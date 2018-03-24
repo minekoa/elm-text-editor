@@ -1,7 +1,7 @@
 ELM_MAKE=elm-make
 ELM_PACKAGE=elm-package
 
-OUT_DIR=../doc
+OUT_DIR=../docs
 TARGET=main.js
 
 

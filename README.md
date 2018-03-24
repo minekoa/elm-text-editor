@@ -17,6 +17,6 @@ The following does not correspond (yet).
 
 We use the following API, so it will not work on browsers that do not support it.
 
-* [CompositionEvent] (https://developer.mozilla.org/en-US/docs/Web/API/CompositionEvent)
-* [ClipboardEvent] (https://developer.mozilla.org/en-US/docs/Web/API/ClipboardEvent)
-* [focusin] (https://developer.mozilla.org/en-US/docs/Web/Events/focusin) / [focusout] (https://developer.mozilla.org/en-US/docs/Web/ Events / focusout) event
+* [CompositionEvent](https://developer.mozilla.org/en-US/docs/Web/API/CompositionEvent)
+* [ClipboardEvent](https://developer.mozilla.org/en-US/docs/Web/API/ClipboardEvent)
+* [focusin](https://developer.mozilla.org/en-US/docs/Web/Events/focusin) / [focusout](https://developer.mozilla.org/en-US/docs/Web/ Events / focusout) event
