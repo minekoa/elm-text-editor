@@ -1,0 +1,129 @@
+
+.software_keyboard {
+  display: flex;
+  flex-direction: row; 
+
+  font-size: 2em;
+}
+
+
+.kbd_switcher {
+  padding: 2px;
+
+  display: flex;
+  flex-direction: column;
+}
+
+.kbd_editcmd {
+  padding: 2px;
+  flex-wrap: wrap;
+
+  display: flex;
+  flex-direction: column;
+}
+
+.kbd_mainkey {
+  display: flex;
+  flex-direction: column;
+}
+
+.kbd_mainkey_row {
+  display: flex;
+  flex-direction: row; 
+  height: 2.5em;
+}
+
+.kbd_key {
+    margin: 3px;
+    text-align: center;
+    color: lightslategray;
+    background-color: aliceblue;
+
+   -moz-user-select: -moz-none;
+   -khtml-user-select: none;
+   -webkit-user-select: none;
+   user-select: none;
+
+
+    /* ripple effect */
+    position: relative;
+    overflow: hidden;
+}
+
+/* for ripple effect */
+.kbd_key:after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 10em; /* この値は目合わせ */
+    height: 10em;
+    border-radius: 50%;
+    opacity: 0;
+    background-color: rgba(180, 210, 250,0.7); 
+    transition: opacity 1s, width 1s, height 1s;
+}
+
+.kbd_key:active:after {
+    content: "";
+    width: 0;
+    height: 0;
+    opacity: 1;
+    transition: opacity 0s, width 0s, height 0s;
+}
+
+
+.kbd_button {
+    color: lightslategray;
+    border: 1px solid lightslategray;
+    text-align: center;
+
+    mim-height: 1.5em;
+    min-width: 4.5em;
+
+   -moz-user-select: -moz-none;
+   -khtml-user-select: none;
+   -webkit-user-select: none;
+   user-select: none;
+
+    /* ripple effect */
+    position: relative;
+    overflow: hidden;
+}
+
+.kbd_button_active {
+    color: dodgerblue;
+    border: 1px solid dodgerblue;
+    text-align: center;
+
+   -moz-user-select: -moz-none;
+   -khtml-user-select: none;
+   -webkit-user-select: none;
+   user-select: none;
+}
+    
+/* for ripple effect */
+.kbd_button:after
+{
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 10em; /* この値は目合わせ */
+    height: 10em;
+    border-radius: 50%;
+    opacity: 0;
+    background-color: rgba(200,200,200,0.7); 
+    transition: opacity 1s, width 1s, height 1s;
+}
+
+.kbd_button:active:after {
+    content: "";
+    width: 0;
+    height: 0;
+    opacity: 1;
+    transition: opacity 0s, width 0s, height 0s;
+}
+
