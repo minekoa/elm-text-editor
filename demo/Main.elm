@@ -3,6 +3,9 @@ import Html.Attributes exposing (..)
 import Html.Events exposing (..)
 import Json.Encode as Encode
 
+import Task
+import FileReader
+
 import TextEditor as Editor
 import TextEditor.Core as Core
 import TextEditor.Commands as Commands
@@ -35,6 +38,7 @@ type Pane
     | DebugPane
     | KeyboardPane
     | StyleEditorPane
+    | FilerPane
 
 type Msg
     = EditorMsg (Editor.Msg)
@@ -42,6 +46,9 @@ type Msg
     | DebuggerMsg (EditorDebugger.Msg)
     | SWKeyboardMsg (SoftwareKeyboard.Msg)
     | StyleSetterMsg (StyleSetter.Msg)
+
+    -- filer
+    | ReadFile FileReader.File
 
 init : (Model, Cmd Msg)
 init =
@@ -112,6 +119,20 @@ update msg model =
                 , Cmd.map StyleSetterMsg c
                 )
 
+        -- Filer
+        ReadFile file ->
+            case file.data of
+                Ok content ->
+                    let
+                        cm = model.editor.core
+                        em1 = model.editor
+                        em2 = { em1 | core = { cm | buffer= Buffer.init content } }
+                    in
+                        ( { model | editor = em2 }
+                        , Cmd.none
+                        )
+                Err err ->
+                    (model , Cmd.none)
 
 
 subscriptions : Model -> Sub Msg
@@ -147,6 +168,10 @@ view model =
                   Html.map SWKeyboardMsg (SoftwareKeyboard.view model.swkeyboard)
               StyleEditorPane ->
                   Html.map StyleSetterMsg (StyleSetter.view model.style)
+              FilerPane ->
+                  div []
+                      [ input (FileReader.fileInput (FileReader.Text "utf-8") ReadFile) []
+                      ]
         ]
 
 paneChanger : Model -> Html Msg
@@ -173,6 +198,7 @@ paneChanger model =
         , tab DebugPane "debug"
         , tab KeyboardPane "keyboard"
         , tab StyleEditorPane "style"
+        , tab FilerPane "filer"
         ]
 
 

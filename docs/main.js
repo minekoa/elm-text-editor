@@ -12979,6 +12979,223 @@ var _minekoa$elm_text_editor$EditorDebugger$view = function (model) {
 		});
 };
 
+var _norpan$elm_file_reader$FileReader$handleFiles = '\n    var fileObjects = [];\n    var index = 0;\n    var reader = new FileReader();\n    var dataFormat = event.target.dataset.format;\n    var encoding = event.target.dataset.encoding;\n    reader.onload = function() {\n        var data;\n        switch(dataFormat) {\n            case \'DataURL\':\n            case \'Text\':\n                data = reader.result;\n                break;\n            case \'Base64\':\n                data = reader.result.split(\',\')[1];\n                break;\n        }\n        var lastModified = files[index].lastModified;\n        if (!lastModified) {\n          lastModified = files[index].lastModifiedDate.getTime();\n        }\n        var result =\n            { lastModified: lastModified\n            , name: files[index].name\n            , size: files[index].size\n            , mimeType: files[index].type\n            , dataFormat: dataFormat\n            , encoding: encoding\n            , data: data\n            };\n        fileObjects.push(result);\n        index++;\n        readOne();\n    }\n    reader.onerror = function () {\n        var lastModified = files[index].lastModified;\n        if (!lastModified) {\n          lastModified = files[index].lastModifiedDate.getTime();\n        }\n        var result =\n            { lastModified: lastModified\n            , name: files[index].name\n            , size: files[index].size\n            , mimeType: files[index].type\n            , dataFormat: dataFormat\n            , encoding: encoding\n            , errorCode: reader.error.code\n            , errorName: reader.error.name\n            , errorMessage: reader.error.message\n            };\n        fileObjects.push(result);\n        index++;\n        readOne();\n    }\n    function readOne() {\n        var file = files[index];\n        if (file) {\n            switch(dataFormat) {\n                case \'DataURL\':\n                case \'Base64\':\n                    reader.readAsDataURL(file);\n                    break;\n                case \'Text\':\n                    reader.readAsText(file, encoding);\n                    break;\n            }\n        } else {\n            if (fileObjects.length > 0) {\n                var filesEvent;\n                try {\n                  filesEvent = new CustomEvent(\"files\", { detail: fileObjects });\n                } catch(e) {\n                  filesEvent = document.createEvent(\"CustomEvent\");\n                  filesEvent.initCustomEvent(\"files\", false, false, fileObjects);\n                }\n                event.target.dispatchEvent(filesEvent);\n            }\n        }\n      }\n    readOne();\n';
+var _norpan$elm_file_reader$FileReader$onChangeHandler = A2(_elm_lang$core$Basics_ops['++'], '\n    event.preventDefault();\n    event.stopPropagation();\n    var files = event.target.files;\n    ', _norpan$elm_file_reader$FileReader$handleFiles);
+var _norpan$elm_file_reader$FileReader$onDropHandler = A2(_elm_lang$core$Basics_ops['++'], '\n    event.preventDefault();\n    event.stopPropagation();\n    var files = event.dataTransfer.files;\n    ', _norpan$elm_file_reader$FileReader$handleFiles);
+var _norpan$elm_file_reader$FileReader$dataFormatAttributes = function (dataFormat) {
+	var _p0 = dataFormat;
+	switch (_p0.ctor) {
+		case 'DataURL':
+			return {
+				ctor: '::',
+				_0: A2(_elm_lang$html$Html_Attributes$attribute, 'data-format', 'DataURL'),
+				_1: {ctor: '[]'}
+			};
+		case 'Base64':
+			return {
+				ctor: '::',
+				_0: A2(_elm_lang$html$Html_Attributes$attribute, 'data-format', 'Base64'),
+				_1: {ctor: '[]'}
+			};
+		default:
+			return {
+				ctor: '::',
+				_0: A2(_elm_lang$html$Html_Attributes$attribute, 'data-format', 'Text'),
+				_1: {
+					ctor: '::',
+					_0: A2(_elm_lang$html$Html_Attributes$attribute, 'data-encoding', _p0._0),
+					_1: {ctor: '[]'}
+				}
+			};
+	}
+};
+var _norpan$elm_file_reader$FileReader$default = F2(
+	function (a, decoder) {
+		return _elm_lang$core$Json_Decode$oneOf(
+			{
+				ctor: '::',
+				_0: decoder,
+				_1: {
+					ctor: '::',
+					_0: _elm_lang$core$Json_Decode$succeed(a),
+					_1: {ctor: '[]'}
+				}
+			});
+	});
+var _norpan$elm_file_reader$FileReader$File = F6(
+	function (a, b, c, d, e, f) {
+		return {lastModified: a, name: b, size: c, mimeType: d, dataFormat: e, data: f};
+	});
+var _norpan$elm_file_reader$FileReader$Error = F3(
+	function (a, b, c) {
+		return {code: a, name: b, message: c};
+	});
+var _norpan$elm_file_reader$FileReader$errorDecoder = A4(
+	_elm_lang$core$Json_Decode$map3,
+	_norpan$elm_file_reader$FileReader$Error,
+	A2(
+		_norpan$elm_file_reader$FileReader$default,
+		0,
+		A2(_elm_lang$core$Json_Decode$field, 'errorCode', _elm_lang$core$Json_Decode$int)),
+	A2(
+		_norpan$elm_file_reader$FileReader$default,
+		'',
+		A2(_elm_lang$core$Json_Decode$field, 'errorName', _elm_lang$core$Json_Decode$string)),
+	A2(
+		_norpan$elm_file_reader$FileReader$default,
+		'',
+		A2(_elm_lang$core$Json_Decode$field, 'errorMessage', _elm_lang$core$Json_Decode$string)));
+var _norpan$elm_file_reader$FileReader$Text = function (a) {
+	return {ctor: 'Text', _0: a};
+};
+var _norpan$elm_file_reader$FileReader$Base64 = {ctor: 'Base64'};
+var _norpan$elm_file_reader$FileReader$DataURL = {ctor: 'DataURL'};
+var _norpan$elm_file_reader$FileReader$dataFormatDecoder = A2(
+	_elm_lang$core$Json_Decode$andThen,
+	function (dataFormat) {
+		var _p1 = dataFormat;
+		switch (_p1) {
+			case 'DataURL':
+				return _elm_lang$core$Json_Decode$succeed(_norpan$elm_file_reader$FileReader$DataURL);
+			case 'Base64':
+				return _elm_lang$core$Json_Decode$succeed(_norpan$elm_file_reader$FileReader$Base64);
+			case 'Text':
+				return A2(
+					_elm_lang$core$Json_Decode$map,
+					_norpan$elm_file_reader$FileReader$Text,
+					A2(_elm_lang$core$Json_Decode$field, 'encoding', _elm_lang$core$Json_Decode$string));
+			default:
+				return _elm_lang$core$Json_Decode$fail(
+					A2(_elm_lang$core$Basics_ops['++'], 'Unknown data format: ', dataFormat));
+		}
+	},
+	A2(_elm_lang$core$Json_Decode$field, 'dataFormat', _elm_lang$core$Json_Decode$string));
+var _norpan$elm_file_reader$FileReader$fileDecoder = A7(
+	_elm_lang$core$Json_Decode$map6,
+	_norpan$elm_file_reader$FileReader$File,
+	A2(_elm_lang$core$Json_Decode$field, 'lastModified', _elm_lang$core$Json_Decode$float),
+	A2(_elm_lang$core$Json_Decode$field, 'name', _elm_lang$core$Json_Decode$string),
+	A2(_elm_lang$core$Json_Decode$field, 'size', _elm_lang$core$Json_Decode$int),
+	A2(_elm_lang$core$Json_Decode$field, 'mimeType', _elm_lang$core$Json_Decode$string),
+	_norpan$elm_file_reader$FileReader$dataFormatDecoder,
+	_elm_lang$core$Json_Decode$oneOf(
+		{
+			ctor: '::',
+			_0: A2(
+				_elm_lang$core$Json_Decode$map,
+				_elm_lang$core$Result$Ok,
+				A2(_elm_lang$core$Json_Decode$field, 'data', _elm_lang$core$Json_Decode$string)),
+			_1: {
+				ctor: '::',
+				_0: A2(_elm_lang$core$Json_Decode$map, _elm_lang$core$Result$Err, _norpan$elm_file_reader$FileReader$errorDecoder),
+				_1: {ctor: '[]'}
+			}
+		}));
+var _norpan$elm_file_reader$FileReader$fileInput = F2(
+	function (dataFormat, fileMsg) {
+		return A2(
+			_elm_lang$core$Basics_ops['++'],
+			{
+				ctor: '::',
+				_0: _elm_lang$html$Html_Attributes$type_('file'),
+				_1: {
+					ctor: '::',
+					_0: A2(_elm_lang$html$Html_Attributes$attribute, 'onchange', _norpan$elm_file_reader$FileReader$onChangeHandler),
+					_1: {
+						ctor: '::',
+						_0: A2(
+							_elm_lang$html$Html_Events$on,
+							'files',
+							A2(
+								_elm_lang$core$Json_Decode$map,
+								fileMsg,
+								A2(
+									_elm_lang$core$Json_Decode$field,
+									'detail',
+									A2(_elm_lang$core$Json_Decode$index, 0, _norpan$elm_file_reader$FileReader$fileDecoder)))),
+						_1: {ctor: '[]'}
+					}
+				}
+			},
+			_norpan$elm_file_reader$FileReader$dataFormatAttributes(dataFormat));
+	});
+var _norpan$elm_file_reader$FileReader$filesInput = F2(
+	function (dataFormat, filesMsg) {
+		return A2(
+			_elm_lang$core$Basics_ops['++'],
+			{
+				ctor: '::',
+				_0: _elm_lang$html$Html_Attributes$type_('file'),
+				_1: {
+					ctor: '::',
+					_0: _elm_lang$html$Html_Attributes$multiple(true),
+					_1: {
+						ctor: '::',
+						_0: A2(_elm_lang$html$Html_Attributes$attribute, 'onchange', _norpan$elm_file_reader$FileReader$onChangeHandler),
+						_1: {
+							ctor: '::',
+							_0: A2(
+								_elm_lang$html$Html_Events$on,
+								'files',
+								A2(
+									_elm_lang$core$Json_Decode$map,
+									filesMsg,
+									A2(
+										_elm_lang$core$Json_Decode$field,
+										'detail',
+										_elm_lang$core$Json_Decode$list(_norpan$elm_file_reader$FileReader$fileDecoder)))),
+							_1: {ctor: '[]'}
+						}
+					}
+				}
+			},
+			_norpan$elm_file_reader$FileReader$dataFormatAttributes(dataFormat));
+	});
+var _norpan$elm_file_reader$FileReader$dropZone = function (_p2) {
+	var _p3 = _p2;
+	return A2(
+		_elm_lang$core$Basics_ops['++'],
+		{
+			ctor: '::',
+			_0: A3(
+				_elm_lang$html$Html_Events$onWithOptions,
+				'dragenter',
+				{preventDefault: true, stopPropagation: true},
+				_elm_lang$core$Json_Decode$succeed(_p3.enterMsg)),
+			_1: {
+				ctor: '::',
+				_0: A3(
+					_elm_lang$html$Html_Events$onWithOptions,
+					'dragleave',
+					{preventDefault: true, stopPropagation: true},
+					_elm_lang$core$Json_Decode$succeed(_p3.leaveMsg)),
+				_1: {
+					ctor: '::',
+					_0: A2(_elm_lang$html$Html_Attributes$attribute, 'ondragover', 'event.preventDefault(); event.stopPropagation();'),
+					_1: {
+						ctor: '::',
+						_0: A2(_elm_lang$html$Html_Attributes$attribute, 'ondrop', _norpan$elm_file_reader$FileReader$onDropHandler),
+						_1: {
+							ctor: '::',
+							_0: A2(
+								_elm_lang$html$Html_Events$on,
+								'files',
+								A2(
+									_elm_lang$core$Json_Decode$map,
+									_p3.filesMsg,
+									A2(
+										_elm_lang$core$Json_Decode$field,
+										'detail',
+										_elm_lang$core$Json_Decode$list(_norpan$elm_file_reader$FileReader$fileDecoder)))),
+							_1: {ctor: '[]'}
+						}
+					}
+				}
+			}
+		},
+		_norpan$elm_file_reader$FileReader$dataFormatAttributes(_p3.dataFormat));
+};
+
 var _minekoa$elm_text_editor$TextEditor_Commands$updateMap = F2(
 	function (model, _p0) {
 		var _p1 = _p0;
@@ -15829,10 +16046,14 @@ var _minekoa$elm_text_editor$Main$Model = F4(
 	function (a, b, c, d) {
 		return {editor: a, pane: b, swkeyboard: c, style: d};
 	});
+var _minekoa$elm_text_editor$Main$FilerPane = {ctor: 'FilerPane'};
 var _minekoa$elm_text_editor$Main$StyleEditorPane = {ctor: 'StyleEditorPane'};
 var _minekoa$elm_text_editor$Main$KeyboardPane = {ctor: 'KeyboardPane'};
 var _minekoa$elm_text_editor$Main$DebugPane = {ctor: 'DebugPane'};
 var _minekoa$elm_text_editor$Main$NoPane = {ctor: 'NoPane'};
+var _minekoa$elm_text_editor$Main$ReadFile = function (a) {
+	return {ctor: 'ReadFile', _0: a};
+};
 var _minekoa$elm_text_editor$Main$StyleSetterMsg = function (a) {
 	return {ctor: 'StyleSetterMsg', _0: a};
 };
@@ -15996,7 +16217,11 @@ var _minekoa$elm_text_editor$Main$paneChanger = function (model) {
 					_1: {
 						ctor: '::',
 						_0: A2(tab, _minekoa$elm_text_editor$Main$StyleEditorPane, 'style'),
-						_1: {ctor: '[]'}
+						_1: {
+							ctor: '::',
+							_0: A2(tab, _minekoa$elm_text_editor$Main$FilerPane, 'filer'),
+							_1: {ctor: '[]'}
+						}
 					}
 				}
 			}
@@ -16096,7 +16321,7 @@ var _minekoa$elm_text_editor$Main$update = F2(
 							}
 						})
 				};
-			default:
+			case 'StyleSetterMsg':
 				var _p7 = A2(_minekoa$elm_text_editor$StyleSetter$update, _p3._0, model.style);
 				var m = _p7._0;
 				var c = _p7._1;
@@ -16107,6 +16332,30 @@ var _minekoa$elm_text_editor$Main$update = F2(
 						{style: m}),
 					_1: A2(_elm_lang$core$Platform_Cmd$map, _minekoa$elm_text_editor$Main$StyleSetterMsg, c)
 				};
+			default:
+				var _p8 = _p3._0.data;
+				if (_p8.ctor === 'Ok') {
+					var em1 = model.editor;
+					var cm = model.editor.core;
+					var em2 = _elm_lang$core$Native_Utils.update(
+						em1,
+						{
+							core: _elm_lang$core$Native_Utils.update(
+								cm,
+								{
+									buffer: _minekoa$elm_text_editor$TextEditor_Buffer$init(_p8._0)
+								})
+						});
+					return {
+						ctor: '_Tuple2',
+						_0: _elm_lang$core$Native_Utils.update(
+							model,
+							{editor: em2}),
+						_1: _elm_lang$core$Platform_Cmd$none
+					};
+				} else {
+					return {ctor: '_Tuple2', _0: model, _1: _elm_lang$core$Platform_Cmd$none};
+				}
 		}
 	});
 var _minekoa$elm_text_editor$Main$subscriptions = function (model) {
@@ -16230,8 +16479,8 @@ var _minekoa$elm_text_editor$Main$view = function (model) {
 						_1: {
 							ctor: '::',
 							_0: function () {
-								var _p8 = model.pane;
-								switch (_p8.ctor) {
+								var _p9 = model.pane;
+								switch (_p9.ctor) {
 									case 'NoPane':
 										return _elm_lang$html$Html$text('');
 									case 'DebugPane':
@@ -16244,11 +16493,26 @@ var _minekoa$elm_text_editor$Main$view = function (model) {
 											_elm_lang$html$Html$map,
 											_minekoa$elm_text_editor$Main$SWKeyboardMsg,
 											_minekoa$elm_text_editor$SoftwareKeyboard$view(model.swkeyboard));
-									default:
+									case 'StyleEditorPane':
 										return A2(
 											_elm_lang$html$Html$map,
 											_minekoa$elm_text_editor$Main$StyleSetterMsg,
 											_minekoa$elm_text_editor$StyleSetter$view(model.style));
+									default:
+										return A2(
+											_elm_lang$html$Html$div,
+											{ctor: '[]'},
+											{
+												ctor: '::',
+												_0: A2(
+													_elm_lang$html$Html$input,
+													A2(
+														_norpan$elm_file_reader$FileReader$fileInput,
+														_norpan$elm_file_reader$FileReader$Text('utf-8'),
+														_minekoa$elm_text_editor$Main$ReadFile),
+													{ctor: '[]'}),
+												_1: {ctor: '[]'}
+											});
 								}
 							}(),
 							_1: {ctor: '[]'}
