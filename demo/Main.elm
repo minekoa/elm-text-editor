@@ -9,7 +9,7 @@ import FileReader
 import TextEditor as Editor
 import TextEditor.Core as Core
 import TextEditor.Commands as Commands
-import TextEditor.Buffer as Buffer
+import TextEditor.Buffer
 import TextEditor.KeyBind as KeyBind
 
 import EditorDebugger
@@ -27,6 +27,8 @@ main =
 
 type alias Model =
     { editor : Editor.Model
+    , buffers : List Buffer
+    , currentBufferName : String
 
     , pane : Pane
     , swkeyboard : SoftwareKeyboard.Model
@@ -40,8 +42,33 @@ type Pane
     | StyleEditorPane
     | FilerPane
 
+type alias Buffer =
+    { name : String
+    , buffer : TextEditor.Buffer.Model
+    }
+
+makeBuffer: String -> String -> Buffer
+makeBuffer name content =
+    { name = name
+    , buffer = TextEditor.Buffer.init content
+    }
+
+appendBuffer: Buffer -> Model -> Model
+appendBuffer buffer model =
+    { model
+          | buffers = buffer :: model.buffers
+    }
+
+setBuffer : TextEditor.Buffer.Model -> Editor.Model -> Editor.Model
+setBuffer newbuf editor =
+    let
+        cm = editor.core
+    in
+        { editor | core = { cm | buffer= newbuf } }
+
 type Msg
     = EditorMsg (Editor.Msg)
+    | ChangeBuffer String
     | ChangePane Pane
     | DebuggerMsg (EditorDebugger.Msg)
     | SWKeyboardMsg (SoftwareKeyboard.Msg)
@@ -53,9 +80,13 @@ type Msg
 init : (Model, Cmd Msg)
 init =
     let
-        (bm, bc) = Editor.init "editor-sample1" (KeyBind.basic ++ KeyBind.gates ++ KeyBind.emacsLike) ""
+        content = ""
+        buf = makeBuffer "*scratch*" content
+        (bm, bc) = Editor.init "editor-sample1" (KeyBind.basic ++ KeyBind.gates ++ KeyBind.emacsLike) content
     in
         ( Model bm
+              [ buf ]
+              buf.name
               NoPane
               SoftwareKeyboard.init
               StyleSetter.init
@@ -74,6 +105,20 @@ updateMap model (em, ec) =
 update : Msg -> Model -> (Model, Cmd Msg)
 update msg model =
     case msg of
+        ChangeBuffer name ->
+            (
+            List.filter (\m -> m.name == name) model.buffers
+                |> List.head
+                |> Maybe.andThen (\buf ->  Just ( { model
+                                                      | editor = setBuffer buf.buffer model.editor
+                                                      , currentBufferName = buf.name
+                                                  }
+                                                )
+                                 )
+                |> Maybe.withDefault model
+            , Cmd.none
+            )
+
         ChangePane pane ->
             ( { model | pane = pane }
             , Cmd.none
@@ -124,11 +169,14 @@ update msg model =
             case file.data of
                 Ok content ->
                     let
-                        cm = model.editor.core
-                        em1 = model.editor
-                        em2 = { em1 | core = { cm | buffer= Buffer.init content } }
+                        newbuf = makeBuffer file.name content
+
                     in
-                        ( { model | editor = em2 }
+                        ( { model
+                              | buffers = newbuf :: model.buffers
+                              , currentBufferName = newbuf.name
+                              , editor  = setBuffer newbuf.buffer  model.editor
+                          }
                         , Cmd.none
                         )
                 Err err ->
@@ -147,6 +195,7 @@ view model =
                 ]
         ]
         [ h1 [] [text "TextEditor Sample"]
+        , bufferTab model
         , div [ style [ ("margin", "0"), ("padding", "0"), ("width", "100%"), ("height", "100%")
                       , ("overflow","hidden")
                       , ("flex-grow", "8")
@@ -173,6 +222,23 @@ view model =
                       [ input (FileReader.fileInput (FileReader.Text "utf-8") ReadFile) []
                       ]
         ]
+
+bufferTab : Model -> Html Msg
+bufferTab model =
+    div [ style [ ("display", "flex"), ("flex-direction", "row"), ("align-items", "flex-end")
+                , ("background-color", "darkgray"), ("color", "snow")
+                , ("height", "1.5em")
+                ]
+        ]
+        ( List.map (\buf ->
+                        div [ style <| if model.currentBufferName == buf.name
+                                       then  [("background-color", "snow"), ("color", "darkgray"), ("padding", "0 0.5em")]
+                                       else  [("padding", "0 0.5em")]
+                            , onClick <| ChangeBuffer buf.name
+                            ]
+                            [ text buf.name ]
+                   ) model.buffers
+        )
 
 paneChanger : Model -> Html Msg
 paneChanger model =
