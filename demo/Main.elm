@@ -59,12 +59,6 @@ appendBuffer buffer model =
           | buffers = buffer :: model.buffers
     }
 
-setBuffer : TextEditor.Buffer.Model -> Editor.Model -> Editor.Model
-setBuffer newbuf editor =
-    let
-        cm = editor.core
-    in
-        { editor | core = { cm | buffer= newbuf } }
 
 type Msg
     = EditorMsg (Editor.Msg)
@@ -110,7 +104,7 @@ update msg model =
             List.filter (\m -> m.name == name) model.buffers
                 |> List.head
                 |> Maybe.andThen (\buf ->  Just ( { model
-                                                      | editor = setBuffer buf.buffer model.editor
+                                                      | editor = Editor.setBuffer buf.buffer model.editor
                                                       , currentBufferName = buf.name
                                                   }
                                                 )
@@ -175,7 +169,7 @@ update msg model =
                         ( { model
                               | buffers = newbuf :: model.buffers
                               , currentBufferName = newbuf.name
-                              , editor  = setBuffer newbuf.buffer  model.editor
+                              , editor  = Editor.setBuffer newbuf.buffer  model.editor
                           }
                         , Cmd.none
                         )
@@ -232,7 +226,7 @@ bufferTab model =
         ]
         ( List.map (\buf ->
                         div [ style <| if model.currentBufferName == buf.name
-                                       then  [("background-color", "snow"), ("color", "darkgray"), ("padding", "0 0.5em")]
+                                       then  [("background-color", "snow"), ("color", "darkgray"), ("padding", "0 0.5giem")]
                                        else  [("padding", "0 0.5em")]
                             , onClick <| ChangeBuffer buf.name
                             ]

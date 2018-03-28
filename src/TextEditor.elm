@@ -4,6 +4,9 @@ module TextEditor exposing ( Model
                            , Msg(..)
                            , subscriptions
                            , view
+
+                           , buffer
+                           , setBuffer
                            )
 
 import Html exposing (..)
@@ -51,6 +54,19 @@ init id keymap text =
           Nothing
     , Cmd.map CoreMsg coreC
     )
+
+buffer : Model -> Buffer.Model
+buffer model =
+    model.core.buffer
+
+setBuffer : Buffer.Model -> Model -> Model
+setBuffer newbuf model =
+    let
+        cm = model.core
+    in
+        { model
+            | core = { cm | buffer= newbuf }
+        }
 
 
 ------------------------------------------------------------

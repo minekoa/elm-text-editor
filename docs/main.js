@@ -11497,6 +11497,20 @@ var _minekoa$elm_text_editor$TextEditor$keyPress = F2(
 			_1: _elm_lang$core$Platform_Cmd$none
 		};
 	});
+var _minekoa$elm_text_editor$TextEditor$setBuffer = F2(
+	function (newbuf, model) {
+		var cm = model.core;
+		return _elm_lang$core$Native_Utils.update(
+			model,
+			{
+				core: _elm_lang$core$Native_Utils.update(
+					cm,
+					{buffer: newbuf})
+			});
+	});
+var _minekoa$elm_text_editor$TextEditor$buffer = function (model) {
+	return model.core.buffer;
+};
 var _minekoa$elm_text_editor$TextEditor$Model = F4(
 	function (a, b, c, d) {
 		return {core: a, enableComposer: b, keymap: c, event_log: d};
@@ -16042,17 +16056,6 @@ var _minekoa$elm_text_editor$Main$modeline = function (model) {
 			}
 		});
 };
-var _minekoa$elm_text_editor$Main$setBuffer = F2(
-	function (newbuf, editor) {
-		var cm = editor.core;
-		return _elm_lang$core$Native_Utils.update(
-			editor,
-			{
-				core: _elm_lang$core$Native_Utils.update(
-					cm,
-					{buffer: newbuf})
-			});
-	});
 var _minekoa$elm_text_editor$Main$appendBuffer = F2(
 	function (buffer, model) {
 		return _elm_lang$core$Native_Utils.update(
@@ -16309,7 +16312,7 @@ var _minekoa$elm_text_editor$Main$bufferTab = function (model) {
 									_0: {ctor: '_Tuple2', _0: 'color', _1: 'darkgray'},
 									_1: {
 										ctor: '::',
-										_0: {ctor: '_Tuple2', _0: 'padding', _1: '0 0.5em'},
+										_0: {ctor: '_Tuple2', _0: 'padding', _1: '0 0.5giem'},
 										_1: {ctor: '[]'}
 									}
 								}
@@ -16394,7 +16397,7 @@ var _minekoa$elm_text_editor$Main$update = F2(
 									_elm_lang$core$Native_Utils.update(
 										model,
 										{
-											editor: A2(_minekoa$elm_text_editor$Main$setBuffer, buf.buffer, model.editor),
+											editor: A2(_minekoa$elm_text_editor$TextEditor$setBuffer, buf.buffer, model.editor),
 											currentBufferName: buf.name
 										}));
 							},
@@ -16489,7 +16492,7 @@ var _minekoa$elm_text_editor$Main$update = F2(
 							{
 								buffers: {ctor: '::', _0: newbuf, _1: model.buffers},
 								currentBufferName: newbuf.name,
-								editor: A2(_minekoa$elm_text_editor$Main$setBuffer, newbuf.buffer, model.editor)
+								editor: A2(_minekoa$elm_text_editor$TextEditor$setBuffer, newbuf.buffer, model.editor)
 							}),
 						_1: _elm_lang$core$Platform_Cmd$none
 					};
