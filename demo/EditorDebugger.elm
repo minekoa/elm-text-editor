@@ -59,9 +59,9 @@ view model =
                                    Buffer.Cmd_Insert (row, col) (ar, ac) str ->
                                        div [celstyle] [ "Ins" ++ (pos2str row col) ++ " -> " ++ (pos2str ar ac) ++ "{" ++ str ++ "}" |> text ]
                                    Buffer.Cmd_Backspace (row, col) (ar, ac) str ->
-                                       div [celstyle] [ "Bs_" ++ (pos2str row col) ++ " -> " ++ (pos2str ar ac) ++"{" ++ str ++ "}" |> text ]
-                                   Buffer.Cmd_Delete (row, col) str ->
-                                       div [celstyle] [ "Del" ++ (pos2str row col) ++ "{" ++ str ++ "}" |> text ]
+                                       div [celstyle] [ "Bs_" ++ (pos2str row col) ++ " -> " ++ (pos2str ar ac) ++ "{" ++ str ++ "}" |> text ]
+                                   Buffer.Cmd_Delete (row, col) (ar, ac) str ->
+                                       div [celstyle] [ "Del" ++ (pos2str row col) ++ " -> " ++ (pos2str ar ac) ++ "{" ++ str ++ "}" |> text ]
                       ) model.core.buffer.history
                   )
               ]

@@ -132,7 +132,7 @@ selectedString model =
 type EditCommand
     = Cmd_Insert (Int, Int) (Int, Int) String    -- befor-cur after-cur inserted_str
     | Cmd_Backspace (Int, Int) (Int, Int) String -- befor-cur after-cur deleted_str
-    | Cmd_Delete (Int, Int) String    -- befor-cur after-cur deleted_str
+    | Cmd_Delete (Int, Int) (Int, Int) String    -- befor-cur after-cur deleted_str
 --    | Cmd_Undo EditCommand
 
 appendHistory: EditCommand -> Model -> Model
@@ -152,9 +152,9 @@ appendHistory cmd model =
             then { model | history = (Cmd_Backspace old_befor after (s ++ old_s)) :: List.drop 1 model.history }
             else { model | history = cmd :: model.history }
 
-        ( (Cmd_Delete (r, c) s), Just (Cmd_Delete (or, oc) os) ) ->
-            if (r == or) && (c == oc)
-            then { model | history = (Cmd_Delete (or, oc) (os ++ s)) :: List.drop 1 model.history }
+        ( (Cmd_Delete befor after s), Just (Cmd_Delete old_befor old_after old_s) ) ->
+            if ((befor |> row) == (old_befor |> row)) && ((befor |> col) == (old_befor |> col))
+            then { model | history = (Cmd_Delete old_befor after (old_s ++ s)) :: List.drop 1 model.history }
             else { model | history = cmd :: model.history }
 
         (_ , _) ->
@@ -303,7 +303,7 @@ delete (row, col) model =
                 m
             Just s ->
                 m
-                |> appendHistory (Cmd_Delete (row, col) s)
+                |> (\m -> appendHistory (Cmd_Delete (row, col) (nowCursorPos m) s) m)
 
 
 deleteRange: Range -> Model -> Model
@@ -318,7 +318,7 @@ deleteRange range model =
             _ ->
                 model
                     |> delete_range_proc range
-                    |> appendHistory (Cmd_Delete head_pos deleted)
+                    |> (\m -> appendHistory (Cmd_Delete head_pos (nowCursorPos m) deleted) m)
 
 undo : Model -> Model
 undo model =
@@ -332,8 +332,8 @@ undo model =
                   Cmd_Backspace before_cur after_cur str ->
                       undo_backspace_proc before_cur after_cur str model
 
-                  Cmd_Delete (row, col) str    ->
-                      undo_delete_proc (row, col) str model
+                  Cmd_Delete before_cur after_cur str    ->
+                      undo_delete_proc before_cur after_cur str model
             )
             |> (\ m -> {m | history = List.drop 1 m.history })
 
@@ -517,8 +517,8 @@ undo_backspace_proc : (Int, Int) -> (Int, Int) -> String -> Model ->Model
 undo_backspace_proc (bf_row, bf_col) (af_row, af_col) str model =
     insert_proc (af_row, af_col) str model 
 
-undo_delete_proc : (Int, Int) -> String -> Model ->Model
-undo_delete_proc (row, col) str model =
-    insert_proc (row, col) str model
-        |> (\m -> { m | cursor = Cursor row col })
+undo_delete_proc : (Int, Int) -> (Int, Int) -> String -> Model ->Model
+undo_delete_proc (bf_row, bf_col) (af_row, af_col) str model =
+    insert_proc (bf_row, bf_col) str model
+        |> (\m -> { m | cursor = Cursor bf_row bf_col })
 

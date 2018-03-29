@@ -26,7 +26,7 @@ suite =
                   Buffer.init "abc"
                       |> Buffer.delete (0, 1)
                       |> (.history)
-                      |> Expect.equal [Buffer.Cmd_Delete (0, 1) "b"]
+                      |> Expect.equal [Buffer.Cmd_Delete (0, 1) (0, 1) "b"]
 
         , test "concat insert" <|
               \_ ->
@@ -53,14 +53,14 @@ suite =
                       |> Buffer.delete (0, 1)
                       |> Buffer.delete (0, 1)
                       |> (.history)
-                      |> Expect.equal [Buffer.Cmd_Delete (0, 1) "bcd"]
+                      |> Expect.equal [Buffer.Cmd_Delete (0, 1) (0, 1) "bcd"]
 
         , test "delete range" <|
               \_ ->
                   Buffer.init "EEEEEXFFFF\nFFFFFYEEEE"
                       |> Buffer.deleteRange { begin=(0, 6), end=(1,5) }
                       |> (.history)
-                      |> Expect.equal [Buffer.Cmd_Delete (0, 6) "FFFF\nFFFFF"]
+                      |> Expect.equal [Buffer.Cmd_Delete (0, 6) (0, 6) "FFFF\nFFFFF"]
 
         , test "insert LF" <|
               \_ ->
@@ -87,7 +87,7 @@ suite =
                   Buffer.init "abc\ndef"
                       |> Buffer.delete (0, 3)
                       |> Expect.all
-                              [ (\m -> Expect.equal [Buffer.Cmd_Delete (0, 3) "\n"] m.history)
+                              [ (\m -> Expect.equal [Buffer.Cmd_Delete (0, 3) (0, 3) "\n"] m.history)
                               , (\m -> Expect.equal ["abcdef"] m.contents)
                               , (\m -> Expect.equal (Buffer.Cursor 0 3) m.cursor)
                               ]
