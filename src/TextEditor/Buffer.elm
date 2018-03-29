@@ -130,22 +130,26 @@ selectedString model =
 ------------------------------------------------------------
 
 type EditCommand
-    = Cmd_Insert (Int, Int) String
-    | Cmd_Backspace (Int, Int) String -- str は undo用
-    | Cmd_Delete (Int, Int) String    -- str は undo 用
+    = Cmd_Insert (Int, Int) (Int, Int) String    -- befor-cur after-cur inserted_str
+    | Cmd_Backspace (Int, Int) (Int, Int) String -- befor-cur after-cur deleted_str
+    | Cmd_Delete (Int, Int) String    -- befor-cur after-cur deleted_str
 --    | Cmd_Undo EditCommand
 
 appendHistory: EditCommand -> Model -> Model
 appendHistory cmd model =
+    let
+        row = Tuple.first
+        col = Tuple.second
+    in
     case (cmd, List.head model.history) of
-        ( (Cmd_Insert (r, c) s), Just (Cmd_Insert (or, oc) os) ) ->
-            if (r == or) && (c == oc + (String.length os))
-            then { model | history = (Cmd_Insert (or, oc) (os ++ s)) :: List.drop 1 model.history }
+        ( (Cmd_Insert befor after s), Just (Cmd_Insert old_befor old_after old_s) ) ->
+            if ((befor |> row) == (old_befor |> row)) && ((befor |> col) == (old_after |> col))
+            then { model | history = (Cmd_Insert old_befor after (old_s ++ s)) :: List.drop 1 model.history }
             else { model | history = cmd :: model.history }
 
-        ( (Cmd_Backspace (r, c) s), Just (Cmd_Backspace (or, oc) os) ) ->
-            if (r == or) && (c == oc - (String.length os))
-            then { model | history = (Cmd_Backspace (or, oc) (s ++ os)) :: List.drop 1 model.history }
+        ( (Cmd_Backspace befor after s), Just (Cmd_Backspace old_befor old_after old_s) ) ->
+            if ((befor |> row) == (old_befor |> row)) && ((befor |> col) == (old_after |> col))
+            then { model | history = (Cmd_Backspace old_befor after (s ++ old_s)) :: List.drop 1 model.history }
             else { model | history = cmd :: model.history }
 
         ( (Cmd_Delete (r, c) s), Just (Cmd_Delete (or, oc) os) ) ->
@@ -275,7 +279,7 @@ insert: (Int, Int) -> String -> Model -> Model
 insert (row, col) text model =
     model
     |> insert_proc (row, col) text
-    |> appendHistory (Cmd_Insert (row, col) text)
+    |> (\m -> appendHistory (Cmd_Insert (row, col) (nowCursorPos m) text) m)
 
 backspace: (Int, Int) -> Model -> Model
 backspace (row, col) model =
@@ -287,7 +291,7 @@ backspace (row, col) model =
                 m
             Just s ->
                 m
-                |> appendHistory (Cmd_Backspace (row, col) s)
+                |> (\m -> appendHistory (Cmd_Backspace (row, col) (nowCursorPos m) s) m)
 
 delete: (Int, Int) -> Model -> Model
 delete (row, col) model =
@@ -322,11 +326,11 @@ undo model =
         Nothing -> model
         Just cmd ->
             ( case cmd of
-                  Cmd_Insert (row, col) str    ->
-                      undo_insert_proc (row, col) str model
+                  Cmd_Insert before_cur after_cur str    ->
+                      undo_insert_proc before_cur after_cur str model
 
-                  Cmd_Backspace (row, col) str ->
-                      undo_backspace_proc (row, col) str model
+                  Cmd_Backspace before_cur after_cur str ->
+                      undo_backspace_proc before_cur after_cur str model
 
                   Cmd_Delete (row, col) str    ->
                       undo_delete_proc (row, col) str model
@@ -492,8 +496,8 @@ delete_range_proc sel model =
                     }
 
     
-undo_insert_proc : (Int, Int) -> String -> Model -> Model
-undo_insert_proc (row, col) str model =
+undo_insert_proc : (Int, Int) -> (Int, Int) -> String -> Model -> Model
+undo_insert_proc (bf_row, bf_col) (af_row, af_col) str model =
     -- todo: ちゃんと実装する。
     --       現存の編集イベントを組み合わせて強引に実現している。汚い。
     let
@@ -503,33 +507,15 @@ undo_insert_proc (row, col) str model =
                              |> Tuple.first
                              |> delete_n (c - 1)
                    )
-        ls      = String.lines str
-        r_delta = (List.length ls) - 1
-        c_delta = ls
-                |> List.reverse 
-                |> List.head
-                |> Maybe.withDefault ""
-                |> String.length
-                |> (+) -1
     in
         delete_n (String.length str)
             { model
-                | cursor = (Cursor (row + r_delta) (col + c_delta + 1))
+                | cursor = Cursor af_row af_col
             }
 
-undo_backspace_proc : (Int, Int) -> String -> Model ->Model
-undo_backspace_proc (row, col) str model =
-    let
-        ls      = String.lines str
-        r_delta = (List.length ls) - 1
-        c_delta = ls
-                |> List.reverse 
-                |> List.head
-                |> Maybe.withDefault ""
-                |> String.length
-                |> (+) -1
-    in
-        insert_proc (row - r_delta, col - c_delta - 1) str model 
+undo_backspace_proc : (Int, Int) -> (Int, Int) -> String -> Model ->Model
+undo_backspace_proc (bf_row, bf_col) (af_row, af_col) str model =
+    insert_proc (af_row, af_col) str model 
 
 undo_delete_proc : (Int, Int) -> String -> Model ->Model
 undo_delete_proc (row, col) str model =

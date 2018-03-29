@@ -14,13 +14,13 @@ suite =
                   Buffer.init ""
                       |> Buffer.insert (0, 0) "a"
                       |> (.history)
-                      |> Expect.equal [Buffer.Cmd_Insert (0, 0) "a"]
+                      |> Expect.equal [Buffer.Cmd_Insert (0, 0) (0, 1) "a"]
         ,  test "backspace one" <|
               \_ ->
                   Buffer.init "abc"
                       |> Buffer.backspace (0, 1)
                       |> (.history)
-                      |> Expect.equal [Buffer.Cmd_Backspace (0, 1) "a"]
+                      |> Expect.equal [Buffer.Cmd_Backspace (0, 1) (0, 0) "a"]
         ,  test "delete one" <|
               \_ ->
                   Buffer.init "abc"
@@ -35,7 +35,7 @@ suite =
                       |> Buffer.insert (0, 1) "b"
                       |> Buffer.insert (0, 2) "c"
                       |> (.history)
-                      |> Expect.equal [Buffer.Cmd_Insert (0, 0) "abc"]
+                      |> Expect.equal [Buffer.Cmd_Insert (0, 0) (0, 3) "abc"]
 
         , test "concat backspace" <|
               \_ ->
@@ -44,7 +44,7 @@ suite =
                       |> Buffer.backspace (0, 2)
                       |> Buffer.backspace (0, 1)
                       |> (.history)
-                      |> Expect.equal [Buffer.Cmd_Backspace (0, 3) "abc"]
+                      |> Expect.equal [Buffer.Cmd_Backspace (0, 3) (0, 0) "abc"]
 
         , test "concat delete" <|
               \_ ->
@@ -67,7 +67,7 @@ suite =
                   Buffer.init "abc\ndef"
                       |> Buffer.insert (0, 1) "\n"
                       |> Expect.all
-                              [ (\m -> Expect.equal [Buffer.Cmd_Insert (0, 1) "\n"] m.history)
+                              [ (\m -> Expect.equal [Buffer.Cmd_Insert (0, 1) (1, 0) "\n"] m.history)
                               , (\m -> Expect.equal ["a", "bc","def"] m.contents)
                               , (\m -> Expect.equal (Buffer.Cursor 1 0) m.cursor)
                               ]
@@ -77,7 +77,7 @@ suite =
                   Buffer.init "abc\ndef"
                       |> Buffer.backspace (1, 0)
                       |> Expect.all
-                              [ (\m -> Expect.equal [Buffer.Cmd_Backspace (1, 0) "\n"] m.history)
+                              [ (\m -> Expect.equal [Buffer.Cmd_Backspace (1, 0) (0, 3) "\n"] m.history)
                               , (\m -> Expect.equal ["abcdef"] m.contents)
                               , (\m -> Expect.equal (Buffer.Cursor 0 3) m.cursor)
                               ]
@@ -144,7 +144,7 @@ suite =
                       |> Expect.all
                               [ (\m -> Expect.equal [] m.history)
                               , (\m -> Expect.equal ["abc","def"] m.contents)
-                              , (\m -> Expect.equal (Buffer.Cursor 0 1) m.cursor)
+                              , (\m -> Expect.equal (Buffer.Cursor 1 0) m.cursor)
                               ]
 
         , test "undo delete LF" <|
