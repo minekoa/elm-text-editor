@@ -329,7 +329,7 @@ undo model =
                       undo_backspace_proc (row, col) str model
 
                   Cmd_Delete (row, col) str    ->
-                      insert_proc (row, col) str model
+                      undo_delete_proc (row, col) str model
             )
             |> (\ m -> {m | history = List.drop 1 m.history })
 
@@ -439,6 +439,7 @@ delete_proc (row, col) model =
                  in
                      ( { model
                            | contents = prows ++ (current :: nrows)
+                           , cursor = Cursor row col
                        }
                      , Just (ln |> String.dropLeft col |> String.left 1) )
 
@@ -452,6 +453,7 @@ delete_proc (row, col) model =
                  in
                      ( { model
                            | contents = prows ++ (current :: nrows)
+                           , cursor = Cursor row col
                        }
                      , Just "\n" )
 
@@ -529,4 +531,8 @@ undo_backspace_proc (row, col) str model =
     in
         insert_proc (row - r_delta, col - c_delta - 1) str model 
 
+undo_delete_proc : (Int, Int) -> String -> Model ->Model
+undo_delete_proc (row, col) str model =
+    insert_proc (row, col) str model
+        |> (\m -> { m | cursor = Cursor row col })
 
