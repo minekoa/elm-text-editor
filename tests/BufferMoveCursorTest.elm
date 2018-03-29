@@ -4,7 +4,7 @@ import Expect exposing (Expectation)
 import Test exposing (..)
 
 
-import Editor.Buffer as Buffer
+import TextEditor.Buffer as Buffer
 
 ntimesdo : Int -> (a -> a) -> a -> a
 ntimesdo  n f v =
