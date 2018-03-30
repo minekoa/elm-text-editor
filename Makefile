@@ -1,11 +1,19 @@
 ELM_MAKE=elm-make
 ELM_PACKAGE=elm-package
 ELM_TEST=elm-test
+MAKE=make
 
 SRC_DIR=src
 TARGET=main.js
+subdirs=demo
 
-.PHONY: all env compile release clean
+.PHONY: all env clean $(subdirs)
+
+
+all: $(subdirs) test
+
+$(subdirs):
+	$(MAKE) -C $@
 
 test:
 	$(ELM_TEST)
@@ -13,6 +21,8 @@ test:
 env:
 	$(ELM_PACKAGE) install
 
+clean:
+	rm -rf docs
 
 
 
