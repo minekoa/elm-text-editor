@@ -102,13 +102,13 @@ editF f model =
 -- API
 
 insert: String -> Model-> (Model, Cmd Msg)
-insert text = editF (Buffer.insertAtCursor text)
+insert text = editF (Buffer.insert text)
 
 backspace: Model -> (Model, Cmd Msg)
-backspace = editF Buffer.backspaceAtCursor
+backspace = editF Buffer.backspace
 
 delete: Model ->  (Model, Cmd Msg)
-delete = editF Buffer.deleteAtCursor
+delete = editF Buffer.delete
 
 
 ------------------------------------------------------------
@@ -163,7 +163,7 @@ paste : String -> Model -> (Model, Cmd Msg)
 paste text model =
     { model
         | buffer = model.buffer
-                       |> Buffer.insertAtCursor text
+                       |> Buffer.insert text
                        |> Buffer.selectionClear
         , copyStore = text  -- clipboard経由のペーストもあるので、copyStoreを更新しておく
     }

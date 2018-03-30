@@ -161,7 +161,7 @@ compositionUpdate data model =
 compositionEnd : String -> Model -> Model
 compositionEnd data model =
     { model
-        | buffer = Buffer.insertAtCursor data model.buffer
+        | buffer = Buffer.insert data model.buffer
         , compositionPreview = Nothing
     }
 

@@ -9912,7 +9912,7 @@ var _minekoa$elm_text_editor$TextEditor_Buffer$appendHistory = F2(
 				history: {ctor: '::', _0: cmd, _1: model.history}
 			});
 	});
-var _minekoa$elm_text_editor$TextEditor_Buffer$backspace = F2(
+var _minekoa$elm_text_editor$TextEditor_Buffer$backspaceAt = F2(
 	function (_p46, model) {
 		var _p47 = _p46;
 		var _p51 = _p47._0;
@@ -9939,7 +9939,7 @@ var _minekoa$elm_text_editor$TextEditor_Buffer$backspace = F2(
 			}(m);
 		}
 	});
-var _minekoa$elm_text_editor$TextEditor_Buffer$delete = F2(
+var _minekoa$elm_text_editor$TextEditor_Buffer$deleteAt = F2(
 	function (_p52, model) {
 		var _p53 = _p52;
 		var _p57 = _p53._0;
@@ -9987,38 +9987,40 @@ var _minekoa$elm_text_editor$TextEditor_Buffer$deleteRange = F2(
 				A2(_minekoa$elm_text_editor$TextEditor_Buffer$delete_range_proc, range, model));
 		}
 	});
-var _minekoa$elm_text_editor$TextEditor_Buffer$deleteSelection = function (bufmodel) {
-	var _p59 = bufmodel.selection;
+var _minekoa$elm_text_editor$TextEditor_Buffer$backspace = function (model) {
+	var _p59 = model.selection;
 	if (_p59.ctor === 'Nothing') {
-		return bufmodel;
+		return A2(
+			_minekoa$elm_text_editor$TextEditor_Buffer$backspaceAt,
+			_minekoa$elm_text_editor$TextEditor_Buffer$nowCursorPos(model),
+			model);
 	} else {
 		return _minekoa$elm_text_editor$TextEditor_Buffer$selectionClear(
-			A2(_minekoa$elm_text_editor$TextEditor_Buffer$deleteRange, _p59._0, bufmodel));
+			A2(_minekoa$elm_text_editor$TextEditor_Buffer$deleteRange, _p59._0, model));
 	}
 };
-var _minekoa$elm_text_editor$TextEditor_Buffer$backspaceAtCursor = function (bufmodel) {
-	var _p60 = bufmodel.selection;
+var _minekoa$elm_text_editor$TextEditor_Buffer$delete = function (model) {
+	var _p60 = model.selection;
 	if (_p60.ctor === 'Nothing') {
 		return A2(
-			_minekoa$elm_text_editor$TextEditor_Buffer$backspace,
-			_minekoa$elm_text_editor$TextEditor_Buffer$nowCursorPos(bufmodel),
-			bufmodel);
+			_minekoa$elm_text_editor$TextEditor_Buffer$deleteAt,
+			_minekoa$elm_text_editor$TextEditor_Buffer$nowCursorPos(model),
+			model);
 	} else {
-		return _minekoa$elm_text_editor$TextEditor_Buffer$deleteSelection(bufmodel);
+		return _minekoa$elm_text_editor$TextEditor_Buffer$selectionClear(
+			A2(_minekoa$elm_text_editor$TextEditor_Buffer$deleteRange, _p60._0, model));
 	}
 };
-var _minekoa$elm_text_editor$TextEditor_Buffer$deleteAtCursor = function (bufmodel) {
-	var _p61 = bufmodel.selection;
+var _minekoa$elm_text_editor$TextEditor_Buffer$deleteSelection = function (model) {
+	var _p61 = model.selection;
 	if (_p61.ctor === 'Nothing') {
-		return A2(
-			_minekoa$elm_text_editor$TextEditor_Buffer$delete,
-			_minekoa$elm_text_editor$TextEditor_Buffer$nowCursorPos(bufmodel),
-			bufmodel);
+		return model;
 	} else {
-		return _minekoa$elm_text_editor$TextEditor_Buffer$deleteSelection(bufmodel);
+		return _minekoa$elm_text_editor$TextEditor_Buffer$selectionClear(
+			A2(_minekoa$elm_text_editor$TextEditor_Buffer$deleteRange, _p61._0, model));
 	}
 };
-var _minekoa$elm_text_editor$TextEditor_Buffer$insert = F3(
+var _minekoa$elm_text_editor$TextEditor_Buffer$insertAt = F3(
 	function (_p62, text, model) {
 		var _p63 = _p62;
 		var _p65 = _p63._0;
@@ -10039,24 +10041,25 @@ var _minekoa$elm_text_editor$TextEditor_Buffer$insert = F3(
 				text,
 				model));
 	});
-var _minekoa$elm_text_editor$TextEditor_Buffer$insertAtCursor = F2(
-	function (text, bufmodel) {
-		var _p66 = bufmodel.selection;
+var _minekoa$elm_text_editor$TextEditor_Buffer$insert = F2(
+	function (text, model) {
+		var _p66 = model.selection;
 		if (_p66.ctor === 'Nothing') {
 			return A3(
-				_minekoa$elm_text_editor$TextEditor_Buffer$insert,
-				_minekoa$elm_text_editor$TextEditor_Buffer$nowCursorPos(bufmodel),
+				_minekoa$elm_text_editor$TextEditor_Buffer$insertAt,
+				_minekoa$elm_text_editor$TextEditor_Buffer$nowCursorPos(model),
 				text,
-				bufmodel);
+				model);
 		} else {
 			return function (m) {
 				return A3(
-					_minekoa$elm_text_editor$TextEditor_Buffer$insert,
+					_minekoa$elm_text_editor$TextEditor_Buffer$insertAt,
 					_minekoa$elm_text_editor$TextEditor_Buffer$nowCursorPos(m),
 					text,
 					m);
 			}(
-				_minekoa$elm_text_editor$TextEditor_Buffer$deleteSelection(bufmodel));
+				_minekoa$elm_text_editor$TextEditor_Buffer$selectionClear(
+					A2(_minekoa$elm_text_editor$TextEditor_Buffer$deleteRange, _p66._0, model)));
 		}
 	});
 
@@ -10095,7 +10098,7 @@ var _minekoa$elm_text_editor$TextEditor_Core$compositionEnd = F2(
 		return _elm_lang$core$Native_Utils.update(
 			model,
 			{
-				buffer: A2(_minekoa$elm_text_editor$TextEditor_Buffer$insertAtCursor, data, model.buffer),
+				buffer: A2(_minekoa$elm_text_editor$TextEditor_Buffer$insert, data, model.buffer),
 				compositionPreview: _elm_lang$core$Maybe$Nothing
 			});
 	});
@@ -10310,11 +10313,7 @@ var _minekoa$elm_text_editor$TextEditor_Core_Commands$paste = F2(
 					model,
 					{
 						buffer: _minekoa$elm_text_editor$TextEditor_Buffer$selectionClear(
-							A3(
-								_minekoa$elm_text_editor$TextEditor_Buffer$insert,
-								_minekoa$elm_text_editor$TextEditor_Buffer$nowCursorPos(model.buffer),
-								text,
-								model.buffer)),
+							A2(_minekoa$elm_text_editor$TextEditor_Buffer$insert, text, model.buffer)),
 						copyStore: text
 					})));
 	});
@@ -10380,10 +10379,10 @@ var _minekoa$elm_text_editor$TextEditor_Core_Commands$editF = F2(
 	});
 var _minekoa$elm_text_editor$TextEditor_Core_Commands$insert = function (text) {
 	return _minekoa$elm_text_editor$TextEditor_Core_Commands$editF(
-		_minekoa$elm_text_editor$TextEditor_Buffer$insertAtCursor(text));
+		_minekoa$elm_text_editor$TextEditor_Buffer$insert(text));
 };
-var _minekoa$elm_text_editor$TextEditor_Core_Commands$backspace = _minekoa$elm_text_editor$TextEditor_Core_Commands$editF(_minekoa$elm_text_editor$TextEditor_Buffer$backspaceAtCursor);
-var _minekoa$elm_text_editor$TextEditor_Core_Commands$delete = _minekoa$elm_text_editor$TextEditor_Core_Commands$editF(_minekoa$elm_text_editor$TextEditor_Buffer$deleteAtCursor);
+var _minekoa$elm_text_editor$TextEditor_Core_Commands$backspace = _minekoa$elm_text_editor$TextEditor_Core_Commands$editF(_minekoa$elm_text_editor$TextEditor_Buffer$backspace);
+var _minekoa$elm_text_editor$TextEditor_Core_Commands$delete = _minekoa$elm_text_editor$TextEditor_Core_Commands$editF(_minekoa$elm_text_editor$TextEditor_Buffer$delete);
 var _minekoa$elm_text_editor$TextEditor_Core_Commands$selectF = F2(
 	function (f, model) {
 		return _minekoa$elm_text_editor$TextEditor_Core$withEnsureVisibleCmd(
