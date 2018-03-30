@@ -28,11 +28,11 @@ module TextEditor.Buffer exposing ( Model
 
                                   -- edit
                                   , insertAtCursor
-                                  , insert
+                                  , insertAt
                                   , backspaceAtCursor
-                                  , backspace
+                                  , backspaceAt
                                   , deleteAtCursor
-                                  , delete
+                                  , deleteAt
                                   , deleteRange
                                   , deleteSelection
                                   , undo
@@ -284,14 +284,14 @@ insertAtCursor : String -> Model -> Model
 insertAtCursor text bufmodel=
     case bufmodel.selection of
         Nothing ->
-            insert (nowCursorPos bufmodel) text bufmodel
+            insertAt (nowCursorPos bufmodel) text bufmodel
         Just s ->
             bufmodel
                 |> deleteSelection
-                |> (\m -> insert (nowCursorPos m) text m)
+                |> (\m -> insertAt (nowCursorPos m) text m)
 
-insert: (Int, Int) -> String -> Model -> Model
-insert (row, col) text model =
+insertAt: (Int, Int) -> String -> Model -> Model
+insertAt (row, col) text model =
     model
     |> insert_proc (row, col) text
     |> (\m -> appendHistory (Cmd_Insert (row, col) (nowCursorPos m) text) m)
@@ -301,13 +301,13 @@ backspaceAtCursor : Model -> Model
 backspaceAtCursor bufmodel =
     case bufmodel.selection of
         Nothing ->
-            backspace (nowCursorPos bufmodel) bufmodel
+            backspaceAt (nowCursorPos bufmodel) bufmodel
         Just s ->
             bufmodel
                 |> deleteSelection
 
-backspace: (Int, Int) -> Model -> Model
-backspace (row, col) model =
+backspaceAt: (Int, Int) -> Model -> Model
+backspaceAt (row, col) model =
     let
         (m, deleted) = backspace_proc (row, col) model 
     in
@@ -322,13 +322,13 @@ deleteAtCursor : Model -> Model
 deleteAtCursor bufmodel =
     case bufmodel.selection of
         Nothing ->
-            delete (nowCursorPos bufmodel) bufmodel
+            deleteAt (nowCursorPos bufmodel) bufmodel
         Just s ->
             bufmodel
                 |> deleteSelection
 
-delete: (Int, Int) -> Model -> Model
-delete (row, col) model =
+deleteAt: (Int, Int) -> Model -> Model
+deleteAt (row, col) model =
     let
         (m, deleted) = delete_proc (row, col) model
     in

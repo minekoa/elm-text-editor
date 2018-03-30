@@ -163,7 +163,7 @@ paste : String -> Model -> (Model, Cmd Msg)
 paste text model =
     { model
         | buffer = model.buffer
-                       |> Buffer.insert (Buffer.nowCursorPos model.buffer) text
+                       |> Buffer.insertAtCursor text
                        |> Buffer.selectionClear
         , copyStore = text  -- clipboard経由のペーストもあるので、copyStoreを更新しておく
     }
