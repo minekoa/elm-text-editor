@@ -27,10 +27,14 @@ module TextEditor.Buffer exposing ( Model
                                   , selectionClear
 
                                   -- edit
+                                  , insertAtCursor
                                   , insert
+                                  , backspaceAtCursor
                                   , backspace
+                                  , deleteAtCursor
                                   , delete
                                   , deleteRange
+                                  , deleteSelection
                                   , undo
                                   )
 
@@ -275,11 +279,32 @@ selectWithMove move_f model =
 -- edit
 ------------------------------------------------------------
 
+
+insertAtCursor : String -> Model -> Model
+insertAtCursor text bufmodel=
+    case bufmodel.selection of
+        Nothing ->
+            insert (nowCursorPos bufmodel) text bufmodel
+        Just s ->
+            bufmodel
+                |> deleteSelection
+                |> (\m -> insert (nowCursorPos m) text m)
+
 insert: (Int, Int) -> String -> Model -> Model
 insert (row, col) text model =
     model
     |> insert_proc (row, col) text
     |> (\m -> appendHistory (Cmd_Insert (row, col) (nowCursorPos m) text) m)
+
+
+backspaceAtCursor : Model -> Model
+backspaceAtCursor bufmodel =
+    case bufmodel.selection of
+        Nothing ->
+            backspace (nowCursorPos bufmodel) bufmodel
+        Just s ->
+            bufmodel
+                |> deleteSelection
 
 backspace: (Int, Int) -> Model -> Model
 backspace (row, col) model =
@@ -292,6 +317,15 @@ backspace (row, col) model =
             Just s ->
                 m
                 |> (\m -> appendHistory (Cmd_Backspace (row, col) (nowCursorPos m) s) m)
+
+deleteAtCursor : Model -> Model
+deleteAtCursor bufmodel =
+    case bufmodel.selection of
+        Nothing ->
+            delete (nowCursorPos bufmodel) bufmodel
+        Just s ->
+            bufmodel
+                |> deleteSelection
 
 delete: (Int, Int) -> Model -> Model
 delete (row, col) model =
@@ -319,6 +353,18 @@ deleteRange range model =
                 model
                     |> delete_range_proc range
                     |> (\m -> appendHistory (Cmd_Delete head_pos (nowCursorPos m) deleted) m)
+
+
+deleteSelection: Model -> Model
+deleteSelection bufmodel =
+    case bufmodel.selection of
+        Nothing ->
+            bufmodel
+        Just s  ->
+            bufmodel
+                |> deleteRange s
+                |> selectionClear
+
 
 undo : Model -> Model
 undo model =

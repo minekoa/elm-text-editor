@@ -146,7 +146,7 @@ blinkBlock model =
 compositionStart : Model -> Model
 compositionStart model =
     { model
-        | buffer = buffer_delete_selection model.buffer
+        | buffer = Buffer.deleteSelection model.buffer
         , compositionPreview = Just ""
     }
     |> blinkBlock
@@ -161,7 +161,7 @@ compositionUpdate data model =
 compositionEnd : String -> Model -> Model
 compositionEnd data model =
     { model
-        | buffer = buffer_insert data model.buffer
+        | buffer = Buffer.insertAtCursor data model.buffer
         , compositionPreview = Nothing
     }
 
@@ -221,34 +221,6 @@ calcHScrollPos model =
                 Just ( scrleft + (cursorRect.right - frameRect.right ) + margin)
             else 
                 Nothing
-
-
-
-------------------------------------------------------------
--- あとでどうにかするコピペ
-------------------------------------------------------------
-
-buffer_delete_selection : Buffer.Model -> Buffer.Model
-buffer_delete_selection bufmodel =
-    case bufmodel.selection of
-        Nothing ->
-            bufmodel
-        Just s  ->
-            bufmodel
-                |> Buffer.deleteRange s
-                |> Buffer.selectionClear
-
-buffer_insert : String -> Buffer.Model -> Buffer.Model
-buffer_insert text bufmodel=
-    case bufmodel.selection of
-        Nothing ->
-            Buffer.insert (Buffer.nowCursorPos bufmodel) text bufmodel
-        Just s ->
-            bufmodel
-                |> Buffer.deleteRange s
-                |> Buffer.selectionClear
-                |> (\m -> Buffer.insert (Buffer.nowCursorPos m) text m)
-
 
 
 ------------------------------------------------------------

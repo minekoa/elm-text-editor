@@ -98,57 +98,17 @@ editF f model =
         |> Core.blinkBlock
         |> Core.withEnsureVisibleCmd
 
-buffer_insert : String -> Buffer.Model -> Buffer.Model
-buffer_insert text bufmodel=
-    case bufmodel.selection of
-        Nothing ->
-            Buffer.insert (Buffer.nowCursorPos bufmodel) text bufmodel
-        Just s ->
-            bufmodel
-                |> Buffer.deleteRange s
-                |> Buffer.selectionClear
-                |> (\m -> Buffer.insert (Buffer.nowCursorPos m) text m)
-
-buffer_backspace : Buffer.Model -> Buffer.Model
-buffer_backspace bufmodel =
-    case bufmodel.selection of
-        Nothing ->
-            Buffer.backspace (Buffer.nowCursorPos bufmodel) bufmodel
-        Just s ->
-            bufmodel
-                |> Buffer.deleteRange s
-                |> Buffer.selectionClear
-
-buffer_delete : Buffer.Model -> Buffer.Model
-buffer_delete bufmodel =
-    case bufmodel.selection of
-        Nothing ->
-            Buffer.delete (Buffer.nowCursorPos bufmodel) bufmodel
-        Just s ->
-            bufmodel
-                |> Buffer.deleteRange s
-                |> Buffer.selectionClear
-
-buffer_delete_selection : Buffer.Model -> Buffer.Model
-buffer_delete_selection bufmodel =
-    case bufmodel.selection of
-        Nothing ->
-            bufmodel
-        Just s  ->
-            bufmodel
-                |> Buffer.deleteRange s
-                |> Buffer.selectionClear
 
 -- API
 
 insert: String -> Model-> (Model, Cmd Msg)
-insert text = editF (buffer_insert text)
+insert text = editF (Buffer.insertAtCursor text)
 
 backspace: Model -> (Model, Cmd Msg)
-backspace = editF buffer_backspace
+backspace = editF Buffer.backspaceAtCursor
 
 delete: Model ->  (Model, Cmd Msg)
-delete = editF buffer_delete
+delete = editF Buffer.deleteAtCursor
 
 
 ------------------------------------------------------------
