@@ -9,6 +9,7 @@ TARGET=main.js
 all: $(OUT_DIR)/$(TARGET)
 	cp index.html $(OUT_DIR)/index.html
 	cp softwarekeyboard.css $(OUT_DIR)/softwarekeyboard.css
+	cp stylesetter.css $(OUT_DIR)/stylesetter.css
 
 env:
 	$(ELM_PACKAGE) install

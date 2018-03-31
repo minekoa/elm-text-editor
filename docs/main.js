@@ -15594,57 +15594,562 @@ var _minekoa$elm_text_editor$StyleSetter$selectList = F3(
 				},
 				values));
 	});
-var _minekoa$elm_text_editor$StyleSetter$update = F2(
-	function (msg, model) {
-		var _p0 = msg;
-		switch (_p0.ctor) {
-			case 'ChangeBGColor':
-				return {
-					ctor: '_Tuple2',
-					_0: _elm_lang$core$Native_Utils.update(
-						model,
+var _minekoa$elm_text_editor$StyleSetter$fontSizeSelector = F2(
+	function (tagger, fontsizeList) {
+		return A2(
+			_elm_lang$html$Html$div,
+			{
+				ctor: '::',
+				_0: _elm_lang$html$Html_Attributes$class('style-palette'),
+				_1: {
+					ctor: '::',
+					_0: _elm_lang$html$Html_Attributes$style(
 						{
-							bgColor: {index: _p0._0, list: model.bgColor.list}
+							ctor: '::',
+							_0: {ctor: '_Tuple2', _0: 'flex-grow', _1: '1'},
+							_1: {
+								ctor: '::',
+								_0: {ctor: '_Tuple2', _0: 'display', _1: 'flex'},
+								_1: {
+									ctor: '::',
+									_0: {ctor: '_Tuple2', _0: 'flex-direction', _1: 'row'},
+									_1: {
+										ctor: '::',
+										_0: {ctor: '_Tuple2', _0: 'flex-wrap', _1: 'no-wrap'},
+										_1: {ctor: '[]'}
+									}
+								}
+							}
 						}),
-					_1: _elm_lang$core$Platform_Cmd$none
-				};
-			case 'ChangeFGColor':
-				return {
-					ctor: '_Tuple2',
-					_0: _elm_lang$core$Native_Utils.update(
-						model,
+					_1: {ctor: '[]'}
+				}
+			},
+			A2(
+				_elm_lang$core$List$map,
+				function (fontsize) {
+					return A2(
+						_elm_lang$html$Html$div,
 						{
-							fgColor: {index: _p0._0, list: model.fgColor.list}
-						}),
-					_1: _elm_lang$core$Platform_Cmd$none
-				};
-			case 'ChangeFontFamily':
-				return {
-					ctor: '_Tuple2',
-					_0: _elm_lang$core$Native_Utils.update(
-						model,
+							ctor: '::',
+							_0: _elm_lang$html$Html_Attributes$style(
+								{
+									ctor: '::',
+									_0: {ctor: '_Tuple2', _0: 'padding', _1: '0.5rem'},
+									_1: {
+										ctor: '::',
+										_0: {ctor: '_Tuple2', _0: 'font-size', _1: fontsize},
+										_1: {
+											ctor: '::',
+											_0: {ctor: '_Tuple2', _0: 'width', _1: '100%'},
+											_1: {ctor: '[]'}
+										}
+									}
+								}),
+							_1: {
+								ctor: '::',
+								_0: _elm_lang$html$Html_Events$onClick(
+									tagger(fontsize)),
+								_1: {ctor: '[]'}
+							}
+						},
 						{
-							fontFamily: {index: _p0._0, list: model.fontFamily.list}
-						}),
-					_1: _elm_lang$core$Platform_Cmd$none
-				};
-			default:
-				return {
-					ctor: '_Tuple2',
-					_0: _elm_lang$core$Native_Utils.update(
-						model,
-						{
-							fontSize: {index: _p0._0, list: model.fontSize.list}
-						}),
-					_1: _elm_lang$core$Platform_Cmd$none
-				};
-		}
+							ctor: '::',
+							_0: _elm_lang$html$Html$text(fontsize),
+							_1: {ctor: '[]'}
+						});
+				},
+				fontsizeList));
 	});
-var _minekoa$elm_text_editor$StyleSetter$Model = F4(
-	function (a, b, c, d) {
-		return {bgColor: a, fgColor: b, fontFamily: c, fontSize: d};
+var _minekoa$elm_text_editor$StyleSetter$fontFamilySelector = F2(
+	function (tagger, fontList) {
+		return A2(
+			_elm_lang$html$Html$div,
+			{
+				ctor: '::',
+				_0: _elm_lang$html$Html_Attributes$class('style-palette'),
+				_1: {
+					ctor: '::',
+					_0: _elm_lang$html$Html_Attributes$style(
+						{
+							ctor: '::',
+							_0: {ctor: '_Tuple2', _0: 'flex-grow', _1: '1'},
+							_1: {
+								ctor: '::',
+								_0: {ctor: '_Tuple2', _0: 'display', _1: 'flex'},
+								_1: {
+									ctor: '::',
+									_0: {ctor: '_Tuple2', _0: 'flex-direction', _1: 'row'},
+									_1: {
+										ctor: '::',
+										_0: {ctor: '_Tuple2', _0: 'flex-wrap', _1: 'no-wrap'},
+										_1: {ctor: '[]'}
+									}
+								}
+							}
+						}),
+					_1: {ctor: '[]'}
+				}
+			},
+			A2(
+				_elm_lang$core$List$map,
+				function (font) {
+					return A2(
+						_elm_lang$html$Html$div,
+						{
+							ctor: '::',
+							_0: _elm_lang$html$Html_Attributes$style(
+								{
+									ctor: '::',
+									_0: {ctor: '_Tuple2', _0: 'height', _1: '2em'},
+									_1: {
+										ctor: '::',
+										_0: {ctor: '_Tuple2', _0: 'size', _1: '2em'},
+										_1: {
+											ctor: '::',
+											_0: {ctor: '_Tuple2', _0: 'padding', _1: '0.5em'},
+											_1: {
+												ctor: '::',
+												_0: {ctor: '_Tuple2', _0: 'font-family', _1: font},
+												_1: {
+													ctor: '::',
+													_0: {ctor: '_Tuple2', _0: 'width', _1: '100%'},
+													_1: {ctor: '[]'}
+												}
+											}
+										}
+									}
+								}),
+							_1: {
+								ctor: '::',
+								_0: _elm_lang$html$Html_Events$onClick(
+									tagger(font)),
+								_1: {ctor: '[]'}
+							}
+						},
+						{
+							ctor: '::',
+							_0: _elm_lang$html$Html$text(font),
+							_1: {ctor: '[]'}
+						});
+				},
+				fontList));
 	});
-var _minekoa$elm_text_editor$StyleSetter$init = A4(
+var _minekoa$elm_text_editor$StyleSetter$colorPalette = F2(
+	function (tagger, colorList) {
+		return A2(
+			_elm_lang$html$Html$div,
+			{
+				ctor: '::',
+				_0: _elm_lang$html$Html_Attributes$class('style-palette'),
+				_1: {
+					ctor: '::',
+					_0: _elm_lang$html$Html_Attributes$style(
+						{
+							ctor: '::',
+							_0: {ctor: '_Tuple2', _0: 'flex-grow', _1: '1'},
+							_1: {
+								ctor: '::',
+								_0: {ctor: '_Tuple2', _0: 'display', _1: 'flex'},
+								_1: {
+									ctor: '::',
+									_0: {ctor: '_Tuple2', _0: 'align-content', _1: 'flex-start'},
+									_1: {
+										ctor: '::',
+										_0: {ctor: '_Tuple2', _0: 'flex-wrap', _1: 'wrap'},
+										_1: {ctor: '[]'}
+									}
+								}
+							}
+						}),
+					_1: {ctor: '[]'}
+				}
+			},
+			A2(
+				_elm_lang$core$List$map,
+				function (color) {
+					return A2(
+						_elm_lang$html$Html$div,
+						{
+							ctor: '::',
+							_0: _elm_lang$html$Html_Attributes$style(
+								{
+									ctor: '::',
+									_0: {ctor: '_Tuple2', _0: 'height', _1: '2em'},
+									_1: {
+										ctor: '::',
+										_0: {ctor: '_Tuple2', _0: 'width', _1: '12em'},
+										_1: {
+											ctor: '::',
+											_0: {ctor: '_Tuple2', _0: 'display', _1: 'flex'},
+											_1: {
+												ctor: '::',
+												_0: {ctor: '_Tuple2', _0: 'flex-directipn', _1: 'column'},
+												_1: {
+													ctor: '::',
+													_0: {ctor: '_Tuple2', _0: 'padding', _1: '1em'},
+													_1: {ctor: '[]'}
+												}
+											}
+										}
+									}
+								}),
+							_1: {ctor: '[]'}
+						},
+						{
+							ctor: '::',
+							_0: A2(
+								_elm_lang$html$Html$div,
+								{
+									ctor: '::',
+									_0: _elm_lang$html$Html_Attributes$style(
+										{
+											ctor: '::',
+											_0: {ctor: '_Tuple2', _0: 'width', _1: '1em'},
+											_1: {
+												ctor: '::',
+												_0: {ctor: '_Tuple2', _0: 'height', _1: '1em'},
+												_1: {
+													ctor: '::',
+													_0: {ctor: '_Tuple2', _0: 'background-color', _1: color},
+													_1: {
+														ctor: '::',
+														_0: {ctor: '_Tuple2', _0: 'border', _1: '1px solid black'},
+														_1: {ctor: '[]'}
+													}
+												}
+											}
+										}),
+									_1: {
+										ctor: '::',
+										_0: _elm_lang$html$Html_Events$onClick(
+											tagger(color)),
+										_1: {ctor: '[]'}
+									}
+								},
+								{ctor: '[]'}),
+							_1: {
+								ctor: '::',
+								_0: A2(
+									_elm_lang$html$Html$div,
+									{
+										ctor: '::',
+										_0: _elm_lang$html$Html_Attributes$style(
+											{
+												ctor: '::',
+												_0: {ctor: '_Tuple2', _0: 'padding-left', _1: '0.5em'},
+												_1: {ctor: '[]'}
+											}),
+										_1: {
+											ctor: '::',
+											_0: _elm_lang$html$Html_Events$onClick(
+												tagger(color)),
+											_1: {ctor: '[]'}
+										}
+									},
+									{
+										ctor: '::',
+										_0: _elm_lang$html$Html$text(color),
+										_1: {ctor: '[]'}
+									}),
+								_1: {ctor: '[]'}
+							}
+						});
+				},
+				colorList));
+	});
+var _minekoa$elm_text_editor$StyleSetter$targetName = function (target) {
+	var _p0 = target;
+	switch (_p0.ctor) {
+		case 'EditColor':
+			return _p0._0;
+		case 'EditFontFamily':
+			return _p0._0;
+		default:
+			return _p0._0;
+	}
+};
+var _minekoa$elm_text_editor$StyleSetter$Model = F5(
+	function (a, b, c, d, e) {
+		return {bgColor: a, fgColor: b, fontFamily: c, fontSize: d, editTarget: e};
+	});
+var _minekoa$elm_text_editor$StyleSetter$EditFontSize = F3(
+	function (a, b, c) {
+		return {ctor: 'EditFontSize', _0: a, _1: b, _2: c};
+	});
+var _minekoa$elm_text_editor$StyleSetter$EditFontFamily = F3(
+	function (a, b, c) {
+		return {ctor: 'EditFontFamily', _0: a, _1: b, _2: c};
+	});
+var _minekoa$elm_text_editor$StyleSetter$EditColor = F3(
+	function (a, b, c) {
+		return {ctor: 'EditColor', _0: a, _1: b, _2: c};
+	});
+var _minekoa$elm_text_editor$StyleSetter$TouchFontFalily = {ctor: 'TouchFontFalily'};
+var _minekoa$elm_text_editor$StyleSetter$TouchFontSize = {ctor: 'TouchFontSize'};
+var _minekoa$elm_text_editor$StyleSetter$TouchForegroundColor = {ctor: 'TouchForegroundColor'};
+var _minekoa$elm_text_editor$StyleSetter$TouchBackgroundColor = {ctor: 'TouchBackgroundColor'};
+var _minekoa$elm_text_editor$StyleSetter$view = function (model) {
+	return A2(
+		_elm_lang$html$Html$div,
+		{
+			ctor: '::',
+			_0: _elm_lang$html$Html_Attributes$style(
+				{
+					ctor: '::',
+					_0: {ctor: '_Tuple2', _0: 'display', _1: 'flex'},
+					_1: {
+						ctor: '::',
+						_0: {ctor: '_Tuple2', _0: 'flex-direction', _1: 'row'},
+						_1: {
+							ctor: '::',
+							_0: {ctor: '_Tuple2', _0: 'justify-content', _1: 'space-between'},
+							_1: {
+								ctor: '::',
+								_0: {ctor: '_Tuple2', _0: 'align-items', _1: 'center'},
+								_1: {
+									ctor: '::',
+									_0: {ctor: '_Tuple2', _0: 'flex-grow', _1: '2'},
+									_1: {
+										ctor: '::',
+										_0: {ctor: '_Tuple2', _0: 'background-color', _1: 'whitesmoke'},
+										_1: {
+											ctor: '::',
+											_0: {ctor: '_Tuple2', _0: 'color', _1: 'gray'},
+											_1: {
+												ctor: '::',
+												_0: {ctor: '_Tuple2', _0: 'min-height', _1: '17em'},
+												_1: {ctor: '[]'}
+											}
+										}
+									}
+								}
+							}
+						}
+					}
+				}),
+			_1: {ctor: '[]'}
+		},
+		{
+			ctor: '::',
+			_0: A2(
+				_elm_lang$html$Html$div,
+				{
+					ctor: '::',
+					_0: _elm_lang$html$Html_Attributes$class('style-itemlist'),
+					_1: {
+						ctor: '::',
+						_0: _elm_lang$html$Html_Attributes$style(
+							{
+								ctor: '::',
+								_0: {ctor: '_Tuple2', _0: 'display', _1: 'flex'},
+								_1: {
+									ctor: '::',
+									_0: {ctor: '_Tuple2', _0: 'flex-direction', _1: 'column'},
+									_1: {
+										ctor: '::',
+										_0: {ctor: '_Tuple2', _0: 'height', _1: '16em'},
+										_1: {
+											ctor: '::',
+											_0: {ctor: '_Tuple2', _0: 'justify-content', _1: 'flex-start'},
+											_1: {ctor: '[]'}
+										}
+									}
+								}
+							}),
+						_1: {ctor: '[]'}
+					}
+				},
+				{
+					ctor: '::',
+					_0: A2(
+						_elm_lang$html$Html$div,
+						{
+							ctor: '::',
+							_0: _elm_lang$html$Html_Events$onClick(_minekoa$elm_text_editor$StyleSetter$TouchBackgroundColor),
+							_1: {
+								ctor: '::',
+								_0: _elm_lang$html$Html_Attributes$class(
+									_elm_lang$core$Native_Utils.eq(
+										_minekoa$elm_text_editor$StyleSetter$targetName(model.editTarget),
+										'bg-color') ? 'style-item-active' : 'style-item'),
+								_1: {ctor: '[]'}
+							}
+						},
+						{
+							ctor: '::',
+							_0: A2(
+								_elm_lang$html$Html$span,
+								{ctor: '[]'},
+								{
+									ctor: '::',
+									_0: _elm_lang$html$Html$text('background-color: '),
+									_1: {ctor: '[]'}
+								}),
+							_1: {
+								ctor: '::',
+								_0: A2(
+									_elm_lang$html$Html$span,
+									{ctor: '[]'},
+									{
+										ctor: '::',
+										_0: _elm_lang$html$Html$text(model.bgColor.index),
+										_1: {ctor: '[]'}
+									}),
+								_1: {ctor: '[]'}
+							}
+						}),
+					_1: {
+						ctor: '::',
+						_0: A2(
+							_elm_lang$html$Html$div,
+							{
+								ctor: '::',
+								_0: _elm_lang$html$Html_Events$onClick(_minekoa$elm_text_editor$StyleSetter$TouchForegroundColor),
+								_1: {
+									ctor: '::',
+									_0: _elm_lang$html$Html_Attributes$class(
+										_elm_lang$core$Native_Utils.eq(
+											_minekoa$elm_text_editor$StyleSetter$targetName(model.editTarget),
+											'fg-color') ? 'style-item-active' : 'style-item'),
+									_1: {ctor: '[]'}
+								}
+							},
+							{
+								ctor: '::',
+								_0: A2(
+									_elm_lang$html$Html$span,
+									{ctor: '[]'},
+									{
+										ctor: '::',
+										_0: _elm_lang$html$Html$text('color: '),
+										_1: {ctor: '[]'}
+									}),
+								_1: {
+									ctor: '::',
+									_0: A2(
+										_elm_lang$html$Html$span,
+										{ctor: '[]'},
+										{
+											ctor: '::',
+											_0: _elm_lang$html$Html$text(model.fgColor.index),
+											_1: {ctor: '[]'}
+										}),
+									_1: {ctor: '[]'}
+								}
+							}),
+						_1: {
+							ctor: '::',
+							_0: A2(
+								_elm_lang$html$Html$div,
+								{
+									ctor: '::',
+									_0: _elm_lang$html$Html_Events$onClick(_minekoa$elm_text_editor$StyleSetter$TouchFontFalily),
+									_1: {
+										ctor: '::',
+										_0: _elm_lang$html$Html_Attributes$class(
+											_elm_lang$core$Native_Utils.eq(
+												_minekoa$elm_text_editor$StyleSetter$targetName(model.editTarget),
+												'font-family') ? 'style-item-active' : 'style-item'),
+										_1: {ctor: '[]'}
+									}
+								},
+								{
+									ctor: '::',
+									_0: A2(
+										_elm_lang$html$Html$span,
+										{ctor: '[]'},
+										{
+											ctor: '::',
+											_0: _elm_lang$html$Html$text('font-family: '),
+											_1: {ctor: '[]'}
+										}),
+									_1: {
+										ctor: '::',
+										_0: A2(
+											_elm_lang$html$Html$span,
+											{ctor: '[]'},
+											{
+												ctor: '::',
+												_0: _elm_lang$html$Html$text(model.fontFamily.index),
+												_1: {ctor: '[]'}
+											}),
+										_1: {ctor: '[]'}
+									}
+								}),
+							_1: {
+								ctor: '::',
+								_0: A2(
+									_elm_lang$html$Html$div,
+									{
+										ctor: '::',
+										_0: _elm_lang$html$Html_Events$onClick(_minekoa$elm_text_editor$StyleSetter$TouchFontSize),
+										_1: {
+											ctor: '::',
+											_0: _elm_lang$html$Html_Attributes$class(
+												_elm_lang$core$Native_Utils.eq(
+													_minekoa$elm_text_editor$StyleSetter$targetName(model.editTarget),
+													'font-size') ? 'style-item-active' : 'style-item'),
+											_1: {ctor: '[]'}
+										}
+									},
+									{
+										ctor: '::',
+										_0: A2(
+											_elm_lang$html$Html$span,
+											{ctor: '[]'},
+											{
+												ctor: '::',
+												_0: _elm_lang$html$Html$text('font-size: '),
+												_1: {ctor: '[]'}
+											}),
+										_1: {
+											ctor: '::',
+											_0: A2(
+												_elm_lang$html$Html$span,
+												{ctor: '[]'},
+												{
+													ctor: '::',
+													_0: _elm_lang$html$Html$text(model.fontSize.index),
+													_1: {ctor: '[]'}
+												}),
+											_1: {ctor: '[]'}
+										}
+									}),
+								_1: {ctor: '[]'}
+							}
+						}
+					}
+				}),
+			_1: {
+				ctor: '::',
+				_0: function () {
+					var _p1 = model.editTarget;
+					switch (_p1.ctor) {
+						case 'EditColor':
+							return A2(_minekoa$elm_text_editor$StyleSetter$colorPalette, _p1._1, _p1._2);
+						case 'EditFontFamily':
+							return A2(_minekoa$elm_text_editor$StyleSetter$fontFamilySelector, _p1._1, _p1._2);
+						default:
+							return A2(_minekoa$elm_text_editor$StyleSetter$fontSizeSelector, _p1._1, _p1._2);
+					}
+				}(),
+				_1: {ctor: '[]'}
+			}
+		});
+};
+var _minekoa$elm_text_editor$StyleSetter$ChangeFontSize = function (a) {
+	return {ctor: 'ChangeFontSize', _0: a};
+};
+var _minekoa$elm_text_editor$StyleSetter$ChangeFontFamily = function (a) {
+	return {ctor: 'ChangeFontFamily', _0: a};
+};
+var _minekoa$elm_text_editor$StyleSetter$ChangeFGColor = function (a) {
+	return {ctor: 'ChangeFGColor', _0: a};
+};
+var _minekoa$elm_text_editor$StyleSetter$ChangeBGColor = function (a) {
+	return {ctor: 'ChangeBGColor', _0: a};
+};
+var _minekoa$elm_text_editor$StyleSetter$init = A5(
 	_minekoa$elm_text_editor$StyleSetter$Model,
 	{
 		index: 'inherit',
@@ -15801,49 +16306,41 @@ var _minekoa$elm_text_editor$StyleSetter$init = A4(
 				}
 			}
 		}
-	});
-var _minekoa$elm_text_editor$StyleSetter$ChangeFontSize = function (a) {
-	return {ctor: 'ChangeFontSize', _0: a};
-};
-var _minekoa$elm_text_editor$StyleSetter$ChangeFontFamily = function (a) {
-	return {ctor: 'ChangeFontFamily', _0: a};
-};
-var _minekoa$elm_text_editor$StyleSetter$ChangeFGColor = function (a) {
-	return {ctor: 'ChangeFGColor', _0: a};
-};
-var _minekoa$elm_text_editor$StyleSetter$ChangeBGColor = function (a) {
-	return {ctor: 'ChangeBGColor', _0: a};
-};
-var _minekoa$elm_text_editor$StyleSetter$view = function (model) {
-	return A2(
-		_elm_lang$html$Html$div,
+	},
+	A3(
+		_minekoa$elm_text_editor$StyleSetter$EditColor,
+		'bg-color',
+		_minekoa$elm_text_editor$StyleSetter$ChangeBGColor,
 		{
 			ctor: '::',
-			_0: _elm_lang$html$Html_Attributes$style(
-				{
+			_0: 'inherit',
+			_1: {
+				ctor: '::',
+				_0: 'black',
+				_1: {
 					ctor: '::',
-					_0: {ctor: '_Tuple2', _0: 'display', _1: 'flex'},
+					_0: 'white',
 					_1: {
 						ctor: '::',
-						_0: {ctor: '_Tuple2', _0: 'flex-direction', _1: 'row'},
+						_0: 'linen',
 						_1: {
 							ctor: '::',
-							_0: {ctor: '_Tuple2', _0: 'justify-content', _1: 'space-between'},
+							_0: 'dimgray',
 							_1: {
 								ctor: '::',
-								_0: {ctor: '_Tuple2', _0: 'align-items', _1: 'center'},
+								_0: 'whitesmoke',
 								_1: {
 									ctor: '::',
-									_0: {ctor: '_Tuple2', _0: 'height', _1: '2em'},
+									_0: 'midnightblue',
 									_1: {
 										ctor: '::',
-										_0: {ctor: '_Tuple2', _0: 'flex-grow', _1: '2'},
+										_0: 'darkolivegreen',
 										_1: {
 											ctor: '::',
-											_0: {ctor: '_Tuple2', _0: 'background-color', _1: 'whitesmoke'},
+											_0: 'darkslategray',
 											_1: {
 												ctor: '::',
-												_0: {ctor: '_Tuple2', _0: 'color', _1: 'gray'},
+												_0: 'lavender',
 												_1: {ctor: '[]'}
 											}
 										}
@@ -15852,99 +16349,95 @@ var _minekoa$elm_text_editor$StyleSetter$view = function (model) {
 							}
 						}
 					}
-				}),
-			_1: {ctor: '[]'}
-		},
-		{
-			ctor: '::',
-			_0: A2(
-				_elm_lang$html$Html$div,
-				{ctor: '[]'},
-				{
-					ctor: '::',
-					_0: A2(
-						_elm_lang$html$Html$span,
-						{ctor: '[]'},
-						{
-							ctor: '::',
-							_0: _elm_lang$html$Html$text('background-color: '),
-							_1: {ctor: '[]'}
-						}),
-					_1: {
-						ctor: '::',
-						_0: A3(_minekoa$elm_text_editor$StyleSetter$selectList, model.bgColor.index, model.bgColor.list, _minekoa$elm_text_editor$StyleSetter$ChangeBGColor),
-						_1: {ctor: '[]'}
-					}
-				}),
-			_1: {
-				ctor: '::',
-				_0: A2(
-					_elm_lang$html$Html$div,
-					{ctor: '[]'},
-					{
-						ctor: '::',
-						_0: A2(
-							_elm_lang$html$Html$span,
-							{ctor: '[]'},
-							{
-								ctor: '::',
-								_0: _elm_lang$html$Html$text('color: '),
-								_1: {ctor: '[]'}
-							}),
-						_1: {
-							ctor: '::',
-							_0: A3(_minekoa$elm_text_editor$StyleSetter$selectList, model.fgColor.index, model.fgColor.list, _minekoa$elm_text_editor$StyleSetter$ChangeFGColor),
-							_1: {ctor: '[]'}
-						}
-					}),
-				_1: {
-					ctor: '::',
-					_0: A2(
-						_elm_lang$html$Html$div,
-						{ctor: '[]'},
-						{
-							ctor: '::',
-							_0: A2(
-								_elm_lang$html$Html$span,
-								{ctor: '[]'},
-								{
-									ctor: '::',
-									_0: _elm_lang$html$Html$text('font-family: '),
-									_1: {ctor: '[]'}
-								}),
-							_1: {
-								ctor: '::',
-								_0: A3(_minekoa$elm_text_editor$StyleSetter$selectList, model.fontFamily.index, model.fontFamily.list, _minekoa$elm_text_editor$StyleSetter$ChangeFontFamily),
-								_1: {ctor: '[]'}
-							}
-						}),
-					_1: {
-						ctor: '::',
-						_0: A2(
-							_elm_lang$html$Html$div,
-							{ctor: '[]'},
-							{
-								ctor: '::',
-								_0: A2(
-									_elm_lang$html$Html$span,
-									{ctor: '[]'},
-									{
-										ctor: '::',
-										_0: _elm_lang$html$Html$text('font-size: '),
-										_1: {ctor: '[]'}
-									}),
-								_1: {
-									ctor: '::',
-									_0: A3(_minekoa$elm_text_editor$StyleSetter$selectList, model.fontSize.index, model.fontSize.list, _minekoa$elm_text_editor$StyleSetter$ChangeFontSize),
-									_1: {ctor: '[]'}
-								}
-							}),
-						_1: {ctor: '[]'}
-					}
 				}
 			}
-		});
-};
+		}));
+var _minekoa$elm_text_editor$StyleSetter$update = F2(
+	function (msg, model) {
+		var _p2 = msg;
+		switch (_p2.ctor) {
+			case 'ChangeBGColor':
+				return {
+					ctor: '_Tuple2',
+					_0: _elm_lang$core$Native_Utils.update(
+						model,
+						{
+							bgColor: {index: _p2._0, list: model.bgColor.list}
+						}),
+					_1: _elm_lang$core$Platform_Cmd$none
+				};
+			case 'ChangeFGColor':
+				return {
+					ctor: '_Tuple2',
+					_0: _elm_lang$core$Native_Utils.update(
+						model,
+						{
+							fgColor: {index: _p2._0, list: model.fgColor.list}
+						}),
+					_1: _elm_lang$core$Platform_Cmd$none
+				};
+			case 'ChangeFontFamily':
+				return {
+					ctor: '_Tuple2',
+					_0: _elm_lang$core$Native_Utils.update(
+						model,
+						{
+							fontFamily: {index: _p2._0, list: model.fontFamily.list}
+						}),
+					_1: _elm_lang$core$Platform_Cmd$none
+				};
+			case 'ChangeFontSize':
+				return {
+					ctor: '_Tuple2',
+					_0: _elm_lang$core$Native_Utils.update(
+						model,
+						{
+							fontSize: {index: _p2._0, list: model.fontSize.list}
+						}),
+					_1: _elm_lang$core$Platform_Cmd$none
+				};
+			case 'TouchBackgroundColor':
+				return {
+					ctor: '_Tuple2',
+					_0: _elm_lang$core$Native_Utils.update(
+						model,
+						{
+							editTarget: A3(_minekoa$elm_text_editor$StyleSetter$EditColor, 'bg-color', _minekoa$elm_text_editor$StyleSetter$ChangeBGColor, model.bgColor.list)
+						}),
+					_1: _elm_lang$core$Platform_Cmd$none
+				};
+			case 'TouchForegroundColor':
+				return {
+					ctor: '_Tuple2',
+					_0: _elm_lang$core$Native_Utils.update(
+						model,
+						{
+							editTarget: A3(_minekoa$elm_text_editor$StyleSetter$EditColor, 'fg-color', _minekoa$elm_text_editor$StyleSetter$ChangeFGColor, model.fgColor.list)
+						}),
+					_1: _elm_lang$core$Platform_Cmd$none
+				};
+			case 'TouchFontSize':
+				return {
+					ctor: '_Tuple2',
+					_0: _elm_lang$core$Native_Utils.update(
+						model,
+						{
+							editTarget: A3(_minekoa$elm_text_editor$StyleSetter$EditFontSize, 'font-size', _minekoa$elm_text_editor$StyleSetter$ChangeFontSize, model.fontSize.list)
+						}),
+					_1: _elm_lang$core$Platform_Cmd$none
+				};
+			default:
+				return {
+					ctor: '_Tuple2',
+					_0: _elm_lang$core$Native_Utils.update(
+						model,
+						{
+							editTarget: A3(_minekoa$elm_text_editor$StyleSetter$EditFontFamily, 'font-family', _minekoa$elm_text_editor$StyleSetter$ChangeFontFamily, model.fontFamily.list)
+						}),
+					_1: _elm_lang$core$Platform_Cmd$none
+				};
+		}
+	});
 
 var _minekoa$elm_text_editor$Main$modeline = function (model) {
 	var toSelectionString = function (selection) {

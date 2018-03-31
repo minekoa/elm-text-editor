@@ -21,9 +21,17 @@ type alias Model =
     }
 
 type EditTarget
-   = EditColor (String -> Msg) (List String)
-   | EditFontFamily (String -> Msg) (List String)
-   | EditFontSize (String -> Msg) (List String)
+   = EditColor      String (String -> Msg) (List String)
+   | EditFontFamily String (String -> Msg) (List String)
+   | EditFontSize   String (String -> Msg) (List String)
+
+
+targetName : EditTarget -> String
+targetName target =
+    case target of
+        EditColor s _ _ -> s
+        EditFontFamily s _ _ -> s
+        EditFontSize s _ _ -> s
 
 init: Model
 init =
@@ -32,7 +40,7 @@ init =
     { index = "inherit", list = ["inherit", "black", "white", "aqua", "coral", "midnightblue", "darkslategray", "lavender", "palevioletred", "rosybrown"] }
     { index = "inherit", list = ["inherit", "cursive", "fantasy", "monospace", "sans-serif", "serif"] }
     { index = "inherit", list = ["inherit", "0.5em", "1em", "1.5em", "2em", "3em", "5em", "7em", "10em"] }
-    (EditColor ChangeBGColor ["inherit", "black", "white", "linen", "dimgray", "whitesmoke", "midnightblue", "darkolivegreen", "darkslategray", "lavender"])
+    (EditColor "bg-color" ChangeBGColor ["inherit", "black", "white", "linen", "dimgray", "whitesmoke", "midnightblue", "darkolivegreen", "darkslategray", "lavender"])
 
 type Msg
     = ChangeBGColor String
@@ -81,25 +89,25 @@ update msg model =
 
         TouchBackgroundColor ->
             ( { model
-                  | editTarget = EditColor ChangeBGColor model.bgColor.list
+                  | editTarget = EditColor "bg-color" ChangeBGColor model.bgColor.list
               }
             , Cmd.none
             )
         TouchForegroundColor ->
             ( { model
-                  | editTarget = EditColor ChangeFGColor model.fgColor.list
+                  | editTarget = EditColor "fg-color" ChangeFGColor model.fgColor.list
               }
             , Cmd.none
             )
         TouchFontSize ->
             ( { model
-                  | editTarget = EditFontSize ChangeFontSize model.fontSize.list
+                  | editTarget = EditFontSize "font-size" ChangeFontSize model.fontSize.list
               }
             , Cmd.none
             )
         TouchFontFalily ->
             ( { model
-                  | editTarget = EditFontFamily ChangeFontFamily model.fontFamily.list
+                  | editTarget = EditFontFamily "font-family" ChangeFontFamily model.fontFamily.list
               }
             , Cmd.none
             )
@@ -110,52 +118,58 @@ view : Model -> Html Msg
 view model =
     div [ style [ ("display", "flex"), ("flex-direction", "row"), ("justify-content", "space-between"), ("align-items", "center")
                 , ("flex-grow", "2"), ("background-color", "whitesmoke"), ("color", "gray")
-                , ("min-height", "10em")
+                , ("min-height", "17em")
                 ]
         ]
-        [ div [ style [("height", "100%"), ("width", "20em"), ("border-left", "1px solid gray")]
+        [ div [ class "style-itemlist"
+              , style [ ("display", "flex"), ("flex-direction", "column")
+                      , ("height", "16em")
+                      , ("justify-content", "flex-start")
+                      ]
               ]
               [ div [ onClick TouchBackgroundColor
-                    , style [ ("height", "2em") ]
+                    , class <| if targetName model.editTarget == "bg-color" then "style-item-active" else "style-item"
                     ]
                     [ span [] [text "background-color: "]
                     , span [] [text model.bgColor.index ]
                     ]
               , div [ onClick TouchForegroundColor
-                    , style [ ("height", "2em") ]
+                    , class <| if targetName model.editTarget == "fg-color" then "style-item-active" else "style-item"
                     ]
                     [ span [] [text "color: "]
                     , span [] [text model.fgColor.index ]
                     ]
               , div [ onClick TouchFontFalily
-                    , style [ ("height", "2em") ]
+                    , class <| if targetName model.editTarget == "font-family" then "style-item-active" else "style-item"
                     ]
                     [ span [] [text "font-family: "]
+                    , span [] [text model.fontFamily.index ]
                     ]
               , div [ onClick TouchFontSize
-                    , style [ ("height", "2em") ]
+                    , class <| if targetName model.editTarget == "font-size" then "style-item-active" else "style-item"
                     ]
                     [ span [] [text "font-size: "]
+                    , span [] [text model.fontSize.index ]
                    ]
               ]
         , case model.editTarget of
-            EditColor tagger list ->
+            EditColor _ tagger list ->
                 colorPalette tagger list
-            EditFontFamily  tagger list ->
+            EditFontFamily _ tagger list ->
                 fontFamilySelector tagger list
-            EditFontSize tagger list ->
+            EditFontSize _ tagger list ->
                 fontSizeSelector tagger list
         ]
 
 colorPalette : (String -> Msg) -> (List String) -> Html Msg
 colorPalette tagger colorList =
-    div [ style [ ("flex-grow", "1"), ("display", "flex"), ("align-content", "flex-start"), ("flex-wrap","wrap")
-                , ("height", "100%"), ("max-height", "100%"), ("min-height", "100%"), ("overflow","auto")
-                , ("background-color", "white")
+    div [ class "style-palette"
+        , style [ ("flex-grow", "1"), ("display", "flex"), ("align-content", "flex-start"), ("flex-wrap","wrap")
                 ]
         ] <|
         List.map (\ color ->
-                      div [ style [("height", "2em"), ("display", "flex"), ("flex-directipn", "column"), ("padding", "1em")]]
+                      div [ style [ ("height", "2em"), ("width", "12em"), ("display", "flex"), ("flex-directipn", "column"), ("padding", "1em") ]
+                          ]
                           [ div [ style [ ("width", "1em"), ("height", "1em"), ("background-color", color), ("border", "1px solid black") ]
                                 , onClick <| tagger color
                                 ]
@@ -170,9 +184,8 @@ colorPalette tagger colorList =
 
 fontFamilySelector : (String -> Msg) -> (List String) -> Html Msg
 fontFamilySelector tagger fontList =
-    div [ style [ ("flex-grow", "1"), ("display", "flex"), ("flex-direction", "row"), ("flex-wrap","no-wrap")
-                , ("height", "100%"), ("max-height", "100%"), ("min-height", "100%"), ("overflow","auto")
-                , ("background-color", "white")
+    div [ class "style-palette"
+        , style [ ("flex-grow", "1"), ("display", "flex"), ("flex-direction", "row"), ("flex-wrap","no-wrap")
                 ]
         ] <|
         List.map (\ font ->
@@ -185,9 +198,8 @@ fontFamilySelector tagger fontList =
 
 fontSizeSelector : (String -> Msg) -> (List String) -> Html Msg
 fontSizeSelector tagger fontsizeList =
-    div [ style [ ("flex-grow", "1"), ("display", "flex"), ("flex-direction", "row"), ("flex-wrap","no-wrap")
-                , ("height", "100%"), ("max-height", "100%"), ("min-height", "100%"), ("overflow","auto")
-                , ("background-color", "white")
+    div [ class "style-palette"
+        , style [ ("flex-grow", "1"), ("display", "flex"), ("flex-direction", "row"), ("flex-wrap","no-wrap")
                 ]
         ] <|
         List.map (\ fontsize ->
