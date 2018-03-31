@@ -4,12 +4,16 @@ ELM_PACKAGE=elm-package
 OUT_DIR=../docs
 TARGET=main.js
 
+CSSS=$(wildcard ./*.css)
+CSS_OUTS=$(CSSS:%=$(OUT_DIR)/%)
+
 .PHONY: all env $(OUT_DIR)/$(TARGET)
 
-all: $(OUT_DIR)/$(TARGET)
+all: $(OUT_DIR)/$(TARGET) $(CSS_OUTS)
 	cp index.html $(OUT_DIR)/index.html
-	cp softwarekeyboard.css $(OUT_DIR)/softwarekeyboard.css
-	cp stylesetter.css $(OUT_DIR)/stylesetter.css
+
+$(OUT_DIR)/%.css: %.css
+	cp $*.css $(OUT_DIR)/$*.css
 
 env:
 	$(ELM_PACKAGE) install
