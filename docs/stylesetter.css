@@ -3,6 +3,15 @@
     --style-item-list-width: 16em
 }
 
+.style-setter {
+    background-color: whitesmoke;
+    color: gray;
+    
+    -moz-user-select: -moz-none;
+   -khtml-user-select: none;
+   -webkit-user-select: none;
+   user-select: none;
+}
 
 .style-itemlist {
     padding-top: 0.5em;
@@ -59,4 +68,53 @@
     border-width: 1px;
     border-color: black;/*gainsboro;*/
 }
+
+
+.color-palette-item {
+    height: 2em;
+    width: 12em;
+    padding: 1em;
+}
+
+.color-palette-item-active {
+    height: 2em;
+    width: 12em;
+    padding: 1em;
+
+    position: relative;
+}
+
+.color-palette-item-active::before {
+    content: "";
+    position: absolute;
+    top: 0.5em;
+    left: 0.5em;
+    width: calc( 100% - 1em );
+    height: calc( 100% - 1em );
+    border: 1px solid lightgrey;
+    border-radius: 0.5em;
+}
+
+.font-palette-item {
+    padding: 0.5rem;
+    vertical-align: middle;
+}
+
+.font-palette-item-active {
+    padding: 0.5rem;
+    vertical-align: middle;
+    position: relative;
+}
+
+.font-palette-item-active::before {
+    content: "";
+    position: absolute;
+    top: 0.25rem;
+    left: 0.25rem;
+    width: calc( 100% - 0.5rem );
+    height: calc( 100% - 0.5rem );
+    border: 1px solid lightgrey;
+    border-radius: 0.25em;
+}
+
 

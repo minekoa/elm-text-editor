@@ -193,10 +193,10 @@ view model =
         , div [ style [ ("margin", "0"), ("padding", "0"), ("width", "100%"), ("height", "100%")
                       , ("overflow","hidden")
                       , ("flex-grow", "8")
-                      , ("color", model.style.fgColor.index)
-                      , ("background-color", model.style.bgColor.index)
-                      , ("font-family", model.style.fontFamily.index)
-                      , ("font-size", model.style.fontSize.index)
+                      , ("color", model.style.fgColor.value)
+                      , ("background-color", model.style.bgColor.value)
+                      , ("font-family", model.style.fontFamily.value)
+                      , ("font-size", model.style.fontSize.value)
                       ]
               ]
               [ Html.map EditorMsg (Editor.view model.editor) ]
