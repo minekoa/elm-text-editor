@@ -11316,7 +11316,7 @@ var _minekoa$elm_text_editor$TextEditor$lineNumArea = function (model) {
 						_0: {ctor: '_Tuple2', _0: 'text-align', _1: 'right'},
 						_1: {
 							ctor: '::',
-							_0: {ctor: '_Tuple2', _0: 'padding-right', _1: '0.2em'},
+							_0: {ctor: '_Tuple2', _0: 'padding-right', _1: '0.8em'},
 							_1: {ctor: '[]'}
 						}
 					}),
@@ -15999,23 +15999,27 @@ var _minekoa$elm_text_editor$StyleSetter$initFontColor = {
 				_0: '1em',
 				_1: {
 					ctor: '::',
-					_0: '1.5em',
+					_0: '1.2em',
 					_1: {
 						ctor: '::',
-						_0: '2em',
+						_0: '1.5em',
 						_1: {
 							ctor: '::',
-							_0: '3em',
+							_0: '2em',
 							_1: {
 								ctor: '::',
-								_0: '5em',
+								_0: '3em',
 								_1: {
 									ctor: '::',
-									_0: '7em',
+									_0: '5em',
 									_1: {
 										ctor: '::',
-										_0: '10em',
-										_1: {ctor: '[]'}
+										_0: '7em',
+										_1: {
+											ctor: '::',
+											_0: '10em',
+											_1: {ctor: '[]'}
+										}
 									}
 								}
 							}
@@ -16079,14 +16083,26 @@ var _minekoa$elm_text_editor$StyleSetter$initFgColor = {
 								_0: 'darkslategray',
 								_1: {
 									ctor: '::',
-									_0: 'lavender',
+									_0: 'ghostwhite',
 									_1: {
 										ctor: '::',
-										_0: 'palevioletred',
+										_0: 'lavender',
 										_1: {
 											ctor: '::',
-											_0: 'rosybrown',
-											_1: {ctor: '[]'}
+											_0: 'palevioletred',
+											_1: {
+												ctor: '::',
+												_0: 'darkmagenta',
+												_1: {
+													ctor: '::',
+													_0: 'moccasin',
+													_1: {
+														ctor: '::',
+														_0: 'rosybrown',
+														_1: {ctor: '[]'}
+													}
+												}
+											}
 										}
 									}
 								}
@@ -16126,11 +16142,23 @@ var _minekoa$elm_text_editor$StyleSetter$initBgColor = {
 									_0: 'darkolivegreen',
 									_1: {
 										ctor: '::',
-										_0: 'darkslategray',
+										_0: 'aquamarine',
 										_1: {
 											ctor: '::',
-											_0: 'lavender',
-											_1: {ctor: '[]'}
+											_0: 'beige',
+											_1: {
+												ctor: '::',
+												_0: 'mediumvioletred',
+												_1: {
+													ctor: '::',
+													_0: 'darkslategray',
+													_1: {
+														ctor: '::',
+														_0: 'lavender',
+														_1: {ctor: '[]'}
+													}
+												}
+											}
 										}
 									}
 								}

@@ -349,7 +349,7 @@ lineNumArea model =
     in
         div [ class "line-num-area"
             , style [ ("text-align", "right")
-                    , ("padding-right", "0.2em")
+                    , ("padding-right", "0.8em")
                     ]
             ] <|
             List.map

@@ -47,16 +47,16 @@ init =
     (EditColor "bg-color" ChangeBGColor initBgColor)
 
 initBgColor : SelectableList
-initBgColor = { value = "inherit", list = ["inherit", "black", "white", "linen", "dimgray", "whitesmoke", "midnightblue", "darkolivegreen", "darkslategray", "lavender"] }
+initBgColor = { value = "inherit", list = ["inherit", "black", "white", "linen", "dimgray", "whitesmoke", "midnightblue", "darkolivegreen", "aquamarine", "beige", "mediumvioletred", "darkslategray", "lavender"] }
 
 initFgColor : SelectableList
-initFgColor = { value = "inherit", list = ["inherit", "black", "white", "aqua", "coral", "midnightblue", "darkslategray", "lavender", "palevioletred", "rosybrown"] }
+initFgColor = { value = "inherit", list = ["inherit", "black", "white", "aqua", "coral", "midnightblue", "darkslategray", "ghostwhite", "lavender", "palevioletred", "darkmagenta", "moccasin", "rosybrown"] }
 
 initFontFamily : SelectableList
 initFontFamily = { value = "inherit", list = ["inherit", "cursive", "fantasy", "monospace", "sans-serif", "serif"] }
 
 initFontColor : SelectableList
-initFontColor = { value = "inherit", list = ["inherit", "0.5em", "1em", "1.5em", "2em", "3em", "5em", "7em", "10em"] }
+initFontColor = { value = "inherit", list = ["inherit", "0.5em", "1em", "1.2em", "1.5em", "2em", "3em", "5em", "7em", "10em"] }
 
 
 type Msg
