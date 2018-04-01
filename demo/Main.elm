@@ -15,6 +15,7 @@ import TextEditor.KeyBind as KeyBind
 import EditorDebugger
 import SoftwareKeyboard
 import StyleSetter
+import Filer
 
 main : Program Never Model Msg
 main =
@@ -212,9 +213,7 @@ view model =
               StyleEditorPane ->
                   Html.map StyleSetterMsg (StyleSetter.view model.style)
               FilerPane ->
-                  div []
-                      [ input (FileReader.fileInput (FileReader.Text "utf-8") ReadFile) []
-                      ]
+                  (Filer.view ReadFile)
         ]
 
 bufferTab : Model -> Html Msg
@@ -222,6 +221,7 @@ bufferTab model =
     div [ style [ ("display", "flex"), ("flex-direction", "row"), ("align-items", "flex-end")
                 , ("background-color", "darkgray"), ("color", "snow")
                 , ("height", "1.5em")
+                , ("-moz-user-select", "-moz-none"), ("-khtml-user-select", "none"), ("-webkit-user-select", "none"), ("user-select", "none")
                 ]
         ]
         ( List.map (\buf ->
@@ -247,6 +247,7 @@ paneChanger model =
     in
     div [ style [ ("display", "flex"), ("flex-direction", "row"), ("align-items", "flex-end")
                 , ("background-color", "darkgray"), ("min-height", "1.5em")
+                , ("-moz-user-select", "-moz-none"), ("-khtml-user-select", "none"), ("-webkit-user-select", "none"), ("user-select", "none")
                 ]
         ]
         [ div [ style [ ("border", "1px solid gray"), ("color", "gray"), if model.pane == NoPane then ("background-color", "inherit") else ("background-color", "silver")
