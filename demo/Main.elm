@@ -219,15 +219,16 @@ view model =
 bufferTab : Model -> Html Msg
 bufferTab model =
     div [ style [ ("display", "flex"), ("flex-direction", "row"), ("align-items", "flex-end")
-                , ("background-color", "darkgray"), ("color", "snow")
-                , ("height", "1.5em")
+                , ("background-color", "dimgray"), ("color", "snow")
+                , ("border-top", "2px solid dimgray")
+                , ("height", "2em")
                 , ("-moz-user-select", "-moz-none"), ("-khtml-user-select", "none"), ("-webkit-user-select", "none"), ("user-select", "none")
                 ]
         ]
         ( List.map (\buf ->
                         div [ style <| if model.currentBufferName == buf.name
-                                       then  [("background-color", "snow"), ("color", "darkgray"), ("padding", "0 0.5giem")]
-                                       else  [("padding", "0 0.5em")]
+                                       then  [("background-color", "darkgray"), ("color", "snow"), ("padding", "2px 0.5em"), ("height", "100%")]
+                                       else  [("padding", "2px 0.5em"), ("height", "100%")]
                             , onClick <| ChangeBuffer buf.name
                             ]
                             [ text buf.name ]
