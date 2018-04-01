@@ -34,6 +34,7 @@ type alias Model =
     , pane : Pane
     , swkeyboard : SoftwareKeyboard.Model
     , style : StyleSetter.Model
+    , filer : Filer.Model
     }
 
 type Pane
@@ -68,9 +69,7 @@ type Msg
     | DebuggerMsg (EditorDebugger.Msg)
     | SWKeyboardMsg (SoftwareKeyboard.Msg)
     | StyleSetterMsg (StyleSetter.Msg)
-
-    -- filer
-    | ReadFile FileReader.File
+    | FilerMsg (Filer.Msg)
 
 init : (Model, Cmd Msg)
 init =
@@ -85,6 +84,7 @@ init =
               NoPane
               SoftwareKeyboard.init
               StyleSetter.init
+              Filer.init
         , Cmd.map EditorMsg bc
         )
 
@@ -160,23 +160,33 @@ update msg model =
                 )
 
         -- Filer
-        ReadFile file ->
-            case file.data of
-                Ok content ->
-                    let
-                        newbuf = makeBuffer file.name content
-
-                    in
-                        ( { model
-                              | buffers = newbuf :: model.buffers
-                              , currentBufferName = newbuf.name
-                              , editor  = Editor.setBuffer newbuf.buffer  model.editor
-                          }
-                        , Cmd.none
+        FilerMsg fmsg ->
+            let
+                (m, c) = Filer.update fmsg model.filer
+            in
+                case fmsg of
+                    Filer.ReadFile file ->
+                        case file.data of
+                            Ok content ->
+                                let
+                                    newbuf = makeBuffer file.name content
+                                in
+                                    ( { model
+                                          | buffers = newbuf :: (List.reverse model.buffers) |> List.reverse
+                                          , currentBufferName = newbuf.name
+                                          , editor  = Editor.setBuffer newbuf.buffer  model.editor
+                                          , filer = m
+                                      }
+                                    , Cmd.map FilerMsg c
+                                    )
+                            Err err ->
+                                ( { model | filer = m}
+                                , Cmd.map FilerMsg c
+                                )
+                    _ ->
+                        ( { model | filer = m}
+                        , Cmd.map FilerMsg c
                         )
-                Err err ->
-                    (model , Cmd.none)
-
 
 subscriptions : Model -> Sub Msg
 subscriptions model =
@@ -213,22 +223,24 @@ view model =
               StyleEditorPane ->
                   Html.map StyleSetterMsg (StyleSetter.view model.style)
               FilerPane ->
-                  (Filer.view ReadFile)
+                  Html.map FilerMsg (Filer.view model.filer)
         ]
 
 bufferTab : Model -> Html Msg
 bufferTab model =
     div [ style [ ("display", "flex"), ("flex-direction", "row"), ("align-items", "flex-end")
-                , ("background-color", "dimgray"), ("color", "snow")
-                , ("border-top", "2px solid dimgray")
-                , ("height", "2em")
+                , ("background-color", "snow"), ("color", "dimgray")
+                , ("padding-left", "3px")
+                , ("border-top", "3px solid snow")
+                , ("border-bottom", "3px solid dimgray")
+                , ("min-height", "1.2em")
                 , ("-moz-user-select", "-moz-none"), ("-khtml-user-select", "none"), ("-webkit-user-select", "none"), ("user-select", "none")
                 ]
         ]
         ( List.map (\buf ->
                         div [ style <| if model.currentBufferName == buf.name
-                                       then  [("background-color", "darkgray"), ("color", "snow"), ("padding", "2px 0.5em"), ("height", "100%")]
-                                       else  [("padding", "2px 0.5em"), ("height", "100%")]
+                                       then  [("background-color", "dimgray"), ("color", "snow"), ("padding", "1px 0.8em"), ("height", "100%")]
+                                       else  [("background-color", "snow"), ("color", "dimgray"), ("padding", "1px 0.8em"), ("height", "100%")]
                             , onClick <| ChangeBuffer buf.name
                             ]
                             [ text buf.name ]

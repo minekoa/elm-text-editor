@@ -13205,6 +13205,145 @@ var _norpan$elm_file_reader$FileReader$dropZone = function (_p2) {
 		_norpan$elm_file_reader$FileReader$dataFormatAttributes(_p3.dataFormat));
 };
 
+var _minekoa$elm_text_editor$Filer$init = {inDropZone: false};
+var _minekoa$elm_text_editor$Filer$Model = function (a) {
+	return {inDropZone: a};
+};
+var _minekoa$elm_text_editor$Filer$ReadFile = function (a) {
+	return {ctor: 'ReadFile', _0: a};
+};
+var _minekoa$elm_text_editor$Filer$update = F2(
+	function (msg, model) {
+		var _p0 = msg;
+		switch (_p0.ctor) {
+			case 'DropZoneEntered':
+				return {
+					ctor: '_Tuple2',
+					_0: _elm_lang$core$Native_Utils.update(
+						model,
+						{inDropZone: true}),
+					_1: _elm_lang$core$Platform_Cmd$none
+				};
+			case 'DropZoneLeaved':
+				return {
+					ctor: '_Tuple2',
+					_0: _elm_lang$core$Native_Utils.update(
+						model,
+						{inDropZone: false}),
+					_1: _elm_lang$core$Platform_Cmd$none
+				};
+			case 'FilesDropped':
+				var _p1 = _elm_lang$core$List$head(_p0._0);
+				if (_p1.ctor === 'Just') {
+					return {
+						ctor: '_Tuple2',
+						_0: _elm_lang$core$Native_Utils.update(
+							model,
+							{inDropZone: false}),
+						_1: A2(
+							_elm_lang$core$Task$perform,
+							_minekoa$elm_text_editor$Filer$ReadFile,
+							_elm_lang$core$Task$succeed(_p1._0))
+					};
+				} else {
+					return {ctor: '_Tuple2', _0: model, _1: _elm_lang$core$Platform_Cmd$none};
+				}
+			default:
+				return {ctor: '_Tuple2', _0: model, _1: _elm_lang$core$Platform_Cmd$none};
+		}
+	});
+var _minekoa$elm_text_editor$Filer$FilesDropped = function (a) {
+	return {ctor: 'FilesDropped', _0: a};
+};
+var _minekoa$elm_text_editor$Filer$DropZoneLeaved = {ctor: 'DropZoneLeaved'};
+var _minekoa$elm_text_editor$Filer$DropZoneEntered = {ctor: 'DropZoneEntered'};
+var _minekoa$elm_text_editor$Filer$view = function (model) {
+	return A2(
+		_elm_lang$html$Html$div,
+		A2(
+			_elm_lang$core$Basics_ops['++'],
+			{
+				ctor: '::',
+				_0: _elm_lang$html$Html_Attributes$class('filer-dropzone'),
+				_1: {
+					ctor: '::',
+					_0: _elm_lang$html$Html_Attributes$style(
+						model.inDropZone ? {
+							ctor: '::',
+							_0: {ctor: '_Tuple2', _0: 'background', _1: 'lightblue'},
+							_1: {ctor: '[]'}
+						} : {ctor: '[]'}),
+					_1: {ctor: '[]'}
+				}
+			},
+			_norpan$elm_file_reader$FileReader$dropZone(
+				{
+					dataFormat: _norpan$elm_file_reader$FileReader$Text('utf-8'),
+					enterMsg: _minekoa$elm_text_editor$Filer$DropZoneEntered,
+					leaveMsg: _minekoa$elm_text_editor$Filer$DropZoneLeaved,
+					filesMsg: _minekoa$elm_text_editor$Filer$FilesDropped
+				})),
+		{
+			ctor: '::',
+			_0: A2(
+				_elm_lang$html$Html$div,
+				{
+					ctor: '::',
+					_0: _elm_lang$html$Html_Attributes$class('filer-inner'),
+					_1: {ctor: '[]'}
+				},
+				{
+					ctor: '::',
+					_0: _elm_lang$html$Html$text('Drop a file here'),
+					_1: {
+						ctor: '::',
+						_0: A2(
+							_elm_lang$html$Html$br,
+							{ctor: '[]'},
+							{ctor: '[]'}),
+						_1: {
+							ctor: '::',
+							_0: _elm_lang$html$Html$text('or..'),
+							_1: {
+								ctor: '::',
+								_0: A2(
+									_elm_lang$html$Html$br,
+									{ctor: '[]'},
+									{ctor: '[]'}),
+								_1: {
+									ctor: '::',
+									_0: A2(
+										_elm_lang$html$Html$label,
+										{
+											ctor: '::',
+											_0: _elm_lang$html$Html_Attributes$class('file_input_label'),
+											_1: {ctor: '[]'}
+										},
+										{
+											ctor: '::',
+											_0: _elm_lang$html$Html$text('Select a file from PC'),
+											_1: {
+												ctor: '::',
+												_0: A2(
+													_elm_lang$html$Html$input,
+													A2(
+														_norpan$elm_file_reader$FileReader$fileInput,
+														_norpan$elm_file_reader$FileReader$Text('utf-8'),
+														_minekoa$elm_text_editor$Filer$ReadFile),
+													{ctor: '[]'}),
+												_1: {ctor: '[]'}
+											}
+										}),
+									_1: {ctor: '[]'}
+								}
+							}
+						}
+					}
+				}),
+			_1: {ctor: '[]'}
+		});
+};
+
 var _minekoa$elm_text_editor$TextEditor_Commands$updateMap = F2(
 	function (model, _p0) {
 		var _p1 = _p0;
@@ -16553,9 +16692,9 @@ var _minekoa$elm_text_editor$Main$makeBuffer = F2(
 			buffer: _minekoa$elm_text_editor$TextEditor_Buffer$init(content)
 		};
 	});
-var _minekoa$elm_text_editor$Main$Model = F6(
-	function (a, b, c, d, e, f) {
-		return {editor: a, buffers: b, currentBufferName: c, pane: d, swkeyboard: e, style: f};
+var _minekoa$elm_text_editor$Main$Model = F7(
+	function (a, b, c, d, e, f, g) {
+		return {editor: a, buffers: b, currentBufferName: c, pane: d, swkeyboard: e, style: f, filer: g};
 	});
 var _minekoa$elm_text_editor$Main$Buffer = F2(
 	function (a, b) {
@@ -16566,8 +16705,8 @@ var _minekoa$elm_text_editor$Main$StyleEditorPane = {ctor: 'StyleEditorPane'};
 var _minekoa$elm_text_editor$Main$KeyboardPane = {ctor: 'KeyboardPane'};
 var _minekoa$elm_text_editor$Main$DebugPane = {ctor: 'DebugPane'};
 var _minekoa$elm_text_editor$Main$NoPane = {ctor: 'NoPane'};
-var _minekoa$elm_text_editor$Main$ReadFile = function (a) {
-	return {ctor: 'ReadFile', _0: a};
+var _minekoa$elm_text_editor$Main$FilerMsg = function (a) {
+	return {ctor: 'FilerMsg', _0: a};
 };
 var _minekoa$elm_text_editor$Main$StyleSetterMsg = function (a) {
 	return {ctor: 'StyleSetterMsg', _0: a};
@@ -16667,7 +16806,23 @@ var _minekoa$elm_text_editor$Main$paneChanger = function (model) {
 								_1: {
 									ctor: '::',
 									_0: {ctor: '_Tuple2', _0: 'min-height', _1: '1.5em'},
-									_1: {ctor: '[]'}
+									_1: {
+										ctor: '::',
+										_0: {ctor: '_Tuple2', _0: '-moz-user-select', _1: '-moz-none'},
+										_1: {
+											ctor: '::',
+											_0: {ctor: '_Tuple2', _0: '-khtml-user-select', _1: 'none'},
+											_1: {
+												ctor: '::',
+												_0: {ctor: '_Tuple2', _0: '-webkit-user-select', _1: 'none'},
+												_1: {
+													ctor: '::',
+													_0: {ctor: '_Tuple2', _0: 'user-select', _1: 'none'},
+													_1: {ctor: '[]'}
+												}
+											}
+										}
+									}
 								}
 							}
 						}
@@ -16762,14 +16917,42 @@ var _minekoa$elm_text_editor$Main$bufferTab = function (model) {
 							_0: {ctor: '_Tuple2', _0: 'align-items', _1: 'flex-end'},
 							_1: {
 								ctor: '::',
-								_0: {ctor: '_Tuple2', _0: 'background-color', _1: 'darkgray'},
+								_0: {ctor: '_Tuple2', _0: 'background-color', _1: 'snow'},
 								_1: {
 									ctor: '::',
-									_0: {ctor: '_Tuple2', _0: 'color', _1: 'snow'},
+									_0: {ctor: '_Tuple2', _0: 'color', _1: 'dimgray'},
 									_1: {
 										ctor: '::',
-										_0: {ctor: '_Tuple2', _0: 'height', _1: '1.5em'},
-										_1: {ctor: '[]'}
+										_0: {ctor: '_Tuple2', _0: 'padding-left', _1: '3px'},
+										_1: {
+											ctor: '::',
+											_0: {ctor: '_Tuple2', _0: 'border-top', _1: '3px solid snow'},
+											_1: {
+												ctor: '::',
+												_0: {ctor: '_Tuple2', _0: 'border-bottom', _1: '3px solid dimgray'},
+												_1: {
+													ctor: '::',
+													_0: {ctor: '_Tuple2', _0: 'min-height', _1: '1.2em'},
+													_1: {
+														ctor: '::',
+														_0: {ctor: '_Tuple2', _0: '-moz-user-select', _1: '-moz-none'},
+														_1: {
+															ctor: '::',
+															_0: {ctor: '_Tuple2', _0: '-khtml-user-select', _1: 'none'},
+															_1: {
+																ctor: '::',
+																_0: {ctor: '_Tuple2', _0: '-webkit-user-select', _1: 'none'},
+																_1: {
+																	ctor: '::',
+																	_0: {ctor: '_Tuple2', _0: 'user-select', _1: 'none'},
+																	_1: {ctor: '[]'}
+																}
+															}
+														}
+													}
+												}
+											}
+										}
 									}
 								}
 							}
@@ -16788,20 +16971,36 @@ var _minekoa$elm_text_editor$Main$bufferTab = function (model) {
 						_0: _elm_lang$html$Html_Attributes$style(
 							_elm_lang$core$Native_Utils.eq(model.currentBufferName, buf.name) ? {
 								ctor: '::',
-								_0: {ctor: '_Tuple2', _0: 'background-color', _1: 'snow'},
+								_0: {ctor: '_Tuple2', _0: 'background-color', _1: 'dimgray'},
 								_1: {
 									ctor: '::',
-									_0: {ctor: '_Tuple2', _0: 'color', _1: 'darkgray'},
+									_0: {ctor: '_Tuple2', _0: 'color', _1: 'snow'},
 									_1: {
 										ctor: '::',
-										_0: {ctor: '_Tuple2', _0: 'padding', _1: '0 0.5giem'},
-										_1: {ctor: '[]'}
+										_0: {ctor: '_Tuple2', _0: 'padding', _1: '1px 0.8em'},
+										_1: {
+											ctor: '::',
+											_0: {ctor: '_Tuple2', _0: 'height', _1: '100%'},
+											_1: {ctor: '[]'}
+										}
 									}
 								}
 							} : {
 								ctor: '::',
-								_0: {ctor: '_Tuple2', _0: 'padding', _1: '0 0.5em'},
-								_1: {ctor: '[]'}
+								_0: {ctor: '_Tuple2', _0: 'background-color', _1: 'snow'},
+								_1: {
+									ctor: '::',
+									_0: {ctor: '_Tuple2', _0: 'color', _1: 'dimgray'},
+									_1: {
+										ctor: '::',
+										_0: {ctor: '_Tuple2', _0: 'padding', _1: '1px 0.8em'},
+										_1: {
+											ctor: '::',
+											_0: {ctor: '_Tuple2', _0: 'height', _1: '100%'},
+											_1: {ctor: '[]'}
+										}
+									}
+								}
 							}),
 						_1: {
 							ctor: '::',
@@ -16836,7 +17035,7 @@ var _minekoa$elm_text_editor$Main$init = function () {
 	var bc = _p0._1;
 	return {
 		ctor: '_Tuple2',
-		_0: A6(
+		_0: A7(
 			_minekoa$elm_text_editor$Main$Model,
 			bm,
 			{
@@ -16847,7 +17046,8 @@ var _minekoa$elm_text_editor$Main$init = function () {
 			buf.name,
 			_minekoa$elm_text_editor$Main$NoPane,
 			_minekoa$elm_text_editor$SoftwareKeyboard$init,
-			_minekoa$elm_text_editor$StyleSetter$init),
+			_minekoa$elm_text_editor$StyleSetter$init,
+			_minekoa$elm_text_editor$Filer$init),
 		_1: A2(_elm_lang$core$Platform_Cmd$map, _minekoa$elm_text_editor$Main$EditorMsg, bc)
 	};
 }();
@@ -16963,23 +17163,50 @@ var _minekoa$elm_text_editor$Main$update = F2(
 					_1: A2(_elm_lang$core$Platform_Cmd$map, _minekoa$elm_text_editor$Main$StyleSetterMsg, c)
 				};
 			default:
-				var _p9 = _p3._0;
-				var _p8 = _p9.data;
-				if (_p8.ctor === 'Ok') {
-					var newbuf = A2(_minekoa$elm_text_editor$Main$makeBuffer, _p9.name, _p8._0);
+				var _p12 = _p3._0;
+				var _p8 = A2(_minekoa$elm_text_editor$Filer$update, _p12, model.filer);
+				var m = _p8._0;
+				var c = _p8._1;
+				var _p9 = _p12;
+				if (_p9.ctor === 'ReadFile') {
+					var _p11 = _p9._0;
+					var _p10 = _p11.data;
+					if (_p10.ctor === 'Ok') {
+						var newbuf = A2(_minekoa$elm_text_editor$Main$makeBuffer, _p11.name, _p10._0);
+						return {
+							ctor: '_Tuple2',
+							_0: _elm_lang$core$Native_Utils.update(
+								model,
+								{
+									buffers: _elm_lang$core$List$reverse(
+										{
+											ctor: '::',
+											_0: newbuf,
+											_1: _elm_lang$core$List$reverse(model.buffers)
+										}),
+									currentBufferName: newbuf.name,
+									editor: A2(_minekoa$elm_text_editor$TextEditor$setBuffer, newbuf.buffer, model.editor),
+									filer: m
+								}),
+							_1: A2(_elm_lang$core$Platform_Cmd$map, _minekoa$elm_text_editor$Main$FilerMsg, c)
+						};
+					} else {
+						return {
+							ctor: '_Tuple2',
+							_0: _elm_lang$core$Native_Utils.update(
+								model,
+								{filer: m}),
+							_1: A2(_elm_lang$core$Platform_Cmd$map, _minekoa$elm_text_editor$Main$FilerMsg, c)
+						};
+					}
+				} else {
 					return {
 						ctor: '_Tuple2',
 						_0: _elm_lang$core$Native_Utils.update(
 							model,
-							{
-								buffers: {ctor: '::', _0: newbuf, _1: model.buffers},
-								currentBufferName: newbuf.name,
-								editor: A2(_minekoa$elm_text_editor$TextEditor$setBuffer, newbuf.buffer, model.editor)
-							}),
-						_1: _elm_lang$core$Platform_Cmd$none
+							{filer: m}),
+						_1: A2(_elm_lang$core$Platform_Cmd$map, _minekoa$elm_text_editor$Main$FilerMsg, c)
 					};
-				} else {
-					return {ctor: '_Tuple2', _0: model, _1: _elm_lang$core$Platform_Cmd$none};
 				}
 		}
 	});
@@ -17107,8 +17334,8 @@ var _minekoa$elm_text_editor$Main$view = function (model) {
 							_1: {
 								ctor: '::',
 								_0: function () {
-									var _p10 = model.pane;
-									switch (_p10.ctor) {
+									var _p13 = model.pane;
+									switch (_p13.ctor) {
 										case 'NoPane':
 											return _elm_lang$html$Html$text('');
 										case 'DebugPane':
@@ -17128,19 +17355,9 @@ var _minekoa$elm_text_editor$Main$view = function (model) {
 												_minekoa$elm_text_editor$StyleSetter$view(model.style));
 										default:
 											return A2(
-												_elm_lang$html$Html$div,
-												{ctor: '[]'},
-												{
-													ctor: '::',
-													_0: A2(
-														_elm_lang$html$Html$input,
-														A2(
-															_norpan$elm_file_reader$FileReader$fileInput,
-															_norpan$elm_file_reader$FileReader$Text('utf-8'),
-															_minekoa$elm_text_editor$Main$ReadFile),
-														{ctor: '[]'}),
-													_1: {ctor: '[]'}
-												});
+												_elm_lang$html$Html$map,
+												_minekoa$elm_text_editor$Main$FilerMsg,
+												_minekoa$elm_text_editor$Filer$view(model.filer));
 									}
 								}(),
 								_1: {ctor: '[]'}

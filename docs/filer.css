@@ -1,0 +1,64 @@
+
+.filer-dropzone {
+    margin: 1em;
+    border: 3px dotted gray;
+
+    min-height: 15rem;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    -moz-user-select: -moz-none;
+    -khtml-user-select: none;
+    -webkit-user-select: none;
+    user-select: none;
+}
+
+.filer-inner {
+    text-align: center;
+}
+
+.file_input_label {
+    display: block;
+
+    border: 1px solid darkgray;
+    border-radius: 2px;
+    background-color: royalblue;
+    margin: 0.5em;
+    padding: 5px;
+    color: snow;
+
+    /* ripple effect */
+    position: relative;
+    overflow: hidden;
+}
+
+/* for ripple effect */
+.file_input_label:after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 10em; /* この値は目合わせ */
+    height: 10em;
+    border-radius: 50%;
+    opacity: 0;
+    background-color: rgba(180, 210, 250,0.7); 
+    transition: opacity 1s, width 1s, height 1s;
+}
+
+.file_input_label:active:after {
+    content: "";
+    width: 0;
+    height: 0;
+    opacity: 1;
+    transition: opacity 0s, width 0s, height 0s;
+}
+
+
+
+.file_input_label input {
+    display: none;
+}
