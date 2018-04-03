@@ -174,56 +174,8 @@ compositionEnd data model =
 withEnsureVisibleCmd : Model -> (Model, Cmd Msg)
 withEnsureVisibleCmd model =
     ( model
-    , ensureVisible model (\_ -> IgnoreResult)
+    , ensureVisible model
     )
-
-ensureVisible : Model -> (Bool -> msg) -> Cmd msg
-ensureVisible model tagger =
-    Cmd.batch
-        [ calcVScrollPos model
-              |> Maybe.andThen
-                  (\n -> Just <| Task.perform tagger (setScrollTop (frameID model) n))
-              |> Maybe.withDefault Cmd.none
-        , calcHScrollPos model
-              |> Maybe.andThen
-                  (\n -> Just <| Task.perform tagger (setScrollLeft (frameID model) n))
-              |> Maybe.withDefault Cmd.none
-        ]
-
-calcVScrollPos : Model -> Maybe Int
-calcVScrollPos model =
-    let
-        frameRect  = getBoundingClientRect <| frameID model
-        cursorRect = getBoundingClientRect <| cursorID model
-        scrtop = getScrollTop (frameID model)
-
-        margin = cursorRect.height * 3
-    in
-        if  cursorRect.top - margin < frameRect.top then
-            Just ( scrtop + (cursorRect.top - frameRect.top ) - margin)
-        else
-            if  cursorRect.bottom + margin > frameRect.bottom then
-                Just ( scrtop + (cursorRect.bottom - frameRect.bottom ) + margin)
-            else 
-                Nothing
-
-calcHScrollPos : Model -> Maybe Int
-calcHScrollPos model =
-    let
-        frameRect  = getBoundingClientRect <| frameID model
-        cursorRect = getBoundingClientRect <| cursorID model
-        scrleft    = getScrollLeft (frameID model)
-
-        margin = cursorRect.height * 3
-    in
-        if cursorRect.left - margin < frameRect.left then
-            Just ( scrleft + (cursorRect.left - frameRect.left ) - margin)
-        else
-            if  cursorRect.right + margin > frameRect.right then
-                Just ( scrleft + (cursorRect.right - frameRect.right ) + margin)
-            else 
-                Nothing
-
 
 ------------------------------------------------------------
 -- Cmd
@@ -237,17 +189,13 @@ elaborateInputArea: Model -> Cmd Msg
 elaborateInputArea model =
     Task.perform (\_ -> IgnoreResult) (elaborateInputAreaTask (inputAreaID model))
 
+ensureVisible: Model -> Cmd Msg
+ensureVisible model =
+    Task.perform (\_ -> IgnoreResult) (ensureVisibleTask (frameID model) (cursorID model))
+
 ------------------------------------------------------------
 -- Native
 ------------------------------------------------------------
-
-setScrollTop : String -> Int -> Task Never Bool
-setScrollTop id pixels =
-    Task.succeed (Native.Mice.setScrollTop id pixels)
-
-setScrollLeft : String -> Int -> Task Never Bool
-setScrollLeft id pixels =
-    Task.succeed (Native.Mice.setScrollLeft id pixels)
 
 doFocusTask : String -> Task Never Bool
 doFocusTask id =
@@ -256,6 +204,11 @@ doFocusTask id =
 elaborateInputAreaTask: String  -> Task Never Bool
 elaborateInputAreaTask input_area_id =
     Task.succeed (Native.Mice.elaborateInputArea input_area_id)
+
+ensureVisibleTask : String -> String -> Task Never Bool
+ensureVisibleTask frame_id target_id =
+    Task.succeed (Native.Mice.ensureVisible frame_id target_id)
+
 
 
 -- Function
@@ -273,20 +226,5 @@ type alias Rect =
 
 getBoundingClientRect: String -> Rect
 getBoundingClientRect id = Native.Mice.getBoundingClientRect id
-
-getScrollTop: String -> Int
-getScrollTop id = Native.Mice.getScrollTop id
-
-getScrollLeft: String -> Int
-getScrollLeft id = Native.Mice.getScrollLeft id
-
-getScrollHeight : String -> Int
-getScrollHeight id = Native.Mice.getScrollHeight
-
-
-
-
-
-
 
                      

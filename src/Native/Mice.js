@@ -11,6 +11,52 @@ var _minekoa$elm_text_editor$Native_Mice = function() {
         return true;
     }
 
+    function ensureVisible( frame_id, target_id ) {
+
+        const target = document.getElementById(target_id);
+        console.log("AF_before:" + target.getBoundingClientRect().top.toString() );
+
+        requestAnimationFrame( () => {
+            const frame  = document.getElementById(frame_id);
+            const target = document.getElementById(target_id);
+            if (frame == null || target == null) {
+                return false;
+            }
+            console.log("AF_after:" + target.getBoundingClientRect().top.toString() );
+
+            const frame_rect  =  frame.getBoundingClientRect();
+            const target_rect =  target.getBoundingClientRect()
+            const margin = target_rect.height * 3;
+
+            /* vertincal */
+            var new_scr_top = null;
+            if      ( target_rect.top    - margin < frame_rect.top    ) {
+                new_scr_top = frame.scrollTop + (target_rect.top - frame_rect.top) - margin;
+            }
+            else if ( target_rect.bottom + margin > frame_rect.bottom ) {
+                new_scr_top = frame.scrollTop + (target_rect.bottom - frame_rect.bottom) + margin;
+            }
+
+            /* horizontal */
+            var new_scr_left = null;
+            if      ( target_rect.left  - margin < frame_rect.left ) {
+                new_scr_left = frame.scrollLeft + (target_rect.left - frame_rect.left) - margin;
+            }
+            else if ( target_rect.right + margin > frame_rect.rignt ) {
+                new_scr_left = frame.scrollLeft + (target_rect.rignt - frame_rect.right) + margin;
+            }
+
+            /* set scroll pos */
+            if (new_scr_top  != null) { console.log("top: " + frame.scrollTop.toString()  + " -> " + new_scr_top.toString() ); frame.scrollTop  = new_scr_top; }
+            if (new_scr_left != null) { console.log("left:" + frame.scrollLeft.toString() + " -> " + new_scr_left.toString()); frame.scrollLeft = new_scr_left; }
+
+            return (new_scr_top != null) ||  (new_scr_left != null);
+        } );
+
+        return true;
+    }
+
+
     function calcTextWidth(_id, txt) {
         const element = document.getElementById(_id); 
         if (element == null) {
@@ -139,62 +185,12 @@ var _minekoa$elm_text_editor$Native_Mice = function() {
     }
 
 
-    /* Scrolling */
-
-    function getScrollTop (_id) {
-        const element = document.getElementById(_id); 
-        if (element == null) {
-            return -1;
-        }
-        return element.scrollTop;
-    }
-
-    function setScrollTop (_id, pixels) {
-        const element = document.getElementById(_id); 
-        if (element == null) {
-            return false;
-        }
-        element.scrollTop = pixels;
-        return true
-    }
-
-    function getScrollLeft (_id) {
-        const element = document.getElementById(_id); 
-        if (element == null) {
-            return -1;
-        }
-        return element.scrollLeft;
-    }
-
-    function setScrollLeft (_id, pixels) {
-        const element = document.getElementById(_id); 
-        if (element == null) {
-            return false;
-        }
-        element.scrollLeft = pixels;
-        return true
-    }
-
-    function getScrollHeight (_id) {
-        const element = document.getElementById(_id); 
-        if (element == null) {
-            return 0;
-        }
-        return element.scrollHeight;
-    }
-
-
-
   return {
       doFocus: doFocus,
+      ensureVisible: F2(ensureVisible),
       calcTextWidth: F2(calcTextWidth),
       getBoundingClientRect: getBoundingClientRect,
       elaborateInputArea : elaborateInputArea,
-      getScrollTop: getScrollTop,
-      setScrollTop: F2(setScrollTop),
-      getScrollLeft: getScrollLeft,
-      setScrollLeft: F2(setScrollLeft),
-      getScrollHeight: getScrollHeight
   }
 }();
 
