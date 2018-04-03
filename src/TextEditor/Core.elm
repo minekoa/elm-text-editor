@@ -158,12 +158,14 @@ compositionUpdate data model =
     }
     |> blinkBlock
 
-compositionEnd : String -> Model -> Model
+compositionEnd : String -> Model -> (Model, Cmd Msg)
 compositionEnd data model =
     { model
         | buffer = Buffer.insert data model.buffer
         , compositionPreview = Nothing
     }
+    |> blinkBlock
+    |> withEnsureVisibleCmd
 
 
 

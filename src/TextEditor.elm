@@ -233,7 +233,6 @@ compositionUpdate data model =
     ( { model
           | core = Core.compositionUpdate data model.core
       }
-      |> blinkBlock
       |> eventLog "compositionupdate" data
     , Cmd.none
     )
@@ -243,14 +242,15 @@ compositionEnd data model =
     -- note: 変換プレビューのクリアはするが、
     --        firefox ではこの後 input イベントがくるので、
     --        それを無視する為 enable-conposerは立てたままにする (keypressイベントで解除する、そちらを参照)
-    ( { model
-          | core = Core.compositionEnd data model.core
-      }
-      |> blinkBlock
-      |> eventLog "compositionend" data
-    , Cmd.none
-    )
---        |> withEnsureVisibleCmd --TODO
+    let
+        (m, c) = Core.compositionEnd data model.core
+    in
+        ( { model
+              | core = m
+          }
+          |> eventLog "compositionend" data
+        , Cmd.map CoreMsg c
+        )
 
 ------------------------------------------------------------
 -- control state update
