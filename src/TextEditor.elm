@@ -165,19 +165,18 @@ update msg model =
 
                 col = (calc_col ln 0 (xy.x - rect.left))
 
-                b1 = model.core.buffer
-                b2 = { b1 | cursor = Buffer.Cursor row col }
-
-                coremodel = model.core
+                (cm, cc) =  Commands.moveAt (row, col) model.core
             in
-                ( { model | core = {coremodel |buffer = b2} }
+                ( { model | core = cm }
                   |> eventLog "dragstart" ("pos=" ++ (toString xy.x) ++ "," ++ (toString xy.y)
                                                ++ "; offsetx=" ++ (toString (xy.x - rect.left))
                                                ++ "; row=" ++ (toString row)
                                                ++ "; calced_col=" ++ (toString col)
                                           )
                   |> blinkBlock
-                , Cmd.map CoreMsg (Core.doFocus model.core)  -- firefox 限定で、たまーに、SetFocus が来ないことがあるので、ここでもやっとく。
+                , Cmd.batch [ Cmd.map CoreMsg (Core.doFocus model.core)  -- firefox 限定で、たまーに、SetFocus が来ないことがあるので、ここでもやっとく。
+                            , Cmd.map CoreMsg cc
+                            ]
                 )
 
 

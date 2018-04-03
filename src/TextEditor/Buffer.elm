@@ -17,6 +17,7 @@ module TextEditor.Buffer exposing ( Model
                                   , moveBackward
                                   , movePrevios
                                   , moveNext
+                                  , moveAt
 
                                   -- selection
                                   , markSet
@@ -233,6 +234,9 @@ moveNext model =
         |> Maybe.withDefault cur
         |> (λ c -> {model | cursor = c})
 
+moveAt : (Int, Int) -> Model -> Model
+moveAt (row, col) model =
+    { model | cursor = Cursor row col }
 
 ------------------------------------------------------------
 -- selection (markset)

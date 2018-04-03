@@ -5,6 +5,7 @@ module TextEditor.Commands exposing
     , moveNext
     , moveBOL
     , moveEOL
+    , moveAt
     , selectForward
     , selectBackward
     , selectPrevios
@@ -48,6 +49,10 @@ moveBOL model = updateMap model (CoreCommands.moveBOL model.core)
 
 moveEOL : Model -> (Model, Cmd Msg)
 moveEOL model = updateMap model (CoreCommands.moveEOL model.core)
+
+moveAt : (Int, Int) -> Model -> (Model, Cmd Msg)
+moveAt pos model = updateMap model (CoreCommands.moveAt pos model.core)
+
 
 selectBackward: Model -> (Model, Cmd Msg)
 selectBackward model = updateMap model (CoreCommands.selectBackward model.core)

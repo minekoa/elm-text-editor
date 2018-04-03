@@ -5,6 +5,7 @@ module TextEditor.Core.Commands exposing
     , moveNext
     , moveBOL
     , moveEOL
+    , moveAt
     , selectForward
     , selectBackward
     , selectPrevios
@@ -58,6 +59,9 @@ moveEOL = moveF (\m ->
                                                               )
                      }
                 )
+
+moveAt : (Int, Int) -> Model -> (Model, Cmd Msg)
+moveAt pos =  moveF (Buffer.moveAt pos)
 
 ------------------------------------------------------------
 -- selection
