@@ -68,6 +68,7 @@ init id text =
 
 type Msg
     = IgnoreResult
+    | EnsureVisible
     | Tick Time
 
 update : Msg -> Model -> (Model, Cmd Msg)
@@ -75,6 +76,11 @@ update msg model =
     case msg of
         IgnoreResult ->  -- Task Result (Native)
             (model, Cmd.none)
+
+        EnsureVisible ->
+            ( model
+            , ensureVisible model
+            )
 
         Tick new_time ->
             ( {model | blink = blinkTransition model.blink }
@@ -174,8 +180,11 @@ compositionEnd data model =
 withEnsureVisibleCmd : Model -> (Model, Cmd Msg)
 withEnsureVisibleCmd model =
     ( model
-    , ensureVisible model
+    , Task.perform (\_ -> EnsureVisible) (Task.succeed True) 
     )
+    -- note: 一度描画ループを回すことで
+    --       model更新により更新されたDOMから
+    --       カーソル位置をDOMから取得sするトリック
 
 ------------------------------------------------------------
 -- Cmd

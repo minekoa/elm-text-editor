@@ -10125,11 +10125,24 @@ var _minekoa$elm_text_editor$TextEditor_Core$subscriptions = function (model) {
 			_1: {ctor: '[]'}
 		});
 };
+var _minekoa$elm_text_editor$TextEditor_Core$EnsureVisible = {ctor: 'EnsureVisible'};
+var _minekoa$elm_text_editor$TextEditor_Core$withEnsureVisibleCmd = function (model) {
+	return {
+		ctor: '_Tuple2',
+		_0: model,
+		_1: A2(
+			_elm_lang$core$Task$perform,
+			function (_p0) {
+				return _minekoa$elm_text_editor$TextEditor_Core$EnsureVisible;
+			},
+			_elm_lang$core$Task$succeed(true))
+	};
+};
 var _minekoa$elm_text_editor$TextEditor_Core$IgnoreResult = {ctor: 'IgnoreResult'};
 var _minekoa$elm_text_editor$TextEditor_Core$doFocus = function (model) {
 	return A2(
 		_elm_lang$core$Task$perform,
-		function (_p0) {
+		function (_p1) {
 			return _minekoa$elm_text_editor$TextEditor_Core$IgnoreResult;
 		},
 		_minekoa$elm_text_editor$TextEditor_Core$doFocusTask(
@@ -10138,7 +10151,7 @@ var _minekoa$elm_text_editor$TextEditor_Core$doFocus = function (model) {
 var _minekoa$elm_text_editor$TextEditor_Core$elaborateInputArea = function (model) {
 	return A2(
 		_elm_lang$core$Task$perform,
-		function (_p1) {
+		function (_p2) {
 			return _minekoa$elm_text_editor$TextEditor_Core$IgnoreResult;
 		},
 		_minekoa$elm_text_editor$TextEditor_Core$elaborateInputAreaTask(
@@ -10147,20 +10160,13 @@ var _minekoa$elm_text_editor$TextEditor_Core$elaborateInputArea = function (mode
 var _minekoa$elm_text_editor$TextEditor_Core$ensureVisible = function (model) {
 	return A2(
 		_elm_lang$core$Task$perform,
-		function (_p2) {
+		function (_p3) {
 			return _minekoa$elm_text_editor$TextEditor_Core$IgnoreResult;
 		},
 		A2(
 			_minekoa$elm_text_editor$TextEditor_Core$ensureVisibleTask,
 			_minekoa$elm_text_editor$TextEditor_Core$frameID(model),
 			_minekoa$elm_text_editor$TextEditor_Core$cursorID(model)));
-};
-var _minekoa$elm_text_editor$TextEditor_Core$withEnsureVisibleCmd = function (model) {
-	return {
-		ctor: '_Tuple2',
-		_0: model,
-		_1: _minekoa$elm_text_editor$TextEditor_Core$ensureVisible(model)
-	};
 };
 var _minekoa$elm_text_editor$TextEditor_Core$BlinkBlocked = {ctor: 'BlinkBlocked'};
 var _minekoa$elm_text_editor$TextEditor_Core$init = F2(
@@ -10216,11 +10222,11 @@ var _minekoa$elm_text_editor$TextEditor_Core$Blink = function (a) {
 	return {ctor: 'Blink', _0: a};
 };
 var _minekoa$elm_text_editor$TextEditor_Core$blinkTransition = function (blnk) {
-	var _p3 = blnk;
-	if (_p3.ctor === 'BlinkBlocked') {
+	var _p4 = blnk;
+	if (_p4.ctor === 'BlinkBlocked') {
 		return _minekoa$elm_text_editor$TextEditor_Core$Blink(true);
 	} else {
-		if (_p3._0 === true) {
+		if (_p4._0 === true) {
 			return _minekoa$elm_text_editor$TextEditor_Core$Blink(false);
 		} else {
 			return _minekoa$elm_text_editor$TextEditor_Core$Blink(true);
@@ -10229,19 +10235,26 @@ var _minekoa$elm_text_editor$TextEditor_Core$blinkTransition = function (blnk) {
 };
 var _minekoa$elm_text_editor$TextEditor_Core$update = F2(
 	function (msg, model) {
-		var _p4 = msg;
-		if (_p4.ctor === 'IgnoreResult') {
-			return {ctor: '_Tuple2', _0: model, _1: _elm_lang$core$Platform_Cmd$none};
-		} else {
-			return {
-				ctor: '_Tuple2',
-				_0: _elm_lang$core$Native_Utils.update(
-					model,
-					{
-						blink: _minekoa$elm_text_editor$TextEditor_Core$blinkTransition(model.blink)
-					}),
-				_1: _elm_lang$core$Platform_Cmd$none
-			};
+		var _p5 = msg;
+		switch (_p5.ctor) {
+			case 'IgnoreResult':
+				return {ctor: '_Tuple2', _0: model, _1: _elm_lang$core$Platform_Cmd$none};
+			case 'EnsureVisible':
+				return {
+					ctor: '_Tuple2',
+					_0: model,
+					_1: _minekoa$elm_text_editor$TextEditor_Core$ensureVisible(model)
+				};
+			default:
+				return {
+					ctor: '_Tuple2',
+					_0: _elm_lang$core$Native_Utils.update(
+						model,
+						{
+							blink: _minekoa$elm_text_editor$TextEditor_Core$blinkTransition(model.blink)
+						}),
+					_1: _elm_lang$core$Platform_Cmd$none
+				};
 		}
 	});
 
@@ -10545,20 +10558,24 @@ var _minekoa$elm_text_editor$Native_Mice = function() {
 
     function ensureVisible( frame_id, target_id ) {
 
-        const target = document.getElementById(target_id);
-        console.log("AF_before:" + target.getBoundingClientRect().top.toString() );
-
         requestAnimationFrame( () => {
+            /* requestAnimationFrame は、描画更新をまつため .. だったのだけれど
+             * 効いたり効かなかったりするので Elm側で対処してしまった...
+             */
+
             const frame  = document.getElementById(frame_id);
             const target = document.getElementById(target_id);
             if (frame == null || target == null) {
                 return false;
             }
-            console.log("AF_after:" + target.getBoundingClientRect().top.toString() );
 
             const frame_rect  =  frame.getBoundingClientRect();
             const target_rect =  target.getBoundingClientRect()
-            const margin = target_rect.height * 3;
+            const margin = target_rect.height * 2;
+
+            /* dbg */
+            console.log( "B: frm: top=" + frame_rect.top.toString()  + " left=" + frame_rect.left.toString()  + " bottom=" + frame_rect.bottom.toString()  + " right=" + frame_rect.right.toString()  );
+            console.log( "B: tgt: top=" + target_rect.top.toString() + " left=" + target_rect.left.toString() + " bottom=" + target_rect.bottom.toString() + " right=" + target_rect.right.toString() );
 
             /* vertincal */
             var new_scr_top = null;
@@ -10574,15 +10591,19 @@ var _minekoa$elm_text_editor$Native_Mice = function() {
             if      ( target_rect.left  - margin < frame_rect.left ) {
                 new_scr_left = frame.scrollLeft + (target_rect.left - frame_rect.left) - margin;
             }
-            else if ( target_rect.right + margin > frame_rect.rignt ) {
-                new_scr_left = frame.scrollLeft + (target_rect.rignt - frame_rect.right) + margin;
+            else if ( target_rect.right + margin > frame_rect.right ) {
+                new_scr_left = frame.scrollLeft + (target_rect.right - frame_rect.right) + margin;
             }
 
             /* set scroll pos */
-            if (new_scr_top  != null) { console.log("top: " + frame.scrollTop.toString()  + " -> " + new_scr_top.toString() ); frame.scrollTop  = new_scr_top; }
-            if (new_scr_left != null) { console.log("left:" + frame.scrollLeft.toString() + " -> " + new_scr_left.toString()); frame.scrollLeft = new_scr_left; }
+            if (new_scr_top  != null) {
+                frame.scrollTop  = new_scr_top;
+            }
+            if (new_scr_left != null) {
+                frame.scrollLeft = new_scr_left;
+            }
 
-            return (new_scr_top != null) ||  (new_scr_left != null);
+            return (new_scr_top != null) || (new_scr_left != null);
         } );
 
         return true;

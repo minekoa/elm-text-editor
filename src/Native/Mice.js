@@ -13,20 +13,24 @@ var _minekoa$elm_text_editor$Native_Mice = function() {
 
     function ensureVisible( frame_id, target_id ) {
 
-        const target = document.getElementById(target_id);
-        console.log("AF_before:" + target.getBoundingClientRect().top.toString() );
-
         requestAnimationFrame( () => {
+            /* requestAnimationFrame は、描画更新をまつため .. だったのだけれど
+             * 効いたり効かなかったりするので Elm側で対処してしまった...
+             */
+
             const frame  = document.getElementById(frame_id);
             const target = document.getElementById(target_id);
             if (frame == null || target == null) {
                 return false;
             }
-            console.log("AF_after:" + target.getBoundingClientRect().top.toString() );
 
             const frame_rect  =  frame.getBoundingClientRect();
             const target_rect =  target.getBoundingClientRect()
-            const margin = target_rect.height * 3;
+            const margin = target_rect.height * 2;
+
+            /* dbg */
+/*            console.log( "B: frm: top=" + frame_rect.top.toString()  + " left=" + frame_rect.left.toString()  + " bottom=" + frame_rect.bottom.toString()  + " right=" + frame_rect.right.toString()  );
+            console.log( "B: tgt: top=" + target_rect.top.toString() + " left=" + target_rect.left.toString() + " bottom=" + target_rect.bottom.toString() + " right=" + target_rect.right.toString() ); */
 
             /* vertincal */
             var new_scr_top = null;
@@ -42,15 +46,19 @@ var _minekoa$elm_text_editor$Native_Mice = function() {
             if      ( target_rect.left  - margin < frame_rect.left ) {
                 new_scr_left = frame.scrollLeft + (target_rect.left - frame_rect.left) - margin;
             }
-            else if ( target_rect.right + margin > frame_rect.rignt ) {
-                new_scr_left = frame.scrollLeft + (target_rect.rignt - frame_rect.right) + margin;
+            else if ( target_rect.right + margin > frame_rect.right ) {
+                new_scr_left = frame.scrollLeft + (target_rect.right - frame_rect.right) + margin;
             }
 
             /* set scroll pos */
-            if (new_scr_top  != null) { console.log("top: " + frame.scrollTop.toString()  + " -> " + new_scr_top.toString() ); frame.scrollTop  = new_scr_top; }
-            if (new_scr_left != null) { console.log("left:" + frame.scrollLeft.toString() + " -> " + new_scr_left.toString()); frame.scrollLeft = new_scr_left; }
+            if (new_scr_top  != null) {
+                frame.scrollTop  = new_scr_top;
+            }
+            if (new_scr_left != null) {
+                frame.scrollLeft = new_scr_left;
+            }
 
-            return (new_scr_top != null) ||  (new_scr_left != null);
+            return (new_scr_top != null) || (new_scr_left != null);
         } );
 
         return true;
