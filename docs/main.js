@@ -10557,10 +10557,18 @@ var _minekoa$elm_text_editor$Native_Mice = function() {
     }
 
     function ensureVisible( frame_id, target_id ) {
+        /*
+         * TODO:
+         *    * marginでごまかしているが、行番号カラムを考慮したスクロールをしないと、左移動しても行番号が出きらない問題がある
+         */
 
         requestAnimationFrame( () => {
-            /* requestAnimationFrame は、描画更新をまつため .. だったのだけれど
-             * 効いたり効かなかったりするので Elm側で対処してしまった...
+            /* note:
+             *     requestAnimationFrame は、描画更新をまつため .. だったのだけれど
+             *     効いたり効かなかったりする
+             *         * 複数行のペーストのときには、これがないと正しくカーソルが見えない
+             *         * フレーム外にカーソルがいる時の、タップでのカーソル移動だと、何故か上手く行かない
+             *     (?? カーソルの点滅制御が悪さしてる ??)
              */
 
             const frame  = document.getElementById(frame_id);
@@ -10571,7 +10579,7 @@ var _minekoa$elm_text_editor$Native_Mice = function() {
 
             const frame_rect  =  frame.getBoundingClientRect();
             const target_rect =  target.getBoundingClientRect()
-            const margin = target_rect.height * 2;
+            const margin = target_rect.height * 2.1;
 
             /* dbg */
             console.log( "B: frm: top=" + frame_rect.top.toString()  + " left=" + frame_rect.left.toString()  + " bottom=" + frame_rect.bottom.toString()  + " right=" + frame_rect.right.toString()  );
@@ -12337,15 +12345,8 @@ var _minekoa$elm_text_editor$TextEditor$update = F2(
 					_1: _elm_lang$core$Platform_Cmd$batch(
 						{
 							ctor: '::',
-							_0: A2(
-								_elm_lang$core$Platform_Cmd$map,
-								_minekoa$elm_text_editor$TextEditor$CoreMsg,
-								_minekoa$elm_text_editor$TextEditor_Core$doFocus(model.core)),
-							_1: {
-								ctor: '::',
-								_0: A2(_elm_lang$core$Platform_Cmd$map, _minekoa$elm_text_editor$TextEditor$CoreMsg, cc),
-								_1: {ctor: '[]'}
-							}
+							_0: A2(_elm_lang$core$Platform_Cmd$map, _minekoa$elm_text_editor$TextEditor$CoreMsg, cc),
+							_1: {ctor: '[]'}
 						})
 				};
 		}

@@ -174,8 +174,12 @@ update msg model =
                                                ++ "; calced_col=" ++ (toString col)
                                           )
                   |> blinkBlock
-                , Cmd.batch [ Cmd.map CoreMsg (Core.doFocus model.core)  -- firefox 限定で、たまーに、SetFocus が来ないことがあるので、ここでもやっとく。
-                            , Cmd.map CoreMsg cc
+                , Cmd.batch [ Cmd.map CoreMsg cc
+-- note: どうやらこの doFocus が悪さをして
+--       カーソルがスクロールの外にいるときに、タップしてカーソル移動した際に
+--       不必要な ensureVisible 制御を誘発しているようだ。
+--       一旦コメントアウト
+--                            , Cmd.map CoreMsg (Core.doFocus model.core)  -- firefox 限定で、たまーに、SetFocus が来ないことがあるので、ここでもやっとく。
                             ]
                 )
 
