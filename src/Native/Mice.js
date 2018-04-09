@@ -1,16 +1,6 @@
 
 var _minekoa$elm_text_editor$Native_Mice = function() {
 
-    function doFocus(_id) { 
-        const element = document.getElementById(_id); 
-        if (element == null) {
-            return false;
-        }
-
-        element.focus();
-        return true;
-    }
-
     function ensureVisible( frame_id, target_id ) {
         /*
          * TODO:
@@ -202,7 +192,6 @@ var _minekoa$elm_text_editor$Native_Mice = function() {
 
 
   return {
-      doFocus: doFocus,
       ensureVisible: F2(ensureVisible),
       calcTextWidth: F2(calcTextWidth),
       getBoundingClientRect: getBoundingClientRect,

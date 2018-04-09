@@ -6356,6 +6356,12 @@ return {
 
 }();
 
+var _elm_lang$dom$Dom$blur = _elm_lang$dom$Native_Dom.blur;
+var _elm_lang$dom$Dom$focus = _elm_lang$dom$Native_Dom.focus;
+var _elm_lang$dom$Dom$NotFound = function (a) {
+	return {ctor: 'NotFound', _0: a};
+};
+
 var _elm_lang$dom$Dom_LowLevel$onWindow = _elm_lang$dom$Native_Dom.onWindow;
 var _elm_lang$dom$Dom_LowLevel$onDocument = _elm_lang$dom$Native_Dom.onDocument;
 
@@ -10084,10 +10090,6 @@ var _minekoa$elm_text_editor$TextEditor_Core$elaborateInputAreaTask = function (
 	return _elm_lang$core$Task$succeed(
 		_minekoa$elm_text_editor$Native_Mice.elaborateInputArea(input_area_id));
 };
-var _minekoa$elm_text_editor$TextEditor_Core$doFocusTask = function (id) {
-	return _elm_lang$core$Task$succeed(
-		_minekoa$elm_text_editor$Native_Mice.doFocus(id));
-};
 var _minekoa$elm_text_editor$TextEditor_Core$inputAreaID = function (model) {
 	return A2(_elm_lang$core$Basics_ops['++'], model.id, '-editor-input');
 };
@@ -10141,11 +10143,11 @@ var _minekoa$elm_text_editor$TextEditor_Core$withEnsureVisibleCmd = function (mo
 var _minekoa$elm_text_editor$TextEditor_Core$IgnoreResult = {ctor: 'IgnoreResult'};
 var _minekoa$elm_text_editor$TextEditor_Core$doFocus = function (model) {
 	return A2(
-		_elm_lang$core$Task$perform,
+		_elm_lang$core$Task$attempt,
 		function (_p1) {
 			return _minekoa$elm_text_editor$TextEditor_Core$IgnoreResult;
 		},
-		_minekoa$elm_text_editor$TextEditor_Core$doFocusTask(
+		_elm_lang$dom$Dom$focus(
 			_minekoa$elm_text_editor$TextEditor_Core$inputAreaID(model)));
 };
 var _minekoa$elm_text_editor$TextEditor_Core$elaborateInputArea = function (model) {
@@ -10546,16 +10548,6 @@ var _minekoa$elm_text_editor$TextEditor_KeyBind$KeyBind = F5(
 
 var _minekoa$elm_text_editor$Native_Mice = function() {
 
-    function doFocus(_id) { 
-        const element = document.getElementById(_id); 
-        if (element == null) {
-            return false;
-        }
-
-        element.focus();
-        return true;
-    }
-
     function ensureVisible( frame_id, target_id ) {
         /*
          * TODO:
@@ -10747,7 +10739,6 @@ var _minekoa$elm_text_editor$Native_Mice = function() {
 
 
   return {
-      doFocus: doFocus,
       ensureVisible: F2(ensureVisible),
       calcTextWidth: F2(calcTextWidth),
       getBoundingClientRect: getBoundingClientRect,

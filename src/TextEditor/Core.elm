@@ -25,6 +25,7 @@ module TextEditor.Core exposing
 
 import Time exposing (Time, second)
 import Task exposing (Task)
+import Dom
 
 import TextEditor.Buffer as Buffer
 
@@ -194,7 +195,7 @@ withEnsureVisibleCmd model =
 
 doFocus: Model -> Cmd Msg
 doFocus model =
-    Task.perform (\_ -> IgnoreResult) (doFocusTask <| inputAreaID model)
+    Task.attempt (\_ -> IgnoreResult) (Dom.focus <| inputAreaID model)
 
 elaborateInputArea: Model -> Cmd Msg
 elaborateInputArea model =
@@ -207,10 +208,6 @@ ensureVisible model =
 ------------------------------------------------------------
 -- Native
 ------------------------------------------------------------
-
-doFocusTask : String -> Task Never Bool
-doFocusTask id =
-    Task.succeed (Native.Mice.doFocus id)
 
 elaborateInputAreaTask: String  -> Task Never Bool
 elaborateInputAreaTask input_area_id =
