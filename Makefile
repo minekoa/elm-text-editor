@@ -12,11 +12,6 @@ subdirs=demo
 
 all: $(subdirs) test
 
-demo:
-	cd demo
-	$(MAKE)
-	cd ..
-
 $(subdirs):
 	$(MAKE) -C $@
 

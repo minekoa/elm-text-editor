@@ -161,7 +161,7 @@ update msg model =
                               else calc_col ln (c + 1)  x)
 
                 ln = Buffer.line row model.core.buffer.contents |> Maybe.withDefault ""
-                rect = getBoundingClientRect (codeLayerID model.core)
+                rect = getBoundingClientRect (codeAreaID model.core)
 
                 col = (calc_col ln 0 (xy.x - rect.left))
 
@@ -350,7 +350,8 @@ lineNumArea model =
     let
         contents = model.buffer.contents
     in
-        div [ class "line-num-area"
+        div [ id <| lineNumAreaID model
+            , class "line-num-area"
             , style [ ("text-align", "right")
                     , ("padding-right", "0.8em")
                     ]
@@ -382,8 +383,7 @@ codeLayer model =
         contents = model.buffer.contents
         cursor = model.buffer.cursor
     in
-        div [ id <| codeLayerID model
-            , class "code-layer"
+        div [ class "code-layer"
             , style [ ("margin", "0"), ("padding", "0"), ("border", "none")
                     , ("width", "100%")
                     ]

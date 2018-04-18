@@ -10099,8 +10099,8 @@ var _minekoa$elm_text_editor$TextEditor_Core$cursorID = function (model) {
 var _minekoa$elm_text_editor$TextEditor_Core$rulerID = function (model) {
 	return A2(_elm_lang$core$Basics_ops['++'], model.id, '-editor-ruler');
 };
-var _minekoa$elm_text_editor$TextEditor_Core$codeLayerID = function (model) {
-	return A2(_elm_lang$core$Basics_ops['++'], model.id, '-editor-codeLayer');
+var _minekoa$elm_text_editor$TextEditor_Core$lineNumAreaID = function (model) {
+	return A2(_elm_lang$core$Basics_ops['++'], model.id, '-editor-lineNumArea');
 };
 var _minekoa$elm_text_editor$TextEditor_Core$codeAreaID = function (model) {
 	return A2(_elm_lang$core$Basics_ops['++'], model.id, '-editor-codeArea');
@@ -11293,20 +11293,25 @@ var _minekoa$elm_text_editor$TextEditor$lineNumArea = function (model) {
 		_elm_lang$html$Html$div,
 		{
 			ctor: '::',
-			_0: _elm_lang$html$Html_Attributes$class('line-num-area'),
+			_0: _elm_lang$html$Html_Attributes$id(
+				_minekoa$elm_text_editor$TextEditor_Core$lineNumAreaID(model)),
 			_1: {
 				ctor: '::',
-				_0: _elm_lang$html$Html_Attributes$style(
-					{
-						ctor: '::',
-						_0: {ctor: '_Tuple2', _0: 'text-align', _1: 'right'},
-						_1: {
+				_0: _elm_lang$html$Html_Attributes$class('line-num-area'),
+				_1: {
+					ctor: '::',
+					_0: _elm_lang$html$Html_Attributes$style(
+						{
 							ctor: '::',
-							_0: {ctor: '_Tuple2', _0: 'padding-right', _1: '0.8em'},
-							_1: {ctor: '[]'}
-						}
-					}),
-				_1: {ctor: '[]'}
+							_0: {ctor: '_Tuple2', _0: 'text-align', _1: 'right'},
+							_1: {
+								ctor: '::',
+								_0: {ctor: '_Tuple2', _0: 'padding-right', _1: '0.8em'},
+								_1: {ctor: '[]'}
+							}
+						}),
+					_1: {ctor: '[]'}
+				}
 			}
 		},
 		A2(
@@ -11494,33 +11499,28 @@ var _minekoa$elm_text_editor$TextEditor$codeLayer = function (model) {
 		_elm_lang$html$Html$div,
 		{
 			ctor: '::',
-			_0: _elm_lang$html$Html_Attributes$id(
-				_minekoa$elm_text_editor$TextEditor_Core$codeLayerID(model)),
+			_0: _elm_lang$html$Html_Attributes$class('code-layer'),
 			_1: {
 				ctor: '::',
-				_0: _elm_lang$html$Html_Attributes$class('code-layer'),
-				_1: {
-					ctor: '::',
-					_0: _elm_lang$html$Html_Attributes$style(
-						{
+				_0: _elm_lang$html$Html_Attributes$style(
+					{
+						ctor: '::',
+						_0: {ctor: '_Tuple2', _0: 'margin', _1: '0'},
+						_1: {
 							ctor: '::',
-							_0: {ctor: '_Tuple2', _0: 'margin', _1: '0'},
+							_0: {ctor: '_Tuple2', _0: 'padding', _1: '0'},
 							_1: {
 								ctor: '::',
-								_0: {ctor: '_Tuple2', _0: 'padding', _1: '0'},
+								_0: {ctor: '_Tuple2', _0: 'border', _1: 'none'},
 								_1: {
 									ctor: '::',
-									_0: {ctor: '_Tuple2', _0: 'border', _1: 'none'},
-									_1: {
-										ctor: '::',
-										_0: {ctor: '_Tuple2', _0: 'width', _1: '100%'},
-										_1: {ctor: '[]'}
-									}
+									_0: {ctor: '_Tuple2', _0: 'width', _1: '100%'},
+									_1: {ctor: '[]'}
 								}
 							}
-						}),
-					_1: {ctor: '[]'}
-				}
+						}
+					}),
+				_1: {ctor: '[]'}
 			}
 		},
 		A2(
@@ -12291,7 +12291,7 @@ var _minekoa$elm_text_editor$TextEditor$update = F2(
 				var _p15 = _p11._1;
 				var _p14 = _p11._0;
 				var rect = _minekoa$elm_text_editor$TextEditor$getBoundingClientRect(
-					_minekoa$elm_text_editor$TextEditor_Core$codeLayerID(model.core));
+					_minekoa$elm_text_editor$TextEditor_Core$codeAreaID(model.core));
 				var ln = A2(
 					_elm_lang$core$Maybe$withDefault,
 					'',

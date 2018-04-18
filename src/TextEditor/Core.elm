@@ -8,7 +8,7 @@ module TextEditor.Core exposing
     , frameID
     , sceneID
     , codeAreaID
-    , codeLayerID
+    , lineNumAreaID
     , rulerID
     , cursorID
     , inputAreaID
@@ -112,13 +112,13 @@ sceneID : Model -> String
 sceneID model =
     model.id ++ "-editor-scene"
 
-codeAreaID: Model -> String
+codeAreaID : Model -> String
 codeAreaID model =
     model.id ++ "-editor-codeArea"
 
-codeLayerID : Model -> String
-codeLayerID model =
-    model.id ++ "-editor-codeLayer"
+lineNumAreaID : Model -> String
+lineNumAreaID model =
+    model.id ++ "-editor-lineNumArea"
 
 rulerID : Model -> String
 rulerID model =
