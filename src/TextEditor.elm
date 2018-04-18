@@ -364,7 +364,8 @@ lineNumArea model =
 
 codeArea : Core.Model -> Html Msg
 codeArea model =
-    div [ class "code-area"
+    div [ id <| codeAreaID model
+        , class "code-area"
         , style [ ("margin", "0"), ("padding", "0"), ("border", "none")
                 , ("flex-grow", "1") -- "line" の行末以降のタップでもカーソル移動したいので、いっぱいまで伸びるようにしておく
                 ]
@@ -477,9 +478,22 @@ markerLayer model =
                 bpos = if (Buffer.isPreviosPos sel.begin sel.end) then sel.begin else sel.end
                 epos = if (Buffer.isPreviosPos sel.begin sel.end) then sel.end else sel.begin
 
+                rect = getBoundingClientRect (codeAreaID model)
+                calc_w  = calcTextWidth (rulerID model)
+                bpix = calc_w (Buffer.line (Tuple.first bpos) model.buffer.contents |> Maybe.withDefault "" |> String.left (Tuple.second bpos))
+                epix = calc_w (Buffer.line (Tuple.first epos) model.buffer.contents |> Maybe.withDefault "" |> String.left (Tuple.second epos))
+
+
                 ms = List.range (Tuple.first bpos) (Tuple.first epos)
                    |> List.map (\ r ->
                                     let
+                                        pb = if r == (Tuple.first bpos)
+                                             then bpix
+                                             else 0 -- rect.left
+                                        pe = if r == (Tuple.first epos)
+                                             then epix
+                                             else rect.right - rect.left
+
                                         cb = if r == (Tuple.first bpos)
                                              then bpos |> Tuple.second
                                              else 0
@@ -487,36 +501,32 @@ markerLayer model =
                                              then epos |> Tuple.second
                                              else String.length <| (Buffer.line r model.buffer.contents |> Maybe.withDefault "")
                                     in
-                                        {row =r, begin_col = cb, end_col = ce}
+                                        {row =r, begin_col = cb, end_col = ce, begin_px = pb, end_px = pe}
                                )
             in
                 div [ class "marker-layer"
                     , style [ ("position", "absolute")
                             , ("pointer-events", "none") -- マウスイベントの対象外にする
+                            , ("z-index", "99") -- note: 範囲選択を一番上にしたいため 99 という数字自体に意味はない
                             ]
                     ]
                     ( List.map (\ m ->
                                   div [ style [ ("position", "absolute")
-                                              , ("display", "inline-flex")
                                               , ("top" , (m.row |> toString) ++ "em")
-                                              , ("left", "0")
+                                              , ("left" , (m.begin_px |> toString |> flip (++) "px"))
+                                              , ("width", (m.end_px - m.begin_px |> toString |> flip (++) "px"))
+                                              , ("height", "1em")
+
+                                              , ("background-color", "blue")
+                                              , ("color","white")
+                                              , ("white-space", "pre")
                                               ]
                                       ]
-                                      [ padToCursor (m.row, m.begin_col) model
-                                      , div [ class "selection"
-                                            , style [ ("background-color", "blue")
-                                                    , ("color","white")
-                                                    , ("white-space", "pre")
-                                                    , ("border","none"), ("padding", "0"), ("margin", "0")
-                                                    , ("z-index", "99") -- note: 範囲選択を一番上にしたいため 99 という数字自体に意味はない
-                                                    ]
-                                            ]
-                                            [ Buffer.line m.row model.buffer.contents |> Maybe.withDefault ""
-                                              |> String.dropLeft m.begin_col
-                                              |> String.left (m.end_col - m.begin_col)
-                                              |> (\l -> if l == "" then " " else l)
-                                              |> text
-                                            ]
+                                      [ Buffer.line m.row model.buffer.contents |> Maybe.withDefault ""
+                                            |> String.dropLeft m.begin_col
+                                            |> String.left (m.end_col - m.begin_col)
+                                            |> (\l -> if l == "" then " " else l)
+                                            |> text
                                       ]
                              ) ms )
 
