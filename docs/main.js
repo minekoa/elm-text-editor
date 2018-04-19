@@ -11904,8 +11904,12 @@ var _minekoa$elm_text_editor$TextEditor$cursorLayer = function (model) {
 																																	_0: {ctor: '_Tuple2', _0: 'font-size', _1: '1em'},
 																																	_1: {
 																																		ctor: '::',
-																																		_0: {ctor: '_Tuple2', _0: 'position', _1: 'absolute'},
-																																		_1: {ctor: '[]'}
+																																		_0: {ctor: '_Tuple2', _0: 'font-family', _1: 'inherit'},
+																																		_1: {
+																																			ctor: '::',
+																																			_0: {ctor: '_Tuple2', _0: 'position', _1: 'absolute'},
+																																			_1: {ctor: '[]'}
+																																		}
 																																	}
 																																}
 																															}
