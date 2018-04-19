@@ -399,7 +399,7 @@ codeLayer model =
                                   ]
                           , onMouseDown (DragStart n)
                           ] <|
-                          if n == cursor.row then
+                          if n == cursor.row && model.compositionPreview /= Nothing then
                               [ span [ style [ ("position", "relative")
                                              , ("white-space", "pre")
                                              , ("pointer-events", "none") -- マウスイベントの対象外にする

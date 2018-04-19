@@ -11633,7 +11633,7 @@ var _minekoa$elm_text_editor$TextEditor$codeLayer = function (model) {
 								}
 							}
 						},
-						_elm_lang$core$Native_Utils.eq(n, cursor.row) ? {
+						(_elm_lang$core$Native_Utils.eq(n, cursor.row) && (!_elm_lang$core$Native_Utils.eq(model.compositionPreview, _elm_lang$core$Maybe$Nothing))) ? {
 							ctor: '::',
 							_0: A2(
 								_elm_lang$html$Html$span,
