@@ -455,6 +455,11 @@ cursorLayer model =
                                 , wrap "off"
                                 , style [ ("border", "none"), ("padding", "0"), ("margin","0"), ("outline", "none")
                                         , ("overflow", "hidden"), ("opacity", "0")
+                                        , ("width", model.compositionPreview
+                                                       |> Maybe.withDefault ""
+                                                       |> String.length |> flip (+) 1
+                                                       |> toEmString
+                                          )
                                         , ("resize", "none")
                                         , ("height", 1 |> emToPxString model)
                                         , ("font-size", "1em") -- 親のスタイルにあわせて大きさを買えるために必要
@@ -463,7 +468,12 @@ cursorLayer model =
                                         ]
                                 ]
                            []
-                     , span [ style [("visibility", "hidden") ]] [compositionPreview model.compositionPreview]
+                     , span [ class "pad-composition-preview"
+                            , style [ ("visibility", "hidden")
+                                    , ("white-space", "nowrap")
+                                    ]
+                            ]
+                           [compositionPreview model.compositionPreview]
                      , cursorView model
                      ]
                ]
@@ -745,6 +755,9 @@ emToPx model n =
 
 toPxString : Int -> String
 toPxString = toString >> flip (++) "px"
+
+toEmString : Int -> String
+toEmString = toString >> flip (++) "em"
 
 emToPxString : Core.Model -> Int -> String
 emToPxString model = emToPx model >> toPxString

@@ -10760,7 +10760,17 @@ var _minekoa$elm_text_editor$TextEditor$calcTextWidth = F2(
 	function (id, txt) {
 		return A2(_minekoa$elm_text_editor$Native_Mice.calcTextWidth, id, txt);
 	});
-var _minekoa$elm_text_editor$TextEditor$toPxString = function (_p0) {
+var _minekoa$elm_text_editor$TextEditor$toEmString = function (_p0) {
+	return A3(
+		_elm_lang$core$Basics$flip,
+		F2(
+			function (x, y) {
+				return A2(_elm_lang$core$Basics_ops['++'], x, y);
+			}),
+		'em',
+		_elm_lang$core$Basics$toString(_p0));
+};
+var _minekoa$elm_text_editor$TextEditor$toPxString = function (_p1) {
 	return A3(
 		_elm_lang$core$Basics$flip,
 		F2(
@@ -10768,7 +10778,7 @@ var _minekoa$elm_text_editor$TextEditor$toPxString = function (_p0) {
 				return A2(_elm_lang$core$Basics_ops['++'], x, y);
 			}),
 		'px',
-		_elm_lang$core$Basics$toString(_p0));
+		_elm_lang$core$Basics$toString(_p1));
 };
 var _minekoa$elm_text_editor$TextEditor$emToPx = F2(
 	function (model, n) {
@@ -10786,9 +10796,9 @@ var _minekoa$elm_text_editor$TextEditor$emToPx = F2(
 					_minekoa$elm_text_editor$TextEditor_Core$prototyleEmID(model))));
 	});
 var _minekoa$elm_text_editor$TextEditor$emToPxString = function (model) {
-	return function (_p1) {
+	return function (_p2) {
 		return _minekoa$elm_text_editor$TextEditor$toPxString(
-			A2(_minekoa$elm_text_editor$TextEditor$emToPx, model, _p1));
+			A2(_minekoa$elm_text_editor$TextEditor$emToPx, model, _p2));
 	};
 };
 var _minekoa$elm_text_editor$TextEditor$selecteddata = function (selected_str) {
@@ -10913,15 +10923,15 @@ var _minekoa$elm_text_editor$TextEditor$keyboarEvent_toString = function (e) {
 		});
 };
 var _minekoa$elm_text_editor$TextEditor$cursorView = function (model) {
-	var blink_off = function (_p2) {
+	var blink_off = function (_p3) {
 		return !function (blnk) {
-			var _p3 = blnk;
-			if (_p3.ctor === 'Blink') {
-				return _p3._0;
+			var _p4 = blnk;
+			if (_p4.ctor === 'Blink') {
+				return _p4._0;
 			} else {
 				return true;
 			}
-		}(_p2);
+		}(_p3);
 	};
 	return A2(
 		_elm_lang$html$Html$span,
@@ -10971,8 +10981,8 @@ var _minekoa$elm_text_editor$TextEditor$cursorView = function (model) {
 		{ctor: '[]'});
 };
 var _minekoa$elm_text_editor$TextEditor$compositionPreview = function (compositionData) {
-	var _p4 = compositionData;
-	if (_p4.ctor === 'Just') {
+	var _p5 = compositionData;
+	if (_p5.ctor === 'Just') {
 		return A2(
 			_elm_lang$html$Html$span,
 			{
@@ -10995,7 +11005,7 @@ var _minekoa$elm_text_editor$TextEditor$compositionPreview = function (compositi
 			},
 			{
 				ctor: '::',
-				_0: _elm_lang$html$Html$text(_p4._0),
+				_0: _elm_lang$html$Html$text(_p5._0),
 				_1: {ctor: '[]'}
 			});
 	} else {
@@ -11175,16 +11185,16 @@ var _minekoa$elm_text_editor$TextEditor$pad = function (model) {
 		});
 };
 var _minekoa$elm_text_editor$TextEditor$markerLayer = function (model) {
-	var _p5 = model.buffer.selection;
-	if (_p5.ctor === 'Nothing') {
+	var _p6 = model.buffer.selection;
+	if (_p6.ctor === 'Nothing') {
 		return _elm_lang$html$Html$text('');
 	} else {
-		var _p6 = _p5._0;
+		var _p7 = _p6._0;
 		var calc_w = _minekoa$elm_text_editor$TextEditor$calcTextWidth(
 			_minekoa$elm_text_editor$TextEditor_Core$rulerID(model));
 		var rect = _minekoa$elm_text_editor$TextEditor$getBoundingClientRect(
 			_minekoa$elm_text_editor$TextEditor_Core$codeAreaID(model));
-		var epos = A2(_minekoa$elm_text_editor$TextEditor_Buffer$isPreviosPos, _p6.begin, _p6.end) ? _p6.end : _p6.begin;
+		var epos = A2(_minekoa$elm_text_editor$TextEditor_Buffer$isPreviosPos, _p7.begin, _p7.end) ? _p7.end : _p7.begin;
 		var epix = calc_w(
 			A2(
 				_elm_lang$core$String$left,
@@ -11196,7 +11206,7 @@ var _minekoa$elm_text_editor$TextEditor$markerLayer = function (model) {
 						_minekoa$elm_text_editor$TextEditor_Buffer$line,
 						_elm_lang$core$Tuple$first(epos),
 						model.buffer.contents))));
-		var bpos = A2(_minekoa$elm_text_editor$TextEditor_Buffer$isPreviosPos, _p6.begin, _p6.end) ? _p6.begin : _p6.end;
+		var bpos = A2(_minekoa$elm_text_editor$TextEditor_Buffer$isPreviosPos, _p7.begin, _p7.end) ? _p7.begin : _p7.end;
 		var bpix = calc_w(
 			A2(
 				_elm_lang$core$String$left,
@@ -11891,24 +11901,41 @@ var _minekoa$elm_text_editor$TextEditor$cursorLayer = function (model) {
 																														_0: {ctor: '_Tuple2', _0: 'opacity', _1: '0'},
 																														_1: {
 																															ctor: '::',
-																															_0: {ctor: '_Tuple2', _0: 'resize', _1: 'none'},
+																															_0: {
+																																ctor: '_Tuple2',
+																																_0: 'width',
+																																_1: _minekoa$elm_text_editor$TextEditor$toEmString(
+																																	A3(
+																																		_elm_lang$core$Basics$flip,
+																																		F2(
+																																			function (x, y) {
+																																				return x + y;
+																																			}),
+																																		1,
+																																		_elm_lang$core$String$length(
+																																			A2(_elm_lang$core$Maybe$withDefault, '', model.compositionPreview))))
+																															},
 																															_1: {
 																																ctor: '::',
-																																_0: {
-																																	ctor: '_Tuple2',
-																																	_0: 'height',
-																																	_1: A2(_minekoa$elm_text_editor$TextEditor$emToPxString, model, 1)
-																																},
+																																_0: {ctor: '_Tuple2', _0: 'resize', _1: 'none'},
 																																_1: {
 																																	ctor: '::',
-																																	_0: {ctor: '_Tuple2', _0: 'font-size', _1: '1em'},
+																																	_0: {
+																																		ctor: '_Tuple2',
+																																		_0: 'height',
+																																		_1: A2(_minekoa$elm_text_editor$TextEditor$emToPxString, model, 1)
+																																	},
 																																	_1: {
 																																		ctor: '::',
-																																		_0: {ctor: '_Tuple2', _0: 'font-family', _1: 'inherit'},
+																																		_0: {ctor: '_Tuple2', _0: 'font-size', _1: '1em'},
 																																		_1: {
 																																			ctor: '::',
-																																			_0: {ctor: '_Tuple2', _0: 'position', _1: 'absolute'},
-																																			_1: {ctor: '[]'}
+																																			_0: {ctor: '_Tuple2', _0: 'font-family', _1: 'inherit'},
+																																			_1: {
+																																				ctor: '::',
+																																				_0: {ctor: '_Tuple2', _0: 'position', _1: 'absolute'},
+																																				_1: {ctor: '[]'}
+																																			}
 																																		}
 																																	}
 																																}
@@ -11942,13 +11969,21 @@ var _minekoa$elm_text_editor$TextEditor$cursorLayer = function (model) {
 										_elm_lang$html$Html$span,
 										{
 											ctor: '::',
-											_0: _elm_lang$html$Html_Attributes$style(
-												{
-													ctor: '::',
-													_0: {ctor: '_Tuple2', _0: 'visibility', _1: 'hidden'},
-													_1: {ctor: '[]'}
-												}),
-											_1: {ctor: '[]'}
+											_0: _elm_lang$html$Html_Attributes$class('pad-composition-preview'),
+											_1: {
+												ctor: '::',
+												_0: _elm_lang$html$Html_Attributes$style(
+													{
+														ctor: '::',
+														_0: {ctor: '_Tuple2', _0: 'visibility', _1: 'hidden'},
+														_1: {
+															ctor: '::',
+															_0: {ctor: '_Tuple2', _0: 'white-space', _1: 'nowrap'},
+															_1: {ctor: '[]'}
+														}
+													}),
+												_1: {ctor: '[]'}
+											}
 										},
 										{
 											ctor: '::',
@@ -12169,9 +12204,9 @@ var _minekoa$elm_text_editor$TextEditor$CoreMsg = function (a) {
 };
 var _minekoa$elm_text_editor$TextEditor$init = F3(
 	function (id, keymap, text) {
-		var _p7 = A2(_minekoa$elm_text_editor$TextEditor_Core$init, id, text);
-		var coreM = _p7._0;
-		var coreC = _p7._1;
+		var _p8 = A2(_minekoa$elm_text_editor$TextEditor_Core$init, id, text);
+		var coreM = _p8._0;
+		var coreC = _p8._1;
 		return {
 			ctor: '_Tuple2',
 			_0: A4(_minekoa$elm_text_editor$TextEditor$Model, coreM, false, keymap, _elm_lang$core$Maybe$Nothing),
@@ -12180,9 +12215,9 @@ var _minekoa$elm_text_editor$TextEditor$init = F3(
 	});
 var _minekoa$elm_text_editor$TextEditor$compositionEnd = F2(
 	function (data, model) {
-		var _p8 = A2(_minekoa$elm_text_editor$TextEditor_Core$compositionEnd, data, model.core);
-		var m = _p8._0;
-		var c = _p8._1;
+		var _p9 = A2(_minekoa$elm_text_editor$TextEditor_Core$compositionEnd, data, model.core);
+		var m = _p9._0;
+		var c = _p9._1;
 		return {
 			ctor: '_Tuple2',
 			_0: A3(
@@ -12196,20 +12231,20 @@ var _minekoa$elm_text_editor$TextEditor$compositionEnd = F2(
 		};
 	});
 var _minekoa$elm_text_editor$TextEditor$updateMap = F2(
-	function (model, _p9) {
-		var _p10 = _p9;
+	function (model, _p10) {
+		var _p11 = _p10;
 		return {
 			ctor: '_Tuple2',
 			_0: _elm_lang$core$Native_Utils.update(
 				model,
-				{core: _p10._0}),
-			_1: A2(_elm_lang$core$Platform_Cmd$map, _minekoa$elm_text_editor$TextEditor$CoreMsg, _p10._1)
+				{core: _p11._0}),
+			_1: A2(_elm_lang$core$Platform_Cmd$map, _minekoa$elm_text_editor$TextEditor$CoreMsg, _p11._1)
 		};
 	});
 var _minekoa$elm_text_editor$TextEditor$input = F2(
 	function (s, model) {
-		var _p11 = model.enableComposer;
-		if (_p11 === true) {
+		var _p12 = model.enableComposer;
+		if (_p12 === true) {
 			return {
 				ctor: '_Tuple2',
 				_0: A3(_minekoa$elm_text_editor$TextEditor$eventLog, 'input (ignored)', s, model),
@@ -12233,11 +12268,11 @@ var _minekoa$elm_text_editor$TextEditor$input = F2(
 	});
 var _minekoa$elm_text_editor$TextEditor$keyDown = F2(
 	function (e, model) {
-		var _p12 = A2(
+		var _p13 = A2(
 			_minekoa$elm_text_editor$TextEditor_KeyBind$find,
 			{ctor: '_Tuple4', _0: e.ctrlKey, _1: e.altKey, _2: e.shiftKey, _3: e.keyCode},
 			model.keymap);
-		if (_p12.ctor === 'Just') {
+		if (_p13.ctor === 'Just') {
 			return A2(
 				_elm_lang$core$Tuple$mapFirst,
 				A2(
@@ -12247,7 +12282,7 @@ var _minekoa$elm_text_editor$TextEditor$keyDown = F2(
 				A2(
 					_minekoa$elm_text_editor$TextEditor$updateMap,
 					model,
-					_p12._0(model.core)));
+					_p13._0(model.core)));
 		} else {
 			return {
 				ctor: '_Tuple2',
@@ -12262,8 +12297,8 @@ var _minekoa$elm_text_editor$TextEditor$keyDown = F2(
 	});
 var _minekoa$elm_text_editor$TextEditor$update = F2(
 	function (msg, model) {
-		var _p13 = msg;
-		switch (_p13.ctor) {
+		var _p14 = msg;
+		switch (_p14.ctor) {
 			case 'CoreMsg':
 				return A2(
 					_elm_lang$core$Tuple$mapSecond,
@@ -12275,20 +12310,20 @@ var _minekoa$elm_text_editor$TextEditor$update = F2(
 								model,
 								{core: cm});
 						},
-						A2(_minekoa$elm_text_editor$TextEditor_Core$update, _p13._0, model.core)));
+						A2(_minekoa$elm_text_editor$TextEditor_Core$update, _p14._0, model.core)));
 			case 'Pasted':
-				var _p14 = _p13._0;
+				var _p15 = _p14._0;
 				return A2(
 					_elm_lang$core$Tuple$mapFirst,
-					A2(_minekoa$elm_text_editor$TextEditor$eventLog, 'pasted', _p14),
+					A2(_minekoa$elm_text_editor$TextEditor$eventLog, 'pasted', _p15),
 					A2(
 						_minekoa$elm_text_editor$TextEditor$updateMap,
 						model,
-						A2(_minekoa$elm_text_editor$TextEditor_Core_Commands$paste, _p14, model.core)));
+						A2(_minekoa$elm_text_editor$TextEditor_Core_Commands$paste, _p15, model.core)));
 			case 'Copied':
 				return A2(
 					_elm_lang$core$Tuple$mapFirst,
-					A2(_minekoa$elm_text_editor$TextEditor$eventLog, 'copied', _p13._0),
+					A2(_minekoa$elm_text_editor$TextEditor$eventLog, 'copied', _p14._0),
 					A2(
 						_minekoa$elm_text_editor$TextEditor$updateMap,
 						model,
@@ -12296,23 +12331,23 @@ var _minekoa$elm_text_editor$TextEditor$update = F2(
 			case 'Cutted':
 				return A2(
 					_elm_lang$core$Tuple$mapFirst,
-					A2(_minekoa$elm_text_editor$TextEditor$eventLog, 'cutted', _p13._0),
+					A2(_minekoa$elm_text_editor$TextEditor$eventLog, 'cutted', _p14._0),
 					A2(
 						_minekoa$elm_text_editor$TextEditor$updateMap,
 						model,
 						_minekoa$elm_text_editor$TextEditor_Core_Commands$cut(model.core)));
 			case 'Input':
-				return A2(_minekoa$elm_text_editor$TextEditor$input, _p13._0, model);
+				return A2(_minekoa$elm_text_editor$TextEditor$input, _p14._0, model);
 			case 'KeyDown':
-				return A2(_minekoa$elm_text_editor$TextEditor$keyDown, _p13._0, model);
+				return A2(_minekoa$elm_text_editor$TextEditor$keyDown, _p14._0, model);
 			case 'KeyPress':
-				return A2(_minekoa$elm_text_editor$TextEditor$keyPress, _p13._0, model);
+				return A2(_minekoa$elm_text_editor$TextEditor$keyPress, _p14._0, model);
 			case 'CompositionStart':
-				return A2(_minekoa$elm_text_editor$TextEditor$compositionStart, _p13._0, model);
+				return A2(_minekoa$elm_text_editor$TextEditor$compositionStart, _p14._0, model);
 			case 'CompositionUpdate':
-				return A2(_minekoa$elm_text_editor$TextEditor$compositionUpdate, _p13._0, model);
+				return A2(_minekoa$elm_text_editor$TextEditor$compositionUpdate, _p14._0, model);
 			case 'CompositionEnd':
-				return A2(_minekoa$elm_text_editor$TextEditor$compositionEnd, _p13._0, model);
+				return A2(_minekoa$elm_text_editor$TextEditor$compositionEnd, _p14._0, model);
 			case 'FocusIn':
 				var cm = model.core;
 				return {
@@ -12352,14 +12387,14 @@ var _minekoa$elm_text_editor$TextEditor$update = F2(
 						_minekoa$elm_text_editor$TextEditor_Core$doFocus(model.core))
 				};
 			default:
-				var _p17 = _p13._1;
-				var _p16 = _p13._0;
+				var _p18 = _p14._1;
+				var _p17 = _p14._0;
 				var rect = _minekoa$elm_text_editor$TextEditor$getBoundingClientRect(
 					_minekoa$elm_text_editor$TextEditor_Core$codeAreaID(model.core));
 				var ln = A2(
 					_elm_lang$core$Maybe$withDefault,
 					'',
-					A2(_minekoa$elm_text_editor$TextEditor_Buffer$line, _p16, model.core.buffer.contents));
+					A2(_minekoa$elm_text_editor$TextEditor_Buffer$line, _p17, model.core.buffer.contents));
 				var calc_w = _minekoa$elm_text_editor$TextEditor$calcTextWidth(
 					_minekoa$elm_text_editor$TextEditor_Core$rulerID(model.core));
 				var calc_col = F3(
@@ -12384,13 +12419,13 @@ var _minekoa$elm_text_editor$TextEditor$update = F2(
 							}
 						}
 					});
-				var col = A3(calc_col, ln, 0, _p17.x - rect.left);
-				var _p15 = A2(
+				var col = A3(calc_col, ln, 0, _p18.x - rect.left);
+				var _p16 = A2(
 					_minekoa$elm_text_editor$TextEditor_Core_Commands$moveAt,
-					{ctor: '_Tuple2', _0: _p16, _1: col},
+					{ctor: '_Tuple2', _0: _p17, _1: col},
 					model.core);
-				var cm = _p15._0;
-				var cc = _p15._1;
+				var cm = _p16._0;
+				var cc = _p16._1;
 				return {
 					ctor: '_Tuple2',
 					_0: _minekoa$elm_text_editor$TextEditor$blinkBlock(
@@ -12402,25 +12437,25 @@ var _minekoa$elm_text_editor$TextEditor$update = F2(
 								'pos=',
 								A2(
 									_elm_lang$core$Basics_ops['++'],
-									_elm_lang$core$Basics$toString(_p17.x),
+									_elm_lang$core$Basics$toString(_p18.x),
 									A2(
 										_elm_lang$core$Basics_ops['++'],
 										',',
 										A2(
 											_elm_lang$core$Basics_ops['++'],
-											_elm_lang$core$Basics$toString(_p17.y),
+											_elm_lang$core$Basics$toString(_p18.y),
 											A2(
 												_elm_lang$core$Basics_ops['++'],
 												'; offsetx=',
 												A2(
 													_elm_lang$core$Basics_ops['++'],
-													_elm_lang$core$Basics$toString(_p17.x - rect.left),
+													_elm_lang$core$Basics$toString(_p18.x - rect.left),
 													A2(
 														_elm_lang$core$Basics_ops['++'],
 														'; row=',
 														A2(
 															_elm_lang$core$Basics_ops['++'],
-															_elm_lang$core$Basics$toString(_p16),
+															_elm_lang$core$Basics$toString(_p17),
 															A2(
 																_elm_lang$core$Basics_ops['++'],
 																'; calced_col=',
