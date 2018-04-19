@@ -10,6 +10,7 @@ module TextEditor.Core exposing
     , codeAreaID
     , lineNumAreaID
     , rulerID
+    , prototyleEmID
     , cursorID
     , inputAreaID
 
@@ -123,6 +124,10 @@ lineNumAreaID model =
 rulerID : Model -> String
 rulerID model =
     model.id ++ "-editor-ruler"
+
+prototyleEmID : Model -> String
+prototyleEmID model =
+    model.id ++ "-editor-prototypeEm"
 
 cursorID : Model -> String
 cursorID model =

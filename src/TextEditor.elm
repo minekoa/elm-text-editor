@@ -358,7 +358,7 @@ lineNumArea model =
             ] <|
             List.map
                 (λ n -> div [ class "line-num"
-                             , style [ ("height", "1em")
+                             , style [ ("height", 1 |> emToPxString model)
                                      , ("text-wrap", "none")]
                              ] [ text (toString n) ])
                 (List.range 1 (List.length contents))
@@ -371,7 +371,7 @@ codeArea model =
                 , ("flex-grow", "1") -- "line" の行末以降のタップでもカーソル移動したいので、いっぱいまで伸びるようにしておく
                 ]
         ]
-        [ ruler <| rulerID model
+        [ ruler model
         , cursorLayer model
         , markerLayer model
         , codeLayer model
@@ -391,7 +391,7 @@ codeLayer model =
             List.indexedMap
                 (λ n ln ->
                       div [ class "line"
-                          , style [ ("height", "1em")
+                          , style [ ("height", 1 |> emToPxString model)
                                   , ("width", "100%")
                                   , ("text-wrap", "none")
                                   , ("white-space", "pre")
@@ -430,10 +430,10 @@ cursorLayer model =
                      , ("flex-direction", "row")
                      , ("flex-wrap", "nowrap")
                      , ("justify-content", "flex-start")
-                     , ("height", "1em")
+                     , ("height", 1 |> emToPxString model)
                      , ("align-items" , "baseline")
 
-                     , ("top" , "calc( " ++ (model.buffer.cursor.row |> toString) ++ "em + 0.1em )")
+                     , ("top" , model.buffer.cursor.row |> emToPxString model)
                      , ("left", "0")
                      ]
                ]
@@ -456,7 +456,8 @@ cursorLayer model =
                                 , style [ ("border", "none"), ("padding", "0"), ("margin","0"), ("outline", "none")
                                         , ("overflow", "hidden"), ("opacity", "0")
                                         , ("resize", "none")
-                                        , ("height", "1em"), ("font-size", "1em") -- 親のスタイルにあわせて大きさを買えるために必要
+                                        , ("height", 1 |> emToPxString model)
+                                        , ("font-size", "1em") -- 親のスタイルにあわせて大きさを買えるために必要
                                         , ("position", "absolute")
                                         ]
                                 ]
@@ -512,10 +513,10 @@ markerLayer model =
                     ]
                     ( List.map (\ m ->
                                   div [ style [ ("position", "absolute")
-                                              , ("top" , (m.row |> toString) ++ "em")
-                                              , ("left" , (m.begin_px |> toString |> flip (++) "px"))
-                                              , ("width", (m.end_px - m.begin_px |> toString |> flip (++) "px"))
-                                              , ("height", "1em")
+                                              , ("top" , m.row |> emToPxString model )
+                                              , ("left" , m.begin_px |> toPxString)
+                                              , ("width", m.end_px - m.begin_px |> toPxString)
+                                              , ("height", 1 |> emToPxString model )
 
                                               , ("background-color", "blue")
                                               , ("color","white")
@@ -561,8 +562,8 @@ padToCursor pos model =
 
 
 
-ruler : String -> Html msg
-ruler ruler_id = 
+ruler : Core.Model -> Html msg
+ruler model = 
     div [ class "ruler-layer"
         , style [ ("position", "absolute")
                 , ("overflow", "hidden")
@@ -571,11 +572,16 @@ ruler ruler_id =
                 , ("pointer-events", "none") -- マウスイベントの対象外にする
                 ]
         ]
-        [ span [ id ruler_id
+        [ span [ id <| rulerID model
                , style [ ("white-space", "pre")
                        ]
                ]
                []
+        , span [ id <| prototyleEmID model
+               , style [ ("white-space", "pre")
+                       ]
+               ]
+               [ text "箱"]
         ]
 
 compositionPreview : Maybe String -> Html msg
@@ -600,7 +606,7 @@ cursorView model =
     in
     span [style [ ("background-color", if model.focus then "blue" else "gray" )
                 , ("opacity", if model.focus && (blink_off model.blink) then "0.0" else "0.5")
-                , ("height", "1em")
+                , ("height", 1 |> emToPxString model )
                 , ("width", "3px")
                 , ("z-index", "99")
                 ]
@@ -724,6 +730,23 @@ selecteddata selected_str =
         |> Json.Encode.string
         |> property "selecteddata"
 
+
+-- em prottype
+--     height : 1em しても、マルチバイト文字などでは文字表示にひつような高さが確保できない（ことがおおい）ため、
+--     一度マルチバイト文字をレンダリングさせて、高さのpxを測り、それを指定するようにする
+
+emToPx : Core.Model -> Int -> Int
+emToPx model n =
+    prototyleEmID model
+        |> getBoundingClientRect
+        |> .height
+        |>  flip (*) n
+
+toPxString : Int -> String
+toPxString = toString >> flip (++) "px"
+
+emToPxString : Core.Model -> Int -> String
+emToPxString model = emToPx model >> toPxString
 
 ------------------------------------------------------------
 -- Native (Mice)
