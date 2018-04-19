@@ -458,6 +458,7 @@ cursorLayer model =
                                         , ("resize", "none")
                                         , ("height", 1 |> emToPxString model)
                                         , ("font-size", "1em") -- 親のスタイルにあわせて大きさを買えるために必要
+                                        , ("font-family", "inherit")
                                         , ("position", "absolute")
                                         ]
                                 ]
