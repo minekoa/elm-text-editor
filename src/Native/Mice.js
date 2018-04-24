@@ -119,6 +119,18 @@ var _minekoa$elm_text_editor$Native_Mice = function() {
             }
         });
 
+        /* IMEを考慮した input_area のクリア制御
+         *      - input
+         *      - compositionstart
+         *      - compositionend
+         *      - keypress
+         * note:
+         *   一見 Elm 世界でやれそうに見えるが、
+         *   TEA は、1周の処理が終えるまでの間、 以降のJSイベントを待たせてくれるわけではないので、
+         *   結果、イベントが非同期となってしまい、状態遷移が上手く行かない。
+         *   よって、JS 世界で行う必要がある
+         */
+
         input_area.addEventListener( "input", e => {
             if (!input_area.enableComposer) {
                 input_area.value = "";
@@ -143,6 +155,17 @@ var _minekoa$elm_text_editor$Native_Mice = function() {
 
             input_area.enableComposer = false;
         });
+
+
+        /* クリップボード制御
+         *      - paste
+         *      - copy
+         *      - cut
+         * note:
+         *   クリップボードイベントはセキュリティのため、
+         *   イベントハンドラ内でないと、クリップボードに対する操作ができない
+         *   (Firefox は厳しくブロックしてくる為、paste を execCommand でTEAから叩く手段もダメ)
+         */
 
         input_area.addEventListener( "paste", e => {
             e.preventDefault();
