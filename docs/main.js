@@ -16013,7 +16013,7 @@ var _minekoa$elm_text_editor$StyleSetter$fontSizeSelector = F2(
 			_elm_lang$html$Html$div,
 			{
 				ctor: '::',
-				_0: _elm_lang$html$Html_Attributes$class('style-palette'),
+				_0: _elm_lang$html$Html_Attributes$class('menu-palette'),
 				_1: {
 					ctor: '::',
 					_0: _elm_lang$html$Html_Attributes$style(

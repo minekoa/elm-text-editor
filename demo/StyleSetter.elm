@@ -227,7 +227,7 @@ fontFamilySelector tagger fontList =
 
 fontSizeSelector : (String -> Msg) -> SelectableList -> Html Msg
 fontSizeSelector tagger fontsizeList =
-    div [ class "style-palette"
+    div [ class "menu-palette"
         , style [ ("flex-grow", "1"), ("display", "flex"), ("flex-direction", "row"), ("flex-wrap","no-wrap")
                 ]
         ] <|
