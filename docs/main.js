@@ -13368,10 +13368,11 @@ var _minekoa$elm_text_editor$Filer$fileSaveView = function (model) {
 var _minekoa$elm_text_editor$Filer$ReadFile = function (a) {
 	return {ctor: 'ReadFile', _0: a};
 };
-var _minekoa$elm_text_editor$Filer$update = F2(
-	function (msg, model) {
-		var _p0 = msg;
-		switch (_p0.ctor) {
+var _minekoa$elm_text_editor$Filer$update = F3(
+	function (msg, _p0, model) {
+		var _p1 = _p0;
+		var _p2 = msg;
+		switch (_p2.ctor) {
 			case 'TouchSaveSubMenu':
 				return {
 					ctor: '_Tuple2',
@@ -13405,8 +13406,8 @@ var _minekoa$elm_text_editor$Filer$update = F2(
 					_1: _elm_lang$core$Platform_Cmd$none
 				};
 			case 'FilesDropped':
-				var _p1 = _elm_lang$core$List$head(_p0._0);
-				if (_p1.ctor === 'Just') {
+				var _p3 = _elm_lang$core$List$head(_p2._0);
+				if (_p3.ctor === 'Just') {
 					return {
 						ctor: '_Tuple2',
 						_0: _elm_lang$core$Native_Utils.update(
@@ -13415,7 +13416,7 @@ var _minekoa$elm_text_editor$Filer$update = F2(
 						_1: A2(
 							_elm_lang$core$Task$perform,
 							_minekoa$elm_text_editor$Filer$ReadFile,
-							_elm_lang$core$Task$succeed(_p1._0))
+							_elm_lang$core$Task$succeed(_p3._0))
 					};
 				} else {
 					return {ctor: '_Tuple2', _0: model, _1: _elm_lang$core$Platform_Cmd$none};
@@ -13427,7 +13428,11 @@ var _minekoa$elm_text_editor$Filer$update = F2(
 					ctor: '_Tuple2',
 					_0: model,
 					_1: _minekoa$elm_text_editor$FilerPorts$filer_saveFile(
-						{ctor: '_Tuple2', _0: 'a.txt', _1: 'xyz'})
+						{
+							ctor: '_Tuple2',
+							_0: _p1._0,
+							_1: A2(_elm_lang$core$String$join, '\n', _p1._1.contents)
+						})
 				};
 		}
 	});
@@ -13523,8 +13528,8 @@ var _minekoa$elm_text_editor$Filer$fileLoadView = function (model) {
 		});
 };
 var _minekoa$elm_text_editor$Filer$menuPalette = function (model) {
-	var _p2 = model.selectedSubMenu;
-	if (_p2.ctor === 'Load') {
+	var _p4 = model.selectedSubMenu;
+	if (_p4.ctor === 'Load') {
 		return A2(
 			_elm_lang$html$Html$div,
 			{
@@ -17476,7 +17481,15 @@ var _minekoa$elm_text_editor$Main$update = F2(
 				};
 			default:
 				var _p12 = _p3._0;
-				var _p8 = A2(_minekoa$elm_text_editor$Filer$update, _p12, model.filer);
+				var _p8 = A3(
+					_minekoa$elm_text_editor$Filer$update,
+					_p12,
+					{
+						ctor: '_Tuple2',
+						_0: model.currentBufferName,
+						_1: _minekoa$elm_text_editor$TextEditor$buffer(model.editor)
+					},
+					model.filer);
 				var m = _p8._0;
 				var c = _p8._1;
 				var _p9 = _p12;

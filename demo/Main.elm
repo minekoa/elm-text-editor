@@ -162,7 +162,7 @@ update msg model =
         -- Filer
         FilerMsg fmsg ->
             let
-                (m, c) = Filer.update fmsg model.filer
+                (m, c) = Filer.update fmsg (model.currentBufferName, Editor.buffer model.editor) model.filer
             in
                 case fmsg of
                     Filer.ReadFile file ->

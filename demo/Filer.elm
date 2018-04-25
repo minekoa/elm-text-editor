@@ -12,6 +12,7 @@ import Html.Events exposing (..)
 import Task exposing (Task)
 import FileReader
 
+import TextEditor.Buffer as Buffer
 import FilerPorts exposing (..)
 
 type alias Model =
@@ -38,8 +39,8 @@ init =
     , inDropZone = False
     }
 
-update : Msg -> Model -> (Model, Cmd Msg)
-update msg model =
+update : Msg -> (String, Buffer.Model) -> Model -> (Model, Cmd Msg)
+update msg (fname, buf) model =
     case msg of
         TouchSaveSubMenu ->
             ( { model | selectedSubMenu = Save }
@@ -69,7 +70,7 @@ update msg model =
             ( model, Cmd.none )
         SaveFile ->
             ( model
-            , filer_saveFile ("a.txt", "xyz")
+            , filer_saveFile (fname, String.join "\n" buf.contents)
             )
 
 view : Model -> Html Msg
