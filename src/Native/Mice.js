@@ -72,7 +72,7 @@ var _minekoa$elm_text_editor$Native_Mice = function() {
         const w = element.offsetWidth;
         element.textContent = null;
 
-        return w
+        return w;
     }
 
     function getBoundingClientRect(_id) {
