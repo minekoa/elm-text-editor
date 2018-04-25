@@ -13322,6 +13322,12 @@ var _norpan$elm_file_reader$FileReader$dropZone = function (_p2) {
 		_norpan$elm_file_reader$FileReader$dataFormatAttributes(_p3.dataFormat));
 };
 
+var _minekoa$elm_text_editor$FilerPorts$filer_saveFile = _elm_lang$core$Native_Platform.outgoingPort(
+	'filer_saveFile',
+	function (v) {
+		return [v._0, v._1];
+	});
+
 var _minekoa$elm_text_editor$Filer$Model = F2(
 	function (a, b) {
 		return {selectedSubMenu: a, inDropZone: b};
@@ -13329,6 +13335,36 @@ var _minekoa$elm_text_editor$Filer$Model = F2(
 var _minekoa$elm_text_editor$Filer$Save = {ctor: 'Save'};
 var _minekoa$elm_text_editor$Filer$Load = {ctor: 'Load'};
 var _minekoa$elm_text_editor$Filer$init = {selectedSubMenu: _minekoa$elm_text_editor$Filer$Load, inDropZone: false};
+var _minekoa$elm_text_editor$Filer$SaveFile = {ctor: 'SaveFile'};
+var _minekoa$elm_text_editor$Filer$fileSaveView = function (model) {
+	return A2(
+		_elm_lang$html$Html$div,
+		{
+			ctor: '::',
+			_0: _elm_lang$html$Html_Attributes$class('filer-save'),
+			_1: {ctor: '[]'}
+		},
+		{
+			ctor: '::',
+			_0: A2(
+				_elm_lang$html$Html$div,
+				{
+					ctor: '::',
+					_0: _elm_lang$html$Html_Attributes$class('file_input_label'),
+					_1: {
+						ctor: '::',
+						_0: _elm_lang$html$Html_Events$onClick(_minekoa$elm_text_editor$Filer$SaveFile),
+						_1: {ctor: '[]'}
+					}
+				},
+				{
+					ctor: '::',
+					_0: _elm_lang$html$Html$text('Save current buffer'),
+					_1: {ctor: '[]'}
+				}),
+			_1: {ctor: '[]'}
+		});
+};
 var _minekoa$elm_text_editor$Filer$ReadFile = function (a) {
 	return {ctor: 'ReadFile', _0: a};
 };
@@ -13384,8 +13420,15 @@ var _minekoa$elm_text_editor$Filer$update = F2(
 				} else {
 					return {ctor: '_Tuple2', _0: model, _1: _elm_lang$core$Platform_Cmd$none};
 				}
-			default:
+			case 'ReadFile':
 				return {ctor: '_Tuple2', _0: model, _1: _elm_lang$core$Platform_Cmd$none};
+			default:
+				return {
+					ctor: '_Tuple2',
+					_0: model,
+					_1: _minekoa$elm_text_editor$FilerPorts$filer_saveFile(
+						{ctor: '_Tuple2', _0: 'a.txt', _1: 'xyz'})
+				};
 		}
 	});
 var _minekoa$elm_text_editor$Filer$FilesDropped = function (a) {
@@ -13504,7 +13547,7 @@ var _minekoa$elm_text_editor$Filer$menuPalette = function (model) {
 			},
 			{
 				ctor: '::',
-				_0: _elm_lang$html$Html$text('save'),
+				_0: _minekoa$elm_text_editor$Filer$fileSaveView(model),
 				_1: {ctor: '[]'}
 			});
 	}

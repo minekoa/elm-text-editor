@@ -12,6 +12,8 @@ import Html.Events exposing (..)
 import Task exposing (Task)
 import FileReader
 
+import FilerPorts exposing (..)
+
 type alias Model =
     { selectedSubMenu: SubMenu
     , inDropZone : Bool
@@ -28,7 +30,7 @@ type Msg
     | DropZoneLeaved    
     | FilesDropped (List FileReader.File)
     | ReadFile FileReader.File
-
+    | SaveFile
 
 init : Model
 init =
@@ -65,6 +67,10 @@ update msg model =
                     ( model, Cmd.none )
         ReadFile _ ->
             ( model, Cmd.none )
+        SaveFile ->
+            ( model
+            , filer_saveFile ("a.txt", "xyz")
+            )
 
 view : Model -> Html Msg
 view model =
@@ -99,7 +105,7 @@ menuPalette model =
         Load ->
             div [class "menu-palette"] [ fileLoadView model ]
         Save ->
-            div [class "menu-palette"] [ text "save" ]
+            div [class "menu-palette"] [ fileSaveView model ]
 
 
 fileLoadView : Model -> Html Msg
@@ -129,4 +135,14 @@ fileLoadView model =
                   ]
               ]
         ]
+
+fileSaveView : Model -> Html Msg
+fileSaveView model =
+    div [ class "filer-save"]
+        [ div [ class "file_input_label"
+              , onClick SaveFile
+              ]
+              [ text "Save current buffer" ]
+        ]
+
 
