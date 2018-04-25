@@ -1,5 +1,3 @@
-
-
 .style-setter {
     --menu-item-list-width: 16em;
 
@@ -11,8 +9,6 @@
     -webkit-user-select: none;
     user-select: none;
 }
-
-
 
 .color-palette-item {
     height: 2em;
