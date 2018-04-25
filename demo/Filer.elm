@@ -13,21 +13,40 @@ import Task exposing (Task)
 import FileReader
 
 type alias Model =
-    { inDropZone : Bool }
+    { selectedSubMenu: SubMenu
+    , inDropZone : Bool
+    }
+
+type SubMenu
+    = Load
+    | Save
 
 type Msg
-    = DropZoneEntered
+    = TouchLoadSubMenu
+    | TouchSaveSubMenu
+    | DropZoneEntered
     | DropZoneLeaved    
     | FilesDropped (List FileReader.File)
     | ReadFile FileReader.File
 
+
 init : Model
 init =
-    { inDropZone = False }
+    { selectedSubMenu = Load
+    , inDropZone = False
+    }
 
 update : Msg -> Model -> (Model, Cmd Msg)
 update msg model =
     case msg of
+        TouchSaveSubMenu ->
+            ( { model | selectedSubMenu = Save }
+            , Cmd.none
+            )
+        TouchLoadSubMenu ->
+            ( { model | selectedSubMenu = Load }
+            , Cmd.none
+            )
         DropZoneEntered ->
             ( { model | inDropZone = True }
             , Cmd.none
@@ -49,6 +68,47 @@ update msg model =
 
 view : Model -> Html Msg
 view model =
+    div [ class "menu-root"
+        , style [ ("flex-grow", "2")
+                , ("min-height", "17em")
+                ]
+        ]
+        [ menuItemsView model
+        , menuPalette model
+        ]
+
+menuItemsView : Model -> Html Msg
+menuItemsView model =                
+    div [ class "menu-itemlist"
+        , style [ ("display", "flex"), ("flex-direction", "column")
+                , ("height", "16em")
+                , ("justify-content", "flex-start")
+                ]
+        ]
+    [ div [ onClick TouchLoadSubMenu
+          , class <| if model.selectedSubMenu == Load then "menu-item-active" else "menu-item"
+          ]
+          [ span [] [text "Load"]
+          ]
+    , div [ onClick TouchSaveSubMenu
+          , class <| if model.selectedSubMenu == Save then "menu-item-active" else "menu-item"
+          ]
+          [ span [] [text "Save "]
+          ]
+    ]
+
+
+
+menuPalette model =
+    case model.selectedSubMenu of
+        Load ->
+            div [class "menu-palette"] [ fileLoadView model ]
+        Save ->
+            div [class "menu-palette"] [ text "save" ]
+
+
+fileLoadView : Model -> Html Msg
+fileLoadView model =
     div ( [ class "filer-dropzone"
           , style <|
                 if model.inDropZone

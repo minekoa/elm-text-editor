@@ -2,8 +2,11 @@
 .filer-dropzone {
     margin: 1em;
     border: 3px dotted gray;
+    border-radius: 1em;
 
-    min-height: 15rem;
+
+/*    min-height: 15rem; */
+    height: calc( 100% - 2em - 6px ) ;
 
     display: flex;
     align-items: center;

@@ -1,0 +1,75 @@
+
+:root {
+    --menu-item-list-width: 12em
+}
+
+.menu-root {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+
+    background-color: whitesmoke;
+    color: gray;
+    
+    -moz-user-select: -moz-none;
+    -khtml-user-select: none;
+    -webkit-user-select: none;
+    user-select: none;
+}
+
+.menu-itemlist {
+    padding-top: 0.5em;
+}
+
+.menu-item {
+    vertical-align: middle;
+    width: var( --menu-item-list-width );
+    height: 2em;
+    padding-left: 0.5em;
+
+    border-bottom: 1px solid white;
+}
+
+.menu-item-active {
+    vertical-align: middle;
+    width: var( --menu-item-list-width );
+    height: 2em;
+    padding-left: 0.5em;
+
+    border-bottom: 1px solid white;
+
+    /* 吹き出し */
+    position: relative;
+}
+
+.menu-item-active::before {
+    content: "";
+    position: absolute;
+    top  : calc( 1em - 0.707em );
+    left : calc( var( --menu-item-list-width ) + 0.5em - 0.707em );
+    padding: 0.707em; /*1/√2*/
+
+    border-style: none none solid solid;
+    border-width: 1px;
+    border-color: black;/*gainsboro;*/
+    background-color: white;
+
+    transform: rotate(45deg);
+}
+
+.menu-palette {
+    flex-grow: 1;
+
+    padding-left: 1.5em;
+    height: 16em;
+    overflow: auto;
+    background-color: white;
+
+    border-radius: 0.4em 0 0 0.4em;
+
+    border-style: solid none solid solid;
+    border-width: 1px;
+    border-color: black;/*gainsboro;*/
+}
+

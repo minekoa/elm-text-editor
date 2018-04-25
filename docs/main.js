@@ -10672,6 +10672,18 @@ var _minekoa$elm_text_editor$Native_Mice = function() {
             }
         });
 
+        /* IMEを考慮した input_area のクリア制御
+         *      - input
+         *      - compositionstart
+         *      - compositionend
+         *      - keypress
+         * note:
+         *   一見 Elm 世界でやれそうに見えるが、
+         *   TEA は、1周の処理が終えるまでの間、 以降のJSイベントを待たせてくれるわけではないので、
+         *   結果、イベントが非同期となってしまい、状態遷移が上手く行かない。
+         *   よって、JS 世界で行う必要がある
+         */
+
         input_area.addEventListener( "input", e => {
             if (!input_area.enableComposer) {
                 input_area.value = "";
@@ -10696,6 +10708,17 @@ var _minekoa$elm_text_editor$Native_Mice = function() {
 
             input_area.enableComposer = false;
         });
+
+
+        /* クリップボード制御
+         *      - paste
+         *      - copy
+         *      - cut
+         * note:
+         *   クリップボードイベントはセキュリティのため、
+         *   イベントハンドラ内でないと、クリップボードに対する操作ができない
+         *   (Firefox は厳しくブロックしてくる為、paste を execCommand でTEAから叩く手段もダメ)
+         */
 
         input_area.addEventListener( "paste", e => {
             e.preventDefault();
@@ -11315,7 +11338,11 @@ var _minekoa$elm_text_editor$TextEditor$markerLayer = function (model) {
 															_1: {
 																ctor: '::',
 																_0: {ctor: '_Tuple2', _0: 'white-space', _1: 'pre'},
-																_1: {ctor: '[]'}
+																_1: {
+																	ctor: '::',
+																	_0: {ctor: '_Tuple2', _0: 'pointer-events', _1: 'auto'},
+																	_1: {ctor: '[]'}
+																}
 															}
 														}
 													}
@@ -11324,7 +11351,11 @@ var _minekoa$elm_text_editor$TextEditor$markerLayer = function (model) {
 										}
 									}
 								}),
-							_1: {ctor: '[]'}
+							_1: {
+								ctor: '::',
+								_0: _elm_lang$html$Html_Attributes$contenteditable(true),
+								_1: {ctor: '[]'}
+							}
 						},
 						{
 							ctor: '::',
@@ -13291,10 +13322,13 @@ var _norpan$elm_file_reader$FileReader$dropZone = function (_p2) {
 		_norpan$elm_file_reader$FileReader$dataFormatAttributes(_p3.dataFormat));
 };
 
-var _minekoa$elm_text_editor$Filer$init = {inDropZone: false};
-var _minekoa$elm_text_editor$Filer$Model = function (a) {
-	return {inDropZone: a};
-};
+var _minekoa$elm_text_editor$Filer$Model = F2(
+	function (a, b) {
+		return {selectedSubMenu: a, inDropZone: b};
+	});
+var _minekoa$elm_text_editor$Filer$Save = {ctor: 'Save'};
+var _minekoa$elm_text_editor$Filer$Load = {ctor: 'Load'};
+var _minekoa$elm_text_editor$Filer$init = {selectedSubMenu: _minekoa$elm_text_editor$Filer$Load, inDropZone: false};
 var _minekoa$elm_text_editor$Filer$ReadFile = function (a) {
 	return {ctor: 'ReadFile', _0: a};
 };
@@ -13302,6 +13336,22 @@ var _minekoa$elm_text_editor$Filer$update = F2(
 	function (msg, model) {
 		var _p0 = msg;
 		switch (_p0.ctor) {
+			case 'TouchSaveSubMenu':
+				return {
+					ctor: '_Tuple2',
+					_0: _elm_lang$core$Native_Utils.update(
+						model,
+						{selectedSubMenu: _minekoa$elm_text_editor$Filer$Save}),
+					_1: _elm_lang$core$Platform_Cmd$none
+				};
+			case 'TouchLoadSubMenu':
+				return {
+					ctor: '_Tuple2',
+					_0: _elm_lang$core$Native_Utils.update(
+						model,
+						{selectedSubMenu: _minekoa$elm_text_editor$Filer$Load}),
+					_1: _elm_lang$core$Platform_Cmd$none
+				};
 			case 'DropZoneEntered':
 				return {
 					ctor: '_Tuple2',
@@ -13343,7 +13393,7 @@ var _minekoa$elm_text_editor$Filer$FilesDropped = function (a) {
 };
 var _minekoa$elm_text_editor$Filer$DropZoneLeaved = {ctor: 'DropZoneLeaved'};
 var _minekoa$elm_text_editor$Filer$DropZoneEntered = {ctor: 'DropZoneEntered'};
-var _minekoa$elm_text_editor$Filer$view = function (model) {
+var _minekoa$elm_text_editor$Filer$fileLoadView = function (model) {
 	return A2(
 		_elm_lang$html$Html$div,
 		A2(
@@ -13427,6 +13477,154 @@ var _minekoa$elm_text_editor$Filer$view = function (model) {
 					}
 				}),
 			_1: {ctor: '[]'}
+		});
+};
+var _minekoa$elm_text_editor$Filer$menuPalette = function (model) {
+	var _p2 = model.selectedSubMenu;
+	if (_p2.ctor === 'Load') {
+		return A2(
+			_elm_lang$html$Html$div,
+			{
+				ctor: '::',
+				_0: _elm_lang$html$Html_Attributes$class('menu-palette'),
+				_1: {ctor: '[]'}
+			},
+			{
+				ctor: '::',
+				_0: _minekoa$elm_text_editor$Filer$fileLoadView(model),
+				_1: {ctor: '[]'}
+			});
+	} else {
+		return A2(
+			_elm_lang$html$Html$div,
+			{
+				ctor: '::',
+				_0: _elm_lang$html$Html_Attributes$class('menu-palette'),
+				_1: {ctor: '[]'}
+			},
+			{
+				ctor: '::',
+				_0: _elm_lang$html$Html$text('save'),
+				_1: {ctor: '[]'}
+			});
+	}
+};
+var _minekoa$elm_text_editor$Filer$TouchSaveSubMenu = {ctor: 'TouchSaveSubMenu'};
+var _minekoa$elm_text_editor$Filer$TouchLoadSubMenu = {ctor: 'TouchLoadSubMenu'};
+var _minekoa$elm_text_editor$Filer$menuItemsView = function (model) {
+	return A2(
+		_elm_lang$html$Html$div,
+		{
+			ctor: '::',
+			_0: _elm_lang$html$Html_Attributes$class('menu-itemlist'),
+			_1: {
+				ctor: '::',
+				_0: _elm_lang$html$Html_Attributes$style(
+					{
+						ctor: '::',
+						_0: {ctor: '_Tuple2', _0: 'display', _1: 'flex'},
+						_1: {
+							ctor: '::',
+							_0: {ctor: '_Tuple2', _0: 'flex-direction', _1: 'column'},
+							_1: {
+								ctor: '::',
+								_0: {ctor: '_Tuple2', _0: 'height', _1: '16em'},
+								_1: {
+									ctor: '::',
+									_0: {ctor: '_Tuple2', _0: 'justify-content', _1: 'flex-start'},
+									_1: {ctor: '[]'}
+								}
+							}
+						}
+					}),
+				_1: {ctor: '[]'}
+			}
+		},
+		{
+			ctor: '::',
+			_0: A2(
+				_elm_lang$html$Html$div,
+				{
+					ctor: '::',
+					_0: _elm_lang$html$Html_Events$onClick(_minekoa$elm_text_editor$Filer$TouchLoadSubMenu),
+					_1: {
+						ctor: '::',
+						_0: _elm_lang$html$Html_Attributes$class(
+							_elm_lang$core$Native_Utils.eq(model.selectedSubMenu, _minekoa$elm_text_editor$Filer$Load) ? 'menu-item-active' : 'menu-item'),
+						_1: {ctor: '[]'}
+					}
+				},
+				{
+					ctor: '::',
+					_0: A2(
+						_elm_lang$html$Html$span,
+						{ctor: '[]'},
+						{
+							ctor: '::',
+							_0: _elm_lang$html$Html$text('Load'),
+							_1: {ctor: '[]'}
+						}),
+					_1: {ctor: '[]'}
+				}),
+			_1: {
+				ctor: '::',
+				_0: A2(
+					_elm_lang$html$Html$div,
+					{
+						ctor: '::',
+						_0: _elm_lang$html$Html_Events$onClick(_minekoa$elm_text_editor$Filer$TouchSaveSubMenu),
+						_1: {
+							ctor: '::',
+							_0: _elm_lang$html$Html_Attributes$class(
+								_elm_lang$core$Native_Utils.eq(model.selectedSubMenu, _minekoa$elm_text_editor$Filer$Save) ? 'menu-item-active' : 'menu-item'),
+							_1: {ctor: '[]'}
+						}
+					},
+					{
+						ctor: '::',
+						_0: A2(
+							_elm_lang$html$Html$span,
+							{ctor: '[]'},
+							{
+								ctor: '::',
+								_0: _elm_lang$html$Html$text('Save '),
+								_1: {ctor: '[]'}
+							}),
+						_1: {ctor: '[]'}
+					}),
+				_1: {ctor: '[]'}
+			}
+		});
+};
+var _minekoa$elm_text_editor$Filer$view = function (model) {
+	return A2(
+		_elm_lang$html$Html$div,
+		{
+			ctor: '::',
+			_0: _elm_lang$html$Html_Attributes$class('menu-root'),
+			_1: {
+				ctor: '::',
+				_0: _elm_lang$html$Html_Attributes$style(
+					{
+						ctor: '::',
+						_0: {ctor: '_Tuple2', _0: 'flex-grow', _1: '2'},
+						_1: {
+							ctor: '::',
+							_0: {ctor: '_Tuple2', _0: 'min-height', _1: '17em'},
+							_1: {ctor: '[]'}
+						}
+					}),
+				_1: {ctor: '[]'}
+			}
+		},
+		{
+			ctor: '::',
+			_0: _minekoa$elm_text_editor$Filer$menuItemsView(model),
+			_1: {
+				ctor: '::',
+				_0: _minekoa$elm_text_editor$Filer$menuPalette(model),
+				_1: {ctor: '[]'}
+			}
 		});
 };
 
