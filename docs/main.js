@@ -10625,7 +10625,7 @@ var _minekoa$elm_text_editor$Native_Mice = function() {
         const w = element.offsetWidth;
         element.textContent = null;
 
-        return w
+        return w;
     }
 
     function getBoundingClientRect(_id) {
@@ -13517,28 +13517,7 @@ var _minekoa$elm_text_editor$Filer$menuItemsView = function (model) {
 		{
 			ctor: '::',
 			_0: _elm_lang$html$Html_Attributes$class('menu-itemlist'),
-			_1: {
-				ctor: '::',
-				_0: _elm_lang$html$Html_Attributes$style(
-					{
-						ctor: '::',
-						_0: {ctor: '_Tuple2', _0: 'display', _1: 'flex'},
-						_1: {
-							ctor: '::',
-							_0: {ctor: '_Tuple2', _0: 'flex-direction', _1: 'column'},
-							_1: {
-								ctor: '::',
-								_0: {ctor: '_Tuple2', _0: 'height', _1: '16em'},
-								_1: {
-									ctor: '::',
-									_0: {ctor: '_Tuple2', _0: 'justify-content', _1: 'flex-start'},
-									_1: {ctor: '[]'}
-								}
-							}
-						}
-					}),
-				_1: {ctor: '[]'}
-			}
+			_1: {ctor: '[]'}
 		},
 		{
 			ctor: '::',
@@ -13601,20 +13580,24 @@ var _minekoa$elm_text_editor$Filer$view = function (model) {
 		_elm_lang$html$Html$div,
 		{
 			ctor: '::',
-			_0: _elm_lang$html$Html_Attributes$class('menu-root'),
+			_0: _elm_lang$html$Html_Attributes$class('filer-menu'),
 			_1: {
 				ctor: '::',
-				_0: _elm_lang$html$Html_Attributes$style(
-					{
-						ctor: '::',
-						_0: {ctor: '_Tuple2', _0: 'flex-grow', _1: '2'},
-						_1: {
+				_0: _elm_lang$html$Html_Attributes$class('menu-root'),
+				_1: {
+					ctor: '::',
+					_0: _elm_lang$html$Html_Attributes$style(
+						{
 							ctor: '::',
-							_0: {ctor: '_Tuple2', _0: 'min-height', _1: '17em'},
-							_1: {ctor: '[]'}
-						}
-					}),
-				_1: {ctor: '[]'}
+							_0: {ctor: '_Tuple2', _0: 'flex-grow', _1: '2'},
+							_1: {
+								ctor: '::',
+								_0: {ctor: '_Tuple2', _0: 'min-height', _1: '17em'},
+								_1: {ctor: '[]'}
+							}
+						}),
+					_1: {ctor: '[]'}
+				}
 			}
 		},
 		{
@@ -16097,7 +16080,7 @@ var _minekoa$elm_text_editor$StyleSetter$fontFamilySelector = F2(
 			_elm_lang$html$Html$div,
 			{
 				ctor: '::',
-				_0: _elm_lang$html$Html_Attributes$class('style-palette'),
+				_0: _elm_lang$html$Html_Attributes$class('menu-palette'),
 				_1: {
 					ctor: '::',
 					_0: _elm_lang$html$Html_Attributes$style(
@@ -16172,7 +16155,7 @@ var _minekoa$elm_text_editor$StyleSetter$colorPalette = F2(
 			_elm_lang$html$Html$div,
 			{
 				ctor: '::',
-				_0: _elm_lang$html$Html_Attributes$class('style-palette'),
+				_0: _elm_lang$html$Html_Attributes$class('menu-palette'),
 				_1: {
 					ctor: '::',
 					_0: _elm_lang$html$Html_Attributes$style(
@@ -16504,33 +16487,21 @@ var _minekoa$elm_text_editor$StyleSetter$view = function (model) {
 			_0: _elm_lang$html$Html_Attributes$class('style-setter'),
 			_1: {
 				ctor: '::',
-				_0: _elm_lang$html$Html_Attributes$style(
-					{
-						ctor: '::',
-						_0: {ctor: '_Tuple2', _0: 'display', _1: 'flex'},
-						_1: {
+				_0: _elm_lang$html$Html_Attributes$class('menu-root'),
+				_1: {
+					ctor: '::',
+					_0: _elm_lang$html$Html_Attributes$style(
+						{
 							ctor: '::',
-							_0: {ctor: '_Tuple2', _0: 'flex-direction', _1: 'row'},
+							_0: {ctor: '_Tuple2', _0: 'flex-grow', _1: '2'},
 							_1: {
 								ctor: '::',
-								_0: {ctor: '_Tuple2', _0: 'justify-content', _1: 'space-between'},
-								_1: {
-									ctor: '::',
-									_0: {ctor: '_Tuple2', _0: 'align-items', _1: 'center'},
-									_1: {
-										ctor: '::',
-										_0: {ctor: '_Tuple2', _0: 'flex-grow', _1: '2'},
-										_1: {
-											ctor: '::',
-											_0: {ctor: '_Tuple2', _0: 'min-height', _1: '17em'},
-											_1: {ctor: '[]'}
-										}
-									}
-								}
+								_0: {ctor: '_Tuple2', _0: 'min-height', _1: '17em'},
+								_1: {ctor: '[]'}
 							}
-						}
-					}),
-				_1: {ctor: '[]'}
+						}),
+					_1: {ctor: '[]'}
+				}
 			}
 		},
 		{
@@ -16539,29 +16510,8 @@ var _minekoa$elm_text_editor$StyleSetter$view = function (model) {
 				_elm_lang$html$Html$div,
 				{
 					ctor: '::',
-					_0: _elm_lang$html$Html_Attributes$class('style-itemlist'),
-					_1: {
-						ctor: '::',
-						_0: _elm_lang$html$Html_Attributes$style(
-							{
-								ctor: '::',
-								_0: {ctor: '_Tuple2', _0: 'display', _1: 'flex'},
-								_1: {
-									ctor: '::',
-									_0: {ctor: '_Tuple2', _0: 'flex-direction', _1: 'column'},
-									_1: {
-										ctor: '::',
-										_0: {ctor: '_Tuple2', _0: 'height', _1: '16em'},
-										_1: {
-											ctor: '::',
-											_0: {ctor: '_Tuple2', _0: 'justify-content', _1: 'flex-start'},
-											_1: {ctor: '[]'}
-										}
-									}
-								}
-							}),
-						_1: {ctor: '[]'}
-					}
+					_0: _elm_lang$html$Html_Attributes$class('menu-itemlist'),
+					_1: {ctor: '[]'}
 				},
 				{
 					ctor: '::',
@@ -16575,7 +16525,7 @@ var _minekoa$elm_text_editor$StyleSetter$view = function (model) {
 								_0: _elm_lang$html$Html_Attributes$class(
 									_elm_lang$core$Native_Utils.eq(
 										_minekoa$elm_text_editor$StyleSetter$targetName(model.editTarget),
-										'bg-color') ? 'style-item-active' : 'style-item'),
+										'bg-color') ? 'menu-item-active' : 'menu-item'),
 								_1: {ctor: '[]'}
 							}
 						},
@@ -16614,7 +16564,7 @@ var _minekoa$elm_text_editor$StyleSetter$view = function (model) {
 									_0: _elm_lang$html$Html_Attributes$class(
 										_elm_lang$core$Native_Utils.eq(
 											_minekoa$elm_text_editor$StyleSetter$targetName(model.editTarget),
-											'fg-color') ? 'style-item-active' : 'style-item'),
+											'fg-color') ? 'menu-item-active' : 'menu-item'),
 									_1: {ctor: '[]'}
 								}
 							},
@@ -16653,7 +16603,7 @@ var _minekoa$elm_text_editor$StyleSetter$view = function (model) {
 										_0: _elm_lang$html$Html_Attributes$class(
 											_elm_lang$core$Native_Utils.eq(
 												_minekoa$elm_text_editor$StyleSetter$targetName(model.editTarget),
-												'font-family') ? 'style-item-active' : 'style-item'),
+												'font-family') ? 'menu-item-active' : 'menu-item'),
 										_1: {ctor: '[]'}
 									}
 								},
@@ -16692,7 +16642,7 @@ var _minekoa$elm_text_editor$StyleSetter$view = function (model) {
 											_0: _elm_lang$html$Html_Attributes$class(
 												_elm_lang$core$Native_Utils.eq(
 													_minekoa$elm_text_editor$StyleSetter$targetName(model.editTarget),
-													'font-size') ? 'style-item-active' : 'style-item'),
+													'font-size') ? 'menu-item-active' : 'menu-item'),
 											_1: {ctor: '[]'}
 										}
 									},

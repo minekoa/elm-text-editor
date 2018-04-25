@@ -143,38 +143,32 @@ update msg model =
 
 view : Model -> Html Msg
 view model =
-    div [ class "style-setter"
-        , style [ ("display", "flex"), ("flex-direction", "row"), ("justify-content", "space-between"), ("align-items", "center")
-                , ("flex-grow", "2")
+    div [ class "style-setter", class "menu-root"
+        , style [ ("flex-grow", "2")
                 , ("min-height", "17em")
                 ]
         ]
-        [ div [ class "style-itemlist"
-              , style [ ("display", "flex"), ("flex-direction", "column")
-                      , ("height", "16em")
-                      , ("justify-content", "flex-start")
-                      ]
-              ]
+        [ div [ class "menu-itemlist" ]
               [ div [ onClick TouchBackgroundColor
-                    , class <| if targetName model.editTarget == "bg-color" then "style-item-active" else "style-item"
+                    , class <| if targetName model.editTarget == "bg-color" then "menu-item-active" else "menu-item"
                     ]
                     [ span [] [text "background-color: "]
                     , span [] [text model.bgColor.value ]
                     ]
               , div [ onClick TouchForegroundColor
-                    , class <| if targetName model.editTarget == "fg-color" then "style-item-active" else "style-item"
+                    , class <| if targetName model.editTarget == "fg-color" then "menu-item-active" else "menu-item"
                     ]
                     [ span [] [text "color: "]
                     , span [] [text model.fgColor.value ]
                     ]
               , div [ onClick TouchFontFalily
-                    , class <| if targetName model.editTarget == "font-family" then "style-item-active" else "style-item"
+                    , class <| if targetName model.editTarget == "font-family" then "menu-item-active" else "menu-item"
                     ]
                     [ span [] [text "font-family: "]
                     , span [] [text model.fontFamily.value ]
                     ]
               , div [ onClick TouchFontSize
-                    , class <| if targetName model.editTarget == "font-size" then "style-item-active" else "style-item"
+                    , class <| if targetName model.editTarget == "font-size" then "menu-item-active" else "menu-item"
                     ]
                     [ span [] [text "font-size: "]
                     , span [] [text model.fontSize.value ]
@@ -191,7 +185,7 @@ view model =
 
 colorPalette : (String -> Msg) -> SelectableList -> Html Msg
 colorPalette tagger colorList =
-    div [ class "style-palette"
+    div [ class "menu-palette"
         , style [ ("flex-grow", "1"), ("display", "flex"), ("align-content", "flex-start"), ("flex-wrap","wrap")
                 ]
         ] <|
@@ -215,7 +209,7 @@ colorPalette tagger colorList =
 
 fontFamilySelector : (String -> Msg) -> SelectableList -> Html Msg
 fontFamilySelector tagger fontList =
-    div [ class "style-palette"
+    div [ class "menu-palette"
         , style [ ("flex-grow", "1"), ("display", "flex"), ("flex-direction", "row"), ("flex-wrap","no-wrap")
                 ]
         ] <|

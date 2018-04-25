@@ -68,7 +68,7 @@ update msg model =
 
 view : Model -> Html Msg
 view model =
-    div [ class "menu-root"
+    div [ class "filer-menu", class "menu-root"
         , style [ ("flex-grow", "2")
                 , ("min-height", "17em")
                 ]
@@ -79,12 +79,7 @@ view model =
 
 menuItemsView : Model -> Html Msg
 menuItemsView model =                
-    div [ class "menu-itemlist"
-        , style [ ("display", "flex"), ("flex-direction", "column")
-                , ("height", "16em")
-                , ("justify-content", "flex-start")
-                ]
-        ]
+    div [ class "menu-itemlist" ]
     [ div [ onClick TouchLoadSubMenu
           , class <| if model.selectedSubMenu == Load then "menu-item-active" else "menu-item"
           ]

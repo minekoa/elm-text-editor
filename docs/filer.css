@@ -1,3 +1,7 @@
+.filer-menu {
+    --menu-item-list-width: 12em
+}
+
 
 .filer-dropzone {
     margin: 1em;
