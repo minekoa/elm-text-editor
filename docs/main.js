@@ -16994,13 +16994,91 @@ var _minekoa$elm_text_editor$Main$modeline = function (model) {
 			}
 		});
 };
-var _minekoa$elm_text_editor$Main$appendBuffer = F2(
-	function (buffer, model) {
+var _minekoa$elm_text_editor$Main$removeBuffer = F2(
+	function (i, model) {
 		return _elm_lang$core$Native_Utils.update(
 			model,
 			{
-				buffers: {ctor: '::', _0: buffer, _1: model.buffers}
+				buffers: A2(
+					_elm_lang$core$Basics_ops['++'],
+					A2(_elm_lang$core$List$take, i, model.buffers),
+					A2(_elm_lang$core$List$drop, i + 1, model.buffers))
 			});
+	});
+var _minekoa$elm_text_editor$Main$insertBuffer = F3(
+	function (i, buf, model) {
+		return _elm_lang$core$Native_Utils.update(
+			model,
+			{
+				buffers: A2(
+					_elm_lang$core$Basics_ops['++'],
+					A2(_elm_lang$core$List$take, i, model.buffers),
+					{
+						ctor: '::',
+						_0: buf,
+						_1: A2(_elm_lang$core$List$drop, i, model.buffers)
+					})
+			});
+	});
+var _minekoa$elm_text_editor$Main$changeBuffer = F2(
+	function (i, model) {
+		changeBuffer:
+		while (true) {
+			var _p0 = _elm_lang$core$List$head(
+				A2(_elm_lang$core$List$drop, i, model.buffers));
+			if (_p0.ctor === 'Just') {
+				var _p1 = _p0._0;
+				return _elm_lang$core$Native_Utils.update(
+					model,
+					{
+						currentBufferIndex: i,
+						currentBufferName: _p1.name,
+						editor: A2(_minekoa$elm_text_editor$TextEditor$setBuffer, _p1.buffer, model.editor)
+					});
+			} else {
+				if (_elm_lang$core$List$isEmpty(model.buffers)) {
+					return model;
+				} else {
+					var _v1 = A3(
+						_elm_lang$core$Basics$flip,
+						F2(
+							function (x, y) {
+								return x - y;
+							}),
+						1,
+						_elm_lang$core$List$length(model.buffers)),
+						_v2 = model;
+					i = _v1;
+					model = _v2;
+					continue changeBuffer;
+				}
+			}
+		}
+	});
+var _minekoa$elm_text_editor$Main$saveBuffer = F2(
+	function (i, model) {
+		var _p2 = _elm_lang$core$List$head(
+			A2(_elm_lang$core$List$drop, i, model.buffers));
+		if (_p2.ctor === 'Just') {
+			return _elm_lang$core$Native_Utils.update(
+				model,
+				{
+					buffers: A2(
+						_elm_lang$core$Basics_ops['++'],
+						A2(_elm_lang$core$List$take, i, model.buffers),
+						{
+							ctor: '::',
+							_0: _elm_lang$core$Native_Utils.update(
+								_p2._0,
+								{
+									buffer: _minekoa$elm_text_editor$TextEditor$buffer(model.editor)
+								}),
+							_1: A2(_elm_lang$core$List$drop, i + 1, model.buffers)
+						})
+				});
+		} else {
+			return model;
+		}
 	});
 var _minekoa$elm_text_editor$Main$makeBuffer = F2(
 	function (name, content) {
@@ -17214,6 +17292,9 @@ var _minekoa$elm_text_editor$Main$paneChanger = function (model) {
 			}
 		});
 };
+var _minekoa$elm_text_editor$Main$CloseBuffer = function (a) {
+	return {ctor: 'CloseBuffer', _0: a};
+};
 var _minekoa$elm_text_editor$Main$ChangeBuffer = function (a) {
 	return {ctor: 'ChangeBuffer', _0: a};
 };
@@ -17320,17 +17401,49 @@ var _minekoa$elm_text_editor$Main$bufferTab = function (model) {
 										}
 									}
 								}),
-							_1: {
-								ctor: '::',
-								_0: _elm_lang$html$Html_Events$onClick(
-									_minekoa$elm_text_editor$Main$ChangeBuffer(i)),
-								_1: {ctor: '[]'}
-							}
+							_1: {ctor: '[]'}
 						},
 						{
 							ctor: '::',
-							_0: _elm_lang$html$Html$text(buf.name),
-							_1: {ctor: '[]'}
+							_0: A2(
+								_elm_lang$html$Html$span,
+								{
+									ctor: '::',
+									_0: _elm_lang$html$Html_Events$onClick(
+										_minekoa$elm_text_editor$Main$ChangeBuffer(i)),
+									_1: {ctor: '[]'}
+								},
+								{
+									ctor: '::',
+									_0: _elm_lang$html$Html$text(buf.name),
+									_1: {ctor: '[]'}
+								}),
+							_1: {
+								ctor: '::',
+								_0: A2(
+									_elm_lang$html$Html$button,
+									{
+										ctor: '::',
+										_0: _elm_lang$html$Html_Events$onClick(
+											_minekoa$elm_text_editor$Main$CloseBuffer(i)),
+										_1: {
+											ctor: '::',
+											_0: _elm_lang$html$Html_Attributes$style(
+												{
+													ctor: '::',
+													_0: {ctor: '_Tuple2', _0: 'font-size', _1: '0.8em'},
+													_1: {ctor: '[]'}
+												}),
+											_1: {ctor: '[]'}
+										}
+									},
+									{
+										ctor: '::',
+										_0: _elm_lang$html$Html$text('(x)'),
+										_1: {ctor: '[]'}
+									}),
+								_1: {ctor: '[]'}
+							}
 						});
 				}),
 			model.buffers));
@@ -17341,7 +17454,7 @@ var _minekoa$elm_text_editor$Main$EditorMsg = function (a) {
 var _minekoa$elm_text_editor$Main$init = function () {
 	var content = '';
 	var buf = A2(_minekoa$elm_text_editor$Main$makeBuffer, '*scratch*', content);
-	var _p0 = A3(
+	var _p3 = A3(
 		_minekoa$elm_text_editor$TextEditor$init,
 		'editor-sample1',
 		A2(
@@ -17349,8 +17462,8 @@ var _minekoa$elm_text_editor$Main$init = function () {
 			_minekoa$elm_text_editor$TextEditor_KeyBind$basic,
 			A2(_elm_lang$core$Basics_ops['++'], _minekoa$elm_text_editor$TextEditor_KeyBind$gates, _minekoa$elm_text_editor$TextEditor_KeyBind$emacsLike)),
 		content);
-	var bm = _p0._0;
-	var bc = _p0._1;
+	var bm = _p3._0;
+	var bc = _p3._1;
 	return {
 		ctor: '_Tuple2',
 		_0: A8(
@@ -17371,65 +17484,53 @@ var _minekoa$elm_text_editor$Main$init = function () {
 	};
 }();
 var _minekoa$elm_text_editor$Main$updateMap = F2(
-	function (model, _p1) {
-		var _p2 = _p1;
+	function (model, _p4) {
+		var _p5 = _p4;
 		return {
 			ctor: '_Tuple2',
 			_0: _elm_lang$core$Native_Utils.update(
 				model,
-				{editor: _p2._0}),
-			_1: A2(_elm_lang$core$Platform_Cmd$map, _minekoa$elm_text_editor$Main$EditorMsg, _p2._1)
+				{editor: _p5._0}),
+			_1: A2(_elm_lang$core$Platform_Cmd$map, _minekoa$elm_text_editor$Main$EditorMsg, _p5._1)
 		};
 	});
 var _minekoa$elm_text_editor$Main$update = F2(
 	function (msg, model) {
-		var _p3 = msg;
-		switch (_p3.ctor) {
+		var _p6 = msg;
+		switch (_p6.ctor) {
 			case 'ChangeBuffer':
-				var _p6 = _p3._0;
-				var next_current = _elm_lang$core$List$head(
-					A2(_elm_lang$core$List$drop, _p6, model.buffers));
-				var new_buffers = A2(
-					_elm_lang$core$Basics_ops['++'],
-					A2(_elm_lang$core$List$take, model.currentBufferIndex, model.buffers),
-					{
-						ctor: '::',
-						_0: {
-							name: model.currentBufferName,
-							buffer: _minekoa$elm_text_editor$TextEditor$buffer(model.editor)
-						},
-						_1: A2(_elm_lang$core$List$drop, model.currentBufferIndex + 1, model.buffers)
-					});
-				var _p4 = next_current;
-				if (_p4.ctor === 'Just') {
-					var _p5 = _p4._0;
-					return {
-						ctor: '_Tuple2',
-						_0: _elm_lang$core$Native_Utils.update(
-							model,
-							{
-								currentBufferIndex: _p6,
-								currentBufferName: _p5.name,
-								buffers: new_buffers,
-								editor: A2(_minekoa$elm_text_editor$TextEditor$setBuffer, _p5.buffer, model.editor)
-							}),
-						_1: _elm_lang$core$Platform_Cmd$none
-					};
-				} else {
-					return {ctor: '_Tuple2', _0: model, _1: _elm_lang$core$Platform_Cmd$none};
-				}
+				return {
+					ctor: '_Tuple2',
+					_0: A2(
+						_minekoa$elm_text_editor$Main$changeBuffer,
+						_p6._0,
+						A2(_minekoa$elm_text_editor$Main$saveBuffer, model.currentBufferIndex, model)),
+					_1: _elm_lang$core$Platform_Cmd$none
+				};
+			case 'CloseBuffer':
+				var _p7 = _p6._0;
+				return {
+					ctor: '_Tuple2',
+					_0: function (m) {
+						return _elm_lang$core$Native_Utils.eq(_p7, m.currentBufferIndex) ? A2(_minekoa$elm_text_editor$Main$changeBuffer, _p7, m) : ((_elm_lang$core$Native_Utils.cmp(_p7, m.currentBufferIndex) < 0) ? _elm_lang$core$Native_Utils.update(
+							m,
+							{currentBufferIndex: m.currentBufferIndex - 1}) : m);
+					}(
+						A2(_minekoa$elm_text_editor$Main$removeBuffer, _p7, model)),
+					_1: _elm_lang$core$Platform_Cmd$none
+				};
 			case 'ChangePane':
 				return {
 					ctor: '_Tuple2',
 					_0: _elm_lang$core$Native_Utils.update(
 						model,
-						{pane: _p3._0}),
+						{pane: _p6._0}),
 					_1: _elm_lang$core$Platform_Cmd$none
 				};
 			case 'EditorMsg':
-				var _p7 = A2(_minekoa$elm_text_editor$TextEditor$update, _p3._0, model.editor);
-				var m = _p7._0;
-				var c = _p7._1;
+				var _p8 = A2(_minekoa$elm_text_editor$TextEditor$update, _p6._0, model.editor);
+				var m = _p8._0;
+				var c = _p8._1;
 				return {
 					ctor: '_Tuple2',
 					_0: _elm_lang$core$Native_Utils.update(
@@ -17438,9 +17539,9 @@ var _minekoa$elm_text_editor$Main$update = F2(
 					_1: A2(_elm_lang$core$Platform_Cmd$map, _minekoa$elm_text_editor$Main$EditorMsg, c)
 				};
 			case 'DebuggerMsg':
-				var _p8 = A2(_minekoa$elm_text_editor$EditorDebugger$update, _p3._0, model.editor);
-				var em = _p8._0;
-				var dc = _p8._1;
+				var _p9 = A2(_minekoa$elm_text_editor$EditorDebugger$update, _p6._0, model.editor);
+				var em = _p9._0;
+				var dc = _p9._1;
 				return {
 					ctor: '_Tuple2',
 					_0: _elm_lang$core$Native_Utils.update(
@@ -17449,9 +17550,9 @@ var _minekoa$elm_text_editor$Main$update = F2(
 					_1: A2(_elm_lang$core$Platform_Cmd$map, _minekoa$elm_text_editor$Main$DebuggerMsg, dc)
 				};
 			case 'SWKeyboardMsg':
-				var _p9 = A3(_minekoa$elm_text_editor$SoftwareKeyboard$update, _p3._0, model.swkeyboard, model.editor);
-				var kbd = _p9._0;
-				var edt = _p9._1;
+				var _p10 = A3(_minekoa$elm_text_editor$SoftwareKeyboard$update, _p6._0, model.swkeyboard, model.editor);
+				var kbd = _p10._0;
+				var edt = _p10._1;
 				return {
 					ctor: '_Tuple2',
 					_0: _elm_lang$core$Native_Utils.update(
@@ -17478,9 +17579,9 @@ var _minekoa$elm_text_editor$Main$update = F2(
 						})
 				};
 			case 'StyleSetterMsg':
-				var _p10 = A2(_minekoa$elm_text_editor$StyleSetter$update, _p3._0, model.style);
-				var m = _p10._0;
-				var c = _p10._1;
+				var _p11 = A2(_minekoa$elm_text_editor$StyleSetter$update, _p6._0, model.style);
+				var m = _p11._0;
+				var c = _p11._1;
 				return {
 					ctor: '_Tuple2',
 					_0: _elm_lang$core$Native_Utils.update(
@@ -17489,50 +17590,39 @@ var _minekoa$elm_text_editor$Main$update = F2(
 					_1: A2(_elm_lang$core$Platform_Cmd$map, _minekoa$elm_text_editor$Main$StyleSetterMsg, c)
 				};
 			default:
-				var _p15 = _p3._0;
-				var _p11 = A3(
+				var _p16 = _p6._0;
+				var _p12 = A3(
 					_minekoa$elm_text_editor$Filer$update,
-					_p15,
+					_p16,
 					{
 						ctor: '_Tuple2',
 						_0: model.currentBufferName,
 						_1: _minekoa$elm_text_editor$TextEditor$buffer(model.editor)
 					},
 					model.filer);
-				var m = _p11._0;
-				var c = _p11._1;
-				var _p12 = _p15;
-				if (_p12.ctor === 'ReadFile') {
-					var _p14 = _p12._0;
-					var _p13 = _p14.data;
-					if (_p13.ctor === 'Ok') {
-						var newbuf = A2(_minekoa$elm_text_editor$Main$makeBuffer, _p14.name, _p13._0);
-						var new_buffers = A2(
-							_elm_lang$core$Basics_ops['++'],
-							A2(_elm_lang$core$List$take, model.currentBufferIndex, model.buffers),
-							{
-								ctor: '::',
-								_0: {
-									name: model.currentBufferName,
-									buffer: _minekoa$elm_text_editor$TextEditor$buffer(model.editor)
-								},
-								_1: {
-									ctor: '::',
-									_0: newbuf,
-									_1: A2(_elm_lang$core$List$drop, model.currentBufferIndex + 1, model.buffers)
-								}
-							});
+				var m = _p12._0;
+				var c = _p12._1;
+				var _p13 = _p16;
+				if (_p13.ctor === 'ReadFile') {
+					var _p15 = _p13._0;
+					var _p14 = _p15.data;
+					if (_p14.ctor === 'Ok') {
+						var newbuf = A2(_minekoa$elm_text_editor$Main$makeBuffer, _p15.name, _p14._0);
 						return {
 							ctor: '_Tuple2',
-							_0: _elm_lang$core$Native_Utils.update(
-								model,
-								{
-									buffers: new_buffers,
-									currentBufferIndex: model.currentBufferIndex + 1,
-									currentBufferName: newbuf.name,
-									editor: A2(_minekoa$elm_text_editor$TextEditor$setBuffer, newbuf.buffer, model.editor),
-									filer: m
-								}),
+							_0: A2(
+								_minekoa$elm_text_editor$Main$changeBuffer,
+								model.currentBufferIndex + 1,
+								A3(
+									_minekoa$elm_text_editor$Main$insertBuffer,
+									model.currentBufferIndex + 1,
+									newbuf,
+									A2(
+										_minekoa$elm_text_editor$Main$saveBuffer,
+										model.currentBufferIndex,
+										_elm_lang$core$Native_Utils.update(
+											model,
+											{filer: m})))),
 							_1: A2(_elm_lang$core$Platform_Cmd$map, _minekoa$elm_text_editor$Main$FilerMsg, c)
 						};
 					} else {
@@ -17679,8 +17769,8 @@ var _minekoa$elm_text_editor$Main$view = function (model) {
 							_1: {
 								ctor: '::',
 								_0: function () {
-									var _p16 = model.pane;
-									switch (_p16.ctor) {
+									var _p17 = model.pane;
+									switch (_p17.ctor) {
 										case 'NoPane':
 											return _elm_lang$html$Html$text('');
 										case 'DebugPane':

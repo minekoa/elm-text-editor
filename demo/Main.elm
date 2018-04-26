@@ -56,16 +56,10 @@ makeBuffer name content =
     , buffer = TextEditor.Buffer.init content
     }
 
-appendBuffer: Buffer -> Model -> Model
-appendBuffer buffer model =
-    { model
-          | buffers = buffer :: model.buffers
-    }
-
-
 type Msg
     = EditorMsg (Editor.Msg)
     | ChangeBuffer Int
+    | CloseBuffer Int
     | ChangePane Pane
     | DebuggerMsg (EditorDebugger.Msg)
     | SWKeyboardMsg (SoftwareKeyboard.Msg)
@@ -99,32 +93,28 @@ updateMap model (em, ec) =
     )
 
 
+
 update : Msg -> Model -> (Model, Cmd Msg)
 update msg model =
     case msg of
         ChangeBuffer i ->
-            let
-                new_buffers = (List.take model.currentBufferIndex model.buffers)
-                              ++ ( { name = model.currentBufferName
-                                   , buffer= (Editor.buffer model.editor)
-                                   }
-                                 :: List.drop (model.currentBufferIndex + 1) model.buffers
-                                 )
-                next_current =  model.buffers
-                                    |> List.drop i |> List.head
-            in
-                case next_current of
-                    Just buf ->
-                        ( { model
-                              | currentBufferIndex = i
-                              , currentBufferName  = buf.name
-                              , buffers = new_buffers
-                              , editor = Editor.setBuffer buf.buffer model.editor
-                          }
-                        , Cmd.none
-                        )
-                    Nothing ->
-                        ( model, Cmd.none )
+            ( model
+                |> saveBuffer model.currentBufferIndex
+                |> changeBuffer i
+            , Cmd.none
+            )
+
+        CloseBuffer i ->
+            ( model
+                |> removeBuffer i
+                |> \m -> if i == m.currentBufferIndex then
+                             changeBuffer i m
+                         else if i < m.currentBufferIndex then
+                                  { m | currentBufferIndex = m.currentBufferIndex - 1 }
+                              else
+                                  m
+            , Cmd.none
+            )
 
         ChangePane pane ->
             ( { model | pane = pane }
@@ -182,20 +172,11 @@ update msg model =
                             Ok content ->
                                 let
                                     newbuf = makeBuffer file.name content
-                                    new_buffers = (List.take model.currentBufferIndex model.buffers)
-                                                  ++ ( { name = model.currentBufferName
-                                                       , buffer= (Editor.buffer model.editor)
-                                                       }
-                                                       :: newbuf :: List.drop (model.currentBufferIndex + 1) model.buffers
-                                                     )
                                 in
-                                    ( { model
-                                          | buffers = new_buffers
-                                          , currentBufferIndex = model.currentBufferIndex + 1
-                                          , currentBufferName = newbuf.name
-                                          , editor  = Editor.setBuffer newbuf.buffer  model.editor
-                                          , filer = m
-                                      }
+                                    ( { model | filer = m }
+                                        |> saveBuffer model.currentBufferIndex
+                                        |> insertBuffer (model.currentBufferIndex + 1) newbuf
+                                        |> changeBuffer (model.currentBufferIndex + 1)
                                     , Cmd.map FilerMsg c
                                     )
                             Err err ->
@@ -206,6 +187,48 @@ update msg model =
                         ( { model | filer = m}
                         , Cmd.map FilerMsg c
                         )
+
+
+saveBuffer : Int -> Model -> Model
+saveBuffer i model =
+    case model.buffers |> List.drop i |> List.head of
+        Just buf ->
+            { model
+                | buffers = (List.take i model.buffers)
+                            ++ ({ buf | buffer = Editor.buffer model.editor } :: List.drop (i + 1) model.buffers)
+            }
+        Nothing ->
+            model
+
+changeBuffer : Int -> Model -> Model
+changeBuffer i model =
+    case model.buffers |> List.drop i |> List.head of
+        Just buf ->
+            { model
+                | currentBufferIndex = i
+                , currentBufferName  = buf.name
+                , editor = Editor.setBuffer buf.buffer model.editor
+            }
+        Nothing ->
+            if List.isEmpty model.buffers then
+                model
+            else
+                changeBuffer (model.buffers |> List.length |> flip (-) 1) model
+
+insertBuffer : Int -> Buffer -> Model -> Model
+insertBuffer i buf model =
+    { model
+        | buffers = (List.take i model.buffers) ++ (buf :: (List.drop i model.buffers))
+    }
+
+removeBuffer : Int -> Model -> Model
+removeBuffer i model =
+    { model
+        | buffers = (List.take i model.buffers) ++ (List.drop (i + 1) model.buffers)
+    }
+
+
+
 
 subscriptions : Model -> Sub Msg
 subscriptions model =
@@ -260,9 +283,13 @@ bufferTab model =
                         div [ style <| if model.currentBufferIndex == i
                                        then  [("background-color", "dimgray"), ("color", "snow"), ("padding", "1px 0.8em"), ("height", "100%")]
                                        else  [("background-color", "snow"), ("color", "dimgray"), ("padding", "1px 0.8em"), ("height", "100%")]
-                            , onClick <| ChangeBuffer i
                             ]
-                            [ text buf.name ]
+                            [ span [ onClick <| ChangeBuffer i ] [text buf.name]
+                            , button [ onClick <| CloseBuffer i
+                                     , style [ ("font-size", "0.8em") ]
+                                     ]
+                                  [ text "(x)" ]
+                            ]
                    ) model.buffers
         )
 
