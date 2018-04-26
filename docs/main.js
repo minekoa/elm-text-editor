@@ -17009,9 +17009,9 @@ var _minekoa$elm_text_editor$Main$makeBuffer = F2(
 			buffer: _minekoa$elm_text_editor$TextEditor_Buffer$init(content)
 		};
 	});
-var _minekoa$elm_text_editor$Main$Model = F7(
-	function (a, b, c, d, e, f, g) {
-		return {editor: a, buffers: b, currentBufferName: c, pane: d, swkeyboard: e, style: f, filer: g};
+var _minekoa$elm_text_editor$Main$Model = F8(
+	function (a, b, c, d, e, f, g, h) {
+		return {editor: a, buffers: b, currentBufferIndex: c, currentBufferName: d, pane: e, swkeyboard: f, style: g, filer: h};
 	});
 var _minekoa$elm_text_editor$Main$Buffer = F2(
 	function (a, b) {
@@ -17279,59 +17279,60 @@ var _minekoa$elm_text_editor$Main$bufferTab = function (model) {
 			_1: {ctor: '[]'}
 		},
 		A2(
-			_elm_lang$core$List$map,
-			function (buf) {
-				return A2(
-					_elm_lang$html$Html$div,
-					{
-						ctor: '::',
-						_0: _elm_lang$html$Html_Attributes$style(
-							_elm_lang$core$Native_Utils.eq(model.currentBufferName, buf.name) ? {
-								ctor: '::',
-								_0: {ctor: '_Tuple2', _0: 'background-color', _1: 'dimgray'},
-								_1: {
-									ctor: '::',
-									_0: {ctor: '_Tuple2', _0: 'color', _1: 'snow'},
-									_1: {
-										ctor: '::',
-										_0: {ctor: '_Tuple2', _0: 'padding', _1: '1px 0.8em'},
-										_1: {
-											ctor: '::',
-											_0: {ctor: '_Tuple2', _0: 'height', _1: '100%'},
-											_1: {ctor: '[]'}
-										}
-									}
-								}
-							} : {
-								ctor: '::',
-								_0: {ctor: '_Tuple2', _0: 'background-color', _1: 'snow'},
-								_1: {
-									ctor: '::',
-									_0: {ctor: '_Tuple2', _0: 'color', _1: 'dimgray'},
-									_1: {
-										ctor: '::',
-										_0: {ctor: '_Tuple2', _0: 'padding', _1: '1px 0.8em'},
-										_1: {
-											ctor: '::',
-											_0: {ctor: '_Tuple2', _0: 'height', _1: '100%'},
-											_1: {ctor: '[]'}
-										}
-									}
-								}
-							}),
-						_1: {
+			_elm_lang$core$List$indexedMap,
+			F2(
+				function (i, buf) {
+					return A2(
+						_elm_lang$html$Html$div,
+						{
 							ctor: '::',
-							_0: _elm_lang$html$Html_Events$onClick(
-								_minekoa$elm_text_editor$Main$ChangeBuffer(buf.name)),
+							_0: _elm_lang$html$Html_Attributes$style(
+								_elm_lang$core$Native_Utils.eq(model.currentBufferIndex, i) ? {
+									ctor: '::',
+									_0: {ctor: '_Tuple2', _0: 'background-color', _1: 'dimgray'},
+									_1: {
+										ctor: '::',
+										_0: {ctor: '_Tuple2', _0: 'color', _1: 'snow'},
+										_1: {
+											ctor: '::',
+											_0: {ctor: '_Tuple2', _0: 'padding', _1: '1px 0.8em'},
+											_1: {
+												ctor: '::',
+												_0: {ctor: '_Tuple2', _0: 'height', _1: '100%'},
+												_1: {ctor: '[]'}
+											}
+										}
+									}
+								} : {
+									ctor: '::',
+									_0: {ctor: '_Tuple2', _0: 'background-color', _1: 'snow'},
+									_1: {
+										ctor: '::',
+										_0: {ctor: '_Tuple2', _0: 'color', _1: 'dimgray'},
+										_1: {
+											ctor: '::',
+											_0: {ctor: '_Tuple2', _0: 'padding', _1: '1px 0.8em'},
+											_1: {
+												ctor: '::',
+												_0: {ctor: '_Tuple2', _0: 'height', _1: '100%'},
+												_1: {ctor: '[]'}
+											}
+										}
+									}
+								}),
+							_1: {
+								ctor: '::',
+								_0: _elm_lang$html$Html_Events$onClick(
+									_minekoa$elm_text_editor$Main$ChangeBuffer(i)),
+								_1: {ctor: '[]'}
+							}
+						},
+						{
+							ctor: '::',
+							_0: _elm_lang$html$Html$text(buf.name),
 							_1: {ctor: '[]'}
-						}
-					},
-					{
-						ctor: '::',
-						_0: _elm_lang$html$Html$text(buf.name),
-						_1: {ctor: '[]'}
-					});
-			},
+						});
+				}),
 			model.buffers));
 };
 var _minekoa$elm_text_editor$Main$EditorMsg = function (a) {
@@ -17352,7 +17353,7 @@ var _minekoa$elm_text_editor$Main$init = function () {
 	var bc = _p0._1;
 	return {
 		ctor: '_Tuple2',
-		_0: A7(
+		_0: A8(
 			_minekoa$elm_text_editor$Main$Model,
 			bm,
 			{
@@ -17360,6 +17361,7 @@ var _minekoa$elm_text_editor$Main$init = function () {
 				_0: buf,
 				_1: {ctor: '[]'}
 			},
+			0,
 			buf.name,
 			_minekoa$elm_text_editor$Main$NoPane,
 			_minekoa$elm_text_editor$SoftwareKeyboard$init,
@@ -17384,31 +17386,38 @@ var _minekoa$elm_text_editor$Main$update = F2(
 		var _p3 = msg;
 		switch (_p3.ctor) {
 			case 'ChangeBuffer':
-				return {
-					ctor: '_Tuple2',
-					_0: A2(
-						_elm_lang$core$Maybe$withDefault,
-						model,
-						A2(
-							_elm_lang$core$Maybe$andThen,
-							function (buf) {
-								return _elm_lang$core$Maybe$Just(
-									_elm_lang$core$Native_Utils.update(
-										model,
-										{
-											editor: A2(_minekoa$elm_text_editor$TextEditor$setBuffer, buf.buffer, model.editor),
-											currentBufferName: buf.name
-										}));
-							},
-							_elm_lang$core$List$head(
-								A2(
-									_elm_lang$core$List$filter,
-									function (m) {
-										return _elm_lang$core$Native_Utils.eq(m.name, _p3._0);
-									},
-									model.buffers)))),
-					_1: _elm_lang$core$Platform_Cmd$none
-				};
+				var _p6 = _p3._0;
+				var next_current = _elm_lang$core$List$head(
+					A2(_elm_lang$core$List$drop, _p6, model.buffers));
+				var new_buffers = A2(
+					_elm_lang$core$Basics_ops['++'],
+					A2(_elm_lang$core$List$take, model.currentBufferIndex, model.buffers),
+					{
+						ctor: '::',
+						_0: {
+							name: model.currentBufferName,
+							buffer: _minekoa$elm_text_editor$TextEditor$buffer(model.editor)
+						},
+						_1: A2(_elm_lang$core$List$drop, model.currentBufferIndex + 1, model.buffers)
+					});
+				var _p4 = next_current;
+				if (_p4.ctor === 'Just') {
+					var _p5 = _p4._0;
+					return {
+						ctor: '_Tuple2',
+						_0: _elm_lang$core$Native_Utils.update(
+							model,
+							{
+								currentBufferIndex: _p6,
+								currentBufferName: _p5.name,
+								buffers: new_buffers,
+								editor: A2(_minekoa$elm_text_editor$TextEditor$setBuffer, _p5.buffer, model.editor)
+							}),
+						_1: _elm_lang$core$Platform_Cmd$none
+					};
+				} else {
+					return {ctor: '_Tuple2', _0: model, _1: _elm_lang$core$Platform_Cmd$none};
+				}
 			case 'ChangePane':
 				return {
 					ctor: '_Tuple2',
@@ -17418,9 +17427,9 @@ var _minekoa$elm_text_editor$Main$update = F2(
 					_1: _elm_lang$core$Platform_Cmd$none
 				};
 			case 'EditorMsg':
-				var _p4 = A2(_minekoa$elm_text_editor$TextEditor$update, _p3._0, model.editor);
-				var m = _p4._0;
-				var c = _p4._1;
+				var _p7 = A2(_minekoa$elm_text_editor$TextEditor$update, _p3._0, model.editor);
+				var m = _p7._0;
+				var c = _p7._1;
 				return {
 					ctor: '_Tuple2',
 					_0: _elm_lang$core$Native_Utils.update(
@@ -17429,9 +17438,9 @@ var _minekoa$elm_text_editor$Main$update = F2(
 					_1: A2(_elm_lang$core$Platform_Cmd$map, _minekoa$elm_text_editor$Main$EditorMsg, c)
 				};
 			case 'DebuggerMsg':
-				var _p5 = A2(_minekoa$elm_text_editor$EditorDebugger$update, _p3._0, model.editor);
-				var em = _p5._0;
-				var dc = _p5._1;
+				var _p8 = A2(_minekoa$elm_text_editor$EditorDebugger$update, _p3._0, model.editor);
+				var em = _p8._0;
+				var dc = _p8._1;
 				return {
 					ctor: '_Tuple2',
 					_0: _elm_lang$core$Native_Utils.update(
@@ -17440,9 +17449,9 @@ var _minekoa$elm_text_editor$Main$update = F2(
 					_1: A2(_elm_lang$core$Platform_Cmd$map, _minekoa$elm_text_editor$Main$DebuggerMsg, dc)
 				};
 			case 'SWKeyboardMsg':
-				var _p6 = A3(_minekoa$elm_text_editor$SoftwareKeyboard$update, _p3._0, model.swkeyboard, model.editor);
-				var kbd = _p6._0;
-				var edt = _p6._1;
+				var _p9 = A3(_minekoa$elm_text_editor$SoftwareKeyboard$update, _p3._0, model.swkeyboard, model.editor);
+				var kbd = _p9._0;
+				var edt = _p9._1;
 				return {
 					ctor: '_Tuple2',
 					_0: _elm_lang$core$Native_Utils.update(
@@ -17469,9 +17478,9 @@ var _minekoa$elm_text_editor$Main$update = F2(
 						})
 				};
 			case 'StyleSetterMsg':
-				var _p7 = A2(_minekoa$elm_text_editor$StyleSetter$update, _p3._0, model.style);
-				var m = _p7._0;
-				var c = _p7._1;
+				var _p10 = A2(_minekoa$elm_text_editor$StyleSetter$update, _p3._0, model.style);
+				var m = _p10._0;
+				var c = _p10._1;
 				return {
 					ctor: '_Tuple2',
 					_0: _elm_lang$core$Native_Utils.update(
@@ -17480,35 +17489,46 @@ var _minekoa$elm_text_editor$Main$update = F2(
 					_1: A2(_elm_lang$core$Platform_Cmd$map, _minekoa$elm_text_editor$Main$StyleSetterMsg, c)
 				};
 			default:
-				var _p12 = _p3._0;
-				var _p8 = A3(
+				var _p15 = _p3._0;
+				var _p11 = A3(
 					_minekoa$elm_text_editor$Filer$update,
-					_p12,
+					_p15,
 					{
 						ctor: '_Tuple2',
 						_0: model.currentBufferName,
 						_1: _minekoa$elm_text_editor$TextEditor$buffer(model.editor)
 					},
 					model.filer);
-				var m = _p8._0;
-				var c = _p8._1;
-				var _p9 = _p12;
-				if (_p9.ctor === 'ReadFile') {
-					var _p11 = _p9._0;
-					var _p10 = _p11.data;
-					if (_p10.ctor === 'Ok') {
-						var newbuf = A2(_minekoa$elm_text_editor$Main$makeBuffer, _p11.name, _p10._0);
+				var m = _p11._0;
+				var c = _p11._1;
+				var _p12 = _p15;
+				if (_p12.ctor === 'ReadFile') {
+					var _p14 = _p12._0;
+					var _p13 = _p14.data;
+					if (_p13.ctor === 'Ok') {
+						var newbuf = A2(_minekoa$elm_text_editor$Main$makeBuffer, _p14.name, _p13._0);
+						var new_buffers = A2(
+							_elm_lang$core$Basics_ops['++'],
+							A2(_elm_lang$core$List$take, model.currentBufferIndex, model.buffers),
+							{
+								ctor: '::',
+								_0: {
+									name: model.currentBufferName,
+									buffer: _minekoa$elm_text_editor$TextEditor$buffer(model.editor)
+								},
+								_1: {
+									ctor: '::',
+									_0: newbuf,
+									_1: A2(_elm_lang$core$List$drop, model.currentBufferIndex + 1, model.buffers)
+								}
+							});
 						return {
 							ctor: '_Tuple2',
 							_0: _elm_lang$core$Native_Utils.update(
 								model,
 								{
-									buffers: _elm_lang$core$List$reverse(
-										{
-											ctor: '::',
-											_0: newbuf,
-											_1: _elm_lang$core$List$reverse(model.buffers)
-										}),
+									buffers: new_buffers,
+									currentBufferIndex: model.currentBufferIndex + 1,
 									currentBufferName: newbuf.name,
 									editor: A2(_minekoa$elm_text_editor$TextEditor$setBuffer, newbuf.buffer, model.editor),
 									filer: m
@@ -17659,8 +17679,8 @@ var _minekoa$elm_text_editor$Main$view = function (model) {
 							_1: {
 								ctor: '::',
 								_0: function () {
-									var _p13 = model.pane;
-									switch (_p13.ctor) {
+									var _p16 = model.pane;
+									switch (_p16.ctor) {
 										case 'NoPane':
 											return _elm_lang$html$Html$text('');
 										case 'DebugPane':

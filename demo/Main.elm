@@ -29,6 +29,7 @@ main =
 type alias Model =
     { editor : Editor.Model
     , buffers : List Buffer
+    , currentBufferIndex : Int
     , currentBufferName : String
 
     , pane : Pane
@@ -64,7 +65,7 @@ appendBuffer buffer model =
 
 type Msg
     = EditorMsg (Editor.Msg)
-    | ChangeBuffer String
+    | ChangeBuffer Int
     | ChangePane Pane
     | DebuggerMsg (EditorDebugger.Msg)
     | SWKeyboardMsg (SoftwareKeyboard.Msg)
@@ -80,6 +81,7 @@ init =
     in
         ( Model bm
               [ buf ]
+              0
               buf.name
               NoPane
               SoftwareKeyboard.init
@@ -100,19 +102,29 @@ updateMap model (em, ec) =
 update : Msg -> Model -> (Model, Cmd Msg)
 update msg model =
     case msg of
-        ChangeBuffer name ->
-            (
-            List.filter (\m -> m.name == name) model.buffers
-                |> List.head
-                |> Maybe.andThen (\buf ->  Just ( { model
-                                                      | editor = Editor.setBuffer buf.buffer model.editor
-                                                      , currentBufferName = buf.name
-                                                  }
-                                                )
+        ChangeBuffer i ->
+            let
+                new_buffers = (List.take model.currentBufferIndex model.buffers)
+                              ++ ( { name = model.currentBufferName
+                                   , buffer= (Editor.buffer model.editor)
+                                   }
+                                 :: List.drop (model.currentBufferIndex + 1) model.buffers
                                  )
-                |> Maybe.withDefault model
-            , Cmd.none
-            )
+                next_current =  model.buffers
+                                    |> List.drop i |> List.head
+            in
+                case next_current of
+                    Just buf ->
+                        ( { model
+                              | currentBufferIndex = i
+                              , currentBufferName  = buf.name
+                              , buffers = new_buffers
+                              , editor = Editor.setBuffer buf.buffer model.editor
+                          }
+                        , Cmd.none
+                        )
+                    Nothing ->
+                        ( model, Cmd.none )
 
         ChangePane pane ->
             ( { model | pane = pane }
@@ -170,9 +182,16 @@ update msg model =
                             Ok content ->
                                 let
                                     newbuf = makeBuffer file.name content
+                                    new_buffers = (List.take model.currentBufferIndex model.buffers)
+                                                  ++ ( { name = model.currentBufferName
+                                                       , buffer= (Editor.buffer model.editor)
+                                                       }
+                                                       :: newbuf :: List.drop (model.currentBufferIndex + 1) model.buffers
+                                                     )
                                 in
                                     ( { model
-                                          | buffers = newbuf :: (List.reverse model.buffers) |> List.reverse
+                                          | buffers = new_buffers
+                                          , currentBufferIndex = model.currentBufferIndex + 1
                                           , currentBufferName = newbuf.name
                                           , editor  = Editor.setBuffer newbuf.buffer  model.editor
                                           , filer = m
@@ -237,11 +256,11 @@ bufferTab model =
                 , ("-moz-user-select", "-moz-none"), ("-khtml-user-select", "none"), ("-webkit-user-select", "none"), ("user-select", "none")
                 ]
         ]
-        ( List.map (\buf ->
-                        div [ style <| if model.currentBufferName == buf.name
+        ( List.indexedMap (\i buf ->
+                        div [ style <| if model.currentBufferIndex == i
                                        then  [("background-color", "dimgray"), ("color", "snow"), ("padding", "1px 0.8em"), ("height", "100%")]
                                        else  [("background-color", "snow"), ("color", "dimgray"), ("padding", "1px 0.8em"), ("height", "100%")]
-                            , onClick <| ChangeBuffer buf.name
+                            , onClick <| ChangeBuffer i
                             ]
                             [ text buf.name ]
                    ) model.buffers
