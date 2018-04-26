@@ -17020,9 +17020,9 @@ var _minekoa$elm_text_editor$Main$insertBuffer = F3(
 					})
 			});
 	});
-var _minekoa$elm_text_editor$Main$changeBuffer = F2(
+var _minekoa$elm_text_editor$Main$selectBuffer = F2(
 	function (i, model) {
-		changeBuffer:
+		selectBuffer:
 		while (true) {
 			var _p0 = _elm_lang$core$List$head(
 				A2(_elm_lang$core$List$drop, i, model.buffers));
@@ -17050,13 +17050,13 @@ var _minekoa$elm_text_editor$Main$changeBuffer = F2(
 						_v2 = model;
 					i = _v1;
 					model = _v2;
-					continue changeBuffer;
+					continue selectBuffer;
 				}
 			}
 		}
 	});
-var _minekoa$elm_text_editor$Main$saveBuffer = F2(
-	function (i, model) {
+var _minekoa$elm_text_editor$Main$updateBufferContent = F3(
+	function (i, content, model) {
 		var _p2 = _elm_lang$core$List$head(
 			A2(_elm_lang$core$List$drop, i, model.buffers));
 		if (_p2.ctor === 'Just') {
@@ -17070,9 +17070,7 @@ var _minekoa$elm_text_editor$Main$saveBuffer = F2(
 							ctor: '::',
 							_0: _elm_lang$core$Native_Utils.update(
 								_p2._0,
-								{
-									buffer: _minekoa$elm_text_editor$TextEditor$buffer(model.editor)
-								}),
+								{buffer: content}),
 							_1: A2(_elm_lang$core$List$drop, i + 1, model.buffers)
 						})
 				});
@@ -17421,7 +17419,7 @@ var _minekoa$elm_text_editor$Main$bufferTab = function (model) {
 							_1: {
 								ctor: '::',
 								_0: A2(
-									_elm_lang$html$Html$button,
+									_elm_lang$html$Html$div,
 									{
 										ctor: '::',
 										_0: _elm_lang$html$Html_Events$onClick(
@@ -17431,15 +17429,51 @@ var _minekoa$elm_text_editor$Main$bufferTab = function (model) {
 											_0: _elm_lang$html$Html_Attributes$style(
 												{
 													ctor: '::',
-													_0: {ctor: '_Tuple2', _0: 'font-size', _1: '0.8em'},
-													_1: {ctor: '[]'}
+													_0: {ctor: '_Tuple2', _0: 'display', _1: 'inline-block'},
+													_1: {
+														ctor: '::',
+														_0: {ctor: '_Tuple2', _0: 'background-color', _1: 'darkgray'},
+														_1: {
+															ctor: '::',
+															_0: {ctor: '_Tuple2', _0: 'color', _1: 'whitesmoke'},
+															_1: {
+																ctor: '::',
+																_0: {ctor: '_Tuple2', _0: 'font-size', _1: '0.8em'},
+																_1: {
+																	ctor: '::',
+																	_0: {ctor: '_Tuple2', _0: 'height', _1: '1.2em'},
+																	_1: {
+																		ctor: '::',
+																		_0: {ctor: '_Tuple2', _0: 'width', _1: '1.2em'},
+																		_1: {
+																			ctor: '::',
+																			_0: {ctor: '_Tuple2', _0: 'border-radius', _1: '0.6em'},
+																			_1: {
+																				ctor: '::',
+																				_0: {ctor: '_Tuple2', _0: 'text-align', _1: 'center'},
+																				_1: {
+																					ctor: '::',
+																					_0: {ctor: '_Tuple2', _0: 'vertical-align', _1: 'middle'},
+																					_1: {
+																						ctor: '::',
+																						_0: {ctor: '_Tuple2', _0: 'margin-left', _1: '0.5em'},
+																						_1: {ctor: '[]'}
+																					}
+																				}
+																			}
+																		}
+																	}
+																}
+															}
+														}
+													}
 												}),
 											_1: {ctor: '[]'}
 										}
 									},
 									{
 										ctor: '::',
-										_0: _elm_lang$html$Html$text('(x)'),
+										_0: _elm_lang$html$Html$text('x'),
 										_1: {ctor: '[]'}
 									}),
 								_1: {ctor: '[]'}
@@ -17502,9 +17536,13 @@ var _minekoa$elm_text_editor$Main$update = F2(
 				return {
 					ctor: '_Tuple2',
 					_0: A2(
-						_minekoa$elm_text_editor$Main$changeBuffer,
+						_minekoa$elm_text_editor$Main$selectBuffer,
 						_p6._0,
-						A2(_minekoa$elm_text_editor$Main$saveBuffer, model.currentBufferIndex, model)),
+						A3(
+							_minekoa$elm_text_editor$Main$updateBufferContent,
+							model.currentBufferIndex,
+							_minekoa$elm_text_editor$TextEditor$buffer(model.editor),
+							model)),
 					_1: _elm_lang$core$Platform_Cmd$none
 				};
 			case 'CloseBuffer':
@@ -17512,7 +17550,7 @@ var _minekoa$elm_text_editor$Main$update = F2(
 				return {
 					ctor: '_Tuple2',
 					_0: function (m) {
-						return _elm_lang$core$Native_Utils.eq(_p7, m.currentBufferIndex) ? A2(_minekoa$elm_text_editor$Main$changeBuffer, _p7, m) : ((_elm_lang$core$Native_Utils.cmp(_p7, m.currentBufferIndex) < 0) ? _elm_lang$core$Native_Utils.update(
+						return _elm_lang$core$Native_Utils.eq(_p7, m.currentBufferIndex) ? A2(_minekoa$elm_text_editor$Main$selectBuffer, _p7, m) : ((_elm_lang$core$Native_Utils.cmp(_p7, m.currentBufferIndex) < 0) ? _elm_lang$core$Native_Utils.update(
 							m,
 							{currentBufferIndex: m.currentBufferIndex - 1}) : m);
 					}(
@@ -17611,15 +17649,16 @@ var _minekoa$elm_text_editor$Main$update = F2(
 						return {
 							ctor: '_Tuple2',
 							_0: A2(
-								_minekoa$elm_text_editor$Main$changeBuffer,
+								_minekoa$elm_text_editor$Main$selectBuffer,
 								model.currentBufferIndex + 1,
 								A3(
 									_minekoa$elm_text_editor$Main$insertBuffer,
 									model.currentBufferIndex + 1,
 									newbuf,
-									A2(
-										_minekoa$elm_text_editor$Main$saveBuffer,
+									A3(
+										_minekoa$elm_text_editor$Main$updateBufferContent,
 										model.currentBufferIndex,
+										_minekoa$elm_text_editor$TextEditor$buffer(model.editor),
 										_elm_lang$core$Native_Utils.update(
 											model,
 											{filer: m})))),

@@ -99,8 +99,8 @@ update msg model =
     case msg of
         ChangeBuffer i ->
             ( model
-                |> saveBuffer model.currentBufferIndex
-                |> changeBuffer i
+                |> updateBufferContent model.currentBufferIndex (Editor.buffer model.editor)
+                |> selectBuffer i
             , Cmd.none
             )
 
@@ -108,7 +108,7 @@ update msg model =
             ( model
                 |> removeBuffer i
                 |> \m -> if i == m.currentBufferIndex then
-                             changeBuffer i m
+                             selectBuffer i m
                          else if i < m.currentBufferIndex then
                                   { m | currentBufferIndex = m.currentBufferIndex - 1 }
                               else
@@ -174,9 +174,9 @@ update msg model =
                                     newbuf = makeBuffer file.name content
                                 in
                                     ( { model | filer = m }
-                                        |> saveBuffer model.currentBufferIndex
+                                        |> updateBufferContent model.currentBufferIndex (Editor.buffer model.editor)
                                         |> insertBuffer (model.currentBufferIndex + 1) newbuf
-                                        |> changeBuffer (model.currentBufferIndex + 1)
+                                        |> selectBuffer (model.currentBufferIndex + 1)
                                     , Cmd.map FilerMsg c
                                     )
                             Err err ->
@@ -188,20 +188,19 @@ update msg model =
                         , Cmd.map FilerMsg c
                         )
 
-
-saveBuffer : Int -> Model -> Model
-saveBuffer i model =
+updateBufferContent : Int -> TextEditor.Buffer.Model -> Model -> Model
+updateBufferContent i content model =
     case model.buffers |> List.drop i |> List.head of
         Just buf ->
             { model
                 | buffers = (List.take i model.buffers)
-                            ++ ({ buf | buffer = Editor.buffer model.editor } :: List.drop (i + 1) model.buffers)
+                            ++ ({ buf | buffer = content } :: List.drop (i + 1) model.buffers)
             }
         Nothing ->
             model
 
-changeBuffer : Int -> Model -> Model
-changeBuffer i model =
+selectBuffer : Int -> Model -> Model
+selectBuffer i model =
     case model.buffers |> List.drop i |> List.head of
         Just buf ->
             { model
@@ -213,7 +212,7 @@ changeBuffer i model =
             if List.isEmpty model.buffers then
                 model
             else
-                changeBuffer (model.buffers |> List.length |> flip (-) 1) model
+                selectBuffer (model.buffers |> List.length |> flip (-) 1) model
 
 insertBuffer : Int -> Buffer -> Model -> Model
 insertBuffer i buf model =
@@ -285,10 +284,17 @@ bufferTab model =
                                        else  [("background-color", "snow"), ("color", "dimgray"), ("padding", "1px 0.8em"), ("height", "100%")]
                             ]
                             [ span [ onClick <| ChangeBuffer i ] [text buf.name]
-                            , button [ onClick <| CloseBuffer i
-                                     , style [ ("font-size", "0.8em") ]
+                            , div  [ onClick <| CloseBuffer i
+                                     , style [ ("display", "inline-block")
+                                             , ("background-color", "darkgray"), ("color", "whitesmoke")
+                                             , ("font-size", "0.8em")
+                                             , ("height", "1.2em"), ("width", "1.2em")
+                                             , ("border-radius", "0.6em")
+                                             , ("text-align", "center"), ("vertical-align", "middle")
+                                             , ("margin-left", "0.5em")
+                                             ]
                                      ]
-                                  [ text "(x)" ]
+                                  [ text "x" ]
                             ]
                    ) model.buffers
         )
