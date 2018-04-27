@@ -1,6 +1,6 @@
 module Filer exposing
     ( Model
-    , Msg(ReadFile, CreateNewBuffer)
+    , Msg(ReadFile, CreateNewBuffer, SaveFileAs)
     , init
     , update
     , view
@@ -25,6 +25,7 @@ type SubMenu
     = New
     | Load
     | Save
+    | SaveAs
 
 type Msg
     = TouchSubMenuSelect SubMenu
@@ -35,6 +36,7 @@ type Msg
     | FilesDropped (List FileReader.File)
     | ReadFile FileReader.File
     | SaveFile
+    | SaveFileAs String
 
 init : Model
 init =
@@ -92,6 +94,12 @@ update msg (fname, buf) model =
             , filer_saveFile (fname, String.join "\n" buf.contents)
             )
 
+        SaveFileAs s ->
+            ( model
+            , filer_saveFile (s, String.join "\n" buf.contents)
+            )
+
+
 view : Model -> Html Msg
 view model =
     div [ class "filer-menu", class "menu-root"
@@ -119,7 +127,12 @@ menuItemsView model =
     , div [ onClick <| TouchSubMenuSelect Save
           , class <| if model.selectedSubMenu == Save then "menu-item-active" else "menu-item"
           ]
-          [ span [] [text "Save "]
+          [ span [] [text "Save"]
+          ]
+    , div [ onClick <| TouchSubMenuSelect SaveAs
+          , class <| if model.selectedSubMenu == SaveAs then "menu-item-active" else "menu-item"
+          ]
+          [ span [] [text "Save as"]
           ]
     ]
 
@@ -133,6 +146,8 @@ menuPalette model =
             div [class "menu-palette"] [ fileLoadView model ]
         Save ->
             div [class "menu-palette"] [ fileSaveView model ]
+        SaveAs ->
+            div [class "menu-palette"] [ fileSaveAsView model ]
 
 
 fileNewView : Model -> Html Msg
@@ -201,4 +216,31 @@ fileSaveView model =
               [ text "Save current buffer" ]
         ]
 
+fileSaveAsView : Model -> Html Msg
+fileSaveAsView model =
+    div [ class "filer-save"]
+        [ div []
+              [ div []
+                    [ text "file name (rename): "
+                    , input [ class "file_name_input"
+                            , placeholder "Please enter the file name here!"
+                            , value model.newFileName
+                            , onInput InputFileName
+                            , style [ ("width", "24em") ]
+                            ] []
+                    ]
+              , div [ style [ ("display", "flex")
+                            , ("justify-content", "flex-end")
+                            ]
+                    ]
+                    [ div ( if model.newFileName == ""
+                            then [ class "filer_button_disabled" ]
+                            else [ class "file_input_label"
+                                 , onClick <| SaveFileAs model.newFileName
+                                 ]
+                          )
+                          [ text "Save current buffer" ]
+                    ]
+              ]
+        ]
 

@@ -164,7 +164,11 @@ update msg model =
         -- Filer
         FilerMsg fmsg ->
             let
-                (m, c) = Filer.update fmsg (model.currentBufferName, Editor.buffer model.editor) model.filer
+                bufname = bufferName model.currentBufferIndex model
+                              |> Maybe.withDefault ""
+
+                (m, c) = Filer.update fmsg (bufname, Editor.buffer model.editor) model.filer
+
             in
                 case fmsg of
                     Filer.CreateNewBuffer name ->
@@ -191,6 +195,12 @@ update msg model =
                                 ( { model | filer = m}
                                 , Cmd.map FilerMsg c
                                 )
+                    Filer.SaveFileAs name ->
+                        ( { model | filer = m  }
+                              |> updateBufferName model.currentBufferIndex name
+                        , Cmd.map FilerMsg c
+                        )
+
                     _ ->
                         ( { model | filer = m}
                         , Cmd.map FilerMsg c
@@ -206,6 +216,23 @@ updateBufferContent i content model =
             }
         Nothing ->
             model
+
+updateBufferName : Int -> String -> Model -> Model
+updateBufferName i name model =
+    case model.buffers |> List.drop i |> List.head of
+        Just buf ->
+            { model
+                | buffers = (List.take i model.buffers)
+                            ++ ({ buf | name = name } :: List.drop (i + 1) model.buffers)
+            }
+        Nothing ->
+            model
+
+bufferName : Int -> Model -> Maybe String
+bufferName i model =
+    model.buffers
+        |> List.drop i |> List.head
+        |> Maybe.andThen (\ buf -> Just buf.name) 
 
 selectBuffer : Int -> Model -> Model
 selectBuffer i model =
