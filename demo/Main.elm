@@ -269,26 +269,14 @@ subscriptions model =
     Sub.batch [ Sub.map EditorMsg  (Editor.subscriptions model.editor) ]
 
 
+
 view : Model -> Html Msg
 view model =
     div [ style [ ("margin", "0"), ("padding", "0"), ("width", "100%"), ("height", "100%")
                 , ("display", "flex"), ("flex-direction", "column")
                 ]
         ]
-        [ div [ style [  ("box-shadow", "0 0 10px 0 rgba(0,0,0,0.4)" ) ] ]
-              [ paneChanger model
-              , case model.pane of
-                    NoPane ->
-                        text ""
-                    DebugPane ->
-                        Html.map DebuggerMsg (EditorDebugger.view model.editor)
-                    KeyboardPane ->
-                        Html.map SWKeyboardMsg (SoftwareKeyboard.view model.swkeyboard)
-                    StyleEditorPane ->
-                        Html.map StyleSetterMsg (StyleSetter.view model.style)
-                    FilerPane ->
-                        Html.map FilerMsg (Filer.view model.filer)
-              ]
+        [ applicationMenu model
         , bufferTab model
         , div [ style [ ("margin", "0"), ("padding", "0"), ("width", "100%"), ("height", "100%")
                       , ("overflow","hidden")
@@ -303,58 +291,37 @@ view model =
         , modeline model
         ]
 
-bufferTab : Model -> Html Msg
-bufferTab model =
-    div [ style [ ("display", "flex"), ("flex-direction", "row"), ("align-items", "flex-end")
-                , ("background-color", "gainsboro"), ("color", "dimgray")
-                , ("padding-left", "3px")
-                , ("border-top", "0.8em solid gainsboro")
-                , ("border-bottom", "3px solid dimgray")
-                , ("min-height", "1.2em")
-                , ("-moz-user-select", "-moz-none"), ("-khtml-user-select", "none"), ("-webkit-user-select", "none"), ("user-select", "none")
-                ]
+
+applicationMenu : Model -> Html Msg
+applicationMenu model =
+    div [ class "app-menu"
         ]
-        ( List.indexedMap (\i buf ->
-                        div [ style <| if model.currentBufferIndex == i
-                                       then  [("background-color", "dimgray"), ("color", "snow"), ("padding", "1px 0.8em"), ("height", "100%")]
-                                       else  [("color", "darkgray"), ("padding", "1px 0.8em"), ("height", "100%")]
-                            ]
-                            [ span [ onClick <| ChangeBuffer i ] [text buf.name]
-                            , div  [ onClick <| CloseBuffer i
-                                     , style [ ("display", "inline-block")
-                                             , ("background-color", "darkgray"), ("color", "whitesmoke")
-                                             , ("font-size", "0.8em")
-                                             , ("height", "1.2em"), ("width", "1.2em")
-                                             , ("border-radius", "0.6em")
-                                             , ("text-align", "center"), ("vertical-align", "middle")
-                                             , ("margin-left", "0.5em")
-                                             ]
-                                     ]
-                                  [ text "x" ]
-                            ]
-                   ) model.buffers
-        )
+        [ paneChanger model
+        , case model.pane of
+              NoPane ->
+                  text ""
+              DebugPane ->
+                  Html.map DebuggerMsg (EditorDebugger.view model.editor)
+              KeyboardPane ->
+                  Html.map SWKeyboardMsg (SoftwareKeyboard.view model.swkeyboard)
+              StyleEditorPane ->
+                  Html.map StyleSetterMsg (StyleSetter.view model.style)
+              FilerPane ->
+                  Html.map FilerMsg (Filer.view model.filer)
+        ]
 
 paneChanger : Model -> Html Msg
 paneChanger model =
     let
         tab = \ tgtPane s ->
-              div [ style <| if model.pane == tgtPane
-                             then [("margin", "2px 5px 0 2px"), ("padding", "0 1em"), ("border-width", "1px 1px 0px 1px"), ("border-color", "gray"), ("background-color", "whitesmoke"), ("color", "gray")]
-                             else [("margin", "2px 5px 0 2px"), ("padding", "0 1em"), ("border", "none"), ("background-color", "gainsboro"), ("color", "darkgray")]
+              div [ class <| if model.pane == tgtPane then "app-menu-item-active" else "app-menu-item"
                   , onClick <| ChangePane tgtPane
                   ]
                   [ text s ]
     in
-    div [ style [ ("display", "flex"), ("flex-direction", "row"), ("align-items", "flex-end")
-                , ("background-color", "gainsboro"), ("min-height", "1.5em")
-                , ("-moz-user-select", "-moz-none"), ("-khtml-user-select", "none"), ("-webkit-user-select", "none"), ("user-select", "none")
-                ]
-        ]
-        [ div [ style [ ("border", "1px solid gray"), ("color", "gray"), if model.pane == NoPane then ("background-color", "inherit") else ("background-color", "silver")
-                      , ("height", "1em"), ("width", "1em"), ("margin", "3px 1.5em 3px 0.5em"), ("text-align", "center")
-                      ]
-              , onClick (ChangePane NoPane)
+    div [ class "app-menu-bar" ]
+        [ div [ class <| if model.pane == NoPane then "app-menu-close-button" else "app-menu-close-button-active"
+              , onClick <| ChangePane NoPane
               ]
               [text "x"]
         , tab FilerPane "File"
@@ -363,6 +330,21 @@ paneChanger model =
         , tab DebugPane "Debug"
         ]
 
+
+bufferTab : Model -> Html Msg
+bufferTab model =
+    div [ class "buf-tab-bar" ]
+        ( List.indexedMap (\i buf ->
+                        div [ class <| if model.currentBufferIndex == i then "buf-tab-active" else "buf-tab"
+                            ]
+                            [ span [ onClick <| ChangeBuffer i ] [text buf.name]
+                            , div  [ class "buf-tab-close-button"
+                                   , onClick <| CloseBuffer i
+                                   ]
+                                   [ text "☓" ]
+                            ]
+                   ) model.buffers
+        )
 
 
 modeline : Model -> Html msg

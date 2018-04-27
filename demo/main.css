@@ -1,0 +1,129 @@
+
+.app-menu {
+    box-shadow: 0 0 10px 0 rgba(0,0,0,0.4);
+
+    -moz-user-select: -moz-none;
+    -khtml-user-select: none;
+    -webkit-user-select: none;
+    user-select: none;
+}
+
+.app-menu-bar {
+    display: flex;
+    flex-direction: row;
+    align-items: flex-end;
+
+    background-color: gainsboro;
+    min-height: 1.5em;
+}
+
+.app-menu-close-button {
+    border: 1px solid gray;
+    color: gray;
+
+    height: 1em;
+    width: 1em;
+    margin: 3px 1.5em 3px 0.5em;
+    text-align: center;
+
+    background-color: silver;
+}
+
+.app-menu-close-button-active {
+    border: 1px solid gray;
+    color: gray;
+
+    height: 1em;
+    width: 1em;
+    margin: 3px 1.5em 3px 0.5em;
+    text-align: center;
+
+    background-color: inherit;
+}
+
+.app-menu-item-active {
+    margin: 2px 5px 0 2px;
+    padding: 0 1em;
+
+    border-width: 1px 1px 0px 1px;
+    border-color: gray;
+    background-color: whitesmoke;
+    color: gray;
+}
+
+.app-menu-item-active:hover {
+    text-decoration: line-through;
+    color: crimson;
+}
+
+.app-menu-item {
+    margin: 2px 5px 0 2px;
+    padding: 0 1em;
+    border: none;
+
+    background-color: gainsboro;
+    color: darkgray;
+}
+
+.app-menu-item:hover {
+    color: dimgray;
+}
+
+
+
+.buf-tab-bar {
+    display: flex;
+    flex-direction: row;
+    align-items: flex-end;
+    
+    background-color: gainsboro;
+    color: dimgray;
+
+    padding-left: 3px;
+    border-top: 0.8em solid gainsboro;
+    border-bottom: 3px solid dimgray;
+    min-height: 1.2em;
+
+    -moz-user-select: -moz-none;
+    -khtml-user-select: none;
+    -webkit-user-select: none;
+    user-select: none;
+}
+
+.buf-tab-close-button {
+    display: inline-block;
+
+    background-color: darkgray;
+    color: whitesmoke;
+    font-size: 0.8em;
+    height: 1.2em;
+    width: 1.2em;
+    border-radius: 0.6em;
+
+    text-align: center;
+    vertical-align: middle;
+    margin-left: 0.5em;
+}
+
+.buf-tab {
+    padding: 1px 0.8em;
+    height: 100%;
+
+    color: darkgray;
+}
+
+.buf-tab:hover {
+    color: dimgray;
+}
+
+.buf-tab-active {
+    padding: 1px 0.8em;
+    height: 100%;
+
+    background-color: dimgray;
+    color: snow;
+}
+
+.buf-tab-close-button:hover {
+    background-color: crimson;
+}

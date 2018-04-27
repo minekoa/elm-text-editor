@@ -17478,52 +17478,8 @@ var _minekoa$elm_text_editor$Main$paneChanger = function (model) {
 				_elm_lang$html$Html$div,
 				{
 					ctor: '::',
-					_0: _elm_lang$html$Html_Attributes$style(
-						_elm_lang$core$Native_Utils.eq(model.pane, tgtPane) ? {
-							ctor: '::',
-							_0: {ctor: '_Tuple2', _0: 'margin', _1: '2px 5px 0 2px'},
-							_1: {
-								ctor: '::',
-								_0: {ctor: '_Tuple2', _0: 'padding', _1: '0 1em'},
-								_1: {
-									ctor: '::',
-									_0: {ctor: '_Tuple2', _0: 'border-width', _1: '1px 1px 0px 1px'},
-									_1: {
-										ctor: '::',
-										_0: {ctor: '_Tuple2', _0: 'border-color', _1: 'gray'},
-										_1: {
-											ctor: '::',
-											_0: {ctor: '_Tuple2', _0: 'background-color', _1: 'whitesmoke'},
-											_1: {
-												ctor: '::',
-												_0: {ctor: '_Tuple2', _0: 'color', _1: 'gray'},
-												_1: {ctor: '[]'}
-											}
-										}
-									}
-								}
-							}
-						} : {
-							ctor: '::',
-							_0: {ctor: '_Tuple2', _0: 'margin', _1: '2px 5px 0 2px'},
-							_1: {
-								ctor: '::',
-								_0: {ctor: '_Tuple2', _0: 'padding', _1: '0 1em'},
-								_1: {
-									ctor: '::',
-									_0: {ctor: '_Tuple2', _0: 'border', _1: 'none'},
-									_1: {
-										ctor: '::',
-										_0: {ctor: '_Tuple2', _0: 'background-color', _1: 'gainsboro'},
-										_1: {
-											ctor: '::',
-											_0: {ctor: '_Tuple2', _0: 'color', _1: 'darkgray'},
-											_1: {ctor: '[]'}
-										}
-									}
-								}
-							}
-						}),
+					_0: _elm_lang$html$Html_Attributes$class(
+						_elm_lang$core$Native_Utils.eq(model.pane, tgtPane) ? 'app-menu-item-active' : 'app-menu-item'),
 					_1: {
 						ctor: '::',
 						_0: _elm_lang$html$Html_Events$onClick(
@@ -17541,44 +17497,7 @@ var _minekoa$elm_text_editor$Main$paneChanger = function (model) {
 		_elm_lang$html$Html$div,
 		{
 			ctor: '::',
-			_0: _elm_lang$html$Html_Attributes$style(
-				{
-					ctor: '::',
-					_0: {ctor: '_Tuple2', _0: 'display', _1: 'flex'},
-					_1: {
-						ctor: '::',
-						_0: {ctor: '_Tuple2', _0: 'flex-direction', _1: 'row'},
-						_1: {
-							ctor: '::',
-							_0: {ctor: '_Tuple2', _0: 'align-items', _1: 'flex-end'},
-							_1: {
-								ctor: '::',
-								_0: {ctor: '_Tuple2', _0: 'background-color', _1: 'gainsboro'},
-								_1: {
-									ctor: '::',
-									_0: {ctor: '_Tuple2', _0: 'min-height', _1: '1.5em'},
-									_1: {
-										ctor: '::',
-										_0: {ctor: '_Tuple2', _0: '-moz-user-select', _1: '-moz-none'},
-										_1: {
-											ctor: '::',
-											_0: {ctor: '_Tuple2', _0: '-khtml-user-select', _1: 'none'},
-											_1: {
-												ctor: '::',
-												_0: {ctor: '_Tuple2', _0: '-webkit-user-select', _1: 'none'},
-												_1: {
-													ctor: '::',
-													_0: {ctor: '_Tuple2', _0: 'user-select', _1: 'none'},
-													_1: {ctor: '[]'}
-												}
-											}
-										}
-									}
-								}
-							}
-						}
-					}
-				}),
+			_0: _elm_lang$html$Html_Attributes$class('app-menu-bar'),
 			_1: {ctor: '[]'}
 		},
 		{
@@ -17587,36 +17506,8 @@ var _minekoa$elm_text_editor$Main$paneChanger = function (model) {
 				_elm_lang$html$Html$div,
 				{
 					ctor: '::',
-					_0: _elm_lang$html$Html_Attributes$style(
-						{
-							ctor: '::',
-							_0: {ctor: '_Tuple2', _0: 'border', _1: '1px solid gray'},
-							_1: {
-								ctor: '::',
-								_0: {ctor: '_Tuple2', _0: 'color', _1: 'gray'},
-								_1: {
-									ctor: '::',
-									_0: _elm_lang$core$Native_Utils.eq(model.pane, _minekoa$elm_text_editor$Main$NoPane) ? {ctor: '_Tuple2', _0: 'background-color', _1: 'inherit'} : {ctor: '_Tuple2', _0: 'background-color', _1: 'silver'},
-									_1: {
-										ctor: '::',
-										_0: {ctor: '_Tuple2', _0: 'height', _1: '1em'},
-										_1: {
-											ctor: '::',
-											_0: {ctor: '_Tuple2', _0: 'width', _1: '1em'},
-											_1: {
-												ctor: '::',
-												_0: {ctor: '_Tuple2', _0: 'margin', _1: '3px 1.5em 3px 0.5em'},
-												_1: {
-													ctor: '::',
-													_0: {ctor: '_Tuple2', _0: 'text-align', _1: 'center'},
-													_1: {ctor: '[]'}
-												}
-											}
-										}
-									}
-								}
-							}
-						}),
+					_0: _elm_lang$html$Html_Attributes$class(
+						_elm_lang$core$Native_Utils.eq(model.pane, _minekoa$elm_text_editor$Main$NoPane) ? 'app-menu-close-button' : 'app-menu-close-button-active'),
 					_1: {
 						ctor: '::',
 						_0: _elm_lang$html$Html_Events$onClick(
@@ -17648,6 +17539,50 @@ var _minekoa$elm_text_editor$Main$paneChanger = function (model) {
 			}
 		});
 };
+var _minekoa$elm_text_editor$Main$applicationMenu = function (model) {
+	return A2(
+		_elm_lang$html$Html$div,
+		{
+			ctor: '::',
+			_0: _elm_lang$html$Html_Attributes$class('app-menu'),
+			_1: {ctor: '[]'}
+		},
+		{
+			ctor: '::',
+			_0: _minekoa$elm_text_editor$Main$paneChanger(model),
+			_1: {
+				ctor: '::',
+				_0: function () {
+					var _p4 = model.pane;
+					switch (_p4.ctor) {
+						case 'NoPane':
+							return _elm_lang$html$Html$text('');
+						case 'DebugPane':
+							return A2(
+								_elm_lang$html$Html$map,
+								_minekoa$elm_text_editor$Main$DebuggerMsg,
+								_minekoa$elm_text_editor$EditorDebugger$view(model.editor));
+						case 'KeyboardPane':
+							return A2(
+								_elm_lang$html$Html$map,
+								_minekoa$elm_text_editor$Main$SWKeyboardMsg,
+								_minekoa$elm_text_editor$SoftwareKeyboard$view(model.swkeyboard));
+						case 'StyleEditorPane':
+							return A2(
+								_elm_lang$html$Html$map,
+								_minekoa$elm_text_editor$Main$StyleSetterMsg,
+								_minekoa$elm_text_editor$StyleSetter$view(model.style));
+						default:
+							return A2(
+								_elm_lang$html$Html$map,
+								_minekoa$elm_text_editor$Main$FilerMsg,
+								_minekoa$elm_text_editor$Filer$view(model.filer));
+					}
+				}(),
+				_1: {ctor: '[]'}
+			}
+		});
+};
 var _minekoa$elm_text_editor$Main$CloseBuffer = function (a) {
 	return {ctor: 'CloseBuffer', _0: a};
 };
@@ -17659,60 +17594,7 @@ var _minekoa$elm_text_editor$Main$bufferTab = function (model) {
 		_elm_lang$html$Html$div,
 		{
 			ctor: '::',
-			_0: _elm_lang$html$Html_Attributes$style(
-				{
-					ctor: '::',
-					_0: {ctor: '_Tuple2', _0: 'display', _1: 'flex'},
-					_1: {
-						ctor: '::',
-						_0: {ctor: '_Tuple2', _0: 'flex-direction', _1: 'row'},
-						_1: {
-							ctor: '::',
-							_0: {ctor: '_Tuple2', _0: 'align-items', _1: 'flex-end'},
-							_1: {
-								ctor: '::',
-								_0: {ctor: '_Tuple2', _0: 'background-color', _1: 'gainsboro'},
-								_1: {
-									ctor: '::',
-									_0: {ctor: '_Tuple2', _0: 'color', _1: 'dimgray'},
-									_1: {
-										ctor: '::',
-										_0: {ctor: '_Tuple2', _0: 'padding-left', _1: '3px'},
-										_1: {
-											ctor: '::',
-											_0: {ctor: '_Tuple2', _0: 'border-top', _1: '0.8em solid gainsboro'},
-											_1: {
-												ctor: '::',
-												_0: {ctor: '_Tuple2', _0: 'border-bottom', _1: '3px solid dimgray'},
-												_1: {
-													ctor: '::',
-													_0: {ctor: '_Tuple2', _0: 'min-height', _1: '1.2em'},
-													_1: {
-														ctor: '::',
-														_0: {ctor: '_Tuple2', _0: '-moz-user-select', _1: '-moz-none'},
-														_1: {
-															ctor: '::',
-															_0: {ctor: '_Tuple2', _0: '-khtml-user-select', _1: 'none'},
-															_1: {
-																ctor: '::',
-																_0: {ctor: '_Tuple2', _0: '-webkit-user-select', _1: 'none'},
-																_1: {
-																	ctor: '::',
-																	_0: {ctor: '_Tuple2', _0: 'user-select', _1: 'none'},
-																	_1: {ctor: '[]'}
-																}
-															}
-														}
-													}
-												}
-											}
-										}
-									}
-								}
-							}
-						}
-					}
-				}),
+			_0: _elm_lang$html$Html_Attributes$class('buf-tab-bar'),
 			_1: {ctor: '[]'}
 		},
 		A2(
@@ -17723,36 +17605,8 @@ var _minekoa$elm_text_editor$Main$bufferTab = function (model) {
 						_elm_lang$html$Html$div,
 						{
 							ctor: '::',
-							_0: _elm_lang$html$Html_Attributes$style(
-								_elm_lang$core$Native_Utils.eq(model.currentBufferIndex, i) ? {
-									ctor: '::',
-									_0: {ctor: '_Tuple2', _0: 'background-color', _1: 'dimgray'},
-									_1: {
-										ctor: '::',
-										_0: {ctor: '_Tuple2', _0: 'color', _1: 'snow'},
-										_1: {
-											ctor: '::',
-											_0: {ctor: '_Tuple2', _0: 'padding', _1: '1px 0.8em'},
-											_1: {
-												ctor: '::',
-												_0: {ctor: '_Tuple2', _0: 'height', _1: '100%'},
-												_1: {ctor: '[]'}
-											}
-										}
-									}
-								} : {
-									ctor: '::',
-									_0: {ctor: '_Tuple2', _0: 'color', _1: 'darkgray'},
-									_1: {
-										ctor: '::',
-										_0: {ctor: '_Tuple2', _0: 'padding', _1: '1px 0.8em'},
-										_1: {
-											ctor: '::',
-											_0: {ctor: '_Tuple2', _0: 'height', _1: '100%'},
-											_1: {ctor: '[]'}
-										}
-									}
-								}),
+							_0: _elm_lang$html$Html_Attributes$class(
+								_elm_lang$core$Native_Utils.eq(model.currentBufferIndex, i) ? 'buf-tab-active' : 'buf-tab'),
 							_1: {ctor: '[]'}
 						},
 						{
@@ -17776,58 +17630,17 @@ var _minekoa$elm_text_editor$Main$bufferTab = function (model) {
 									_elm_lang$html$Html$div,
 									{
 										ctor: '::',
-										_0: _elm_lang$html$Html_Events$onClick(
-											_minekoa$elm_text_editor$Main$CloseBuffer(i)),
+										_0: _elm_lang$html$Html_Attributes$class('buf-tab-close-button'),
 										_1: {
 											ctor: '::',
-											_0: _elm_lang$html$Html_Attributes$style(
-												{
-													ctor: '::',
-													_0: {ctor: '_Tuple2', _0: 'display', _1: 'inline-block'},
-													_1: {
-														ctor: '::',
-														_0: {ctor: '_Tuple2', _0: 'background-color', _1: 'darkgray'},
-														_1: {
-															ctor: '::',
-															_0: {ctor: '_Tuple2', _0: 'color', _1: 'whitesmoke'},
-															_1: {
-																ctor: '::',
-																_0: {ctor: '_Tuple2', _0: 'font-size', _1: '0.8em'},
-																_1: {
-																	ctor: '::',
-																	_0: {ctor: '_Tuple2', _0: 'height', _1: '1.2em'},
-																	_1: {
-																		ctor: '::',
-																		_0: {ctor: '_Tuple2', _0: 'width', _1: '1.2em'},
-																		_1: {
-																			ctor: '::',
-																			_0: {ctor: '_Tuple2', _0: 'border-radius', _1: '0.6em'},
-																			_1: {
-																				ctor: '::',
-																				_0: {ctor: '_Tuple2', _0: 'text-align', _1: 'center'},
-																				_1: {
-																					ctor: '::',
-																					_0: {ctor: '_Tuple2', _0: 'vertical-align', _1: 'middle'},
-																					_1: {
-																						ctor: '::',
-																						_0: {ctor: '_Tuple2', _0: 'margin-left', _1: '0.5em'},
-																						_1: {ctor: '[]'}
-																					}
-																				}
-																			}
-																		}
-																	}
-																}
-															}
-														}
-													}
-												}),
+											_0: _elm_lang$html$Html_Events$onClick(
+												_minekoa$elm_text_editor$Main$CloseBuffer(i)),
 											_1: {ctor: '[]'}
 										}
 									},
 									{
 										ctor: '::',
-										_0: _elm_lang$html$Html$text('x'),
+										_0: _elm_lang$html$Html$text('☓'),
 										_1: {ctor: '[]'}
 									}),
 								_1: {ctor: '[]'}
@@ -17842,7 +17655,7 @@ var _minekoa$elm_text_editor$Main$EditorMsg = function (a) {
 var _minekoa$elm_text_editor$Main$init = function () {
 	var content = '';
 	var buf = A2(_minekoa$elm_text_editor$Main$makeBuffer, '*scratch*', content);
-	var _p4 = A3(
+	var _p5 = A3(
 		_minekoa$elm_text_editor$TextEditor$init,
 		'editor-sample1',
 		A2(
@@ -17850,8 +17663,8 @@ var _minekoa$elm_text_editor$Main$init = function () {
 			_minekoa$elm_text_editor$TextEditor_KeyBind$basic,
 			A2(_elm_lang$core$Basics_ops['++'], _minekoa$elm_text_editor$TextEditor_KeyBind$gates, _minekoa$elm_text_editor$TextEditor_KeyBind$emacsLike)),
 		content);
-	var bm = _p4._0;
-	var bc = _p4._1;
+	var bm = _p5._0;
+	var bc = _p5._1;
 	return {
 		ctor: '_Tuple2',
 		_0: A8(
@@ -17872,26 +17685,26 @@ var _minekoa$elm_text_editor$Main$init = function () {
 	};
 }();
 var _minekoa$elm_text_editor$Main$updateMap = F2(
-	function (model, _p5) {
-		var _p6 = _p5;
+	function (model, _p6) {
+		var _p7 = _p6;
 		return {
 			ctor: '_Tuple2',
 			_0: _elm_lang$core$Native_Utils.update(
 				model,
-				{editor: _p6._0}),
-			_1: A2(_elm_lang$core$Platform_Cmd$map, _minekoa$elm_text_editor$Main$EditorMsg, _p6._1)
+				{editor: _p7._0}),
+			_1: A2(_elm_lang$core$Platform_Cmd$map, _minekoa$elm_text_editor$Main$EditorMsg, _p7._1)
 		};
 	});
 var _minekoa$elm_text_editor$Main$update = F2(
 	function (msg, model) {
-		var _p7 = msg;
-		switch (_p7.ctor) {
+		var _p8 = msg;
+		switch (_p8.ctor) {
 			case 'ChangeBuffer':
 				return {
 					ctor: '_Tuple2',
 					_0: A2(
 						_minekoa$elm_text_editor$Main$selectBuffer,
-						_p7._0,
+						_p8._0,
 						A3(
 							_minekoa$elm_text_editor$Main$updateBufferContent,
 							model.currentBufferIndex,
@@ -17900,15 +17713,15 @@ var _minekoa$elm_text_editor$Main$update = F2(
 					_1: _elm_lang$core$Platform_Cmd$none
 				};
 			case 'CloseBuffer':
-				var _p8 = _p7._0;
+				var _p9 = _p8._0;
 				return {
 					ctor: '_Tuple2',
 					_0: function (m) {
-						return _elm_lang$core$Native_Utils.eq(_p8, m.currentBufferIndex) ? A2(_minekoa$elm_text_editor$Main$selectBuffer, _p8, m) : ((_elm_lang$core$Native_Utils.cmp(_p8, m.currentBufferIndex) < 0) ? _elm_lang$core$Native_Utils.update(
+						return _elm_lang$core$Native_Utils.eq(_p9, m.currentBufferIndex) ? A2(_minekoa$elm_text_editor$Main$selectBuffer, _p9, m) : ((_elm_lang$core$Native_Utils.cmp(_p9, m.currentBufferIndex) < 0) ? _elm_lang$core$Native_Utils.update(
 							m,
 							{currentBufferIndex: m.currentBufferIndex - 1}) : m);
 					}(
-						A2(_minekoa$elm_text_editor$Main$removeBuffer, _p8, model)),
+						A2(_minekoa$elm_text_editor$Main$removeBuffer, _p9, model)),
 					_1: _elm_lang$core$Platform_Cmd$none
 				};
 			case 'ChangePane':
@@ -17916,13 +17729,13 @@ var _minekoa$elm_text_editor$Main$update = F2(
 					ctor: '_Tuple2',
 					_0: _elm_lang$core$Native_Utils.update(
 						model,
-						{pane: _p7._0}),
+						{pane: _p8._0}),
 					_1: _elm_lang$core$Platform_Cmd$none
 				};
 			case 'EditorMsg':
-				var _p9 = A2(_minekoa$elm_text_editor$TextEditor$update, _p7._0, model.editor);
-				var m = _p9._0;
-				var c = _p9._1;
+				var _p10 = A2(_minekoa$elm_text_editor$TextEditor$update, _p8._0, model.editor);
+				var m = _p10._0;
+				var c = _p10._1;
 				return {
 					ctor: '_Tuple2',
 					_0: _elm_lang$core$Native_Utils.update(
@@ -17931,9 +17744,9 @@ var _minekoa$elm_text_editor$Main$update = F2(
 					_1: A2(_elm_lang$core$Platform_Cmd$map, _minekoa$elm_text_editor$Main$EditorMsg, c)
 				};
 			case 'DebuggerMsg':
-				var _p10 = A2(_minekoa$elm_text_editor$EditorDebugger$update, _p7._0, model.editor);
-				var em = _p10._0;
-				var dc = _p10._1;
+				var _p11 = A2(_minekoa$elm_text_editor$EditorDebugger$update, _p8._0, model.editor);
+				var em = _p11._0;
+				var dc = _p11._1;
 				return {
 					ctor: '_Tuple2',
 					_0: _elm_lang$core$Native_Utils.update(
@@ -17942,9 +17755,9 @@ var _minekoa$elm_text_editor$Main$update = F2(
 					_1: A2(_elm_lang$core$Platform_Cmd$map, _minekoa$elm_text_editor$Main$DebuggerMsg, dc)
 				};
 			case 'SWKeyboardMsg':
-				var _p11 = A3(_minekoa$elm_text_editor$SoftwareKeyboard$update, _p7._0, model.swkeyboard, model.editor);
-				var kbd = _p11._0;
-				var edt = _p11._1;
+				var _p12 = A3(_minekoa$elm_text_editor$SoftwareKeyboard$update, _p8._0, model.swkeyboard, model.editor);
+				var kbd = _p12._0;
+				var edt = _p12._1;
 				return {
 					ctor: '_Tuple2',
 					_0: _elm_lang$core$Native_Utils.update(
@@ -17971,9 +17784,9 @@ var _minekoa$elm_text_editor$Main$update = F2(
 						})
 				};
 			case 'StyleSetterMsg':
-				var _p12 = A2(_minekoa$elm_text_editor$StyleSetter$update, _p7._0, model.style);
-				var m = _p12._0;
-				var c = _p12._1;
+				var _p13 = A2(_minekoa$elm_text_editor$StyleSetter$update, _p8._0, model.style);
+				var m = _p13._0;
+				var c = _p13._1;
 				return {
 					ctor: '_Tuple2',
 					_0: _elm_lang$core$Native_Utils.update(
@@ -17982,24 +17795,24 @@ var _minekoa$elm_text_editor$Main$update = F2(
 					_1: A2(_elm_lang$core$Platform_Cmd$map, _minekoa$elm_text_editor$Main$StyleSetterMsg, c)
 				};
 			default:
-				var _p17 = _p7._0;
+				var _p18 = _p8._0;
 				var bufname = A2(
 					_elm_lang$core$Maybe$withDefault,
 					'',
 					A2(_minekoa$elm_text_editor$Main$bufferName, model.currentBufferIndex, model));
-				var _p13 = A3(
+				var _p14 = A3(
 					_minekoa$elm_text_editor$Filer$update,
-					_p17,
+					_p18,
 					{
 						ctor: '_Tuple2',
 						_0: bufname,
 						_1: _minekoa$elm_text_editor$TextEditor$buffer(model.editor)
 					},
 					model.filer);
-				var m = _p13._0;
-				var c = _p13._1;
-				var _p14 = _p17;
-				switch (_p14.ctor) {
+				var m = _p14._0;
+				var c = _p14._1;
+				var _p15 = _p18;
+				switch (_p15.ctor) {
 					case 'CreateNewBuffer':
 						return {
 							ctor: '_Tuple2',
@@ -18009,7 +17822,7 @@ var _minekoa$elm_text_editor$Main$update = F2(
 								A3(
 									_minekoa$elm_text_editor$Main$insertBuffer,
 									model.currentBufferIndex + 1,
-									A2(_minekoa$elm_text_editor$Main$makeBuffer, _p14._0, ''),
+									A2(_minekoa$elm_text_editor$Main$makeBuffer, _p15._0, ''),
 									A3(
 										_minekoa$elm_text_editor$Main$updateBufferContent,
 										model.currentBufferIndex,
@@ -18020,10 +17833,10 @@ var _minekoa$elm_text_editor$Main$update = F2(
 							_1: A2(_elm_lang$core$Platform_Cmd$map, _minekoa$elm_text_editor$Main$FilerMsg, c)
 						};
 					case 'ReadFile':
-						var _p16 = _p14._0;
-						var _p15 = _p16.data;
-						if (_p15.ctor === 'Ok') {
-							var newbuf = A2(_minekoa$elm_text_editor$Main$makeBuffer, _p16.name, _p15._0);
+						var _p17 = _p15._0;
+						var _p16 = _p17.data;
+						if (_p16.ctor === 'Ok') {
+							var newbuf = A2(_minekoa$elm_text_editor$Main$makeBuffer, _p17.name, _p16._0);
 							return {
 								ctor: '_Tuple2',
 								_0: A2(
@@ -18057,7 +17870,7 @@ var _minekoa$elm_text_editor$Main$update = F2(
 							_0: A3(
 								_minekoa$elm_text_editor$Main$updateBufferName,
 								model.currentBufferIndex,
-								_p14._0,
+								_p15._0,
 								_elm_lang$core$Native_Utils.update(
 									model,
 									{filer: m})),
@@ -18120,53 +17933,7 @@ var _minekoa$elm_text_editor$Main$view = function (model) {
 		},
 		{
 			ctor: '::',
-			_0: A2(
-				_elm_lang$html$Html$div,
-				{
-					ctor: '::',
-					_0: _elm_lang$html$Html_Attributes$style(
-						{
-							ctor: '::',
-							_0: {ctor: '_Tuple2', _0: 'box-shadow', _1: '0 0 10px 0 rgba(0,0,0,0.4)'},
-							_1: {ctor: '[]'}
-						}),
-					_1: {ctor: '[]'}
-				},
-				{
-					ctor: '::',
-					_0: _minekoa$elm_text_editor$Main$paneChanger(model),
-					_1: {
-						ctor: '::',
-						_0: function () {
-							var _p18 = model.pane;
-							switch (_p18.ctor) {
-								case 'NoPane':
-									return _elm_lang$html$Html$text('');
-								case 'DebugPane':
-									return A2(
-										_elm_lang$html$Html$map,
-										_minekoa$elm_text_editor$Main$DebuggerMsg,
-										_minekoa$elm_text_editor$EditorDebugger$view(model.editor));
-								case 'KeyboardPane':
-									return A2(
-										_elm_lang$html$Html$map,
-										_minekoa$elm_text_editor$Main$SWKeyboardMsg,
-										_minekoa$elm_text_editor$SoftwareKeyboard$view(model.swkeyboard));
-								case 'StyleEditorPane':
-									return A2(
-										_elm_lang$html$Html$map,
-										_minekoa$elm_text_editor$Main$StyleSetterMsg,
-										_minekoa$elm_text_editor$StyleSetter$view(model.style));
-								default:
-									return A2(
-										_elm_lang$html$Html$map,
-										_minekoa$elm_text_editor$Main$FilerMsg,
-										_minekoa$elm_text_editor$Filer$view(model.filer));
-							}
-						}(),
-						_1: {ctor: '[]'}
-					}
-				}),
+			_0: _minekoa$elm_text_editor$Main$applicationMenu(model),
 			_1: {
 				ctor: '::',
 				_0: _minekoa$elm_text_editor$Main$bufferTab(model),
