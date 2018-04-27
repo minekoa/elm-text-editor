@@ -65,6 +65,44 @@
     display: none;
 }
 
+.filer_button_disabled {
+   display: block;
+
+    border: 1px solid darkgray;
+    border-radius: 2px;
+    color: gray;
+    background-color: lightgray;
+    margin: 0.5em;
+    padding: 5px;
+    color: snow;
+}
+
+.filer-new {
+    height: 100%;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    -moz-user-select: -moz-none;
+    -khtml-user-select: none;
+    -webkit-user-select: none;
+    user-select: none;
+
+}
+
+.file_name_input {
+    height: 2em;
+    border: 1px solid dimgray;
+    border-radius: 0.2em;
+
+    padding: 2px 0.5em;
+}
+
+.file_name_input::placeholder {
+    color: lightgray;
+}
+
 .filer-save {
     height: 100%;
 

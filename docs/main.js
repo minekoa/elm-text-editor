@@ -13328,13 +13328,14 @@ var _minekoa$elm_text_editor$FilerPorts$filer_saveFile = _elm_lang$core$Native_P
 		return [v._0, v._1];
 	});
 
-var _minekoa$elm_text_editor$Filer$Model = F2(
-	function (a, b) {
-		return {selectedSubMenu: a, inDropZone: b};
+var _minekoa$elm_text_editor$Filer$Model = F3(
+	function (a, b, c) {
+		return {selectedSubMenu: a, inDropZone: b, newFileName: c};
 	});
 var _minekoa$elm_text_editor$Filer$Save = {ctor: 'Save'};
 var _minekoa$elm_text_editor$Filer$Load = {ctor: 'Load'};
-var _minekoa$elm_text_editor$Filer$init = {selectedSubMenu: _minekoa$elm_text_editor$Filer$Load, inDropZone: false};
+var _minekoa$elm_text_editor$Filer$New = {ctor: 'New'};
+var _minekoa$elm_text_editor$Filer$init = {selectedSubMenu: _minekoa$elm_text_editor$Filer$New, inDropZone: false, newFileName: ''};
 var _minekoa$elm_text_editor$Filer$SaveFile = {ctor: 'SaveFile'};
 var _minekoa$elm_text_editor$Filer$fileSaveView = function (model) {
 	return A2(
@@ -13373,20 +13374,28 @@ var _minekoa$elm_text_editor$Filer$update = F3(
 		var _p1 = _p0;
 		var _p2 = msg;
 		switch (_p2.ctor) {
-			case 'TouchSaveSubMenu':
+			case 'TouchSubMenuSelect':
 				return {
 					ctor: '_Tuple2',
 					_0: _elm_lang$core$Native_Utils.update(
 						model,
-						{selectedSubMenu: _minekoa$elm_text_editor$Filer$Save}),
+						{selectedSubMenu: _p2._0, newFileName: ''}),
 					_1: _elm_lang$core$Platform_Cmd$none
 				};
-			case 'TouchLoadSubMenu':
+			case 'InputFileName':
 				return {
 					ctor: '_Tuple2',
 					_0: _elm_lang$core$Native_Utils.update(
 						model,
-						{selectedSubMenu: _minekoa$elm_text_editor$Filer$Load}),
+						{newFileName: _p2._0}),
+					_1: _elm_lang$core$Platform_Cmd$none
+				};
+			case 'CreateNewBuffer':
+				return {
+					ctor: '_Tuple2',
+					_0: _elm_lang$core$Native_Utils.update(
+						model,
+						{newFileName: ''}),
 					_1: _elm_lang$core$Platform_Cmd$none
 				};
 			case 'DropZoneEntered':
@@ -13527,38 +13536,163 @@ var _minekoa$elm_text_editor$Filer$fileLoadView = function (model) {
 			_1: {ctor: '[]'}
 		});
 };
+var _minekoa$elm_text_editor$Filer$CreateNewBuffer = function (a) {
+	return {ctor: 'CreateNewBuffer', _0: a};
+};
+var _minekoa$elm_text_editor$Filer$InputFileName = function (a) {
+	return {ctor: 'InputFileName', _0: a};
+};
+var _minekoa$elm_text_editor$Filer$fileNewView = function (model) {
+	return A2(
+		_elm_lang$html$Html$div,
+		{
+			ctor: '::',
+			_0: _elm_lang$html$Html_Attributes$class('filer-new'),
+			_1: {ctor: '[]'}
+		},
+		{
+			ctor: '::',
+			_0: A2(
+				_elm_lang$html$Html$div,
+				{ctor: '[]'},
+				{
+					ctor: '::',
+					_0: A2(
+						_elm_lang$html$Html$div,
+						{ctor: '[]'},
+						{
+							ctor: '::',
+							_0: _elm_lang$html$Html$text('new file name: '),
+							_1: {
+								ctor: '::',
+								_0: A2(
+									_elm_lang$html$Html$input,
+									{
+										ctor: '::',
+										_0: _elm_lang$html$Html_Attributes$class('file_name_input'),
+										_1: {
+											ctor: '::',
+											_0: _elm_lang$html$Html_Attributes$placeholder('Please enter the file name here!'),
+											_1: {
+												ctor: '::',
+												_0: _elm_lang$html$Html_Attributes$value(model.newFileName),
+												_1: {
+													ctor: '::',
+													_0: _elm_lang$html$Html_Events$onInput(_minekoa$elm_text_editor$Filer$InputFileName),
+													_1: {
+														ctor: '::',
+														_0: _elm_lang$html$Html_Attributes$style(
+															{
+																ctor: '::',
+																_0: {ctor: '_Tuple2', _0: 'width', _1: '24em'},
+																_1: {ctor: '[]'}
+															}),
+														_1: {ctor: '[]'}
+													}
+												}
+											}
+										}
+									},
+									{ctor: '[]'}),
+								_1: {ctor: '[]'}
+							}
+						}),
+					_1: {
+						ctor: '::',
+						_0: A2(
+							_elm_lang$html$Html$div,
+							{
+								ctor: '::',
+								_0: _elm_lang$html$Html_Attributes$style(
+									{
+										ctor: '::',
+										_0: {ctor: '_Tuple2', _0: 'display', _1: 'flex'},
+										_1: {
+											ctor: '::',
+											_0: {ctor: '_Tuple2', _0: 'justify-content', _1: 'flex-end'},
+											_1: {ctor: '[]'}
+										}
+									}),
+								_1: {ctor: '[]'}
+							},
+							{
+								ctor: '::',
+								_0: A2(
+									_elm_lang$html$Html$div,
+									_elm_lang$core$Native_Utils.eq(model.newFileName, '') ? {
+										ctor: '::',
+										_0: _elm_lang$html$Html_Attributes$class('filer_button_disabled'),
+										_1: {ctor: '[]'}
+									} : {
+										ctor: '::',
+										_0: _elm_lang$html$Html_Attributes$class('file_input_label'),
+										_1: {
+											ctor: '::',
+											_0: _elm_lang$html$Html_Events$onClick(
+												_minekoa$elm_text_editor$Filer$CreateNewBuffer(model.newFileName)),
+											_1: {ctor: '[]'}
+										}
+									},
+									{
+										ctor: '::',
+										_0: _elm_lang$html$Html$text('Create!'),
+										_1: {ctor: '[]'}
+									}),
+								_1: {ctor: '[]'}
+							}),
+						_1: {ctor: '[]'}
+					}
+				}),
+			_1: {ctor: '[]'}
+		});
+};
 var _minekoa$elm_text_editor$Filer$menuPalette = function (model) {
 	var _p4 = model.selectedSubMenu;
-	if (_p4.ctor === 'Load') {
-		return A2(
-			_elm_lang$html$Html$div,
-			{
-				ctor: '::',
-				_0: _elm_lang$html$Html_Attributes$class('menu-palette'),
-				_1: {ctor: '[]'}
-			},
-			{
-				ctor: '::',
-				_0: _minekoa$elm_text_editor$Filer$fileLoadView(model),
-				_1: {ctor: '[]'}
-			});
-	} else {
-		return A2(
-			_elm_lang$html$Html$div,
-			{
-				ctor: '::',
-				_0: _elm_lang$html$Html_Attributes$class('menu-palette'),
-				_1: {ctor: '[]'}
-			},
-			{
-				ctor: '::',
-				_0: _minekoa$elm_text_editor$Filer$fileSaveView(model),
-				_1: {ctor: '[]'}
-			});
+	switch (_p4.ctor) {
+		case 'New':
+			return A2(
+				_elm_lang$html$Html$div,
+				{
+					ctor: '::',
+					_0: _elm_lang$html$Html_Attributes$class('menu-palette'),
+					_1: {ctor: '[]'}
+				},
+				{
+					ctor: '::',
+					_0: _minekoa$elm_text_editor$Filer$fileNewView(model),
+					_1: {ctor: '[]'}
+				});
+		case 'Load':
+			return A2(
+				_elm_lang$html$Html$div,
+				{
+					ctor: '::',
+					_0: _elm_lang$html$Html_Attributes$class('menu-palette'),
+					_1: {ctor: '[]'}
+				},
+				{
+					ctor: '::',
+					_0: _minekoa$elm_text_editor$Filer$fileLoadView(model),
+					_1: {ctor: '[]'}
+				});
+		default:
+			return A2(
+				_elm_lang$html$Html$div,
+				{
+					ctor: '::',
+					_0: _elm_lang$html$Html_Attributes$class('menu-palette'),
+					_1: {ctor: '[]'}
+				},
+				{
+					ctor: '::',
+					_0: _minekoa$elm_text_editor$Filer$fileSaveView(model),
+					_1: {ctor: '[]'}
+				});
 	}
 };
-var _minekoa$elm_text_editor$Filer$TouchSaveSubMenu = {ctor: 'TouchSaveSubMenu'};
-var _minekoa$elm_text_editor$Filer$TouchLoadSubMenu = {ctor: 'TouchLoadSubMenu'};
+var _minekoa$elm_text_editor$Filer$TouchSubMenuSelect = function (a) {
+	return {ctor: 'TouchSubMenuSelect', _0: a};
+};
 var _minekoa$elm_text_editor$Filer$menuItemsView = function (model) {
 	return A2(
 		_elm_lang$html$Html$div,
@@ -13573,11 +13707,12 @@ var _minekoa$elm_text_editor$Filer$menuItemsView = function (model) {
 				_elm_lang$html$Html$div,
 				{
 					ctor: '::',
-					_0: _elm_lang$html$Html_Events$onClick(_minekoa$elm_text_editor$Filer$TouchLoadSubMenu),
+					_0: _elm_lang$html$Html_Events$onClick(
+						_minekoa$elm_text_editor$Filer$TouchSubMenuSelect(_minekoa$elm_text_editor$Filer$New)),
 					_1: {
 						ctor: '::',
 						_0: _elm_lang$html$Html_Attributes$class(
-							_elm_lang$core$Native_Utils.eq(model.selectedSubMenu, _minekoa$elm_text_editor$Filer$Load) ? 'menu-item-active' : 'menu-item'),
+							_elm_lang$core$Native_Utils.eq(model.selectedSubMenu, _minekoa$elm_text_editor$Filer$New) ? 'menu-item-active' : 'menu-item'),
 						_1: {ctor: '[]'}
 					}
 				},
@@ -13588,7 +13723,7 @@ var _minekoa$elm_text_editor$Filer$menuItemsView = function (model) {
 						{ctor: '[]'},
 						{
 							ctor: '::',
-							_0: _elm_lang$html$Html$text('Load'),
+							_0: _elm_lang$html$Html$text('New'),
 							_1: {ctor: '[]'}
 						}),
 					_1: {ctor: '[]'}
@@ -13599,11 +13734,12 @@ var _minekoa$elm_text_editor$Filer$menuItemsView = function (model) {
 					_elm_lang$html$Html$div,
 					{
 						ctor: '::',
-						_0: _elm_lang$html$Html_Events$onClick(_minekoa$elm_text_editor$Filer$TouchSaveSubMenu),
+						_0: _elm_lang$html$Html_Events$onClick(
+							_minekoa$elm_text_editor$Filer$TouchSubMenuSelect(_minekoa$elm_text_editor$Filer$Load)),
 						_1: {
 							ctor: '::',
 							_0: _elm_lang$html$Html_Attributes$class(
-								_elm_lang$core$Native_Utils.eq(model.selectedSubMenu, _minekoa$elm_text_editor$Filer$Save) ? 'menu-item-active' : 'menu-item'),
+								_elm_lang$core$Native_Utils.eq(model.selectedSubMenu, _minekoa$elm_text_editor$Filer$Load) ? 'menu-item-active' : 'menu-item'),
 							_1: {ctor: '[]'}
 						}
 					},
@@ -13614,12 +13750,40 @@ var _minekoa$elm_text_editor$Filer$menuItemsView = function (model) {
 							{ctor: '[]'},
 							{
 								ctor: '::',
-								_0: _elm_lang$html$Html$text('Save '),
+								_0: _elm_lang$html$Html$text('Load'),
 								_1: {ctor: '[]'}
 							}),
 						_1: {ctor: '[]'}
 					}),
-				_1: {ctor: '[]'}
+				_1: {
+					ctor: '::',
+					_0: A2(
+						_elm_lang$html$Html$div,
+						{
+							ctor: '::',
+							_0: _elm_lang$html$Html_Events$onClick(
+								_minekoa$elm_text_editor$Filer$TouchSubMenuSelect(_minekoa$elm_text_editor$Filer$Save)),
+							_1: {
+								ctor: '::',
+								_0: _elm_lang$html$Html_Attributes$class(
+									_elm_lang$core$Native_Utils.eq(model.selectedSubMenu, _minekoa$elm_text_editor$Filer$Save) ? 'menu-item-active' : 'menu-item'),
+								_1: {ctor: '[]'}
+							}
+						},
+						{
+							ctor: '::',
+							_0: A2(
+								_elm_lang$html$Html$span,
+								{ctor: '[]'},
+								{
+									ctor: '::',
+									_0: _elm_lang$html$Html$text('Save '),
+									_1: {ctor: '[]'}
+								}),
+							_1: {ctor: '[]'}
+						}),
+					_1: {ctor: '[]'}
+				}
 			}
 		});
 };
@@ -17641,11 +17805,8 @@ var _minekoa$elm_text_editor$Main$update = F2(
 				var m = _p12._0;
 				var c = _p12._1;
 				var _p13 = _p16;
-				if (_p13.ctor === 'ReadFile') {
-					var _p15 = _p13._0;
-					var _p14 = _p15.data;
-					if (_p14.ctor === 'Ok') {
-						var newbuf = A2(_minekoa$elm_text_editor$Main$makeBuffer, _p15.name, _p14._0);
+				switch (_p13.ctor) {
+					case 'CreateNewBuffer':
 						return {
 							ctor: '_Tuple2',
 							_0: A2(
@@ -17654,7 +17815,7 @@ var _minekoa$elm_text_editor$Main$update = F2(
 								A3(
 									_minekoa$elm_text_editor$Main$insertBuffer,
 									model.currentBufferIndex + 1,
-									newbuf,
+									A2(_minekoa$elm_text_editor$Main$makeBuffer, _p13._0, ''),
 									A3(
 										_minekoa$elm_text_editor$Main$updateBufferContent,
 										model.currentBufferIndex,
@@ -17664,7 +17825,39 @@ var _minekoa$elm_text_editor$Main$update = F2(
 											{filer: m})))),
 							_1: A2(_elm_lang$core$Platform_Cmd$map, _minekoa$elm_text_editor$Main$FilerMsg, c)
 						};
-					} else {
+					case 'ReadFile':
+						var _p15 = _p13._0;
+						var _p14 = _p15.data;
+						if (_p14.ctor === 'Ok') {
+							var newbuf = A2(_minekoa$elm_text_editor$Main$makeBuffer, _p15.name, _p14._0);
+							return {
+								ctor: '_Tuple2',
+								_0: A2(
+									_minekoa$elm_text_editor$Main$selectBuffer,
+									model.currentBufferIndex + 1,
+									A3(
+										_minekoa$elm_text_editor$Main$insertBuffer,
+										model.currentBufferIndex + 1,
+										newbuf,
+										A3(
+											_minekoa$elm_text_editor$Main$updateBufferContent,
+											model.currentBufferIndex,
+											_minekoa$elm_text_editor$TextEditor$buffer(model.editor),
+											_elm_lang$core$Native_Utils.update(
+												model,
+												{filer: m})))),
+								_1: A2(_elm_lang$core$Platform_Cmd$map, _minekoa$elm_text_editor$Main$FilerMsg, c)
+							};
+						} else {
+							return {
+								ctor: '_Tuple2',
+								_0: _elm_lang$core$Native_Utils.update(
+									model,
+									{filer: m}),
+								_1: A2(_elm_lang$core$Platform_Cmd$map, _minekoa$elm_text_editor$Main$FilerMsg, c)
+							};
+						}
+					default:
 						return {
 							ctor: '_Tuple2',
 							_0: _elm_lang$core$Native_Utils.update(
@@ -17672,15 +17865,6 @@ var _minekoa$elm_text_editor$Main$update = F2(
 								{filer: m}),
 							_1: A2(_elm_lang$core$Platform_Cmd$map, _minekoa$elm_text_editor$Main$FilerMsg, c)
 						};
-					}
-				} else {
-					return {
-						ctor: '_Tuple2',
-						_0: _elm_lang$core$Native_Utils.update(
-							model,
-							{filer: m}),
-						_1: A2(_elm_lang$core$Platform_Cmd$map, _minekoa$elm_text_editor$Main$FilerMsg, c)
-					};
 				}
 		}
 	});

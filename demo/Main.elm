@@ -167,6 +167,14 @@ update msg model =
                 (m, c) = Filer.update fmsg (model.currentBufferName, Editor.buffer model.editor) model.filer
             in
                 case fmsg of
+                    Filer.CreateNewBuffer name ->
+                        ( { model | filer = m }
+                              |> updateBufferContent model.currentBufferIndex (Editor.buffer model.editor)
+                              |> insertBuffer (model.currentBufferIndex + 1) (makeBuffer name "")
+                              |> selectBuffer (model.currentBufferIndex + 1)
+                        , Cmd.map FilerMsg c
+                        )
+
                     Filer.ReadFile file ->
                         case file.data of
                             Ok content ->

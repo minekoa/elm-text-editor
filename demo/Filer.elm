@@ -1,6 +1,6 @@
 module Filer exposing
     ( Model
-    , Msg(ReadFile)
+    , Msg(ReadFile, CreateNewBuffer)
     , init
     , update
     , view
@@ -18,15 +18,18 @@ import FilerPorts exposing (..)
 type alias Model =
     { selectedSubMenu: SubMenu
     , inDropZone : Bool
+    , newFileName : String
     }
 
 type SubMenu
-    = Load
+    = New
+    | Load
     | Save
 
 type Msg
-    = TouchLoadSubMenu
-    | TouchSaveSubMenu
+    = TouchSubMenuSelect SubMenu
+    | InputFileName String
+    | CreateNewBuffer String
     | DropZoneEntered
     | DropZoneLeaved    
     | FilesDropped (List FileReader.File)
@@ -35,21 +38,35 @@ type Msg
 
 init : Model
 init =
-    { selectedSubMenu = Load
+    { selectedSubMenu = New
     , inDropZone = False
+    , newFileName = ""
     }
 
 update : Msg -> (String, Buffer.Model) -> Model -> (Model, Cmd Msg)
 update msg (fname, buf) model =
     case msg of
-        TouchSaveSubMenu ->
-            ( { model | selectedSubMenu = Save }
+        TouchSubMenuSelect submenu ->
+            ( { model
+                  | selectedSubMenu = submenu
+                  , newFileName = ""
+              }
             , Cmd.none
             )
-        TouchLoadSubMenu ->
-            ( { model | selectedSubMenu = Load }
+        -- New:
+        InputFileName s ->
+            ( { model | newFileName = s }
             , Cmd.none
             )
+
+        CreateNewBuffer s ->
+            ( { model
+                  | newFileName = ""
+              }
+            , Cmd.none
+            )
+
+        -- Load:
         DropZoneEntered ->
             ( { model | inDropZone = True }
             , Cmd.none
@@ -68,6 +85,8 @@ update msg (fname, buf) model =
                     ( model, Cmd.none )
         ReadFile _ ->
             ( model, Cmd.none )
+
+        -- Save:
         SaveFile ->
             ( model
             , filer_saveFile (fname, String.join "\n" buf.contents)
@@ -87,12 +106,17 @@ view model =
 menuItemsView : Model -> Html Msg
 menuItemsView model =                
     div [ class "menu-itemlist" ]
-    [ div [ onClick TouchLoadSubMenu
+    [ div [ onClick <| TouchSubMenuSelect New
+          , class <| if model.selectedSubMenu == New then "menu-item-active" else "menu-item"
+          ]
+          [ span [] [text "New"]
+          ]
+    , div [ onClick <| TouchSubMenuSelect Load
           , class <| if model.selectedSubMenu == Load then "menu-item-active" else "menu-item"
           ]
           [ span [] [text "Load"]
           ]
-    , div [ onClick TouchSaveSubMenu
+    , div [ onClick <| TouchSubMenuSelect Save
           , class <| if model.selectedSubMenu == Save then "menu-item-active" else "menu-item"
           ]
           [ span [] [text "Save "]
@@ -103,10 +127,41 @@ menuItemsView model =
 
 menuPalette model =
     case model.selectedSubMenu of
+        New ->
+            div [class "menu-palette"] [ fileNewView model ]
         Load ->
             div [class "menu-palette"] [ fileLoadView model ]
         Save ->
             div [class "menu-palette"] [ fileSaveView model ]
+
+
+fileNewView : Model -> Html Msg
+fileNewView model =
+    div [ class "filer-new"]
+        [ div []
+              [ div []
+                    [ text "new file name: "
+                    , input [ class "file_name_input"
+                            , placeholder "Please enter the file name here!"
+                            , value model.newFileName
+                            , onInput InputFileName
+                            , style [ ("width", "24em") ]
+                            ] []
+                    ]
+              , div [ style [ ("display", "flex")
+                            , ("justify-content", "flex-end")
+                            ]
+                    ]
+                    [ div ( if model.newFileName == ""
+                            then [ class "filer_button_disabled" ]
+                            else [ class "file_input_label"
+                                 , onClick <| CreateNewBuffer model.newFileName
+                                 ]
+                          )
+                          [ text "Create!" ]
+                    ]
+              ]
+        ]
 
 
 fileLoadView : Model -> Html Msg
