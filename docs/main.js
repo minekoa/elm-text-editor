@@ -17514,10 +17514,10 @@ var _minekoa$elm_text_editor$Main$paneChanger = function (model) {
 									_0: {ctor: '_Tuple2', _0: 'border', _1: 'none'},
 									_1: {
 										ctor: '::',
-										_0: {ctor: '_Tuple2', _0: 'background-color', _1: 'darkgray'},
+										_0: {ctor: '_Tuple2', _0: 'background-color', _1: 'gainsboro'},
 										_1: {
 											ctor: '::',
-											_0: {ctor: '_Tuple2', _0: 'color', _1: 'whitesmoke'},
+											_0: {ctor: '_Tuple2', _0: 'color', _1: 'darkgray'},
 											_1: {ctor: '[]'}
 										}
 									}
@@ -17553,7 +17553,7 @@ var _minekoa$elm_text_editor$Main$paneChanger = function (model) {
 							_0: {ctor: '_Tuple2', _0: 'align-items', _1: 'flex-end'},
 							_1: {
 								ctor: '::',
-								_0: {ctor: '_Tuple2', _0: 'background-color', _1: 'darkgray'},
+								_0: {ctor: '_Tuple2', _0: 'background-color', _1: 'gainsboro'},
 								_1: {
 									ctor: '::',
 									_0: {ctor: '_Tuple2', _0: 'min-height', _1: '1.5em'},
@@ -17631,16 +17631,16 @@ var _minekoa$elm_text_editor$Main$paneChanger = function (model) {
 				}),
 			_1: {
 				ctor: '::',
-				_0: A2(tab, _minekoa$elm_text_editor$Main$DebugPane, 'debug'),
+				_0: A2(tab, _minekoa$elm_text_editor$Main$FilerPane, 'File'),
 				_1: {
 					ctor: '::',
-					_0: A2(tab, _minekoa$elm_text_editor$Main$KeyboardPane, 'keyboard'),
+					_0: A2(tab, _minekoa$elm_text_editor$Main$StyleEditorPane, 'Style'),
 					_1: {
 						ctor: '::',
-						_0: A2(tab, _minekoa$elm_text_editor$Main$StyleEditorPane, 'style'),
+						_0: A2(tab, _minekoa$elm_text_editor$Main$KeyboardPane, 'Keyboard'),
 						_1: {
 							ctor: '::',
-							_0: A2(tab, _minekoa$elm_text_editor$Main$FilerPane, 'filer'),
+							_0: A2(tab, _minekoa$elm_text_editor$Main$DebugPane, 'Debug'),
 							_1: {ctor: '[]'}
 						}
 					}
@@ -17671,7 +17671,7 @@ var _minekoa$elm_text_editor$Main$bufferTab = function (model) {
 							_0: {ctor: '_Tuple2', _0: 'align-items', _1: 'flex-end'},
 							_1: {
 								ctor: '::',
-								_0: {ctor: '_Tuple2', _0: 'background-color', _1: 'snow'},
+								_0: {ctor: '_Tuple2', _0: 'background-color', _1: 'gainsboro'},
 								_1: {
 									ctor: '::',
 									_0: {ctor: '_Tuple2', _0: 'color', _1: 'dimgray'},
@@ -17680,7 +17680,7 @@ var _minekoa$elm_text_editor$Main$bufferTab = function (model) {
 										_0: {ctor: '_Tuple2', _0: 'padding-left', _1: '3px'},
 										_1: {
 											ctor: '::',
-											_0: {ctor: '_Tuple2', _0: 'border-top', _1: '3px solid snow'},
+											_0: {ctor: '_Tuple2', _0: 'border-top', _1: '0.8em solid gainsboro'},
 											_1: {
 												ctor: '::',
 												_0: {ctor: '_Tuple2', _0: 'border-bottom', _1: '3px solid dimgray'},
@@ -17742,18 +17742,14 @@ var _minekoa$elm_text_editor$Main$bufferTab = function (model) {
 									}
 								} : {
 									ctor: '::',
-									_0: {ctor: '_Tuple2', _0: 'background-color', _1: 'snow'},
+									_0: {ctor: '_Tuple2', _0: 'color', _1: 'darkgray'},
 									_1: {
 										ctor: '::',
-										_0: {ctor: '_Tuple2', _0: 'color', _1: 'dimgray'},
+										_0: {ctor: '_Tuple2', _0: 'padding', _1: '1px 0.8em'},
 										_1: {
 											ctor: '::',
-											_0: {ctor: '_Tuple2', _0: 'padding', _1: '1px 0.8em'},
-											_1: {
-												ctor: '::',
-												_0: {ctor: '_Tuple2', _0: 'height', _1: '100%'},
-												_1: {ctor: '[]'}
-											}
+											_0: {ctor: '_Tuple2', _0: 'height', _1: '100%'},
+											_1: {ctor: '[]'}
 										}
 									}
 								}),
@@ -18125,12 +18121,51 @@ var _minekoa$elm_text_editor$Main$view = function (model) {
 		{
 			ctor: '::',
 			_0: A2(
-				_elm_lang$html$Html$h1,
-				{ctor: '[]'},
+				_elm_lang$html$Html$div,
 				{
 					ctor: '::',
-					_0: _elm_lang$html$Html$text('TextEditor Sample'),
+					_0: _elm_lang$html$Html_Attributes$style(
+						{
+							ctor: '::',
+							_0: {ctor: '_Tuple2', _0: 'box-shadow', _1: '0 0 10px 0 rgba(0,0,0,0.4)'},
+							_1: {ctor: '[]'}
+						}),
 					_1: {ctor: '[]'}
+				},
+				{
+					ctor: '::',
+					_0: _minekoa$elm_text_editor$Main$paneChanger(model),
+					_1: {
+						ctor: '::',
+						_0: function () {
+							var _p18 = model.pane;
+							switch (_p18.ctor) {
+								case 'NoPane':
+									return _elm_lang$html$Html$text('');
+								case 'DebugPane':
+									return A2(
+										_elm_lang$html$Html$map,
+										_minekoa$elm_text_editor$Main$DebuggerMsg,
+										_minekoa$elm_text_editor$EditorDebugger$view(model.editor));
+								case 'KeyboardPane':
+									return A2(
+										_elm_lang$html$Html$map,
+										_minekoa$elm_text_editor$Main$SWKeyboardMsg,
+										_minekoa$elm_text_editor$SoftwareKeyboard$view(model.swkeyboard));
+								case 'StyleEditorPane':
+									return A2(
+										_elm_lang$html$Html$map,
+										_minekoa$elm_text_editor$Main$StyleSetterMsg,
+										_minekoa$elm_text_editor$StyleSetter$view(model.style));
+								default:
+									return A2(
+										_elm_lang$html$Html$map,
+										_minekoa$elm_text_editor$Main$FilerMsg,
+										_minekoa$elm_text_editor$Filer$view(model.filer));
+							}
+						}(),
+						_1: {ctor: '[]'}
+					}
 				}),
 			_1: {
 				ctor: '::',
@@ -18196,41 +18231,7 @@ var _minekoa$elm_text_editor$Main$view = function (model) {
 					_1: {
 						ctor: '::',
 						_0: _minekoa$elm_text_editor$Main$modeline(model),
-						_1: {
-							ctor: '::',
-							_0: _minekoa$elm_text_editor$Main$paneChanger(model),
-							_1: {
-								ctor: '::',
-								_0: function () {
-									var _p18 = model.pane;
-									switch (_p18.ctor) {
-										case 'NoPane':
-											return _elm_lang$html$Html$text('');
-										case 'DebugPane':
-											return A2(
-												_elm_lang$html$Html$map,
-												_minekoa$elm_text_editor$Main$DebuggerMsg,
-												_minekoa$elm_text_editor$EditorDebugger$view(model.editor));
-										case 'KeyboardPane':
-											return A2(
-												_elm_lang$html$Html$map,
-												_minekoa$elm_text_editor$Main$SWKeyboardMsg,
-												_minekoa$elm_text_editor$SoftwareKeyboard$view(model.swkeyboard));
-										case 'StyleEditorPane':
-											return A2(
-												_elm_lang$html$Html$map,
-												_minekoa$elm_text_editor$Main$StyleSetterMsg,
-												_minekoa$elm_text_editor$StyleSetter$view(model.style));
-										default:
-											return A2(
-												_elm_lang$html$Html$map,
-												_minekoa$elm_text_editor$Main$FilerMsg,
-												_minekoa$elm_text_editor$Filer$view(model.filer));
-									}
-								}(),
-								_1: {ctor: '[]'}
-							}
-						}
+						_1: {ctor: '[]'}
 					}
 				}
 			}

@@ -275,7 +275,20 @@ view model =
                 , ("display", "flex"), ("flex-direction", "column")
                 ]
         ]
-        [ h1 [] [text "TextEditor Sample"]
+        [ div [ style [  ("box-shadow", "0 0 10px 0 rgba(0,0,0,0.4)" ) ] ]
+              [ paneChanger model
+              , case model.pane of
+                    NoPane ->
+                        text ""
+                    DebugPane ->
+                        Html.map DebuggerMsg (EditorDebugger.view model.editor)
+                    KeyboardPane ->
+                        Html.map SWKeyboardMsg (SoftwareKeyboard.view model.swkeyboard)
+                    StyleEditorPane ->
+                        Html.map StyleSetterMsg (StyleSetter.view model.style)
+                    FilerPane ->
+                        Html.map FilerMsg (Filer.view model.filer)
+              ]
         , bufferTab model
         , div [ style [ ("margin", "0"), ("padding", "0"), ("width", "100%"), ("height", "100%")
                       , ("overflow","hidden")
@@ -288,26 +301,14 @@ view model =
               ]
               [ Html.map EditorMsg (Editor.view model.editor) ]
         , modeline model
-        , paneChanger model
-        , case model.pane of
-              NoPane ->
-                  text ""
-              DebugPane ->
-                  Html.map DebuggerMsg (EditorDebugger.view model.editor)
-              KeyboardPane ->
-                  Html.map SWKeyboardMsg (SoftwareKeyboard.view model.swkeyboard)
-              StyleEditorPane ->
-                  Html.map StyleSetterMsg (StyleSetter.view model.style)
-              FilerPane ->
-                  Html.map FilerMsg (Filer.view model.filer)
         ]
 
 bufferTab : Model -> Html Msg
 bufferTab model =
     div [ style [ ("display", "flex"), ("flex-direction", "row"), ("align-items", "flex-end")
-                , ("background-color", "snow"), ("color", "dimgray")
+                , ("background-color", "gainsboro"), ("color", "dimgray")
                 , ("padding-left", "3px")
-                , ("border-top", "3px solid snow")
+                , ("border-top", "0.8em solid gainsboro")
                 , ("border-bottom", "3px solid dimgray")
                 , ("min-height", "1.2em")
                 , ("-moz-user-select", "-moz-none"), ("-khtml-user-select", "none"), ("-webkit-user-select", "none"), ("user-select", "none")
@@ -316,7 +317,7 @@ bufferTab model =
         ( List.indexedMap (\i buf ->
                         div [ style <| if model.currentBufferIndex == i
                                        then  [("background-color", "dimgray"), ("color", "snow"), ("padding", "1px 0.8em"), ("height", "100%")]
-                                       else  [("background-color", "snow"), ("color", "dimgray"), ("padding", "1px 0.8em"), ("height", "100%")]
+                                       else  [("color", "darkgray"), ("padding", "1px 0.8em"), ("height", "100%")]
                             ]
                             [ span [ onClick <| ChangeBuffer i ] [text buf.name]
                             , div  [ onClick <| CloseBuffer i
@@ -340,13 +341,13 @@ paneChanger model =
         tab = \ tgtPane s ->
               div [ style <| if model.pane == tgtPane
                              then [("margin", "2px 5px 0 2px"), ("padding", "0 1em"), ("border-width", "1px 1px 0px 1px"), ("border-color", "gray"), ("background-color", "whitesmoke"), ("color", "gray")]
-                             else [("margin", "2px 5px 0 2px"), ("padding", "0 1em"), ("border", "none"), ("background-color", "darkgray"), ("color", "whitesmoke")]
+                             else [("margin", "2px 5px 0 2px"), ("padding", "0 1em"), ("border", "none"), ("background-color", "gainsboro"), ("color", "darkgray")]
                   , onClick <| ChangePane tgtPane
                   ]
                   [ text s ]
     in
     div [ style [ ("display", "flex"), ("flex-direction", "row"), ("align-items", "flex-end")
-                , ("background-color", "darkgray"), ("min-height", "1.5em")
+                , ("background-color", "gainsboro"), ("min-height", "1.5em")
                 , ("-moz-user-select", "-moz-none"), ("-khtml-user-select", "none"), ("-webkit-user-select", "none"), ("user-select", "none")
                 ]
         ]
@@ -356,10 +357,10 @@ paneChanger model =
               , onClick (ChangePane NoPane)
               ]
               [text "x"]
-        , tab DebugPane "debug"
-        , tab KeyboardPane "keyboard"
-        , tab StyleEditorPane "style"
-        , tab FilerPane "filer"
+        , tab FilerPane "File"
+        , tab StyleEditorPane "Style"
+        , tab KeyboardPane "Keyboard"
+        , tab DebugPane "Debug"
         ]
 
 
