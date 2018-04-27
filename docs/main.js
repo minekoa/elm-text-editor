@@ -17483,7 +17483,7 @@ var _minekoa$elm_text_editor$Main$paneChanger = function (model) {
 					_1: {
 						ctor: '::',
 						_0: _elm_lang$html$Html_Events$onClick(
-							_minekoa$elm_text_editor$Main$ChangePane(tgtPane)),
+							_elm_lang$core$Native_Utils.eq(model.pane, tgtPane) ? _minekoa$elm_text_editor$Main$ChangePane(_minekoa$elm_text_editor$Main$NoPane) : _minekoa$elm_text_editor$Main$ChangePane(tgtPane)),
 						_1: {ctor: '[]'}
 					}
 				},
@@ -17933,49 +17933,45 @@ var _minekoa$elm_text_editor$Main$view = function (model) {
 		},
 		{
 			ctor: '::',
-			_0: _minekoa$elm_text_editor$Main$applicationMenu(model),
+			_0: _minekoa$elm_text_editor$Main$bufferTab(model),
 			_1: {
 				ctor: '::',
-				_0: _minekoa$elm_text_editor$Main$bufferTab(model),
-				_1: {
-					ctor: '::',
-					_0: A2(
-						_elm_lang$html$Html$div,
-						{
-							ctor: '::',
-							_0: _elm_lang$html$Html_Attributes$style(
-								{
+				_0: A2(
+					_elm_lang$html$Html$div,
+					{
+						ctor: '::',
+						_0: _elm_lang$html$Html_Attributes$style(
+							{
+								ctor: '::',
+								_0: {ctor: '_Tuple2', _0: 'margin', _1: '0'},
+								_1: {
 									ctor: '::',
-									_0: {ctor: '_Tuple2', _0: 'margin', _1: '0'},
+									_0: {ctor: '_Tuple2', _0: 'padding', _1: '0'},
 									_1: {
 										ctor: '::',
-										_0: {ctor: '_Tuple2', _0: 'padding', _1: '0'},
+										_0: {ctor: '_Tuple2', _0: 'width', _1: '100%'},
 										_1: {
 											ctor: '::',
-											_0: {ctor: '_Tuple2', _0: 'width', _1: '100%'},
+											_0: {ctor: '_Tuple2', _0: 'height', _1: '100%'},
 											_1: {
 												ctor: '::',
-												_0: {ctor: '_Tuple2', _0: 'height', _1: '100%'},
+												_0: {ctor: '_Tuple2', _0: 'overflow', _1: 'hidden'},
 												_1: {
 													ctor: '::',
-													_0: {ctor: '_Tuple2', _0: 'overflow', _1: 'hidden'},
+													_0: {ctor: '_Tuple2', _0: 'flex-grow', _1: '8'},
 													_1: {
 														ctor: '::',
-														_0: {ctor: '_Tuple2', _0: 'flex-grow', _1: '8'},
+														_0: {ctor: '_Tuple2', _0: 'color', _1: model.style.fgColor.value},
 														_1: {
 															ctor: '::',
-															_0: {ctor: '_Tuple2', _0: 'color', _1: model.style.fgColor.value},
+															_0: {ctor: '_Tuple2', _0: 'background-color', _1: model.style.bgColor.value},
 															_1: {
 																ctor: '::',
-																_0: {ctor: '_Tuple2', _0: 'background-color', _1: model.style.bgColor.value},
+																_0: {ctor: '_Tuple2', _0: 'font-family', _1: model.style.fontFamily.value},
 																_1: {
 																	ctor: '::',
-																	_0: {ctor: '_Tuple2', _0: 'font-family', _1: model.style.fontFamily.value},
-																	_1: {
-																		ctor: '::',
-																		_0: {ctor: '_Tuple2', _0: 'font-size', _1: model.style.fontSize.value},
-																		_1: {ctor: '[]'}
-																	}
+																	_0: {ctor: '_Tuple2', _0: 'font-size', _1: model.style.fontSize.value},
+																	_1: {ctor: '[]'}
 																}
 															}
 														}
@@ -17984,20 +17980,24 @@ var _minekoa$elm_text_editor$Main$view = function (model) {
 											}
 										}
 									}
-								}),
-							_1: {ctor: '[]'}
-						},
-						{
-							ctor: '::',
-							_0: A2(
-								_elm_lang$html$Html$map,
-								_minekoa$elm_text_editor$Main$EditorMsg,
-								_minekoa$elm_text_editor$TextEditor$view(model.editor)),
-							_1: {ctor: '[]'}
-						}),
+								}
+							}),
+						_1: {ctor: '[]'}
+					},
+					{
+						ctor: '::',
+						_0: A2(
+							_elm_lang$html$Html$map,
+							_minekoa$elm_text_editor$Main$EditorMsg,
+							_minekoa$elm_text_editor$TextEditor$view(model.editor)),
+						_1: {ctor: '[]'}
+					}),
+				_1: {
+					ctor: '::',
+					_0: _minekoa$elm_text_editor$Main$modeline(model),
 					_1: {
 						ctor: '::',
-						_0: _minekoa$elm_text_editor$Main$modeline(model),
+						_0: _minekoa$elm_text_editor$Main$applicationMenu(model),
 						_1: {ctor: '[]'}
 					}
 				}

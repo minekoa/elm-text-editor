@@ -13,20 +13,22 @@
     flex-direction: row;
     align-items: flex-end;
 
+/*
     background-color: gainsboro;
+*/
+    background-color: darkgray;
     min-height: 1.5em;
 }
 
 .app-menu-close-button {
-    border: 1px solid gray;
+    border: 1px solid darkgray;
+    color: darkgray;
     color: gray;
 
     height: 1em;
     width: 1em;
     margin: 3px 1.5em 3px 0.5em;
     text-align: center;
-
-    background-color: silver;
 }
 
 .app-menu-close-button-active {
@@ -61,8 +63,12 @@
     padding: 0 1em;
     border: none;
 
+/*
     background-color: gainsboro;
     color: darkgray;
+*/
+    background-color: darkgray;
+    color: gainsboro;
 }
 
 .app-menu-item:hover {
