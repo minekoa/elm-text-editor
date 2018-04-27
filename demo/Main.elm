@@ -276,8 +276,8 @@ view model =
                 , ("display", "flex"), ("flex-direction", "column")
                 ]
         ]
-        [ applicationMenu model
-        , bufferTab model
+        [ 
+        bufferTab model
         , div [ style [ ("margin", "0"), ("padding", "0"), ("width", "100%"), ("height", "100%")
                       , ("overflow","hidden")
                       , ("flex-grow", "8")
@@ -289,6 +289,7 @@ view model =
               ]
               [ Html.map EditorMsg (Editor.view model.editor) ]
         , modeline model
+        , applicationMenu model
         ]
 
 
@@ -315,7 +316,7 @@ paneChanger model =
     let
         tab = \ tgtPane s ->
               div [ class <| if model.pane == tgtPane then "app-menu-item-active" else "app-menu-item"
-                  , onClick <| ChangePane tgtPane
+                  , onClick <| if model.pane == tgtPane then ChangePane NoPane else ChangePane tgtPane
                   ]
                   [ text s ]
     in
