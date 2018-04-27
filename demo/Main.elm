@@ -44,6 +44,7 @@ type Pane
     | KeyboardPane
     | StyleEditorPane
     | FilerPane
+    | AboutPane
 
 type alias Buffer =
     { name : String
@@ -55,16 +56,6 @@ makeBuffer name content =
     { name = name
     , buffer = TextEditor.Buffer.init content
     }
-
-type Msg
-    = EditorMsg (Editor.Msg)
-    | ChangeBuffer Int
-    | CloseBuffer Int
-    | ChangePane Pane
-    | DebuggerMsg (EditorDebugger.Msg)
-    | SWKeyboardMsg (SoftwareKeyboard.Msg)
-    | StyleSetterMsg (StyleSetter.Msg)
-    | FilerMsg (Filer.Msg)
 
 init : (Model, Cmd Msg)
 init =
@@ -86,12 +77,26 @@ init =
 
 
 
+------------------------------------------------------------
+-- Update
+------------------------------------------------------------
+
+type Msg
+    = EditorMsg (Editor.Msg)
+    | ChangeBuffer Int
+    | CloseBuffer Int
+    | ChangePane Pane
+    | DebuggerMsg (EditorDebugger.Msg)
+    | SWKeyboardMsg (SoftwareKeyboard.Msg)
+    | StyleSetterMsg (StyleSetter.Msg)
+    | FilerMsg (Filer.Msg)
+
+
 updateMap: Model -> (Editor.Model, Cmd Editor.Msg) -> (Model, Cmd Msg)
 updateMap model (em, ec) =
     ( {model | editor = em}
     , Cmd.map EditorMsg ec
     )
-
 
 
 update : Msg -> Model -> (Model, Cmd Msg)
@@ -206,6 +211,7 @@ update msg model =
                         , Cmd.map FilerMsg c
                         )
 
+
 updateBufferContent : Int -> TextEditor.Buffer.Model -> Model -> Model
 updateBufferContent i content model =
     case model.buffers |> List.drop i |> List.head of
@@ -262,13 +268,18 @@ removeBuffer i model =
     }
 
 
-
+------------------------------------------------------------
+-- Subscriptions
+------------------------------------------------------------
 
 subscriptions : Model -> Sub Msg
 subscriptions model =
     Sub.batch [ Sub.map EditorMsg  (Editor.subscriptions model.editor) ]
 
 
+------------------------------------------------------------
+-- View
+------------------------------------------------------------
 
 view : Model -> Html Msg
 view model =
@@ -276,8 +287,7 @@ view model =
                 , ("display", "flex"), ("flex-direction", "column")
                 ]
         ]
-        [ 
-        bufferTab model
+        [ bufferTab model
         , div [ style [ ("margin", "0"), ("padding", "0"), ("width", "100%"), ("height", "100%")
                       , ("overflow","hidden")
                       , ("flex-grow", "8")
@@ -309,6 +319,17 @@ applicationMenu model =
                   Html.map StyleSetterMsg (StyleSetter.view model.style)
               FilerPane ->
                   Html.map FilerMsg (Filer.view model.filer)
+              AboutPane ->
+                  div [ style [ ("flex-grow", "2")
+                              , ("min-height", "13em")
+                              , ("padding", "2em")
+                              , ("background-color", "whitesmoke")
+                              , ("color", "gray")
+                              ]
+                      ]
+                      [ h1 [] [ text "elm-text-editor demo" ]
+                      , a [ href "https://github.com/minekoa/elm-text-editor"] [text "https://github.com/minekoa/elm-text-editor"]
+                      ]
         ]
 
 paneChanger : Model -> Html Msg
@@ -329,6 +350,7 @@ paneChanger model =
         , tab StyleEditorPane "Style"
         , tab KeyboardPane "Keyboard"
         , tab DebugPane "Debug"
+        , tab AboutPane "About"
         ]
 
 

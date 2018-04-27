@@ -11338,11 +11338,7 @@ var _minekoa$elm_text_editor$TextEditor$markerLayer = function (model) {
 															_1: {
 																ctor: '::',
 																_0: {ctor: '_Tuple2', _0: 'white-space', _1: 'pre'},
-																_1: {
-																	ctor: '::',
-																	_0: {ctor: '_Tuple2', _0: 'pointer-events', _1: 'auto'},
-																	_1: {ctor: '[]'}
-																}
+																_1: {ctor: '[]'}
 															}
 														}
 													}
@@ -11351,11 +11347,7 @@ var _minekoa$elm_text_editor$TextEditor$markerLayer = function (model) {
 										}
 									}
 								}),
-							_1: {
-								ctor: '::',
-								_0: _elm_lang$html$Html_Attributes$contenteditable(true),
-								_1: {ctor: '[]'}
-							}
+							_1: {ctor: '[]'}
 						},
 						{
 							ctor: '::',
@@ -17451,6 +17443,7 @@ var _minekoa$elm_text_editor$Main$Buffer = F2(
 	function (a, b) {
 		return {name: a, buffer: b};
 	});
+var _minekoa$elm_text_editor$Main$AboutPane = {ctor: 'AboutPane'};
 var _minekoa$elm_text_editor$Main$FilerPane = {ctor: 'FilerPane'};
 var _minekoa$elm_text_editor$Main$StyleEditorPane = {ctor: 'StyleEditorPane'};
 var _minekoa$elm_text_editor$Main$KeyboardPane = {ctor: 'KeyboardPane'};
@@ -17532,7 +17525,11 @@ var _minekoa$elm_text_editor$Main$paneChanger = function (model) {
 						_1: {
 							ctor: '::',
 							_0: A2(tab, _minekoa$elm_text_editor$Main$DebugPane, 'Debug'),
-							_1: {ctor: '[]'}
+							_1: {
+								ctor: '::',
+								_0: A2(tab, _minekoa$elm_text_editor$Main$AboutPane, 'About'),
+								_1: {ctor: '[]'}
+							}
 						}
 					}
 				}
@@ -17572,11 +17569,67 @@ var _minekoa$elm_text_editor$Main$applicationMenu = function (model) {
 								_elm_lang$html$Html$map,
 								_minekoa$elm_text_editor$Main$StyleSetterMsg,
 								_minekoa$elm_text_editor$StyleSetter$view(model.style));
-						default:
+						case 'FilerPane':
 							return A2(
 								_elm_lang$html$Html$map,
 								_minekoa$elm_text_editor$Main$FilerMsg,
 								_minekoa$elm_text_editor$Filer$view(model.filer));
+						default:
+							return A2(
+								_elm_lang$html$Html$div,
+								{
+									ctor: '::',
+									_0: _elm_lang$html$Html_Attributes$style(
+										{
+											ctor: '::',
+											_0: {ctor: '_Tuple2', _0: 'flex-grow', _1: '2'},
+											_1: {
+												ctor: '::',
+												_0: {ctor: '_Tuple2', _0: 'min-height', _1: '13em'},
+												_1: {
+													ctor: '::',
+													_0: {ctor: '_Tuple2', _0: 'padding', _1: '2em'},
+													_1: {
+														ctor: '::',
+														_0: {ctor: '_Tuple2', _0: 'background-color', _1: 'whitesmoke'},
+														_1: {
+															ctor: '::',
+															_0: {ctor: '_Tuple2', _0: 'color', _1: 'gray'},
+															_1: {ctor: '[]'}
+														}
+													}
+												}
+											}
+										}),
+									_1: {ctor: '[]'}
+								},
+								{
+									ctor: '::',
+									_0: A2(
+										_elm_lang$html$Html$h1,
+										{ctor: '[]'},
+										{
+											ctor: '::',
+											_0: _elm_lang$html$Html$text('elm-text-editor demo'),
+											_1: {ctor: '[]'}
+										}),
+									_1: {
+										ctor: '::',
+										_0: A2(
+											_elm_lang$html$Html$a,
+											{
+												ctor: '::',
+												_0: _elm_lang$html$Html_Attributes$href('https://github.com/minekoa/elm-text-editor'),
+												_1: {ctor: '[]'}
+											},
+											{
+												ctor: '::',
+												_0: _elm_lang$html$Html$text('https://github.com/minekoa/elm-text-editor'),
+												_1: {ctor: '[]'}
+											}),
+										_1: {ctor: '[]'}
+									}
+								});
 					}
 				}(),
 				_1: {ctor: '[]'}
