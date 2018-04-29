@@ -12507,39 +12507,12 @@ var _minekoa$elm_text_editor$TextEditor$subscriptions = function (model) {
 		});
 };
 
-var _minekoa$elm_text_editor$EditorDebugger$update = F2(
-	function (msg, model) {
-		var _p0 = msg;
-		if (_p0._0 === true) {
-			return {
-				ctor: '_Tuple2',
-				_0: _elm_lang$core$Native_Utils.update(
-					model,
-					{
-						event_log: _elm_lang$core$Maybe$Just(
-							{ctor: '[]'})
-					}),
-				_1: _elm_lang$core$Platform_Cmd$none
-			};
-		} else {
-			return {
-				ctor: '_Tuple2',
-				_0: _elm_lang$core$Native_Utils.update(
-					model,
-					{event_log: _elm_lang$core$Maybe$Nothing}),
-				_1: _elm_lang$core$Platform_Cmd$none
-			};
-		}
-	});
-var _minekoa$elm_text_editor$EditorDebugger$SetEventlogEnable = function (a) {
-	return {ctor: 'SetEventlogEnable', _0: a};
-};
-var _minekoa$elm_text_editor$EditorDebugger$view = function (model) {
+var _minekoa$elm_text_editor$EditorDebugger$clipboardView = function (editorModel) {
 	return A2(
 		_elm_lang$html$Html$div,
 		{
 			ctor: '::',
-			_0: _elm_lang$html$Html_Attributes$id('debug-pane'),
+			_0: _elm_lang$html$Html_Attributes$id('debug-pane-clipboard'),
 			_1: {
 				ctor: '::',
 				_0: _elm_lang$html$Html_Attributes$class('hbox'),
@@ -12548,28 +12521,20 @@ var _minekoa$elm_text_editor$EditorDebugger$view = function (model) {
 					_0: _elm_lang$html$Html_Attributes$style(
 						{
 							ctor: '::',
-							_0: {ctor: '_Tuple2', _0: 'display', _1: 'flex'},
+							_0: {ctor: '_Tuple2', _0: 'flex-grow', _1: '2'},
 							_1: {
 								ctor: '::',
-								_0: {ctor: '_Tuple2', _0: 'flex-direction', _1: 'row'},
+								_0: {ctor: '_Tuple2', _0: 'width', _1: '100%'},
 								_1: {
 									ctor: '::',
-									_0: {ctor: '_Tuple2', _0: 'width', _1: '100%'},
+									_0: {ctor: '_Tuple2', _0: 'height', _1: '100%'},
 									_1: {
 										ctor: '::',
-										_0: {ctor: '_Tuple2', _0: 'height', _1: '100%'},
+										_0: {ctor: '_Tuple2', _0: 'display', _1: 'flex'},
 										_1: {
 											ctor: '::',
-											_0: {ctor: '_Tuple2', _0: 'flex-grow', _1: '3'},
-											_1: {
-												ctor: '::',
-												_0: {ctor: '_Tuple2', _0: 'min-height', _1: '7em'},
-												_1: {
-													ctor: '::',
-													_0: {ctor: '_Tuple2', _0: 'max-height', _1: '14em'},
-													_1: {ctor: '[]'}
-												}
-											}
+											_0: {ctor: '_Tuple2', _0: 'flex-direction', _1: 'row'},
+											_1: {ctor: '[]'}
 										}
 									}
 								}
@@ -12585,47 +12550,392 @@ var _minekoa$elm_text_editor$EditorDebugger$view = function (model) {
 				_elm_lang$html$Html$div,
 				{
 					ctor: '::',
-					_0: _elm_lang$html$Html_Attributes$id('debug-pane-history'),
-					_1: {
+					_0: _elm_lang$html$Html_Attributes$style(
+						{
+							ctor: '::',
+							_0: {ctor: '_Tuple2', _0: 'background-color', _1: 'whitesmoke'},
+							_1: {
+								ctor: '::',
+								_0: {ctor: '_Tuple2', _0: 'color', _1: 'gray'},
+								_1: {
+									ctor: '::',
+									_0: {ctor: '_Tuple2', _0: 'width', _1: '10ex'},
+									_1: {ctor: '[]'}
+								}
+							}
+						}),
+					_1: {ctor: '[]'}
+				},
+				{
+					ctor: '::',
+					_0: _elm_lang$html$Html$text('clipboard:'),
+					_1: {ctor: '[]'}
+				}),
+			_1: {
+				ctor: '::',
+				_0: A2(
+					_elm_lang$html$Html$div,
+					{
 						ctor: '::',
 						_0: _elm_lang$html$Html_Attributes$style(
 							{
 								ctor: '::',
-								_0: {ctor: '_Tuple2', _0: 'min-width', _1: '8em'},
+								_0: {ctor: '_Tuple2', _0: 'overflow', _1: 'auto'},
 								_1: {
 									ctor: '::',
-									_0: {ctor: '_Tuple2', _0: 'flex-grow', _1: '2'},
+									_0: {ctor: '_Tuple2', _0: 'width', _1: '100%'},
+									_1: {
+										ctor: '::',
+										_0: {ctor: '_Tuple2', _0: 'color', _1: 'gray'},
+										_1: {ctor: '[]'}
+									}
+								}
+							}),
+						_1: {ctor: '[]'}
+					},
+					A2(
+						_elm_lang$core$List$map,
+						function (ln) {
+							return A2(
+								_elm_lang$html$Html$div,
+								{
+									ctor: '::',
+									_0: _elm_lang$html$Html_Attributes$style(
+										{
+											ctor: '::',
+											_0: {ctor: '_Tuple2', _0: 'border-bottom', _1: '1px dotted gainsboro'},
+											_1: {
+												ctor: '::',
+												_0: {ctor: '_Tuple2', _0: 'height', _1: '1em'},
+												_1: {ctor: '[]'}
+											}
+										}),
+									_1: {ctor: '[]'}
+								},
+								{
+									ctor: '::',
+									_0: _elm_lang$html$Html$text(ln),
+									_1: {ctor: '[]'}
+								});
+						},
+						_elm_lang$core$String$lines(editorModel.core.copyStore))),
+				_1: {ctor: '[]'}
+			}
+		});
+};
+var _minekoa$elm_text_editor$EditorDebugger$historyView = function (editorModel) {
+	return A2(
+		_elm_lang$html$Html$div,
+		{
+			ctor: '::',
+			_0: _elm_lang$html$Html_Attributes$id('debug-pane-history'),
+			_1: {
+				ctor: '::',
+				_0: _elm_lang$html$Html_Attributes$style(
+					{
+						ctor: '::',
+						_0: {ctor: '_Tuple2', _0: 'min-width', _1: '8em'},
+						_1: {
+							ctor: '::',
+							_0: {ctor: '_Tuple2', _0: 'flex-grow', _1: '2'},
+							_1: {
+								ctor: '::',
+								_0: {ctor: '_Tuple2', _0: 'height', _1: '100%'},
+								_1: {ctor: '[]'}
+							}
+						}
+					}),
+				_1: {ctor: '[]'}
+			}
+		},
+		{
+			ctor: '::',
+			_0: A2(
+				_elm_lang$html$Html$div,
+				{
+					ctor: '::',
+					_0: _elm_lang$html$Html_Attributes$style(
+						{
+							ctor: '::',
+							_0: {ctor: '_Tuple2', _0: 'background-color', _1: 'whitesmoke'},
+							_1: {
+								ctor: '::',
+								_0: {ctor: '_Tuple2', _0: 'color', _1: 'gray'},
+								_1: {
+									ctor: '::',
+									_0: {ctor: '_Tuple2', _0: 'height', _1: '1em'},
+									_1: {ctor: '[]'}
+								}
+							}
+						}),
+					_1: {ctor: '[]'}
+				},
+				{
+					ctor: '::',
+					_0: _elm_lang$html$Html$text('history:'),
+					_1: {ctor: '[]'}
+				}),
+			_1: {
+				ctor: '::',
+				_0: A2(
+					_elm_lang$html$Html$div,
+					{
+						ctor: '::',
+						_0: _elm_lang$html$Html_Attributes$style(
+							{
+								ctor: '::',
+								_0: {ctor: '_Tuple2', _0: 'overflow', _1: 'scroll'},
+								_1: {
+									ctor: '::',
+									_0: {ctor: '_Tuple2', _0: 'height', _1: 'calc( 100% - 1em )'},
 									_1: {ctor: '[]'}
 								}
 							}),
 						_1: {ctor: '[]'}
-					}
+					},
+					A2(
+						_elm_lang$core$List$map,
+						function (c) {
+							var celstyle = _elm_lang$html$Html_Attributes$style(
+								{
+									ctor: '::',
+									_0: {ctor: '_Tuple2', _0: 'text-wrap', _1: 'none'},
+									_1: {
+										ctor: '::',
+										_0: {ctor: '_Tuple2', _0: 'white-space', _1: 'nowrap'},
+										_1: {
+											ctor: '::',
+											_0: {ctor: '_Tuple2', _0: 'color', _1: 'gray'},
+											_1: {ctor: '[]'}
+										}
+									}
+								});
+							var pos2str = F2(
+								function (row, col) {
+									return A2(
+										_elm_lang$core$Basics_ops['++'],
+										'(',
+										A2(
+											_elm_lang$core$Basics_ops['++'],
+											_elm_lang$core$Basics$toString(row),
+											A2(
+												_elm_lang$core$Basics_ops['++'],
+												', ',
+												A2(
+													_elm_lang$core$Basics_ops['++'],
+													_elm_lang$core$Basics$toString(col),
+													')'))));
+								});
+							var _p0 = c;
+							switch (_p0.ctor) {
+								case 'Cmd_Insert':
+									return A2(
+										_elm_lang$html$Html$div,
+										{
+											ctor: '::',
+											_0: celstyle,
+											_1: {ctor: '[]'}
+										},
+										{
+											ctor: '::',
+											_0: _elm_lang$html$Html$text(
+												A2(
+													_elm_lang$core$Basics_ops['++'],
+													'Ins',
+													A2(
+														_elm_lang$core$Basics_ops['++'],
+														A2(pos2str, _p0._0._0, _p0._0._1),
+														A2(
+															_elm_lang$core$Basics_ops['++'],
+															' -> ',
+															A2(
+																_elm_lang$core$Basics_ops['++'],
+																A2(pos2str, _p0._1._0, _p0._1._1),
+																A2(
+																	_elm_lang$core$Basics_ops['++'],
+																	'{',
+																	A2(_elm_lang$core$Basics_ops['++'], _p0._2, '}'))))))),
+											_1: {ctor: '[]'}
+										});
+								case 'Cmd_Backspace':
+									return A2(
+										_elm_lang$html$Html$div,
+										{
+											ctor: '::',
+											_0: celstyle,
+											_1: {ctor: '[]'}
+										},
+										{
+											ctor: '::',
+											_0: _elm_lang$html$Html$text(
+												A2(
+													_elm_lang$core$Basics_ops['++'],
+													'Bs_',
+													A2(
+														_elm_lang$core$Basics_ops['++'],
+														A2(pos2str, _p0._0._0, _p0._0._1),
+														A2(
+															_elm_lang$core$Basics_ops['++'],
+															' -> ',
+															A2(
+																_elm_lang$core$Basics_ops['++'],
+																A2(pos2str, _p0._1._0, _p0._1._1),
+																A2(
+																	_elm_lang$core$Basics_ops['++'],
+																	'{',
+																	A2(_elm_lang$core$Basics_ops['++'], _p0._2, '}'))))))),
+											_1: {ctor: '[]'}
+										});
+								default:
+									return A2(
+										_elm_lang$html$Html$div,
+										{
+											ctor: '::',
+											_0: celstyle,
+											_1: {ctor: '[]'}
+										},
+										{
+											ctor: '::',
+											_0: _elm_lang$html$Html$text(
+												A2(
+													_elm_lang$core$Basics_ops['++'],
+													'Del',
+													A2(
+														_elm_lang$core$Basics_ops['++'],
+														A2(pos2str, _p0._0._0, _p0._0._1),
+														A2(
+															_elm_lang$core$Basics_ops['++'],
+															' -> ',
+															A2(
+																_elm_lang$core$Basics_ops['++'],
+																A2(pos2str, _p0._1._0, _p0._1._1),
+																A2(
+																	_elm_lang$core$Basics_ops['++'],
+																	'{',
+																	A2(_elm_lang$core$Basics_ops['++'], _p0._2, '}'))))))),
+											_1: {ctor: '[]'}
+										});
+							}
+						},
+						editorModel.core.buffer.history)),
+				_1: {ctor: '[]'}
+			}
+		});
+};
+var _minekoa$elm_text_editor$EditorDebugger$update = F3(
+	function (msg, editorModel, model) {
+		var _p1 = msg;
+		if (_p1.ctor === 'SelectSubMenu') {
+			return {
+				ctor: '_Tuple3',
+				_0: editorModel,
+				_1: _elm_lang$core$Native_Utils.update(
+					model,
+					{selectedSubMenu: _p1._0}),
+				_2: _elm_lang$core$Platform_Cmd$none
+			};
+		} else {
+			if (_p1._0 === true) {
+				return {
+					ctor: '_Tuple3',
+					_0: _elm_lang$core$Native_Utils.update(
+						editorModel,
+						{
+							event_log: _elm_lang$core$Maybe$Just(
+								{ctor: '[]'})
+						}),
+					_1: model,
+					_2: _elm_lang$core$Platform_Cmd$none
+				};
+			} else {
+				return {
+					ctor: '_Tuple3',
+					_0: _elm_lang$core$Native_Utils.update(
+						editorModel,
+						{event_log: _elm_lang$core$Maybe$Nothing}),
+					_1: model,
+					_2: _elm_lang$core$Platform_Cmd$none
+				};
+			}
+		}
+	});
+var _minekoa$elm_text_editor$EditorDebugger$Model = function (a) {
+	return {selectedSubMenu: a};
+};
+var _minekoa$elm_text_editor$EditorDebugger$EventLog = {ctor: 'EventLog'};
+var _minekoa$elm_text_editor$EditorDebugger$Clipboard = {ctor: 'Clipboard'};
+var _minekoa$elm_text_editor$EditorDebugger$EditHistory = {ctor: 'EditHistory'};
+var _minekoa$elm_text_editor$EditorDebugger$init = {selectedSubMenu: _minekoa$elm_text_editor$EditorDebugger$EditHistory};
+var _minekoa$elm_text_editor$EditorDebugger$SetEventlogEnable = function (a) {
+	return {ctor: 'SetEventlogEnable', _0: a};
+};
+var _minekoa$elm_text_editor$EditorDebugger$eventlogView = function (editorModel) {
+	return A2(
+		_elm_lang$html$Html$div,
+		{
+			ctor: '::',
+			_0: _elm_lang$html$Html_Attributes$id('debug-pane-eventlog'),
+			_1: {
+				ctor: '::',
+				_0: _elm_lang$html$Html_Attributes$class('hbox'),
+				_1: {
+					ctor: '::',
+					_0: _elm_lang$html$Html_Attributes$style(
+						{
+							ctor: '::',
+							_0: {ctor: '_Tuple2', _0: 'flex-grow', _1: '8'},
+							_1: {
+								ctor: '::',
+								_0: {ctor: '_Tuple2', _0: 'width', _1: '100%'},
+								_1: {
+									ctor: '::',
+									_0: {ctor: '_Tuple2', _0: 'height', _1: '100%'},
+									_1: {
+										ctor: '::',
+										_0: {ctor: '_Tuple2', _0: 'display', _1: 'flex'},
+										_1: {
+											ctor: '::',
+											_0: {ctor: '_Tuple2', _0: 'flex-direction', _1: 'row'},
+											_1: {ctor: '[]'}
+										}
+									}
+								}
+							}
+						}),
+					_1: {ctor: '[]'}
+				}
+			}
+		},
+		{
+			ctor: '::',
+			_0: A2(
+				_elm_lang$html$Html$div,
+				{
+					ctor: '::',
+					_0: _elm_lang$html$Html_Attributes$style(
+						{
+							ctor: '::',
+							_0: {ctor: '_Tuple2', _0: 'background-color', _1: 'whitesmoke'},
+							_1: {
+								ctor: '::',
+								_0: {ctor: '_Tuple2', _0: 'color', _1: 'gray'},
+								_1: {
+									ctor: '::',
+									_0: {ctor: '_Tuple2', _0: 'width', _1: '10ex'},
+									_1: {ctor: '[]'}
+								}
+							}
+						}),
+					_1: {ctor: '[]'}
 				},
 				{
 					ctor: '::',
 					_0: A2(
 						_elm_lang$html$Html$div,
+						{ctor: '[]'},
 						{
 							ctor: '::',
-							_0: _elm_lang$html$Html_Attributes$style(
-								{
-									ctor: '::',
-									_0: {ctor: '_Tuple2', _0: 'background-color', _1: 'whitesmoke'},
-									_1: {
-										ctor: '::',
-										_0: {ctor: '_Tuple2', _0: 'color', _1: 'gray'},
-										_1: {
-											ctor: '::',
-											_0: {ctor: '_Tuple2', _0: 'height', _1: '1em'},
-											_1: {ctor: '[]'}
-										}
-									}
-								}),
-							_1: {ctor: '[]'}
-						},
-						{
-							ctor: '::',
-							_0: _elm_lang$html$Html$text('history:'),
+							_0: _elm_lang$html$Html$text('eventlog:'),
 							_1: {ctor: '[]'}
 						}),
 					_1: {
@@ -12634,143 +12944,42 @@ var _minekoa$elm_text_editor$EditorDebugger$view = function (model) {
 							_elm_lang$html$Html$div,
 							{
 								ctor: '::',
-								_0: _elm_lang$html$Html_Attributes$style(
-									{
-										ctor: '::',
-										_0: {ctor: '_Tuple2', _0: 'overflow', _1: 'scroll'},
-										_1: {
-											ctor: '::',
-											_0: {ctor: '_Tuple2', _0: 'height', _1: 'calc( 100% - 1em )'},
-											_1: {ctor: '[]'}
-										}
-									}),
-								_1: {ctor: '[]'}
-							},
-							A2(
-								_elm_lang$core$List$map,
-								function (c) {
-									var celstyle = _elm_lang$html$Html_Attributes$style(
+								_0: _elm_lang$html$Html_Events$onClick(
+									_minekoa$elm_text_editor$EditorDebugger$SetEventlogEnable(
+										_elm_lang$core$Native_Utils.eq(editorModel.event_log, _elm_lang$core$Maybe$Nothing))),
+								_1: {
+									ctor: '::',
+									_0: _elm_lang$html$Html_Attributes$style(
 										{
 											ctor: '::',
-											_0: {ctor: '_Tuple2', _0: 'text-wrap', _1: 'none'},
+											_0: {ctor: '_Tuple2', _0: 'border', _1: '1px solid gray'},
 											_1: {
 												ctor: '::',
-												_0: {ctor: '_Tuple2', _0: 'white-space', _1: 'nowrap'},
+												_0: {
+													ctor: '_Tuple2',
+													_0: 'opacity',
+													_1: _elm_lang$core$Native_Utils.eq(editorModel.event_log, _elm_lang$core$Maybe$Nothing) ? '0.5' : '1.0'
+												},
 												_1: {
 													ctor: '::',
-													_0: {ctor: '_Tuple2', _0: 'color', _1: 'gray'},
-													_1: {ctor: '[]'}
+													_0: {ctor: '_Tuple2', _0: 'margin', _1: '1ex'},
+													_1: {
+														ctor: '::',
+														_0: {ctor: '_Tuple2', _0: 'text-align', _1: 'center'},
+														_1: {ctor: '[]'}
+													}
 												}
 											}
-										});
-									var pos2str = F2(
-										function (row, col) {
-											return A2(
-												_elm_lang$core$Basics_ops['++'],
-												'(',
-												A2(
-													_elm_lang$core$Basics_ops['++'],
-													_elm_lang$core$Basics$toString(row),
-													A2(
-														_elm_lang$core$Basics_ops['++'],
-														', ',
-														A2(
-															_elm_lang$core$Basics_ops['++'],
-															_elm_lang$core$Basics$toString(col),
-															')'))));
-										});
-									var _p1 = c;
-									switch (_p1.ctor) {
-										case 'Cmd_Insert':
-											return A2(
-												_elm_lang$html$Html$div,
-												{
-													ctor: '::',
-													_0: celstyle,
-													_1: {ctor: '[]'}
-												},
-												{
-													ctor: '::',
-													_0: _elm_lang$html$Html$text(
-														A2(
-															_elm_lang$core$Basics_ops['++'],
-															'Ins',
-															A2(
-																_elm_lang$core$Basics_ops['++'],
-																A2(pos2str, _p1._0._0, _p1._0._1),
-																A2(
-																	_elm_lang$core$Basics_ops['++'],
-																	' -> ',
-																	A2(
-																		_elm_lang$core$Basics_ops['++'],
-																		A2(pos2str, _p1._1._0, _p1._1._1),
-																		A2(
-																			_elm_lang$core$Basics_ops['++'],
-																			'{',
-																			A2(_elm_lang$core$Basics_ops['++'], _p1._2, '}'))))))),
-													_1: {ctor: '[]'}
-												});
-										case 'Cmd_Backspace':
-											return A2(
-												_elm_lang$html$Html$div,
-												{
-													ctor: '::',
-													_0: celstyle,
-													_1: {ctor: '[]'}
-												},
-												{
-													ctor: '::',
-													_0: _elm_lang$html$Html$text(
-														A2(
-															_elm_lang$core$Basics_ops['++'],
-															'Bs_',
-															A2(
-																_elm_lang$core$Basics_ops['++'],
-																A2(pos2str, _p1._0._0, _p1._0._1),
-																A2(
-																	_elm_lang$core$Basics_ops['++'],
-																	' -> ',
-																	A2(
-																		_elm_lang$core$Basics_ops['++'],
-																		A2(pos2str, _p1._1._0, _p1._1._1),
-																		A2(
-																			_elm_lang$core$Basics_ops['++'],
-																			'{',
-																			A2(_elm_lang$core$Basics_ops['++'], _p1._2, '}'))))))),
-													_1: {ctor: '[]'}
-												});
-										default:
-											return A2(
-												_elm_lang$html$Html$div,
-												{
-													ctor: '::',
-													_0: celstyle,
-													_1: {ctor: '[]'}
-												},
-												{
-													ctor: '::',
-													_0: _elm_lang$html$Html$text(
-														A2(
-															_elm_lang$core$Basics_ops['++'],
-															'Del',
-															A2(
-																_elm_lang$core$Basics_ops['++'],
-																A2(pos2str, _p1._0._0, _p1._0._1),
-																A2(
-																	_elm_lang$core$Basics_ops['++'],
-																	' -> ',
-																	A2(
-																		_elm_lang$core$Basics_ops['++'],
-																		A2(pos2str, _p1._1._0, _p1._1._1),
-																		A2(
-																			_elm_lang$core$Basics_ops['++'],
-																			'{',
-																			A2(_elm_lang$core$Basics_ops['++'], _p1._2, '}'))))))),
-													_1: {ctor: '[]'}
-												});
-									}
-								},
-								model.core.buffer.history)),
+										}),
+									_1: {ctor: '[]'}
+								}
+							},
+							{
+								ctor: '::',
+								_0: _elm_lang$html$Html$text(
+									_elm_lang$core$Native_Utils.eq(editorModel.event_log, _elm_lang$core$Maybe$Nothing) ? 'OFF' : 'ON'),
+								_1: {ctor: '[]'}
+							}),
 						_1: {ctor: '[]'}
 					}
 				}),
@@ -12780,322 +12989,233 @@ var _minekoa$elm_text_editor$EditorDebugger$view = function (model) {
 					_elm_lang$html$Html$div,
 					{
 						ctor: '::',
-						_0: _elm_lang$html$Html_Attributes$class('vbox'),
-						_1: {
-							ctor: '::',
-							_0: _elm_lang$html$Html_Attributes$style(
-								{
+						_0: _elm_lang$html$Html_Attributes$style(
+							{
+								ctor: '::',
+								_0: {ctor: '_Tuple2', _0: 'overflow', _1: 'scroll'},
+								_1: {
 									ctor: '::',
-									_0: {ctor: '_Tuple2', _0: 'flex-grow', _1: '8'},
+									_0: {ctor: '_Tuple2', _0: 'width', _1: 'calc( 100% - 3px )'},
 									_1: {
 										ctor: '::',
-										_0: {ctor: '_Tuple2', _0: 'display', _1: 'flex'},
+										_0: {ctor: '_Tuple2', _0: 'border-top', _1: '3px solid whitesmoke'},
 										_1: {
 											ctor: '::',
-											_0: {ctor: '_Tuple2', _0: 'flex-direction', _1: 'column'},
-											_1: {ctor: '[]'}
+											_0: {ctor: '_Tuple2', _0: 'flex-grow', _1: '8'},
+											_1: {
+												ctor: '::',
+												_0: {ctor: '_Tuple2', _0: 'color', _1: 'gray'},
+												_1: {ctor: '[]'}
+											}
 										}
 									}
-								}),
+								}
+							}),
+						_1: {ctor: '[]'}
+					},
+					A2(
+						_elm_lang$core$List$map,
+						function (ln) {
+							return A2(
+								_elm_lang$html$Html$span,
+								{
+									ctor: '::',
+									_0: _elm_lang$html$Html_Attributes$style(
+										{
+											ctor: '::',
+											_0: {ctor: '_Tuple2', _0: 'margin-right', _1: '0.2em'},
+											_1: {ctor: '[]'}
+										}),
+									_1: {ctor: '[]'}
+								},
+								{
+									ctor: '::',
+									_0: _elm_lang$html$Html$text(ln),
+									_1: {ctor: '[]'}
+								});
+						},
+						A2(
+							_elm_lang$core$Maybe$withDefault,
+							{ctor: '[]'},
+							editorModel.event_log))),
+				_1: {ctor: '[]'}
+			}
+		});
+};
+var _minekoa$elm_text_editor$EditorDebugger$menuPalette = F2(
+	function (editorModel, model) {
+		var _p2 = model.selectedSubMenu;
+		switch (_p2.ctor) {
+			case 'EditHistory':
+				return A2(
+					_elm_lang$html$Html$div,
+					{
+						ctor: '::',
+						_0: _elm_lang$html$Html_Attributes$class('menu-palette'),
+						_1: {ctor: '[]'}
+					},
+					{
+						ctor: '::',
+						_0: _minekoa$elm_text_editor$EditorDebugger$historyView(editorModel),
+						_1: {ctor: '[]'}
+					});
+			case 'Clipboard':
+				return A2(
+					_elm_lang$html$Html$div,
+					{
+						ctor: '::',
+						_0: _elm_lang$html$Html_Attributes$class('menu-palette'),
+						_1: {ctor: '[]'}
+					},
+					{
+						ctor: '::',
+						_0: _minekoa$elm_text_editor$EditorDebugger$clipboardView(editorModel),
+						_1: {ctor: '[]'}
+					});
+			default:
+				return A2(
+					_elm_lang$html$Html$div,
+					{
+						ctor: '::',
+						_0: _elm_lang$html$Html_Attributes$class('menu-palette'),
+						_1: {ctor: '[]'}
+					},
+					{
+						ctor: '::',
+						_0: _minekoa$elm_text_editor$EditorDebugger$eventlogView(editorModel),
+						_1: {ctor: '[]'}
+					});
+		}
+	});
+var _minekoa$elm_text_editor$EditorDebugger$SelectSubMenu = function (a) {
+	return {ctor: 'SelectSubMenu', _0: a};
+};
+var _minekoa$elm_text_editor$EditorDebugger$menuItemsView = function (model) {
+	return A2(
+		_elm_lang$html$Html$div,
+		{
+			ctor: '::',
+			_0: _elm_lang$html$Html_Attributes$class('menu-itemlist'),
+			_1: {ctor: '[]'}
+		},
+		{
+			ctor: '::',
+			_0: A2(
+				_elm_lang$html$Html$div,
+				{
+					ctor: '::',
+					_0: _elm_lang$html$Html_Events$onClick(
+						_minekoa$elm_text_editor$EditorDebugger$SelectSubMenu(_minekoa$elm_text_editor$EditorDebugger$EditHistory)),
+					_1: {
+						ctor: '::',
+						_0: _elm_lang$html$Html_Attributes$class(
+							_elm_lang$core$Native_Utils.eq(model.selectedSubMenu, _minekoa$elm_text_editor$EditorDebugger$EditHistory) ? 'menu-item-active' : 'menu-item'),
+						_1: {ctor: '[]'}
+					}
+				},
+				{
+					ctor: '::',
+					_0: A2(
+						_elm_lang$html$Html$span,
+						{ctor: '[]'},
+						{
+							ctor: '::',
+							_0: _elm_lang$html$Html$text('History'),
+							_1: {ctor: '[]'}
+						}),
+					_1: {ctor: '[]'}
+				}),
+			_1: {
+				ctor: '::',
+				_0: A2(
+					_elm_lang$html$Html$div,
+					{
+						ctor: '::',
+						_0: _elm_lang$html$Html_Events$onClick(
+							_minekoa$elm_text_editor$EditorDebugger$SelectSubMenu(_minekoa$elm_text_editor$EditorDebugger$Clipboard)),
+						_1: {
+							ctor: '::',
+							_0: _elm_lang$html$Html_Attributes$class(
+								_elm_lang$core$Native_Utils.eq(model.selectedSubMenu, _minekoa$elm_text_editor$EditorDebugger$Clipboard) ? 'menu-item-active' : 'menu-item'),
 							_1: {ctor: '[]'}
 						}
 					},
 					{
 						ctor: '::',
 						_0: A2(
-							_elm_lang$html$Html$div,
+							_elm_lang$html$Html$span,
+							{ctor: '[]'},
 							{
 								ctor: '::',
-								_0: _elm_lang$html$Html_Attributes$id('debug-pane-clipboard'),
-								_1: {
-									ctor: '::',
-									_0: _elm_lang$html$Html_Attributes$class('hbox'),
-									_1: {
-										ctor: '::',
-										_0: _elm_lang$html$Html_Attributes$style(
-											{
-												ctor: '::',
-												_0: {ctor: '_Tuple2', _0: 'flex-grow', _1: '2'},
-												_1: {
-													ctor: '::',
-													_0: {ctor: '_Tuple2', _0: 'width', _1: '100%'},
-													_1: {
-														ctor: '::',
-														_0: {ctor: '_Tuple2', _0: 'min-height', _1: '2em'},
-														_1: {
-															ctor: '::',
-															_0: {ctor: '_Tuple2', _0: 'display', _1: 'flex'},
-															_1: {
-																ctor: '::',
-																_0: {ctor: '_Tuple2', _0: 'flex-direction', _1: 'row'},
-																_1: {ctor: '[]'}
-															}
-														}
-													}
-												}
-											}),
-										_1: {ctor: '[]'}
-									}
-								}
-							},
-							{
-								ctor: '::',
-								_0: A2(
-									_elm_lang$html$Html$div,
-									{
-										ctor: '::',
-										_0: _elm_lang$html$Html_Attributes$style(
-											{
-												ctor: '::',
-												_0: {ctor: '_Tuple2', _0: 'background-color', _1: 'whitesmoke'},
-												_1: {
-													ctor: '::',
-													_0: {ctor: '_Tuple2', _0: 'color', _1: 'gray'},
-													_1: {
-														ctor: '::',
-														_0: {ctor: '_Tuple2', _0: 'width', _1: '10ex'},
-														_1: {ctor: '[]'}
-													}
-												}
-											}),
-										_1: {ctor: '[]'}
-									},
-									{
-										ctor: '::',
-										_0: _elm_lang$html$Html$text('clipboard:'),
-										_1: {ctor: '[]'}
-									}),
-								_1: {
-									ctor: '::',
-									_0: A2(
-										_elm_lang$html$Html$div,
-										{
-											ctor: '::',
-											_0: _elm_lang$html$Html_Attributes$style(
-												{
-													ctor: '::',
-													_0: {ctor: '_Tuple2', _0: 'overflow', _1: 'auto'},
-													_1: {
-														ctor: '::',
-														_0: {ctor: '_Tuple2', _0: 'width', _1: '100%'},
-														_1: {
-															ctor: '::',
-															_0: {ctor: '_Tuple2', _0: 'color', _1: 'gray'},
-															_1: {ctor: '[]'}
-														}
-													}
-												}),
-											_1: {ctor: '[]'}
-										},
-										A2(
-											_elm_lang$core$List$map,
-											function (ln) {
-												return A2(
-													_elm_lang$html$Html$div,
-													{
-														ctor: '::',
-														_0: _elm_lang$html$Html_Attributes$style(
-															{
-																ctor: '::',
-																_0: {ctor: '_Tuple2', _0: 'border-bottom', _1: '1px dotted gainsboro'},
-																_1: {
-																	ctor: '::',
-																	_0: {ctor: '_Tuple2', _0: 'height', _1: '1em'},
-																	_1: {ctor: '[]'}
-																}
-															}),
-														_1: {ctor: '[]'}
-													},
-													{
-														ctor: '::',
-														_0: _elm_lang$html$Html$text(ln),
-														_1: {ctor: '[]'}
-													});
-											},
-											_elm_lang$core$String$lines(model.core.copyStore))),
-									_1: {ctor: '[]'}
-								}
+								_0: _elm_lang$html$Html$text('Clipboard'),
+								_1: {ctor: '[]'}
 							}),
-						_1: {
+						_1: {ctor: '[]'}
+					}),
+				_1: {
+					ctor: '::',
+					_0: A2(
+						_elm_lang$html$Html$div,
+						{
+							ctor: '::',
+							_0: _elm_lang$html$Html_Events$onClick(
+								_minekoa$elm_text_editor$EditorDebugger$SelectSubMenu(_minekoa$elm_text_editor$EditorDebugger$EventLog)),
+							_1: {
+								ctor: '::',
+								_0: _elm_lang$html$Html_Attributes$class(
+									_elm_lang$core$Native_Utils.eq(model.selectedSubMenu, _minekoa$elm_text_editor$EditorDebugger$EventLog) ? 'menu-item-active' : 'menu-item'),
+								_1: {ctor: '[]'}
+							}
+						},
+						{
 							ctor: '::',
 							_0: A2(
-								_elm_lang$html$Html$div,
+								_elm_lang$html$Html$span,
+								{ctor: '[]'},
 								{
 									ctor: '::',
-									_0: _elm_lang$html$Html_Attributes$id('debug-pane-eventlog'),
-									_1: {
-										ctor: '::',
-										_0: _elm_lang$html$Html_Attributes$class('hbox'),
-										_1: {
-											ctor: '::',
-											_0: _elm_lang$html$Html_Attributes$style(
-												{
-													ctor: '::',
-													_0: {ctor: '_Tuple2', _0: 'flex-grow', _1: '8'},
-													_1: {
-														ctor: '::',
-														_0: {ctor: '_Tuple2', _0: 'width', _1: '100%'},
-														_1: {
-															ctor: '::',
-															_0: {ctor: '_Tuple2', _0: 'min-height', _1: '2em'},
-															_1: {
-																ctor: '::',
-																_0: {ctor: '_Tuple2', _0: 'display', _1: 'flex'},
-																_1: {
-																	ctor: '::',
-																	_0: {ctor: '_Tuple2', _0: 'flex-direction', _1: 'row'},
-																	_1: {ctor: '[]'}
-																}
-															}
-														}
-													}
-												}),
-											_1: {ctor: '[]'}
-										}
-									}
-								},
-								{
-									ctor: '::',
-									_0: A2(
-										_elm_lang$html$Html$div,
-										{
-											ctor: '::',
-											_0: _elm_lang$html$Html_Attributes$style(
-												{
-													ctor: '::',
-													_0: {ctor: '_Tuple2', _0: 'background-color', _1: 'whitesmoke'},
-													_1: {
-														ctor: '::',
-														_0: {ctor: '_Tuple2', _0: 'color', _1: 'gray'},
-														_1: {
-															ctor: '::',
-															_0: {ctor: '_Tuple2', _0: 'width', _1: '10ex'},
-															_1: {ctor: '[]'}
-														}
-													}
-												}),
-											_1: {ctor: '[]'}
-										},
-										{
-											ctor: '::',
-											_0: A2(
-												_elm_lang$html$Html$div,
-												{ctor: '[]'},
-												{
-													ctor: '::',
-													_0: _elm_lang$html$Html$text('eventlog:'),
-													_1: {ctor: '[]'}
-												}),
-											_1: {
-												ctor: '::',
-												_0: A2(
-													_elm_lang$html$Html$div,
-													{
-														ctor: '::',
-														_0: _elm_lang$html$Html_Events$onClick(
-															_minekoa$elm_text_editor$EditorDebugger$SetEventlogEnable(
-																_elm_lang$core$Native_Utils.eq(model.event_log, _elm_lang$core$Maybe$Nothing))),
-														_1: {
-															ctor: '::',
-															_0: _elm_lang$html$Html_Attributes$style(
-																{
-																	ctor: '::',
-																	_0: {ctor: '_Tuple2', _0: 'border', _1: '1px solid gray'},
-																	_1: {
-																		ctor: '::',
-																		_0: {
-																			ctor: '_Tuple2',
-																			_0: 'opacity',
-																			_1: _elm_lang$core$Native_Utils.eq(model.event_log, _elm_lang$core$Maybe$Nothing) ? '0.5' : '1.0'
-																		},
-																		_1: {
-																			ctor: '::',
-																			_0: {ctor: '_Tuple2', _0: 'margin', _1: '1ex'},
-																			_1: {
-																				ctor: '::',
-																				_0: {ctor: '_Tuple2', _0: 'text-align', _1: 'center'},
-																				_1: {ctor: '[]'}
-																			}
-																		}
-																	}
-																}),
-															_1: {ctor: '[]'}
-														}
-													},
-													{
-														ctor: '::',
-														_0: _elm_lang$html$Html$text(
-															_elm_lang$core$Native_Utils.eq(model.event_log, _elm_lang$core$Maybe$Nothing) ? 'OFF' : 'ON'),
-														_1: {ctor: '[]'}
-													}),
-												_1: {ctor: '[]'}
-											}
-										}),
-									_1: {
-										ctor: '::',
-										_0: A2(
-											_elm_lang$html$Html$div,
-											{
-												ctor: '::',
-												_0: _elm_lang$html$Html_Attributes$style(
-													{
-														ctor: '::',
-														_0: {ctor: '_Tuple2', _0: 'overflow', _1: 'scroll'},
-														_1: {
-															ctor: '::',
-															_0: {ctor: '_Tuple2', _0: 'width', _1: 'calc( 100% - 3px )'},
-															_1: {
-																ctor: '::',
-																_0: {ctor: '_Tuple2', _0: 'border-top', _1: '3px solid whitesmoke'},
-																_1: {
-																	ctor: '::',
-																	_0: {ctor: '_Tuple2', _0: 'flex-grow', _1: '8'},
-																	_1: {
-																		ctor: '::',
-																		_0: {ctor: '_Tuple2', _0: 'color', _1: 'gray'},
-																		_1: {ctor: '[]'}
-																	}
-																}
-															}
-														}
-													}),
-												_1: {ctor: '[]'}
-											},
-											A2(
-												_elm_lang$core$List$map,
-												function (ln) {
-													return A2(
-														_elm_lang$html$Html$span,
-														{
-															ctor: '::',
-															_0: _elm_lang$html$Html_Attributes$style(
-																{
-																	ctor: '::',
-																	_0: {ctor: '_Tuple2', _0: 'margin-right', _1: '0.2em'},
-																	_1: {ctor: '[]'}
-																}),
-															_1: {ctor: '[]'}
-														},
-														{
-															ctor: '::',
-															_0: _elm_lang$html$Html$text(ln),
-															_1: {ctor: '[]'}
-														});
-												},
-												A2(
-													_elm_lang$core$Maybe$withDefault,
-													{ctor: '[]'},
-													model.event_log))),
-										_1: {ctor: '[]'}
-									}
+									_0: _elm_lang$html$Html$text('Event log'),
+									_1: {ctor: '[]'}
 								}),
 							_1: {ctor: '[]'}
-						}
-					}),
-				_1: {ctor: '[]'}
+						}),
+					_1: {ctor: '[]'}
+				}
 			}
 		});
 };
+var _minekoa$elm_text_editor$EditorDebugger$view = F2(
+	function (editorModel, model) {
+		return A2(
+			_elm_lang$html$Html$div,
+			{
+				ctor: '::',
+				_0: _elm_lang$html$Html_Attributes$class('debugger-menu'),
+				_1: {
+					ctor: '::',
+					_0: _elm_lang$html$Html_Attributes$class('menu-root'),
+					_1: {
+						ctor: '::',
+						_0: _elm_lang$html$Html_Attributes$style(
+							{
+								ctor: '::',
+								_0: {ctor: '_Tuple2', _0: 'min-height', _1: '17em'},
+								_1: {ctor: '[]'}
+							}),
+						_1: {ctor: '[]'}
+					}
+				}
+			},
+			{
+				ctor: '::',
+				_0: _minekoa$elm_text_editor$EditorDebugger$menuItemsView(model),
+				_1: {
+					ctor: '::',
+					_0: A2(_minekoa$elm_text_editor$EditorDebugger$menuPalette, editorModel, model),
+					_1: {ctor: '[]'}
+				}
+			});
+	});
 
 var _norpan$elm_file_reader$FileReader$handleFiles = '\n    var fileObjects = [];\n    var index = 0;\n    var reader = new FileReader();\n    var dataFormat = event.target.dataset.format;\n    var encoding = event.target.dataset.encoding;\n    reader.onload = function() {\n        var data;\n        switch(dataFormat) {\n            case \'DataURL\':\n            case \'Text\':\n                data = reader.result;\n                break;\n            case \'Base64\':\n                data = reader.result.split(\',\')[1];\n                break;\n        }\n        var lastModified = files[index].lastModified;\n        if (!lastModified) {\n          lastModified = files[index].lastModifiedDate.getTime();\n        }\n        var result =\n            { lastModified: lastModified\n            , name: files[index].name\n            , size: files[index].size\n            , mimeType: files[index].type\n            , dataFormat: dataFormat\n            , encoding: encoding\n            , data: data\n            };\n        fileObjects.push(result);\n        index++;\n        readOne();\n    }\n    reader.onerror = function () {\n        var lastModified = files[index].lastModified;\n        if (!lastModified) {\n          lastModified = files[index].lastModifiedDate.getTime();\n        }\n        var result =\n            { lastModified: lastModified\n            , name: files[index].name\n            , size: files[index].size\n            , mimeType: files[index].type\n            , dataFormat: dataFormat\n            , encoding: encoding\n            , errorCode: reader.error.code\n            , errorName: reader.error.name\n            , errorMessage: reader.error.message\n            };\n        fileObjects.push(result);\n        index++;\n        readOne();\n    }\n    function readOne() {\n        var file = files[index];\n        if (file) {\n            switch(dataFormat) {\n                case \'DataURL\':\n                case \'Base64\':\n                    reader.readAsDataURL(file);\n                    break;\n                case \'Text\':\n                    reader.readAsText(file, encoding);\n                    break;\n            }\n        } else {\n            if (fileObjects.length > 0) {\n                var filesEvent;\n                try {\n                  filesEvent = new CustomEvent(\"files\", { detail: fileObjects });\n                } catch(e) {\n                  filesEvent = document.createEvent(\"CustomEvent\");\n                  filesEvent.initCustomEvent(\"files\", false, false, fileObjects);\n                }\n                event.target.dispatchEvent(filesEvent);\n            }\n        }\n      }\n    readOne();\n';
 var _norpan$elm_file_reader$FileReader$onChangeHandler = A2(_elm_lang$core$Basics_ops['++'], '\n    event.preventDefault();\n    event.stopPropagation();\n    var files = event.target.files;\n    ', _norpan$elm_file_reader$FileReader$handleFiles);
@@ -17435,9 +17555,9 @@ var _minekoa$elm_text_editor$Main$makeBuffer = F2(
 			buffer: _minekoa$elm_text_editor$TextEditor_Buffer$init(content)
 		};
 	});
-var _minekoa$elm_text_editor$Main$Model = F8(
-	function (a, b, c, d, e, f, g, h) {
-		return {editor: a, buffers: b, currentBufferIndex: c, currentBufferName: d, pane: e, swkeyboard: f, style: g, filer: h};
+var _minekoa$elm_text_editor$Main$Model = F9(
+	function (a, b, c, d, e, f, g, h, i) {
+		return {editor: a, buffers: b, currentBufferIndex: c, currentBufferName: d, pane: e, $debugger: f, swkeyboard: g, style: h, filer: i};
 	});
 var _minekoa$elm_text_editor$Main$Buffer = F2(
 	function (a, b) {
@@ -17558,7 +17678,7 @@ var _minekoa$elm_text_editor$Main$applicationMenu = function (model) {
 							return A2(
 								_elm_lang$html$Html$map,
 								_minekoa$elm_text_editor$Main$DebuggerMsg,
-								_minekoa$elm_text_editor$EditorDebugger$view(model.editor));
+								A2(_minekoa$elm_text_editor$EditorDebugger$view, model.editor, model.$debugger));
 						case 'KeyboardPane':
 							return A2(
 								_elm_lang$html$Html$map,
@@ -17720,7 +17840,7 @@ var _minekoa$elm_text_editor$Main$init = function () {
 	var bc = _p5._1;
 	return {
 		ctor: '_Tuple2',
-		_0: A8(
+		_0: A9(
 			_minekoa$elm_text_editor$Main$Model,
 			bm,
 			{
@@ -17731,6 +17851,7 @@ var _minekoa$elm_text_editor$Main$init = function () {
 			0,
 			buf.name,
 			_minekoa$elm_text_editor$Main$NoPane,
+			_minekoa$elm_text_editor$EditorDebugger$init,
 			_minekoa$elm_text_editor$SoftwareKeyboard$init,
 			_minekoa$elm_text_editor$StyleSetter$init,
 			_minekoa$elm_text_editor$Filer$init),
@@ -17797,14 +17918,15 @@ var _minekoa$elm_text_editor$Main$update = F2(
 					_1: A2(_elm_lang$core$Platform_Cmd$map, _minekoa$elm_text_editor$Main$EditorMsg, c)
 				};
 			case 'DebuggerMsg':
-				var _p11 = A2(_minekoa$elm_text_editor$EditorDebugger$update, _p8._0, model.editor);
+				var _p11 = A3(_minekoa$elm_text_editor$EditorDebugger$update, _p8._0, model.editor, model.$debugger);
 				var em = _p11._0;
-				var dc = _p11._1;
+				var dm = _p11._1;
+				var dc = _p11._2;
 				return {
 					ctor: '_Tuple2',
 					_0: _elm_lang$core$Native_Utils.update(
 						model,
-						{editor: em}),
+						{editor: em, $debugger: dm}),
 					_1: A2(_elm_lang$core$Platform_Cmd$map, _minekoa$elm_text_editor$Main$DebuggerMsg, dc)
 				};
 			case 'SWKeyboardMsg':

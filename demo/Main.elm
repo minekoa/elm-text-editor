@@ -33,6 +33,7 @@ type alias Model =
     , currentBufferName : String
 
     , pane : Pane
+    , debugger : EditorDebugger.Model
     , swkeyboard : SoftwareKeyboard.Model
     , style : StyleSetter.Model
     , filer : Filer.Model
@@ -69,6 +70,7 @@ init =
               0
               buf.name
               NoPane
+              EditorDebugger.init
               SoftwareKeyboard.init
               StyleSetter.init
               Filer.init
@@ -137,9 +139,12 @@ update msg model =
 
         DebuggerMsg dmsg ->
             let
-                (em, dc) = EditorDebugger.update dmsg model.editor
+                (em, dm, dc) = EditorDebugger.update dmsg model.editor model.debugger
             in
-                ( { model | editor = em }
+                ( { model
+                      | editor = em
+                      , debugger = dm
+                  }
                 , Cmd.map DebuggerMsg dc
                 )
 
@@ -312,7 +317,7 @@ applicationMenu model =
               NoPane ->
                   text ""
               DebugPane ->
-                  Html.map DebuggerMsg (EditorDebugger.view model.editor)
+                  Html.map DebuggerMsg (EditorDebugger.view model.editor model.debugger)
               KeyboardPane ->
                   Html.map SWKeyboardMsg (SoftwareKeyboard.view model.swkeyboard)
               StyleEditorPane ->
