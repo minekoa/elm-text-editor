@@ -5,3 +5,18 @@
 }
 
 
+.debugger-hbox {
+    flex-grow: 2;
+    width: 100%;
+    height: 100%;
+
+    display: flex;
+    flex-direction: row;
+}
+
+.debugger-submenu-title {
+    border-right: 1px solid dimgray;
+    color: gray;
+    width: 10ex;
+}
+

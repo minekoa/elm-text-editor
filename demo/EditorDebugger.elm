@@ -96,14 +96,11 @@ menuPalette editorModel model =
 historyView : Editor.Model -> Html Msg
 historyView editorModel =
     div [ id "debug-pane-history"
-        , style [ ("min-width", "8em")
-                , ("flex-grow", "2")
-                , ("height", "100%")
-                ]
+        , class "debugger-hbox"
         ]
-        [ div [ style [ ("background-color", "whitesmoke"), ("color", "gray"), ("height", "1em")]] [text "history:"]
+        [ div [ class "debugger-submenu-title" ] [ text "history:" ]
         , div
-              [ style [ ("overflow","scroll"), ("height", "calc( 100% - 1em )") ] ]
+              [ style [ ("overflow","auto"), ("width", "100%") ] ]
               ( List.map
                     (\ c ->
                          let
@@ -125,19 +122,13 @@ historyView editorModel =
 clipboardView : Editor.Model -> Html Msg
 clipboardView editorModel =
     div [ id "debug-pane-clipboard"
-        , class "hbox"
-        , style [ ("flex-grow", "2")
-                , ("width", "100%")
-                , ("height", "100%")
---                , ("min-height", "2em")
-                , ("display", "flex"), ("flex-direction", "row")
-                ]
+        , class "debugger-hbox"
         ]
-        [ div [ style [ ("background-color","whitesmoke"), ("color", "gray"), ("width", "10ex")] ] [text "clipboard:"]
-        , div [ style [ ("overflow","auto"), ("width", "100%"), ("color", "gray") ]
+        [ div [ class "debugger-submenu-title" ] [ text "clipboard:" ]
+        , div [ style [ ("overflow","auto"), ("width", "100%"), ("color", "gray"), ("background-color", "whitesmoke") ]
               ]
               ( List.map
-                    (λ ln-> div [ style [("border-bottom", "1px dotted gainsboro"), ("height", "1em")] ] [ text ln ] )
+                    (λ ln-> div [ style [("border-bottom", "1px dotted gainsboro"), ("background-color", "white"), ("height", "1em")] ] [ text ln ] )
                     (String.lines editorModel.core.copyStore)
               )
         ]
@@ -146,15 +137,9 @@ clipboardView editorModel =
 eventlogView : Editor.Model -> Html Msg
 eventlogView editorModel =
     div [ id "debug-pane-eventlog"
-        , class "hbox"
-        , style [ ("flex-grow", "8")
-                , ("width", "100%")
-                , ("height", "100%")
---                , ("min-height", "2em")
-                , ("display", "flex"), ("flex-direction", "row")
-                ]
+        , class "debugger-hbox"
         ]
-        [ div [ style [ ("background-color","whitesmoke"), ("color", "gray"), ("width", "10ex")] ]
+        [ div [ class "debugger-submenu-title" ]
               [ div [] [text "eventlog:"]
               , div [ onClick (SetEventlogEnable (editorModel.event_log == Nothing))
                     , style [ ("border", "1px solid gray")
@@ -165,10 +150,8 @@ eventlogView editorModel =
                     ]
                     [text <| if (editorModel.event_log == Nothing) then "OFF" else "ON"]
               ]
-        , div [ style [ ("overflow","scroll")
-                      , ("width", "calc( 100% - 3px )")
-                      , ("border-top", "3px solid whitesmoke")
-                      , ("flex-grow", "8")
+        , div [ style [ ("overflow","auto")
+                      , ("width", "100%")
                       , ("color", "gray")
                       ]
               ]

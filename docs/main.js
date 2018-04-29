@@ -12515,33 +12515,8 @@ var _minekoa$elm_text_editor$EditorDebugger$clipboardView = function (editorMode
 			_0: _elm_lang$html$Html_Attributes$id('debug-pane-clipboard'),
 			_1: {
 				ctor: '::',
-				_0: _elm_lang$html$Html_Attributes$class('hbox'),
-				_1: {
-					ctor: '::',
-					_0: _elm_lang$html$Html_Attributes$style(
-						{
-							ctor: '::',
-							_0: {ctor: '_Tuple2', _0: 'flex-grow', _1: '2'},
-							_1: {
-								ctor: '::',
-								_0: {ctor: '_Tuple2', _0: 'width', _1: '100%'},
-								_1: {
-									ctor: '::',
-									_0: {ctor: '_Tuple2', _0: 'height', _1: '100%'},
-									_1: {
-										ctor: '::',
-										_0: {ctor: '_Tuple2', _0: 'display', _1: 'flex'},
-										_1: {
-											ctor: '::',
-											_0: {ctor: '_Tuple2', _0: 'flex-direction', _1: 'row'},
-											_1: {ctor: '[]'}
-										}
-									}
-								}
-							}
-						}),
-					_1: {ctor: '[]'}
-				}
+				_0: _elm_lang$html$Html_Attributes$class('debugger-hbox'),
+				_1: {ctor: '[]'}
 			}
 		},
 		{
@@ -12550,20 +12525,7 @@ var _minekoa$elm_text_editor$EditorDebugger$clipboardView = function (editorMode
 				_elm_lang$html$Html$div,
 				{
 					ctor: '::',
-					_0: _elm_lang$html$Html_Attributes$style(
-						{
-							ctor: '::',
-							_0: {ctor: '_Tuple2', _0: 'background-color', _1: 'whitesmoke'},
-							_1: {
-								ctor: '::',
-								_0: {ctor: '_Tuple2', _0: 'color', _1: 'gray'},
-								_1: {
-									ctor: '::',
-									_0: {ctor: '_Tuple2', _0: 'width', _1: '10ex'},
-									_1: {ctor: '[]'}
-								}
-							}
-						}),
+					_0: _elm_lang$html$Html_Attributes$class('debugger-submenu-title'),
 					_1: {ctor: '[]'}
 				},
 				{
@@ -12587,7 +12549,11 @@ var _minekoa$elm_text_editor$EditorDebugger$clipboardView = function (editorMode
 									_1: {
 										ctor: '::',
 										_0: {ctor: '_Tuple2', _0: 'color', _1: 'gray'},
-										_1: {ctor: '[]'}
+										_1: {
+											ctor: '::',
+											_0: {ctor: '_Tuple2', _0: 'background-color', _1: 'whitesmoke'},
+											_1: {ctor: '[]'}
+										}
 									}
 								}
 							}),
@@ -12606,8 +12572,12 @@ var _minekoa$elm_text_editor$EditorDebugger$clipboardView = function (editorMode
 											_0: {ctor: '_Tuple2', _0: 'border-bottom', _1: '1px dotted gainsboro'},
 											_1: {
 												ctor: '::',
-												_0: {ctor: '_Tuple2', _0: 'height', _1: '1em'},
-												_1: {ctor: '[]'}
+												_0: {ctor: '_Tuple2', _0: 'background-color', _1: 'white'},
+												_1: {
+													ctor: '::',
+													_0: {ctor: '_Tuple2', _0: 'height', _1: '1em'},
+													_1: {ctor: '[]'}
+												}
 											}
 										}),
 									_1: {ctor: '[]'}
@@ -12631,20 +12601,7 @@ var _minekoa$elm_text_editor$EditorDebugger$historyView = function (editorModel)
 			_0: _elm_lang$html$Html_Attributes$id('debug-pane-history'),
 			_1: {
 				ctor: '::',
-				_0: _elm_lang$html$Html_Attributes$style(
-					{
-						ctor: '::',
-						_0: {ctor: '_Tuple2', _0: 'min-width', _1: '8em'},
-						_1: {
-							ctor: '::',
-							_0: {ctor: '_Tuple2', _0: 'flex-grow', _1: '2'},
-							_1: {
-								ctor: '::',
-								_0: {ctor: '_Tuple2', _0: 'height', _1: '100%'},
-								_1: {ctor: '[]'}
-							}
-						}
-					}),
+				_0: _elm_lang$html$Html_Attributes$class('debugger-hbox'),
 				_1: {ctor: '[]'}
 			}
 		},
@@ -12654,20 +12611,7 @@ var _minekoa$elm_text_editor$EditorDebugger$historyView = function (editorModel)
 				_elm_lang$html$Html$div,
 				{
 					ctor: '::',
-					_0: _elm_lang$html$Html_Attributes$style(
-						{
-							ctor: '::',
-							_0: {ctor: '_Tuple2', _0: 'background-color', _1: 'whitesmoke'},
-							_1: {
-								ctor: '::',
-								_0: {ctor: '_Tuple2', _0: 'color', _1: 'gray'},
-								_1: {
-									ctor: '::',
-									_0: {ctor: '_Tuple2', _0: 'height', _1: '1em'},
-									_1: {ctor: '[]'}
-								}
-							}
-						}),
+					_0: _elm_lang$html$Html_Attributes$class('debugger-submenu-title'),
 					_1: {ctor: '[]'}
 				},
 				{
@@ -12684,10 +12628,10 @@ var _minekoa$elm_text_editor$EditorDebugger$historyView = function (editorModel)
 						_0: _elm_lang$html$Html_Attributes$style(
 							{
 								ctor: '::',
-								_0: {ctor: '_Tuple2', _0: 'overflow', _1: 'scroll'},
+								_0: {ctor: '_Tuple2', _0: 'overflow', _1: 'auto'},
 								_1: {
 									ctor: '::',
-									_0: {ctor: '_Tuple2', _0: 'height', _1: 'calc( 100% - 1em )'},
+									_0: {ctor: '_Tuple2', _0: 'width', _1: '100%'},
 									_1: {ctor: '[]'}
 								}
 							}),
@@ -12877,33 +12821,8 @@ var _minekoa$elm_text_editor$EditorDebugger$eventlogView = function (editorModel
 			_0: _elm_lang$html$Html_Attributes$id('debug-pane-eventlog'),
 			_1: {
 				ctor: '::',
-				_0: _elm_lang$html$Html_Attributes$class('hbox'),
-				_1: {
-					ctor: '::',
-					_0: _elm_lang$html$Html_Attributes$style(
-						{
-							ctor: '::',
-							_0: {ctor: '_Tuple2', _0: 'flex-grow', _1: '8'},
-							_1: {
-								ctor: '::',
-								_0: {ctor: '_Tuple2', _0: 'width', _1: '100%'},
-								_1: {
-									ctor: '::',
-									_0: {ctor: '_Tuple2', _0: 'height', _1: '100%'},
-									_1: {
-										ctor: '::',
-										_0: {ctor: '_Tuple2', _0: 'display', _1: 'flex'},
-										_1: {
-											ctor: '::',
-											_0: {ctor: '_Tuple2', _0: 'flex-direction', _1: 'row'},
-											_1: {ctor: '[]'}
-										}
-									}
-								}
-							}
-						}),
-					_1: {ctor: '[]'}
-				}
+				_0: _elm_lang$html$Html_Attributes$class('debugger-hbox'),
+				_1: {ctor: '[]'}
 			}
 		},
 		{
@@ -12912,20 +12831,7 @@ var _minekoa$elm_text_editor$EditorDebugger$eventlogView = function (editorModel
 				_elm_lang$html$Html$div,
 				{
 					ctor: '::',
-					_0: _elm_lang$html$Html_Attributes$style(
-						{
-							ctor: '::',
-							_0: {ctor: '_Tuple2', _0: 'background-color', _1: 'whitesmoke'},
-							_1: {
-								ctor: '::',
-								_0: {ctor: '_Tuple2', _0: 'color', _1: 'gray'},
-								_1: {
-									ctor: '::',
-									_0: {ctor: '_Tuple2', _0: 'width', _1: '10ex'},
-									_1: {ctor: '[]'}
-								}
-							}
-						}),
+					_0: _elm_lang$html$Html_Attributes$class('debugger-submenu-title'),
 					_1: {ctor: '[]'}
 				},
 				{
@@ -12992,22 +12898,14 @@ var _minekoa$elm_text_editor$EditorDebugger$eventlogView = function (editorModel
 						_0: _elm_lang$html$Html_Attributes$style(
 							{
 								ctor: '::',
-								_0: {ctor: '_Tuple2', _0: 'overflow', _1: 'scroll'},
+								_0: {ctor: '_Tuple2', _0: 'overflow', _1: 'auto'},
 								_1: {
 									ctor: '::',
-									_0: {ctor: '_Tuple2', _0: 'width', _1: 'calc( 100% - 3px )'},
+									_0: {ctor: '_Tuple2', _0: 'width', _1: '100%'},
 									_1: {
 										ctor: '::',
-										_0: {ctor: '_Tuple2', _0: 'border-top', _1: '3px solid whitesmoke'},
-										_1: {
-											ctor: '::',
-											_0: {ctor: '_Tuple2', _0: 'flex-grow', _1: '8'},
-											_1: {
-												ctor: '::',
-												_0: {ctor: '_Tuple2', _0: 'color', _1: 'gray'},
-												_1: {ctor: '[]'}
-											}
-										}
+										_0: {ctor: '_Tuple2', _0: 'color', _1: 'gray'},
+										_1: {ctor: '[]'}
 									}
 								}
 							}),
