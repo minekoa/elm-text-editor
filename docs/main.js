@@ -11549,9 +11549,9 @@ var _minekoa$elm_text_editor$TextEditor$setBuffer = F2(
 var _minekoa$elm_text_editor$TextEditor$buffer = function (model) {
 	return model.core.buffer;
 };
-var _minekoa$elm_text_editor$TextEditor$Model = F4(
-	function (a, b, c, d) {
-		return {core: a, enableComposer: b, keymap: c, event_log: d};
+var _minekoa$elm_text_editor$TextEditor$Model = F5(
+	function (a, b, c, d, e) {
+		return {core: a, enableComposer: b, drag: c, keymap: d, event_log: e};
 	});
 var _minekoa$elm_text_editor$TextEditor$KeyboardEvent = F6(
 	function (a, b, c, d, e, f) {
@@ -11576,6 +11576,12 @@ var _minekoa$elm_text_editor$TextEditor$Rect = F8(
 	function (a, b, c, d, e, f, g, h) {
 		return {left: a, top: b, right: c, bottom: d, x: e, y: f, width: g, height: h};
 	});
+var _minekoa$elm_text_editor$TextEditor$DragEnd = function (a) {
+	return {ctor: 'DragEnd', _0: a};
+};
+var _minekoa$elm_text_editor$TextEditor$DragAt = function (a) {
+	return {ctor: 'DragAt', _0: a};
+};
 var _minekoa$elm_text_editor$TextEditor$DragStart = F2(
 	function (a, b) {
 		return {ctor: 'DragStart', _0: a, _1: b};
@@ -12232,7 +12238,7 @@ var _minekoa$elm_text_editor$TextEditor$init = F3(
 		var coreC = _p8._1;
 		return {
 			ctor: '_Tuple2',
-			_0: A4(_minekoa$elm_text_editor$TextEditor$Model, coreM, false, keymap, _elm_lang$core$Maybe$Nothing),
+			_0: A5(_minekoa$elm_text_editor$TextEditor$Model, coreM, false, false, keymap, _elm_lang$core$Maybe$Nothing),
 			_1: A2(_elm_lang$core$Platform_Cmd$map, _minekoa$elm_text_editor$TextEditor$CoreMsg, coreC)
 		};
 	});
@@ -12409,7 +12415,7 @@ var _minekoa$elm_text_editor$TextEditor$update = F2(
 						_minekoa$elm_text_editor$TextEditor$CoreMsg,
 						_minekoa$elm_text_editor$TextEditor_Core$doFocus(model.core))
 				};
-			default:
+			case 'DragStart':
 				var _p18 = _p14._1;
 				var _p17 = _p14._0;
 				var rect = _minekoa$elm_text_editor$TextEditor$getBoundingClientRect(
@@ -12485,6 +12491,90 @@ var _minekoa$elm_text_editor$TextEditor$update = F2(
 																_elm_lang$core$Basics$toString(col)))))))))),
 							_elm_lang$core$Native_Utils.update(
 								model,
+								{core: cm, drag: true}))),
+					_1: _elm_lang$core$Platform_Cmd$batch(
+						{
+							ctor: '::',
+							_0: A2(_elm_lang$core$Platform_Cmd$map, _minekoa$elm_text_editor$TextEditor$CoreMsg, cc),
+							_1: {ctor: '[]'}
+						})
+				};
+			case 'DragAt':
+				var _p20 = _p14._0;
+				var rect = _minekoa$elm_text_editor$TextEditor$getBoundingClientRect(
+					_minekoa$elm_text_editor$TextEditor_Core$codeAreaID(model.core));
+				var row = ((_p20.y - rect.top) / A2(_minekoa$elm_text_editor$TextEditor$emToPx, model.core, 1)) | 0;
+				var ln = A2(
+					_elm_lang$core$Maybe$withDefault,
+					'',
+					A2(_minekoa$elm_text_editor$TextEditor_Buffer$line, row, model.core.buffer.contents));
+				var calc_w = _minekoa$elm_text_editor$TextEditor$calcTextWidth(
+					_minekoa$elm_text_editor$TextEditor_Core$rulerID(model.core));
+				var calc_col = F3(
+					function (ln, c, x) {
+						calc_col:
+						while (true) {
+							if ((_elm_lang$core$Native_Utils.cmp(
+								calc_w(
+									A2(_elm_lang$core$String$left, c, ln)),
+								x) > 0) || (_elm_lang$core$Native_Utils.cmp(
+								_elm_lang$core$String$length(ln),
+								c) < 0)) {
+								return c - 1;
+							} else {
+								var _v10 = ln,
+									_v11 = c + 1,
+									_v12 = x;
+								ln = _v10;
+								c = _v11;
+								x = _v12;
+								continue calc_col;
+							}
+						}
+					});
+				var col = A3(calc_col, ln, 0, _p20.x - rect.left);
+				var _p19 = A2(
+					_minekoa$elm_text_editor$TextEditor_Core_Commands$moveAt,
+					{ctor: '_Tuple2', _0: row, _1: col},
+					model.core);
+				var cm = _p19._0;
+				var cc = _p19._1;
+				return {
+					ctor: '_Tuple2',
+					_0: _minekoa$elm_text_editor$TextEditor$blinkBlock(
+						A3(
+							_minekoa$elm_text_editor$TextEditor$eventLog,
+							'dragstart',
+							A2(
+								_elm_lang$core$Basics_ops['++'],
+								'pos=',
+								A2(
+									_elm_lang$core$Basics_ops['++'],
+									_elm_lang$core$Basics$toString(_p20.x),
+									A2(
+										_elm_lang$core$Basics_ops['++'],
+										',',
+										A2(
+											_elm_lang$core$Basics_ops['++'],
+											_elm_lang$core$Basics$toString(_p20.y),
+											A2(
+												_elm_lang$core$Basics_ops['++'],
+												'; offsetx=',
+												A2(
+													_elm_lang$core$Basics_ops['++'],
+													_elm_lang$core$Basics$toString(_p20.x - rect.left),
+													A2(
+														_elm_lang$core$Basics_ops['++'],
+														'; row=',
+														A2(
+															_elm_lang$core$Basics_ops['++'],
+															_elm_lang$core$Basics$toString(row),
+															A2(
+																_elm_lang$core$Basics_ops['++'],
+																'; calced_col=',
+																_elm_lang$core$Basics$toString(col)))))))))),
+							_elm_lang$core$Native_Utils.update(
+								model,
 								{core: cm}))),
 					_1: _elm_lang$core$Platform_Cmd$batch(
 						{
@@ -12493,18 +12583,44 @@ var _minekoa$elm_text_editor$TextEditor$update = F2(
 							_1: {ctor: '[]'}
 						})
 				};
+			default:
+				return {
+					ctor: '_Tuple2',
+					_0: _elm_lang$core$Native_Utils.update(
+						model,
+						{drag: false}),
+					_1: _elm_lang$core$Platform_Cmd$none
+				};
 		}
 	});
 var _minekoa$elm_text_editor$TextEditor$subscriptions = function (model) {
 	return _elm_lang$core$Platform_Sub$batch(
-		{
-			ctor: '::',
-			_0: A2(
-				_elm_lang$core$Platform_Sub$map,
-				_minekoa$elm_text_editor$TextEditor$CoreMsg,
-				_minekoa$elm_text_editor$TextEditor_Core$subscriptions(model.core)),
-			_1: {ctor: '[]'}
-		});
+		A2(
+			_elm_lang$core$Basics_ops['++'],
+			{
+				ctor: '::',
+				_0: A2(
+					_elm_lang$core$Platform_Sub$map,
+					_minekoa$elm_text_editor$TextEditor$CoreMsg,
+					_minekoa$elm_text_editor$TextEditor_Core$subscriptions(model.core)),
+				_1: {ctor: '[]'}
+			},
+			function () {
+				var _p21 = model.drag;
+				if (_p21 === true) {
+					return {
+						ctor: '::',
+						_0: _elm_lang$mouse$Mouse$moves(_minekoa$elm_text_editor$TextEditor$DragAt),
+						_1: {
+							ctor: '::',
+							_0: _elm_lang$mouse$Mouse$ups(_minekoa$elm_text_editor$TextEditor$DragEnd),
+							_1: {ctor: '[]'}
+						}
+					};
+				} else {
+					return {ctor: '[]'};
+				}
+			}()));
 };
 
 var _minekoa$elm_text_editor$EditorDebugger$clipboardView = function (editorModel) {

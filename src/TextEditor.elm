@@ -34,6 +34,7 @@ type alias Model =
 
     -- state
     , enableComposer : Bool -- ブラウザの互換のため、compositionEvent の遷移とは別の「IME入力中」判定フラグが必要
+    , drag : Bool
 
     -- options
     , keymap : List KeyBind.KeyBind
@@ -49,6 +50,7 @@ init id keymap text =
     in
     ( Model
           coreM
+          False
           False
           keymap
           Nothing
@@ -88,6 +90,8 @@ type Msg
     | FocusOut Bool
     | ClickScreen
     | DragStart Int Mouse.Position
+    | DragAt Mouse.Position
+    | DragEnd Mouse.Position
 
 update : Msg -> Model -> (Model, Cmd Msg)
 update msg model =
@@ -167,7 +171,9 @@ update msg model =
 
                 (cm, cc) =  Commands.moveAt (row, col) model.core
             in
-                ( { model | core = cm }
+                ( { model | core = cm
+                  , drag = True
+                  }
                   |> eventLog "dragstart" ("pos=" ++ (toString xy.x) ++ "," ++ (toString xy.y)
                                                ++ "; offsetx=" ++ (toString (xy.x - rect.left))
                                                ++ "; row=" ++ (toString row)
@@ -182,6 +188,39 @@ update msg model =
 --                            , Cmd.map CoreMsg (Core.doFocus model.core)  -- firefox 限定で、たまーに、SetFocus が来ないことがあるので、ここでもやっとく。
                             ]
                 )
+
+        DragAt xy ->
+            let
+                calc_w  = calcTextWidth (rulerID model.core)
+                calc_col = (\ ln c x ->
+                              if (calc_w (String.left c ln)) > x || String.length ln < c  then c - 1
+                              else calc_col ln (c + 1)  x)
+
+                ln = Buffer.line row model.core.buffer.contents |> Maybe.withDefault ""
+                rect = getBoundingClientRect (codeAreaID model.core)
+
+                col = (calc_col ln 0 (xy.x - rect.left))
+
+                (cm, cc) =  Commands.moveAt (row, col) model.core
+
+                row = (xy.y - rect.top) // (emToPx model.core 1)
+
+            in
+                ( { model | core = cm }
+                  |> eventLog "dragstart" ("pos=" ++ (toString xy.x) ++ "," ++ (toString xy.y)
+                                               ++ "; offsetx=" ++ (toString (xy.x - rect.left))
+                                               ++ "; row=" ++ (toString row)
+                                               ++ "; calced_col=" ++ (toString col)
+                                          )
+                  |> blinkBlock
+                , Cmd.batch [ Cmd.map CoreMsg cc
+                            ]
+                )
+
+        DragEnd xy ->
+            ( {model | drag = False }
+            , Cmd.none
+            )
 
 
 input: String -> Model -> (Model, Cmd Msg)
@@ -632,7 +671,10 @@ cursorView model =
 
 subscriptions : Model -> Sub Msg
 subscriptions model =
-    Sub.batch [ Sub.map CoreMsg  (Core.subscriptions model.core) ]
+    Sub.batch <| [ Sub.map CoreMsg  (Core.subscriptions model.core) ]
+        ++ case model.drag of
+               True -> [Mouse.moves DragAt, Mouse.ups DragEnd]
+               False -> []
 
 
 ------------------------------------------------------------
