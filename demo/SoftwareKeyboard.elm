@@ -99,7 +99,7 @@ update msg model editor =
 view : Model -> Html Msg
 view model =
     div [ class "software_keyboard"
-        , style []
+        , style [("min-height", "17rem")]
         ]
         [ keyboardSwitcher model
         , mainkey model

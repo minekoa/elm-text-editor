@@ -30,7 +30,7 @@
 .kbd_mainkey_row {
   display: flex;
   flex-direction: row; 
-  height: 2.5em;
+  height: 1.5em;
 }
 
 .kbd_key {

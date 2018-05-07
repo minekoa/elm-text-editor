@@ -16322,7 +16322,11 @@ var _minekoa$elm_text_editor$SoftwareKeyboard$view = function (model) {
 			_1: {
 				ctor: '::',
 				_0: _elm_lang$html$Html_Attributes$style(
-					{ctor: '[]'}),
+					{
+						ctor: '::',
+						_0: {ctor: '_Tuple2', _0: 'min-height', _1: '17rem'},
+						_1: {ctor: '[]'}
+					}),
 				_1: {ctor: '[]'}
 			}
 		},
