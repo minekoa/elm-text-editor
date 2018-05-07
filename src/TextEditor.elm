@@ -159,26 +159,16 @@ update msg model =
 
         DragStart row xy ->
             let
-                calc_w  = calcTextWidth (rulerID model.core)
-                calc_col = (\ ln c x ->
-                              if (calc_w (String.left c ln)) > x || String.length ln < c  then c - 1
-                              else calc_col ln (c + 1)  x)
-
-                ln = Buffer.line row model.core.buffer.contents |> Maybe.withDefault ""
                 rect = getBoundingClientRect (codeAreaID model.core)
-
-                col = (calc_col ln 0 (xy.x - rect.left))
+                ln = Buffer.line row model.core.buffer.contents |> Maybe.withDefault ""
+                col = posToColumn model.core ln (xy.x - rect.left)
 
                 (cm, cc) =  Commands.moveAt (row, col) model.core
             in
                 ( { model | core = cm
                   , drag = True
                   }
-                  |> eventLog "dragstart" ("pos=" ++ (toString xy.x) ++ "," ++ (toString xy.y)
-                                               ++ "; offsetx=" ++ (toString (xy.x - rect.left))
-                                               ++ "; row=" ++ (toString row)
-                                               ++ "; calced_col=" ++ (toString col)
-                                          )
+                  |> eventLog "dragstart" (printDragInfo rect xy (row, col) )
                   |> blinkBlock
                 , Cmd.batch [ Cmd.map CoreMsg cc
 -- note: どうやらこの doFocus が悪さをして
@@ -191,25 +181,15 @@ update msg model =
 
         DragAt xy ->
             let
-                calc_w  = calcTextWidth (rulerID model.core)
-                calc_col = (\ ln c x ->
-                              if (calc_w (String.left c ln)) > x || String.length ln < c  then c - 1
-                              else calc_col ln (c + 1)  x)
-
+                rect = getBoundingClientRect (codeAreaID model.core)
                 row = (xy.y - rect.top) // (emToPx model.core 1)
                 ln = Buffer.line row model.core.buffer.contents |> Maybe.withDefault ""
-                rect = getBoundingClientRect (codeAreaID model.core)
-
-                col = (calc_col ln 0 (xy.x - rect.left))
+                col = posToColumn model.core ln (xy.x - rect.left)
 
                 (cm, cc) =  Commands.selectAt (row, col) model.core
             in
                 ( { model | core = cm }
-                  |> eventLog "dragstart" ("pos=" ++ (toString xy.x) ++ "," ++ (toString xy.y)
-                                               ++ "; offsetx=" ++ (toString (xy.x - rect.left))
-                                               ++ "; row=" ++ (toString row)
-                                               ++ "; calced_col=" ++ (toString col)
-                                          )
+                  |> eventLog "dragat" (printDragInfo rect xy (row, col) )
                   |> blinkBlock
                 , Cmd.batch [ Cmd.map CoreMsg cc
                             ]
@@ -217,9 +197,9 @@ update msg model =
 
         DragEnd xy ->
             ( {model | drag = False }
+                  |> eventLog "dragend" ""
             , Cmd.none
             )
-
 
 input: String -> Model -> (Model, Cmd Msg)
 input s model =
@@ -291,6 +271,23 @@ compositionEnd data model =
           |> eventLog "compositionend" data
         , Cmd.map CoreMsg c
         )
+
+posToColumn : Core.Model -> String -> Int -> Int
+posToColumn model line pos_x =
+    let
+        calc_w  = calcTextWidth (rulerID model)
+        calc_col = (\ ln c x ->
+                        if (calc_w (String.left c ln)) > x || String.length ln < c  then c - 1
+                        else calc_col ln (c + 1)  x
+                   )
+    in
+        calc_col line 0 pos_x
+
+printDragInfo: Rect -> Mouse.Position -> (Int, Int) -> String
+printDragInfo rect xy (row, col) =
+    "pos=" ++ (toString xy.x) ++ "," ++ (toString xy.y)
+        ++ "; offset_pos=" ++ (toString (xy.x - rect.left)) ++ "," ++ (toString (xy.y - rect.top))
+        ++ "; row_col=" ++ (toString row) ++ "," ++(toString col)
 
 ------------------------------------------------------------
 -- control state update
