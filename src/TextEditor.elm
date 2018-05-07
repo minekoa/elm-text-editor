@@ -196,15 +196,13 @@ update msg model =
                               if (calc_w (String.left c ln)) > x || String.length ln < c  then c - 1
                               else calc_col ln (c + 1)  x)
 
+                row = (xy.y - rect.top) // (emToPx model.core 1)
                 ln = Buffer.line row model.core.buffer.contents |> Maybe.withDefault ""
                 rect = getBoundingClientRect (codeAreaID model.core)
 
                 col = (calc_col ln 0 (xy.x - rect.left))
 
-                (cm, cc) =  Commands.moveAt (row, col) model.core
-
-                row = (xy.y - rect.top) // (emToPx model.core 1)
-
+                (cm, cc) =  Commands.selectAt (row, col) model.core
             in
                 ( { model | core = cm }
                   |> eventLog "dragstart" ("pos=" ++ (toString xy.x) ++ "," ++ (toString xy.y)

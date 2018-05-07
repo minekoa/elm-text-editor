@@ -9807,6 +9807,10 @@ var _minekoa$elm_text_editor$TextEditor_Buffer$selectBackward = _minekoa$elm_tex
 var _minekoa$elm_text_editor$TextEditor_Buffer$selectForward = _minekoa$elm_text_editor$TextEditor_Buffer$selectWithMove(_minekoa$elm_text_editor$TextEditor_Buffer$moveForward);
 var _minekoa$elm_text_editor$TextEditor_Buffer$selectPrevios = _minekoa$elm_text_editor$TextEditor_Buffer$selectWithMove(_minekoa$elm_text_editor$TextEditor_Buffer$movePrevios);
 var _minekoa$elm_text_editor$TextEditor_Buffer$selectNext = _minekoa$elm_text_editor$TextEditor_Buffer$selectWithMove(_minekoa$elm_text_editor$TextEditor_Buffer$moveNext);
+var _minekoa$elm_text_editor$TextEditor_Buffer$selectAt = function (pos) {
+	return _minekoa$elm_text_editor$TextEditor_Buffer$selectWithMove(
+		_minekoa$elm_text_editor$TextEditor_Buffer$moveAt(pos));
+};
 var _minekoa$elm_text_editor$TextEditor_Buffer$Cmd_Delete = F3(
 	function (a, b, c) {
 		return {ctor: 'Cmd_Delete', _0: a, _1: b, _2: c};
@@ -10358,6 +10362,10 @@ var _minekoa$elm_text_editor$TextEditor_Core_Commands$selectBackward = _minekoa$
 var _minekoa$elm_text_editor$TextEditor_Core_Commands$selectForward = _minekoa$elm_text_editor$TextEditor_Core_Commands$selectF(_minekoa$elm_text_editor$TextEditor_Buffer$selectForward);
 var _minekoa$elm_text_editor$TextEditor_Core_Commands$selectPrevios = _minekoa$elm_text_editor$TextEditor_Core_Commands$selectF(_minekoa$elm_text_editor$TextEditor_Buffer$selectPrevios);
 var _minekoa$elm_text_editor$TextEditor_Core_Commands$selectNext = _minekoa$elm_text_editor$TextEditor_Core_Commands$selectF(_minekoa$elm_text_editor$TextEditor_Buffer$selectNext);
+var _minekoa$elm_text_editor$TextEditor_Core_Commands$selectAt = function (pos) {
+	return _minekoa$elm_text_editor$TextEditor_Core_Commands$selectF(
+		_minekoa$elm_text_editor$TextEditor_Buffer$selectAt(pos));
+};
 var _minekoa$elm_text_editor$TextEditor_Core_Commands$moveF = F2(
 	function (f, model) {
 		return _minekoa$elm_text_editor$TextEditor_Core$withEnsureVisibleCmd(
@@ -12534,7 +12542,7 @@ var _minekoa$elm_text_editor$TextEditor$update = F2(
 					});
 				var col = A3(calc_col, ln, 0, _p20.x - rect.left);
 				var _p19 = A2(
-					_minekoa$elm_text_editor$TextEditor_Core_Commands$moveAt,
+					_minekoa$elm_text_editor$TextEditor_Core_Commands$selectAt,
 					{ctor: '_Tuple2', _0: row, _1: col},
 					model.core);
 				var cm = _p19._0;
@@ -14188,6 +14196,13 @@ var _minekoa$elm_text_editor$TextEditor_Commands$selectNext = function (model) {
 		model,
 		_minekoa$elm_text_editor$TextEditor_Core_Commands$selectNext(model.core));
 };
+var _minekoa$elm_text_editor$TextEditor_Commands$selectAt = F2(
+	function (pos, model) {
+		return A2(
+			_minekoa$elm_text_editor$TextEditor_Commands$updateMap,
+			model,
+			A2(_minekoa$elm_text_editor$TextEditor_Core_Commands$selectAt, pos, model.core));
+	});
 var _minekoa$elm_text_editor$TextEditor_Commands$insert = F2(
 	function (text, model) {
 		return A2(

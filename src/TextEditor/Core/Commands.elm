@@ -10,6 +10,7 @@ module TextEditor.Core.Commands exposing
     , selectBackward
     , selectPrevios
     , selectNext
+    , selectAt
     , insert
     , backspace
     , delete
@@ -89,6 +90,8 @@ selectPrevios = selectF Buffer.selectPrevios
 selectNext: Model -> (Model, Cmd Msg)
 selectNext = selectF Buffer.selectNext
 
+selectAt: (Int, Int) -> Model -> (Model, Cmd Msg)
+selectAt pos = selectF (Buffer.selectAt pos)
 
 ------------------------------------------------------------
 -- edit buffer

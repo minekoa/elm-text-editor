@@ -10,6 +10,7 @@ module TextEditor.Commands exposing
     , selectBackward
     , selectPrevios
     , selectNext
+    , selectAt
     , insert
     , backspace
     , delete
@@ -65,6 +66,9 @@ selectPrevios model = updateMap model (CoreCommands.selectPrevios model.core)
 
 selectNext: Model -> (Model, Cmd Msg)
 selectNext model = updateMap model (CoreCommands.selectNext model.core)
+
+selectAt: (Int, Int) -> Model -> (Model, Cmd Msg)
+selectAt pos model = updateMap model (CoreCommands.selectAt pos model.core)
 
 insert: String -> Model-> (Model, Cmd Msg)
 insert text model = updateMap model (CoreCommands.insert text model.core)

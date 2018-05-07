@@ -25,6 +25,7 @@ module TextEditor.Buffer exposing ( Model
                                   , selectForward
                                   , selectPrevios
                                   , selectNext
+                                  , selectAt
                                   , selectionClear
 
                                   -- edit
@@ -265,6 +266,9 @@ selectPrevios = selectWithMove movePrevios
 
 selectNext: Model -> Model
 selectNext = selectWithMove moveNext
+
+selectAt: (Int, Int) -> Model -> Model
+selectAt pos = selectWithMove (moveAt pos)
 
 selectionClear: Model -> Model
 selectionClear model =
