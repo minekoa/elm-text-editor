@@ -89,7 +89,7 @@ type Msg
     | FocusIn Bool
     | FocusOut Bool
     | ClickScreen
-    | DragStart Int Mouse.Position
+    | DragStart Mouse.Position
     | DragAt Mouse.Position
     | DragEnd Mouse.Position
 
@@ -105,15 +105,21 @@ update msg model =
 
         Pasted s ->
             updateMap model (Commands.paste s model.core)
+                |> Tuple.mapFirst (\m -> {m|drag=False})
                 |> Tuple.mapFirst (eventLog "pasted" s)
+                |> Tuple.mapSecond (\c -> Cmd.batch [c, Cmd.map CoreMsg (Core.doFocus model.core)] )
 
         Copied s ->
             updateMap model (Commands.copy model.core)
+                |> Tuple.mapFirst (\m -> {m|drag=False})
                 |> Tuple.mapFirst (eventLog "copied" s)
+                |> Tuple.mapSecond (\c -> Cmd.batch [c, Cmd.map CoreMsg (Core.doFocus model.core)] )
 
         Cutted s ->
             updateMap model (Commands.cut model.core)
+                |> Tuple.mapFirst (\m -> {m|drag=False})
                 |> Tuple.mapFirst (eventLog "cutted" s)
+                |> Tuple.mapSecond (\c -> Cmd.batch [c, Cmd.map CoreMsg (Core.doFocus model.core)] )
 
         -- View Operation Event
 
@@ -140,7 +146,9 @@ update msg model =
                 cm = model.core
             in
             ( { model | core = {cm | focus = True}  }
-            , Cmd.map CoreMsg (Core.elaborateInputArea model.core)
+            , Cmd.batch [ Cmd.map CoreMsg (Core.elaborateInputArea model.core)
+                        , Cmd.map CoreMsg (Core.elaborateTapArea model.core)
+                        ]
             )
 
         FocusOut _ ->
@@ -157,9 +165,10 @@ update msg model =
             , Cmd.map CoreMsg (Core.doFocus model.core)
             )
 
-        DragStart row xy ->
+        DragStart xy ->
             let
                 rect = getBoundingClientRect (codeAreaID model.core)
+                row = (xy.y - rect.top) // (emToPx model.core 1)
                 ln = Buffer.line row model.core.buffer.contents |> Maybe.withDefault ""
                 col = posToColumn model.core ln (xy.x - rect.left)
 
@@ -351,7 +360,7 @@ view model =
     div [ id <| frameID model.core
         , style [ ("margin", "0"), ("padding", "0"), ("width", "100%"), ("height", "100%")
                 , ("overflow","auto")
-                , ( "position", "relative")
+                , ("position", "relative")
                 , ("user-select", "none")
                 , ("-webkit-user-select", "none")
                 , ("-moz-user-select", "none")
@@ -360,11 +369,12 @@ view model =
         ]
         [ div [ id <| sceneID model.core
               , class "editor-scene"
-              , style [ ( "position", "relative") ]
+              , style [ ("position", "relative") ]
               ]
               [ presentation model.core
               ]
         ]
+
 
 presentation : Core.Model -> Html Msg
 presentation model =
@@ -407,6 +417,7 @@ codeArea model =
         ]
         [ ruler model
         , cursorLayer model
+        , tapControlLayer model
         , markerLayer model
         , codeLayer model
         ]
@@ -431,7 +442,7 @@ codeLayer model =
                                   , ("white-space", "pre")
                                   , ("pointer-events", "auto") -- マウスイベントの対象にする
                                   ]
-                          , onMouseDown (DragStart n)
+--                          , onMouseDown (DragStart n)
                           ] <|
                           if n == cursor.row && model.compositionPreview /= Nothing then
                               [ span [ style [ ("position", "relative")
@@ -513,6 +524,28 @@ cursorLayer model =
                ]
         ]
 
+tapControlLayer : Core.Model -> Html Msg
+tapControlLayer model =
+    div [ id <| tapAreaID model
+        , style [ ("position", "absolute")
+                , ("pointer-events", "auto")
+                , ("width", "100%"), ("height", "100%")
+                , ("z-index", "9")
+
+                , ("color", "green")
+--                , ("background-color", "red")
+--                , ("opacity", "0.2")
+                ]
+        , contenteditable True
+        , onClick ClickScreen
+        , onPasted Pasted
+        , onCopied Copied
+        , onCutted Cutted
+        , onMouseDown DragStart
+        ]
+        [ text <| Maybe.withDefault "" <| Buffer.selectedString model.buffer ]
+
+
 markerLayer: Core.Model -> Html Msg
 markerLayer model =
     case model.buffer.selection of
@@ -553,7 +586,7 @@ markerLayer model =
                 div [ class "marker-layer"
                     , style [ ("position", "absolute")
                             , ("pointer-events", "none") -- マウスイベントの対象外にする
-                            , ("z-index", "99") -- note: 範囲選択を一番上にしたいため 99 という数字自体に意味はない
+                            , ("z-index", "5") -- note: 範囲選択を一番上にしたいため 99 という数字自体に意味はない
                             ]
                     ]
                     ( List.map (\ m ->
@@ -653,7 +686,7 @@ cursorView model =
                 , ("opacity", if model.focus && (blink_off model.blink) then "0.0" else "0.5")
                 , ("height", 1 |> emToPxString model )
                 , ("width", "3px")
-                , ("z-index", "99")
+                , ("z-index", "5")
                 ]
          , id <| cursorID model
          ]
@@ -779,9 +812,11 @@ selecteddata selected_str =
         |> property "selecteddata"
 
 
+------------------------------------------------------------
 -- em prottype
 --     height : 1em しても、マルチバイト文字などでは文字表示にひつような高さが確保できない（ことがおおい）ため、
 --     一度マルチバイト文字をレンダリングさせて、高さのpxを測り、それを指定するようにする
+------------------------------------------------------------
 
 emToPx : Core.Model -> Int -> Int
 emToPx model n =

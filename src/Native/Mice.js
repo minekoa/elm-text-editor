@@ -214,11 +214,82 @@ var _minekoa$elm_text_editor$Native_Mice = function() {
     }
 
 
+
+
+
+    function elaborateTapArea(id_tap_area) {
+        const tap_area = document.getElementById(id_tap_area);
+        if (tap_area == null) {
+            return false;
+        }
+
+        if (tap_area.tap_controll_handlers_registerd) {
+            return true;
+        }
+        tap_area.tap_controll_handlers_registerd = true;
+        console.log("regist tap-ctrl event handlers");
+/*
+        tap_area.addEventListener( "keydown", e => {
+            if (e.target.id != id_tap_area) {
+                return true;
+            }
+            e.preventDefault();
+        });
+*/
+        tap_area.addEventListener( "paste", e => {
+            e.preventDefault();
+            console.log("pasete event (tap_area)");
+
+            const data_transfer = (e.clipboardData) || (window.clipboardData);
+            const str = data_transfer.getData("text/plain");
+
+            const evt = new CustomEvent("pasted", { "bubbles": true,
+                                                    "cancelable": true,
+                                                    "detail": str
+                                                  }
+                                       );
+            tap_area.dispatchEvent(evt);
+        });
+
+        tap_area.addEventListener( "copy", e => {
+            e.preventDefault();
+
+            const str = tap_area.selecteddata
+            e.clipboardData.setData('text/plain', str);
+
+            const evt = new CustomEvent("copied", { "bubbles": true,
+                                                    "cancelable": true,
+                                                    "detail": str
+                                                  }
+                                       );
+            tap_area.dispatchEvent(evt);
+        });
+
+        tap_area.addEventListener( "cut", e => {
+            e.preventDefault();
+
+            const str = tap_area.selecteddata
+            e.clipboardData.setData('text/plain', str);
+
+            const evt = new CustomEvent("cutted", { "bubbles": true,
+                                                    "cancelable": true,
+                                                    "detail": str
+                                                  }
+                                       );
+            tap_area.dispatchEvent(evt);
+        });
+
+
+        return true;
+    }
+
+
   return {
       ensureVisible: F2(ensureVisible),
       calcTextWidth: F2(calcTextWidth),
       getBoundingClientRect: getBoundingClientRect,
       elaborateInputArea : elaborateInputArea,
+      elaborateTapArea : elaborateTapArea,
   }
 }();
 

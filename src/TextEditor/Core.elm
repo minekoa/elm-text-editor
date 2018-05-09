@@ -13,6 +13,7 @@ module TextEditor.Core exposing
     , prototyleEmID
     , cursorID
     , inputAreaID
+    , tapAreaID
 
     , BlinkState(..)
     , blinkBlock
@@ -23,6 +24,7 @@ module TextEditor.Core exposing
 
     , doFocus
     , elaborateInputArea
+    , elaborateTapArea
     )
 
 import Time exposing (Time, second)
@@ -137,6 +139,9 @@ inputAreaID : Model -> String
 inputAreaID model =
     model.id ++ "-editor-input"
 
+tapAreaID : Model -> String
+tapAreaID model =
+    model.id ++ "-editor-tap"
 
 
 -- Blink Cursor
@@ -211,6 +216,11 @@ elaborateInputArea: Model -> Cmd Msg
 elaborateInputArea model =
     Task.perform (\_ -> IgnoreResult) (elaborateInputAreaTask (inputAreaID model))
 
+elaborateTapArea: Model -> Cmd Msg
+elaborateTapArea model =
+    Task.perform (\_ -> IgnoreResult) (elaborateTapAreaTask (tapAreaID model))
+
+
 ensureVisible: Model -> Cmd Msg
 ensureVisible model =
     Task.perform (\_ -> IgnoreResult) (ensureVisibleTask (frameID model) (cursorID model))
@@ -222,6 +232,10 @@ ensureVisible model =
 elaborateInputAreaTask: String  -> Task Never Bool
 elaborateInputAreaTask input_area_id =
     Task.succeed (Native.Mice.elaborateInputArea input_area_id)
+
+elaborateTapAreaTask: String  -> Task Never Bool
+elaborateTapAreaTask input_area_id =
+    Task.succeed (Native.Mice.elaborateTapArea input_area_id)
 
 ensureVisibleTask : String -> String -> Task Never Bool
 ensureVisibleTask frame_id target_id =
