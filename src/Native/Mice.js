@@ -167,48 +167,9 @@ var _minekoa$elm_text_editor$Native_Mice = function() {
          *   (Firefox は厳しくブロックしてくる為、paste を execCommand でTEAから叩く手段もダメ)
          */
 
-        input_area.addEventListener( "paste", e => {
-            e.preventDefault();
-
-            const data_transfer = (e.clipboardData) || (window.clipboardData);
-            const str = data_transfer.getData("text/plain");
-
-            const evt = new CustomEvent("pasted", { "bubbles": true,
-                                                    "cancelable": true,
-                                                    "detail": str
-                                                  }
-                                       );
-            input_area.dispatchEvent(evt);
-        });
-
-        input_area.addEventListener( "copy", e => {
-            e.preventDefault();
-
-            const str = input_area.selecteddata
-            e.clipboardData.setData('text/plain', str);
-
-            const evt = new CustomEvent("copied", { "bubbles": true,
-                                                    "cancelable": true,
-                                                    "detail": str
-                                                  }
-                                       );
-            input_area.dispatchEvent(evt);
-        });
-
-        input_area.addEventListener( "cut", e => {
-            e.preventDefault();
-
-            const str = input_area.selecteddata
-            e.clipboardData.setData('text/plain', str);
-
-            const evt = new CustomEvent("cutted", { "bubbles": true,
-                                                    "cancelable": true,
-                                                    "detail": str
-                                                  }
-                                       );
-            input_area.dispatchEvent(evt);
-        });
-
+        input_area.addEventListener( "paste", pasteEventListener );
+        input_area.addEventListener( "copy" , copyEventListener );
+        input_area.addEventListener( "cut"  , cutEventListener );
 
         return true;
     }
@@ -236,52 +197,65 @@ var _minekoa$elm_text_editor$Native_Mice = function() {
             }
         });
 
-        tap_area.addEventListener( "paste", e => {
-            e.preventDefault();
-            console.log("pasete event (tap_area)");
-
-            const data_transfer = (e.clipboardData) || (window.clipboardData);
-            const str = data_transfer.getData("text/plain");
-
-            const evt = new CustomEvent("pasted", { "bubbles": true,
-                                                    "cancelable": true,
-                                                    "detail": str
-                                                  }
-                                       );
-            tap_area.dispatchEvent(evt);
-        });
-
-        tap_area.addEventListener( "copy", e => {
-            e.preventDefault();
-
-            const str = tap_area.selecteddata
-            e.clipboardData.setData('text/plain', str);
-
-            const evt = new CustomEvent("copied", { "bubbles": true,
-                                                    "cancelable": true,
-                                                    "detail": str
-                                                  }
-                                       );
-            tap_area.dispatchEvent(evt);
-        });
-
-        tap_area.addEventListener( "cut", e => {
-            e.preventDefault();
-
-            const str = tap_area.selecteddata
-            e.clipboardData.setData('text/plain', str);
-
-            const evt = new CustomEvent("cutted", { "bubbles": true,
-                                                    "cancelable": true,
-                                                    "detail": str
-                                                  }
-                                       );
-            tap_area.dispatchEvent(evt);
-        });
-
+        tap_area.addEventListener( "paste", pasteEventListener );
+        tap_area.addEventListener( "copy" , copyEventListener );
+        tap_area.addEventListener( "cut"  , cutEventListener );
 
         return true;
     }
+
+
+    /**
+     * クリップボードイベントハンドラ
+     *     clipboardイベントを処理した後、
+     *     Elm世界の状態を合わせるため、clipboard への操作・からの操作を
+     *     カスタムイベントで事後通知する
+     *     また、Elm世界からclipboardに渡すデータは、
+     *     イベント登録先オブジェクトのカスタム属性 selecteddata に設定されている
+     */
+
+    function pasteEventListener (e) {
+        e.preventDefault();
+
+        const data_transfer = (e.clipboardData) || (window.clipboardData);
+        const str = data_transfer.getData("text/plain");
+
+        const evt = new CustomEvent("pasted", { "bubbles": true,
+                                                "cancelable": true,
+                                                "detail": str
+                                              }
+                                   );
+        this.dispatchEvent(evt);
+    }
+
+    function copyEventListener (e) {
+        e.preventDefault();
+
+        const str = this.selecteddata
+        e.clipboardData.setData('text/plain', str);
+
+        const evt = new CustomEvent("copied", { "bubbles": true,
+                                                "cancelable": true,
+                                                "detail": str
+                                              }
+                                   );
+        this.dispatchEvent(evt);
+    }
+
+    function cutEventListener (e) {
+        e.preventDefault();
+
+        const str = this.selecteddata
+        e.clipboardData.setData('text/plain', str);
+
+        const evt = new CustomEvent("cutted", { "bubbles": true,
+                                                "cancelable": true,
+                                                "detail": str
+                                              }
+                                   );
+        this.dispatchEvent(evt);
+    }
+
 
 
   return {

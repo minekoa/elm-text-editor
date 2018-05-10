@@ -10744,48 +10744,9 @@ var _minekoa$elm_text_editor$Native_Mice = function() {
          *   (Firefox は厳しくブロックしてくる為、paste を execCommand でTEAから叩く手段もダメ)
          */
 
-        input_area.addEventListener( "paste", e => {
-            e.preventDefault();
-
-            const data_transfer = (e.clipboardData) || (window.clipboardData);
-            const str = data_transfer.getData("text/plain");
-
-            const evt = new CustomEvent("pasted", { "bubbles": true,
-                                                    "cancelable": true,
-                                                    "detail": str
-                                                  }
-                                       );
-            input_area.dispatchEvent(evt);
-        });
-
-        input_area.addEventListener( "copy", e => {
-            e.preventDefault();
-
-            const str = input_area.selecteddata
-            e.clipboardData.setData('text/plain', str);
-
-            const evt = new CustomEvent("copied", { "bubbles": true,
-                                                    "cancelable": true,
-                                                    "detail": str
-                                                  }
-                                       );
-            input_area.dispatchEvent(evt);
-        });
-
-        input_area.addEventListener( "cut", e => {
-            e.preventDefault();
-
-            const str = input_area.selecteddata
-            e.clipboardData.setData('text/plain', str);
-
-            const evt = new CustomEvent("cutted", { "bubbles": true,
-                                                    "cancelable": true,
-                                                    "detail": str
-                                                  }
-                                       );
-            input_area.dispatchEvent(evt);
-        });
-
+        input_area.addEventListener( "paste", pasteEventListener );
+        input_area.addEventListener( "copy" , copyEventListener );
+        input_area.addEventListener( "cut"  , cutEventListener );
 
         return true;
     }
@@ -10813,52 +10774,65 @@ var _minekoa$elm_text_editor$Native_Mice = function() {
             }
         });
 
-        tap_area.addEventListener( "paste", e => {
-            e.preventDefault();
-            console.log("pasete event (tap_area)");
-
-            const data_transfer = (e.clipboardData) || (window.clipboardData);
-            const str = data_transfer.getData("text/plain");
-
-            const evt = new CustomEvent("pasted", { "bubbles": true,
-                                                    "cancelable": true,
-                                                    "detail": str
-                                                  }
-                                       );
-            tap_area.dispatchEvent(evt);
-        });
-
-        tap_area.addEventListener( "copy", e => {
-            e.preventDefault();
-
-            const str = tap_area.selecteddata
-            e.clipboardData.setData('text/plain', str);
-
-            const evt = new CustomEvent("copied", { "bubbles": true,
-                                                    "cancelable": true,
-                                                    "detail": str
-                                                  }
-                                       );
-            tap_area.dispatchEvent(evt);
-        });
-
-        tap_area.addEventListener( "cut", e => {
-            e.preventDefault();
-
-            const str = tap_area.selecteddata
-            e.clipboardData.setData('text/plain', str);
-
-            const evt = new CustomEvent("cutted", { "bubbles": true,
-                                                    "cancelable": true,
-                                                    "detail": str
-                                                  }
-                                       );
-            tap_area.dispatchEvent(evt);
-        });
-
+        tap_area.addEventListener( "paste", pasteEventListener );
+        tap_area.addEventListener( "copy" , copyEventListener );
+        tap_area.addEventListener( "cut"  , cutEventListener );
 
         return true;
     }
+
+
+    /**
+     * クリップボードイベントハンドラ
+     *     clipboardイベントを処理した後、
+     *     Elm世界の状態を合わせるため、clipboard への操作・からの操作を
+     *     カスタムイベントで事後通知する
+     *     また、Elm世界からclipboardに渡すデータは、
+     *     イベント登録先オブジェクトのカスタム属性 selecteddata に設定されている
+     */
+
+    function pasteEventListener (e) {
+        e.preventDefault();
+
+        const data_transfer = (e.clipboardData) || (window.clipboardData);
+        const str = data_transfer.getData("text/plain");
+
+        const evt = new CustomEvent("pasted", { "bubbles": true,
+                                                "cancelable": true,
+                                                "detail": str
+                                              }
+                                   );
+        this.dispatchEvent(evt);
+    }
+
+    function copyEventListener (e) {
+        e.preventDefault();
+
+        const str = this.selecteddata
+        e.clipboardData.setData('text/plain', str);
+
+        const evt = new CustomEvent("copied", { "bubbles": true,
+                                                "cancelable": true,
+                                                "detail": str
+                                              }
+                                   );
+        this.dispatchEvent(evt);
+    }
+
+    function cutEventListener (e) {
+        e.preventDefault();
+
+        const str = this.selecteddata
+        e.clipboardData.setData('text/plain', str);
+
+        const evt = new CustomEvent("cutted", { "bubbles": true,
+                                                "cancelable": true,
+                                                "detail": str
+                                              }
+                                   );
+        this.dispatchEvent(evt);
+    }
+
 
 
   return {
@@ -11791,8 +11765,8 @@ var _minekoa$elm_text_editor$TextEditor$eventLog = F3(
 					model.event_log)
 			});
 	});
-var _minekoa$elm_text_editor$TextEditor$printDragInfo = F3(
-	function (rect, xy, _p10) {
+var _minekoa$elm_text_editor$TextEditor$printDragInfo = F2(
+	function (xy, _p10) {
 		var _p11 = _p10;
 		return A2(
 			_elm_lang$core$Basics_ops['++'],
@@ -11808,28 +11782,16 @@ var _minekoa$elm_text_editor$TextEditor$printDragInfo = F3(
 						_elm_lang$core$Basics$toString(xy.y),
 						A2(
 							_elm_lang$core$Basics_ops['++'],
-							'; offset_pos=',
+							'; row_col=',
 							A2(
 								_elm_lang$core$Basics_ops['++'],
-								_elm_lang$core$Basics$toString(xy.x - rect.left),
+								_elm_lang$core$Basics$toString(_p11._0),
 								A2(
 									_elm_lang$core$Basics_ops['++'],
 									',',
-									A2(
-										_elm_lang$core$Basics_ops['++'],
-										_elm_lang$core$Basics$toString(xy.y - rect.top),
-										A2(
-											_elm_lang$core$Basics_ops['++'],
-											'; row_col=',
-											A2(
-												_elm_lang$core$Basics_ops['++'],
-												_elm_lang$core$Basics$toString(_p11._0),
-												A2(
-													_elm_lang$core$Basics_ops['++'],
-													',',
-													_elm_lang$core$Basics$toString(_p11._1))))))))))));
+									_elm_lang$core$Basics$toString(_p11._1))))))));
 	});
-var _minekoa$elm_text_editor$TextEditor$posToColumn = F3(
+var _minekoa$elm_text_editor$TextEditor$xToColumn = F3(
 	function (model, line, pos_x) {
 		var calc_w = _minekoa$elm_text_editor$TextEditor$calcTextWidth(
 			_minekoa$elm_text_editor$TextEditor_Core$rulerID(model));
@@ -11856,6 +11818,32 @@ var _minekoa$elm_text_editor$TextEditor$posToColumn = F3(
 				}
 			});
 		return A3(calc_col, line, 0, pos_x);
+	});
+var _minekoa$elm_text_editor$TextEditor$yToRow = F2(
+	function (model, pos_y) {
+		return A2(
+			_elm_lang$core$Basics$min,
+			(pos_y / A2(_minekoa$elm_text_editor$TextEditor$emToPx, model, 1)) | 0,
+			A3(
+				_elm_lang$core$Basics$flip,
+				F2(
+					function (x, y) {
+						return x - y;
+					}),
+				1,
+				_elm_lang$core$List$length(model.buffer.contents)));
+	});
+var _minekoa$elm_text_editor$TextEditor$posToRowColumn = F2(
+	function (model, xy) {
+		var rect = _minekoa$elm_text_editor$TextEditor$getBoundingClientRect(
+			_minekoa$elm_text_editor$TextEditor_Core$codeAreaID(model));
+		var row = A2(_minekoa$elm_text_editor$TextEditor$yToRow, model, xy.y - rect.top);
+		var line = A2(
+			_elm_lang$core$Maybe$withDefault,
+			'',
+			A2(_minekoa$elm_text_editor$TextEditor_Buffer$line, row, model.buffer.contents));
+		var col = A3(_minekoa$elm_text_editor$TextEditor$xToColumn, model, line, xy.x - rect.left);
+		return {ctor: '_Tuple2', _0: row, _1: col};
 	});
 var _minekoa$elm_text_editor$TextEditor$compositionUpdate = F2(
 	function (data, model) {
@@ -12528,74 +12516,84 @@ var _minekoa$elm_text_editor$TextEditor$update = F2(
 						_minekoa$elm_text_editor$TextEditor_Core$doFocus(model.core))
 				};
 			case 'DragStart':
-				var _p22 = _p18._0;
-				var rect = _minekoa$elm_text_editor$TextEditor$getBoundingClientRect(
-					_minekoa$elm_text_editor$TextEditor_Core$codeAreaID(model.core));
-				var xy = {x: _p22.x, y: _p22.y};
-				var row = ((xy.y - rect.top) / A2(_minekoa$elm_text_editor$TextEditor$emToPx, model.core, 1)) | 0;
-				var ln = A2(
-					_elm_lang$core$Maybe$withDefault,
-					'',
-					A2(_minekoa$elm_text_editor$TextEditor_Buffer$line, row, model.core.buffer.contents));
-				var col = A3(_minekoa$elm_text_editor$TextEditor$posToColumn, model.core, ln, xy.x - rect.left);
-				var _p20 = A2(
+				var _p23 = _p18._0;
+				var xy = {x: _p23.x, y: _p23.y};
+				var _p20 = A2(_minekoa$elm_text_editor$TextEditor$posToRowColumn, model.core, xy);
+				var row = _p20._0;
+				var col = _p20._1;
+				var _p21 = A2(
 					_minekoa$elm_text_editor$TextEditor_Core_Commands$moveAt,
 					{ctor: '_Tuple2', _0: row, _1: col},
 					model.core);
-				var cm = _p20._0;
-				var cc = _p20._1;
-				var _p21 = _p22.button;
-				if (_p21.ctor === 'LeftMouse') {
-					return {
-						ctor: '_Tuple2',
-						_0: _minekoa$elm_text_editor$TextEditor$blinkBlock(
-							A3(
-								_minekoa$elm_text_editor$TextEditor$eventLog,
-								'dragstart',
+				var cm = _p21._0;
+				var cc = _p21._1;
+				var _p22 = _p23.button;
+				switch (_p22.ctor) {
+					case 'LeftMouse':
+						return {
+							ctor: '_Tuple2',
+							_0: _minekoa$elm_text_editor$TextEditor$blinkBlock(
 								A3(
-									_minekoa$elm_text_editor$TextEditor$printDragInfo,
-									rect,
-									xy,
-									{ctor: '_Tuple2', _0: row, _1: col}),
-								_elm_lang$core$Native_Utils.update(
-									model,
-									{core: cm, drag: true}))),
-						_1: _elm_lang$core$Platform_Cmd$batch(
-							{
-								ctor: '::',
-								_0: A2(_elm_lang$core$Platform_Cmd$map, _minekoa$elm_text_editor$TextEditor$CoreMsg, cc),
-								_1: {ctor: '[]'}
-							})
-					};
-				} else {
-					return {ctor: '_Tuple2', _0: model, _1: _elm_lang$core$Platform_Cmd$none};
+									_minekoa$elm_text_editor$TextEditor$eventLog,
+									'dragstart',
+									A2(
+										_minekoa$elm_text_editor$TextEditor$printDragInfo,
+										xy,
+										{ctor: '_Tuple2', _0: row, _1: col}),
+									_elm_lang$core$Native_Utils.update(
+										model,
+										{core: cm, drag: true}))),
+							_1: _elm_lang$core$Platform_Cmd$batch(
+								{
+									ctor: '::',
+									_0: A2(_elm_lang$core$Platform_Cmd$map, _minekoa$elm_text_editor$TextEditor$CoreMsg, cc),
+									_1: {ctor: '[]'}
+								})
+						};
+					case 'RightMouse':
+						return _elm_lang$core$Native_Utils.eq(model.core.buffer.selection, _elm_lang$core$Maybe$Nothing) ? {
+							ctor: '_Tuple2',
+							_0: _minekoa$elm_text_editor$TextEditor$blinkBlock(
+								A3(
+									_minekoa$elm_text_editor$TextEditor$eventLog,
+									'moveto',
+									A2(
+										_minekoa$elm_text_editor$TextEditor$printDragInfo,
+										xy,
+										{ctor: '_Tuple2', _0: row, _1: col}),
+									_elm_lang$core$Native_Utils.update(
+										model,
+										{core: cm}))),
+							_1: _elm_lang$core$Platform_Cmd$batch(
+								{
+									ctor: '::',
+									_0: A2(_elm_lang$core$Platform_Cmd$map, _minekoa$elm_text_editor$TextEditor$CoreMsg, cc),
+									_1: {ctor: '[]'}
+								})
+						} : {ctor: '_Tuple2', _0: model, _1: _elm_lang$core$Platform_Cmd$none};
+					default:
+						return {ctor: '_Tuple2', _0: model, _1: _elm_lang$core$Platform_Cmd$none};
 				}
 			case 'DragAt':
-				var _p24 = _p18._0;
-				var rect = _minekoa$elm_text_editor$TextEditor$getBoundingClientRect(
-					_minekoa$elm_text_editor$TextEditor_Core$codeAreaID(model.core));
-				var row = ((_p24.y - rect.top) / A2(_minekoa$elm_text_editor$TextEditor$emToPx, model.core, 1)) | 0;
-				var ln = A2(
-					_elm_lang$core$Maybe$withDefault,
-					'',
-					A2(_minekoa$elm_text_editor$TextEditor_Buffer$line, row, model.core.buffer.contents));
-				var col = A3(_minekoa$elm_text_editor$TextEditor$posToColumn, model.core, ln, _p24.x - rect.left);
-				var _p23 = A2(
+				var _p26 = _p18._0;
+				var _p24 = A2(_minekoa$elm_text_editor$TextEditor$posToRowColumn, model.core, _p26);
+				var row = _p24._0;
+				var col = _p24._1;
+				var _p25 = A2(
 					_minekoa$elm_text_editor$TextEditor_Core_Commands$selectAt,
 					{ctor: '_Tuple2', _0: row, _1: col},
 					model.core);
-				var cm = _p23._0;
-				var cc = _p23._1;
+				var cm = _p25._0;
+				var cc = _p25._1;
 				return {
 					ctor: '_Tuple2',
 					_0: _minekoa$elm_text_editor$TextEditor$blinkBlock(
 						A3(
 							_minekoa$elm_text_editor$TextEditor$eventLog,
 							'dragat',
-							A3(
+							A2(
 								_minekoa$elm_text_editor$TextEditor$printDragInfo,
-								rect,
-								_p24,
+								_p26,
 								{ctor: '_Tuple2', _0: row, _1: col}),
 							_elm_lang$core$Native_Utils.update(
 								model,
@@ -12634,8 +12632,8 @@ var _minekoa$elm_text_editor$TextEditor$subscriptions = function (model) {
 				_1: {ctor: '[]'}
 			},
 			function () {
-				var _p25 = model.drag;
-				if (_p25 === true) {
+				var _p27 = model.drag;
+				if (_p27 === true) {
 					return {
 						ctor: '::',
 						_0: _elm_lang$mouse$Mouse$moves(_minekoa$elm_text_editor$TextEditor$DragAt),
@@ -12658,8 +12656,8 @@ var _minekoa$elm_text_editor$TextEditor$LeftMouse = {ctor: 'LeftMouse'};
 var _minekoa$elm_text_editor$TextEditor$mouseButton = A2(
 	_elm_lang$core$Json_Decode$andThen,
 	function (n) {
-		var _p26 = n;
-		switch (_p26) {
+		var _p28 = n;
+		switch (_p28) {
 			case 0:
 				return _elm_lang$core$Json_Decode$succeed(_minekoa$elm_text_editor$TextEditor$LeftMouse);
 			case 1:
@@ -12677,7 +12675,7 @@ var _minekoa$elm_text_editor$TextEditor$mouseButton = A2(
 						'unknown mouse button value (',
 						A2(
 							_elm_lang$core$Basics_ops['++'],
-							_elm_lang$core$Basics$toString(_p26),
+							_elm_lang$core$Basics$toString(_p28),
 							')')));
 		}
 	},
