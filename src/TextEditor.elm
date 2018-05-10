@@ -181,11 +181,19 @@ update msg model =
                         ( { model | core = cm
                           , drag = True
                           }
-                        |> eventLog "dragstart" (printDragInfo rect xy (row, col) )
-                        |> blinkBlock
-                        , Cmd.batch [ Cmd.map CoreMsg cc
-                                    ]
+                            |> eventLog "dragstart" (printDragInfo rect xy (row, col) )
+                            |> blinkBlock
+                        , Cmd.batch [ Cmd.map CoreMsg cc ]
                         )
+                    RightMouse ->
+                        if model.core.buffer.selection == Nothing then
+                            ( { model | core = cm }
+                                |> eventLog "moveto" (printDragInfo rect xy (row, col) )
+                                |> blinkBlock
+                            , Cmd.batch [ Cmd.map CoreMsg cc ]
+                            )
+                        else
+                            (model, Cmd.none)
                     _ ->
                         (model, Cmd.none)
 
