@@ -228,14 +228,14 @@ var _minekoa$elm_text_editor$Native_Mice = function() {
         }
         tap_area.tap_controll_handlers_registerd = true;
         console.log("regist tap-ctrl event handlers");
-/*
-        tap_area.addEventListener( "keydown", e => {
-            if (e.target.id != id_tap_area) {
-                return true;
+
+        tap_area.addEventListener( "mousedown", e => {
+            if (e.button == 2) { /* RightClick*/
+                tap_area.focus();
+                document.execCommand('SelectAll');
             }
-            e.preventDefault();
         });
-*/
+
         tap_area.addEventListener( "paste", e => {
             e.preventDefault();
             console.log("pasete event (tap_area)");

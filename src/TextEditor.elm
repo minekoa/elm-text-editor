@@ -534,9 +534,11 @@ tapControlLayer model =
                 , ("width", "100%"), ("height", "100%")
                 , ("z-index", "9")
 
-                , ("color", "green")
+-- for debug
+--                , ("color", "green")
 --                , ("background-color", "red")
---                , ("opacity", "0.2")
+--                , ("opacity", "0.8")
+                , ("opacity", "0")
                 ]
         , contenteditable True
         , onClick ClickScreen
@@ -544,8 +546,36 @@ tapControlLayer model =
         , onCopied Copied
         , onCutted Cutted
         , onMouseDown DragStart
+        , selecteddata <| Buffer.selectedString model.buffer
         ]
-        [ text <| Maybe.withDefault "" <| Buffer.selectedString model.buffer ]
+        (selectedTouchPad model)
+
+selectedTouchPad : Core.Model -> List (Html Msg)
+selectedTouchPad model =
+    case model.buffer.selection of
+        Nothing -> []
+        Just sel ->
+            -- 選択範囲を右クリックしたときに、大体の位置に選択されたテキストがあればいいので、
+            -- 行単位で選択領域を再現（列はみない）
+            let
+                bpos = if (Buffer.isPreviosPos sel.begin sel.end) then sel.begin else sel.end
+                epos = if (Buffer.isPreviosPos sel.begin sel.end) then sel.end else sel.begin
+            in
+                (List.range (Tuple.first bpos) (Tuple.first epos))
+                   |> List.map (\ row ->
+                                  div [ style [ ("position", "absolute")
+                                              , ("top" , row |> emToPxString model )
+                                              , ("left" , "0")
+                                              , ("height", 1 |> emToPxString model )
+
+                                              , ("background-color", "gray")
+                                              , ("color","white")
+                                              , ("white-space", "pre")
+                                              ]
+                                      ]
+                                      [ Buffer.line row model.buffer.contents |> Maybe.withDefault "" |> text ]
+                               )
+
 
 
 markerLayer: Core.Model -> Html Msg
