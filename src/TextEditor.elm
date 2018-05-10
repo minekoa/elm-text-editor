@@ -89,7 +89,7 @@ type Msg
     | FocusIn Bool
     | FocusOut Bool
     | ClickScreen
-    | DragStart Mouse.Position
+    | DragStart MouseEvent
     | DragAt Mouse.Position
     | DragEnd Mouse.Position
 
@@ -165,8 +165,10 @@ update msg model =
             , Cmd.map CoreMsg (Core.doFocus model.core)
             )
 
-        DragStart xy ->
+        DragStart mouseEvent  ->
             let
+                xy = { x = mouseEvent.x, y = mouseEvent.y }
+
                 rect = getBoundingClientRect (codeAreaID model.core)
                 row = (xy.y - rect.top) // (emToPx model.core 1)
                 ln = Buffer.line row model.core.buffer.contents |> Maybe.withDefault ""
@@ -174,19 +176,19 @@ update msg model =
 
                 (cm, cc) =  Commands.moveAt (row, col) model.core
             in
-                ( { model | core = cm
-                  , drag = True
-                  }
-                  |> eventLog "dragstart" (printDragInfo rect xy (row, col) )
-                  |> blinkBlock
-                , Cmd.batch [ Cmd.map CoreMsg cc
--- note: どうやらこの doFocus が悪さをして
---       カーソルがスクロールの外にいるときに、タップしてカーソル移動した際に
---       不必要な ensureVisible 制御を誘発しているようだ。
---       一旦コメントアウト
---                            , Cmd.map CoreMsg (Core.doFocus model.core)  -- firefox 限定で、たまーに、SetFocus が来ないことがあるので、ここでもやっとく。
-                            ]
-                )
+                case mouseEvent.button of
+                    LeftMouse ->
+                        ( { model | core = cm
+                          , drag = True
+                          }
+                        |> eventLog "dragstart" (printDragInfo rect xy (row, col) )
+                        |> blinkBlock
+                        , Cmd.batch [ Cmd.map CoreMsg cc
+                                    ]
+                        )
+                    _ ->
+                        (model, Cmd.none)
+
 
         DragAt xy ->
             let
@@ -782,9 +784,9 @@ onFocusOut tagger =
 
 -- Mouse Event
 
-onMouseDown : (Mouse.Position -> msg) -> Attribute msg
+onMouseDown : (MouseEvent -> msg) -> Attribute msg
 onMouseDown tagger =
-    on "mousedown" (Json.map tagger Mouse.position)
+    on "mousedown" (Json.map tagger mouseEvent)
 
 
 -- CustomEvent (clipboard)
@@ -833,6 +835,46 @@ toEmString = toString >> flip (++) "em"
 
 emToPxString : Core.Model -> Int -> String
 emToPxString model = emToPx model >> toPxString
+
+
+
+------------------------------------------------------------
+-- Mouse Event
+------------------------------------------------------------
+
+type alias MouseEvent =
+  { x : Int
+  , y : Int
+  , button : MouseButton
+  }
+
+type MouseButton
+  = LeftMouse
+  | MiddleMouse
+  | RightMouse
+  | X1Mouse
+  | X2Mouse
+
+mouseButton : Json.Decoder MouseButton
+mouseButton =
+    Json.int
+        |> Json.andThen (\n ->
+           case n of
+               0 -> Json.succeed LeftMouse
+               1 -> Json.succeed MiddleMouse
+               2 -> Json.succeed RightMouse
+               3 -> Json.succeed X1Mouse
+               4 -> Json.succeed X2Mouse
+               x -> Json.fail <| "unknown mouse button value (" ++ (toString x) ++ ")"
+        )
+
+mouseEvent : Json.Decoder MouseEvent
+mouseEvent =
+  Json.map3 MouseEvent
+    (Json.field "pageX" Json.int)
+    (Json.field "pageY" Json.int)
+    (Json.field "button" mouseButton)
+
 
 ------------------------------------------------------------
 -- Native (Mice)

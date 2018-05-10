@@ -10953,12 +10953,6 @@ var _minekoa$elm_text_editor$TextEditor$onPasted = function (tagger) {
 			tagger,
 			A2(_elm_lang$core$Json_Decode$field, 'detail', _elm_lang$core$Json_Decode$string)));
 };
-var _minekoa$elm_text_editor$TextEditor$onMouseDown = function (tagger) {
-	return A2(
-		_elm_lang$html$Html_Events$on,
-		'mousedown',
-		A2(_elm_lang$core$Json_Decode$map, tagger, _elm_lang$mouse$Mouse$position));
-};
 var _minekoa$elm_text_editor$TextEditor$onFocusOut = function (tagger) {
 	return A2(
 		_elm_lang$html$Html_Events$on,
@@ -11874,6 +11868,10 @@ var _minekoa$elm_text_editor$TextEditor$onKeyDown = function (tagger) {
 		'keydown',
 		A2(_elm_lang$core$Json_Decode$map, tagger, _minekoa$elm_text_editor$TextEditor$decodeKeyboardEvent));
 };
+var _minekoa$elm_text_editor$TextEditor$MouseEvent = F3(
+	function (a, b, c) {
+		return {x: a, y: b, button: c};
+	});
 var _minekoa$elm_text_editor$TextEditor$Rect = F8(
 	function (a, b, c, d, e, f, g, h) {
 		return {left: a, top: b, right: c, bottom: d, x: e, y: f, width: g, height: h};
@@ -11908,9 +11906,6 @@ var _minekoa$elm_text_editor$TextEditor$KeyPress = function (a) {
 };
 var _minekoa$elm_text_editor$TextEditor$KeyDown = function (a) {
 	return {ctor: 'KeyDown', _0: a};
-};
-var _minekoa$elm_text_editor$TextEditor$IgnoreInput = function (a) {
-	return {ctor: 'IgnoreInput', _0: a};
 };
 var _minekoa$elm_text_editor$TextEditor$Input = function (a) {
 	return {ctor: 'Input', _0: a};
@@ -12190,6 +12185,444 @@ var _minekoa$elm_text_editor$TextEditor$cursorLayer = function (model) {
 			_1: {ctor: '[]'}
 		});
 };
+var _minekoa$elm_text_editor$TextEditor$CoreMsg = function (a) {
+	return {ctor: 'CoreMsg', _0: a};
+};
+var _minekoa$elm_text_editor$TextEditor$init = F3(
+	function (id, keymap, text) {
+		var _p10 = A2(_minekoa$elm_text_editor$TextEditor_Core$init, id, text);
+		var coreM = _p10._0;
+		var coreC = _p10._1;
+		return {
+			ctor: '_Tuple2',
+			_0: A5(_minekoa$elm_text_editor$TextEditor$Model, coreM, false, false, keymap, _elm_lang$core$Maybe$Nothing),
+			_1: A2(_elm_lang$core$Platform_Cmd$map, _minekoa$elm_text_editor$TextEditor$CoreMsg, coreC)
+		};
+	});
+var _minekoa$elm_text_editor$TextEditor$compositionEnd = F2(
+	function (data, model) {
+		var _p11 = A2(_minekoa$elm_text_editor$TextEditor_Core$compositionEnd, data, model.core);
+		var m = _p11._0;
+		var c = _p11._1;
+		return {
+			ctor: '_Tuple2',
+			_0: A3(
+				_minekoa$elm_text_editor$TextEditor$eventLog,
+				'compositionend',
+				data,
+				_elm_lang$core$Native_Utils.update(
+					model,
+					{core: m})),
+			_1: A2(_elm_lang$core$Platform_Cmd$map, _minekoa$elm_text_editor$TextEditor$CoreMsg, c)
+		};
+	});
+var _minekoa$elm_text_editor$TextEditor$updateMap = F2(
+	function (model, _p12) {
+		var _p13 = _p12;
+		return {
+			ctor: '_Tuple2',
+			_0: _elm_lang$core$Native_Utils.update(
+				model,
+				{core: _p13._0}),
+			_1: A2(_elm_lang$core$Platform_Cmd$map, _minekoa$elm_text_editor$TextEditor$CoreMsg, _p13._1)
+		};
+	});
+var _minekoa$elm_text_editor$TextEditor$input = F2(
+	function (s, model) {
+		var _p14 = model.enableComposer;
+		if (_p14 === true) {
+			return {
+				ctor: '_Tuple2',
+				_0: A3(_minekoa$elm_text_editor$TextEditor$eventLog, 'input (ignored)', s, model),
+				_1: _elm_lang$core$Platform_Cmd$none
+			};
+		} else {
+			return A2(
+				_elm_lang$core$Tuple$mapFirst,
+				A2(
+					_minekoa$elm_text_editor$TextEditor$eventLog,
+					'input',
+					A2(_elm_lang$core$String$right, 1, s)),
+				A2(
+					_minekoa$elm_text_editor$TextEditor$updateMap,
+					model,
+					A2(
+						_minekoa$elm_text_editor$TextEditor_Core_Commands$insert,
+						A2(_elm_lang$core$String$right, 1, s),
+						model.core)));
+		}
+	});
+var _minekoa$elm_text_editor$TextEditor$keyDown = F2(
+	function (e, model) {
+		var _p15 = A2(
+			_minekoa$elm_text_editor$TextEditor_KeyBind$find,
+			{ctor: '_Tuple4', _0: e.ctrlKey, _1: e.altKey, _2: e.shiftKey, _3: e.keyCode},
+			model.keymap);
+		if (_p15.ctor === 'Just') {
+			return A2(
+				_elm_lang$core$Tuple$mapFirst,
+				A2(
+					_minekoa$elm_text_editor$TextEditor$eventLog,
+					'keydown',
+					_minekoa$elm_text_editor$TextEditor$keyboarEvent_toString(e)),
+				A2(
+					_minekoa$elm_text_editor$TextEditor$updateMap,
+					model,
+					_p15._0(model.core)));
+		} else {
+			return {
+				ctor: '_Tuple2',
+				_0: A3(
+					_minekoa$elm_text_editor$TextEditor$eventLog,
+					'keydown',
+					_minekoa$elm_text_editor$TextEditor$keyboarEvent_toString(e),
+					model),
+				_1: _elm_lang$core$Platform_Cmd$none
+			};
+		}
+	});
+var _minekoa$elm_text_editor$TextEditor$update = F2(
+	function (msg, model) {
+		var _p16 = msg;
+		switch (_p16.ctor) {
+			case 'CoreMsg':
+				return A2(
+					_elm_lang$core$Tuple$mapSecond,
+					_elm_lang$core$Platform_Cmd$map(_minekoa$elm_text_editor$TextEditor$CoreMsg),
+					A2(
+						_elm_lang$core$Tuple$mapFirst,
+						function (cm) {
+							return _elm_lang$core$Native_Utils.update(
+								model,
+								{core: cm});
+						},
+						A2(_minekoa$elm_text_editor$TextEditor_Core$update, _p16._0, model.core)));
+			case 'Pasted':
+				var _p17 = _p16._0;
+				return A2(
+					_elm_lang$core$Tuple$mapSecond,
+					function (c) {
+						return _elm_lang$core$Platform_Cmd$batch(
+							{
+								ctor: '::',
+								_0: c,
+								_1: {
+									ctor: '::',
+									_0: A2(
+										_elm_lang$core$Platform_Cmd$map,
+										_minekoa$elm_text_editor$TextEditor$CoreMsg,
+										_minekoa$elm_text_editor$TextEditor_Core$doFocus(model.core)),
+									_1: {ctor: '[]'}
+								}
+							});
+					},
+					A2(
+						_elm_lang$core$Tuple$mapFirst,
+						A2(_minekoa$elm_text_editor$TextEditor$eventLog, 'pasted', _p17),
+						A2(
+							_elm_lang$core$Tuple$mapFirst,
+							function (m) {
+								return _elm_lang$core$Native_Utils.update(
+									m,
+									{drag: false});
+							},
+							A2(
+								_minekoa$elm_text_editor$TextEditor$updateMap,
+								model,
+								A2(_minekoa$elm_text_editor$TextEditor_Core_Commands$paste, _p17, model.core)))));
+			case 'Copied':
+				return A2(
+					_elm_lang$core$Tuple$mapSecond,
+					function (c) {
+						return _elm_lang$core$Platform_Cmd$batch(
+							{
+								ctor: '::',
+								_0: c,
+								_1: {
+									ctor: '::',
+									_0: A2(
+										_elm_lang$core$Platform_Cmd$map,
+										_minekoa$elm_text_editor$TextEditor$CoreMsg,
+										_minekoa$elm_text_editor$TextEditor_Core$doFocus(model.core)),
+									_1: {ctor: '[]'}
+								}
+							});
+					},
+					A2(
+						_elm_lang$core$Tuple$mapFirst,
+						A2(_minekoa$elm_text_editor$TextEditor$eventLog, 'copied', _p16._0),
+						A2(
+							_elm_lang$core$Tuple$mapFirst,
+							function (m) {
+								return _elm_lang$core$Native_Utils.update(
+									m,
+									{drag: false});
+							},
+							A2(
+								_minekoa$elm_text_editor$TextEditor$updateMap,
+								model,
+								_minekoa$elm_text_editor$TextEditor_Core_Commands$copy(model.core)))));
+			case 'Cutted':
+				return A2(
+					_elm_lang$core$Tuple$mapSecond,
+					function (c) {
+						return _elm_lang$core$Platform_Cmd$batch(
+							{
+								ctor: '::',
+								_0: c,
+								_1: {
+									ctor: '::',
+									_0: A2(
+										_elm_lang$core$Platform_Cmd$map,
+										_minekoa$elm_text_editor$TextEditor$CoreMsg,
+										_minekoa$elm_text_editor$TextEditor_Core$doFocus(model.core)),
+									_1: {ctor: '[]'}
+								}
+							});
+					},
+					A2(
+						_elm_lang$core$Tuple$mapFirst,
+						A2(_minekoa$elm_text_editor$TextEditor$eventLog, 'cutted', _p16._0),
+						A2(
+							_elm_lang$core$Tuple$mapFirst,
+							function (m) {
+								return _elm_lang$core$Native_Utils.update(
+									m,
+									{drag: false});
+							},
+							A2(
+								_minekoa$elm_text_editor$TextEditor$updateMap,
+								model,
+								_minekoa$elm_text_editor$TextEditor_Core_Commands$cut(model.core)))));
+			case 'Input':
+				return A2(_minekoa$elm_text_editor$TextEditor$input, _p16._0, model);
+			case 'KeyDown':
+				return A2(_minekoa$elm_text_editor$TextEditor$keyDown, _p16._0, model);
+			case 'KeyPress':
+				return A2(_minekoa$elm_text_editor$TextEditor$keyPress, _p16._0, model);
+			case 'CompositionStart':
+				return A2(_minekoa$elm_text_editor$TextEditor$compositionStart, _p16._0, model);
+			case 'CompositionUpdate':
+				return A2(_minekoa$elm_text_editor$TextEditor$compositionUpdate, _p16._0, model);
+			case 'CompositionEnd':
+				return A2(_minekoa$elm_text_editor$TextEditor$compositionEnd, _p16._0, model);
+			case 'FocusIn':
+				var cm = model.core;
+				return {
+					ctor: '_Tuple2',
+					_0: _elm_lang$core$Native_Utils.update(
+						model,
+						{
+							core: _elm_lang$core$Native_Utils.update(
+								cm,
+								{focus: true})
+						}),
+					_1: _elm_lang$core$Platform_Cmd$batch(
+						{
+							ctor: '::',
+							_0: A2(
+								_elm_lang$core$Platform_Cmd$map,
+								_minekoa$elm_text_editor$TextEditor$CoreMsg,
+								_minekoa$elm_text_editor$TextEditor_Core$elaborateInputArea(model.core)),
+							_1: {
+								ctor: '::',
+								_0: A2(
+									_elm_lang$core$Platform_Cmd$map,
+									_minekoa$elm_text_editor$TextEditor$CoreMsg,
+									_minekoa$elm_text_editor$TextEditor_Core$elaborateTapArea(model.core)),
+								_1: {ctor: '[]'}
+							}
+						})
+				};
+			case 'FocusOut':
+				var cm = model.core;
+				return {
+					ctor: '_Tuple2',
+					_0: _elm_lang$core$Native_Utils.update(
+						model,
+						{
+							core: _elm_lang$core$Native_Utils.update(
+								cm,
+								{focus: false})
+						}),
+					_1: _elm_lang$core$Platform_Cmd$none
+				};
+			case 'ClickScreen':
+				return {
+					ctor: '_Tuple2',
+					_0: A3(_minekoa$elm_text_editor$TextEditor$eventLog, 'setfocus', '', model),
+					_1: A2(
+						_elm_lang$core$Platform_Cmd$map,
+						_minekoa$elm_text_editor$TextEditor$CoreMsg,
+						_minekoa$elm_text_editor$TextEditor_Core$doFocus(model.core))
+				};
+			case 'DragStart':
+				var _p20 = _p16._0;
+				var rect = _minekoa$elm_text_editor$TextEditor$getBoundingClientRect(
+					_minekoa$elm_text_editor$TextEditor_Core$codeAreaID(model.core));
+				var xy = {x: _p20.x, y: _p20.y};
+				var row = ((xy.y - rect.top) / A2(_minekoa$elm_text_editor$TextEditor$emToPx, model.core, 1)) | 0;
+				var ln = A2(
+					_elm_lang$core$Maybe$withDefault,
+					'',
+					A2(_minekoa$elm_text_editor$TextEditor_Buffer$line, row, model.core.buffer.contents));
+				var col = A3(_minekoa$elm_text_editor$TextEditor$posToColumn, model.core, ln, xy.x - rect.left);
+				var _p18 = A2(
+					_minekoa$elm_text_editor$TextEditor_Core_Commands$moveAt,
+					{ctor: '_Tuple2', _0: row, _1: col},
+					model.core);
+				var cm = _p18._0;
+				var cc = _p18._1;
+				var _p19 = _p20.button;
+				if (_p19.ctor === 'LeftMouse') {
+					return {
+						ctor: '_Tuple2',
+						_0: _minekoa$elm_text_editor$TextEditor$blinkBlock(
+							A3(
+								_minekoa$elm_text_editor$TextEditor$eventLog,
+								'dragstart',
+								A3(
+									_minekoa$elm_text_editor$TextEditor$printDragInfo,
+									rect,
+									xy,
+									{ctor: '_Tuple2', _0: row, _1: col}),
+								_elm_lang$core$Native_Utils.update(
+									model,
+									{core: cm, drag: true}))),
+						_1: _elm_lang$core$Platform_Cmd$batch(
+							{
+								ctor: '::',
+								_0: A2(_elm_lang$core$Platform_Cmd$map, _minekoa$elm_text_editor$TextEditor$CoreMsg, cc),
+								_1: {ctor: '[]'}
+							})
+					};
+				} else {
+					return {ctor: '_Tuple2', _0: model, _1: _elm_lang$core$Platform_Cmd$none};
+				}
+			case 'DragAt':
+				var _p22 = _p16._0;
+				var rect = _minekoa$elm_text_editor$TextEditor$getBoundingClientRect(
+					_minekoa$elm_text_editor$TextEditor_Core$codeAreaID(model.core));
+				var row = ((_p22.y - rect.top) / A2(_minekoa$elm_text_editor$TextEditor$emToPx, model.core, 1)) | 0;
+				var ln = A2(
+					_elm_lang$core$Maybe$withDefault,
+					'',
+					A2(_minekoa$elm_text_editor$TextEditor_Buffer$line, row, model.core.buffer.contents));
+				var col = A3(_minekoa$elm_text_editor$TextEditor$posToColumn, model.core, ln, _p22.x - rect.left);
+				var _p21 = A2(
+					_minekoa$elm_text_editor$TextEditor_Core_Commands$selectAt,
+					{ctor: '_Tuple2', _0: row, _1: col},
+					model.core);
+				var cm = _p21._0;
+				var cc = _p21._1;
+				return {
+					ctor: '_Tuple2',
+					_0: _minekoa$elm_text_editor$TextEditor$blinkBlock(
+						A3(
+							_minekoa$elm_text_editor$TextEditor$eventLog,
+							'dragat',
+							A3(
+								_minekoa$elm_text_editor$TextEditor$printDragInfo,
+								rect,
+								_p22,
+								{ctor: '_Tuple2', _0: row, _1: col}),
+							_elm_lang$core$Native_Utils.update(
+								model,
+								{core: cm}))),
+					_1: _elm_lang$core$Platform_Cmd$batch(
+						{
+							ctor: '::',
+							_0: A2(_elm_lang$core$Platform_Cmd$map, _minekoa$elm_text_editor$TextEditor$CoreMsg, cc),
+							_1: {ctor: '[]'}
+						})
+				};
+			default:
+				return {
+					ctor: '_Tuple2',
+					_0: A3(
+						_minekoa$elm_text_editor$TextEditor$eventLog,
+						'dragend',
+						'',
+						_elm_lang$core$Native_Utils.update(
+							model,
+							{drag: false})),
+					_1: _elm_lang$core$Platform_Cmd$none
+				};
+		}
+	});
+var _minekoa$elm_text_editor$TextEditor$subscriptions = function (model) {
+	return _elm_lang$core$Platform_Sub$batch(
+		A2(
+			_elm_lang$core$Basics_ops['++'],
+			{
+				ctor: '::',
+				_0: A2(
+					_elm_lang$core$Platform_Sub$map,
+					_minekoa$elm_text_editor$TextEditor$CoreMsg,
+					_minekoa$elm_text_editor$TextEditor_Core$subscriptions(model.core)),
+				_1: {ctor: '[]'}
+			},
+			function () {
+				var _p23 = model.drag;
+				if (_p23 === true) {
+					return {
+						ctor: '::',
+						_0: _elm_lang$mouse$Mouse$moves(_minekoa$elm_text_editor$TextEditor$DragAt),
+						_1: {
+							ctor: '::',
+							_0: _elm_lang$mouse$Mouse$ups(_minekoa$elm_text_editor$TextEditor$DragEnd),
+							_1: {ctor: '[]'}
+						}
+					};
+				} else {
+					return {ctor: '[]'};
+				}
+			}()));
+};
+var _minekoa$elm_text_editor$TextEditor$X2Mouse = {ctor: 'X2Mouse'};
+var _minekoa$elm_text_editor$TextEditor$X1Mouse = {ctor: 'X1Mouse'};
+var _minekoa$elm_text_editor$TextEditor$RightMouse = {ctor: 'RightMouse'};
+var _minekoa$elm_text_editor$TextEditor$MiddleMouse = {ctor: 'MiddleMouse'};
+var _minekoa$elm_text_editor$TextEditor$LeftMouse = {ctor: 'LeftMouse'};
+var _minekoa$elm_text_editor$TextEditor$mouseButton = A2(
+	_elm_lang$core$Json_Decode$andThen,
+	function (n) {
+		var _p24 = n;
+		switch (_p24) {
+			case 0:
+				return _elm_lang$core$Json_Decode$succeed(_minekoa$elm_text_editor$TextEditor$LeftMouse);
+			case 1:
+				return _elm_lang$core$Json_Decode$succeed(_minekoa$elm_text_editor$TextEditor$MiddleMouse);
+			case 2:
+				return _elm_lang$core$Json_Decode$succeed(_minekoa$elm_text_editor$TextEditor$RightMouse);
+			case 3:
+				return _elm_lang$core$Json_Decode$succeed(_minekoa$elm_text_editor$TextEditor$X1Mouse);
+			case 4:
+				return _elm_lang$core$Json_Decode$succeed(_minekoa$elm_text_editor$TextEditor$X2Mouse);
+			default:
+				return _elm_lang$core$Json_Decode$fail(
+					A2(
+						_elm_lang$core$Basics_ops['++'],
+						'unknown mouse button value (',
+						A2(
+							_elm_lang$core$Basics_ops['++'],
+							_elm_lang$core$Basics$toString(_p24),
+							')')));
+		}
+	},
+	_elm_lang$core$Json_Decode$int);
+var _minekoa$elm_text_editor$TextEditor$mouseEvent = A4(
+	_elm_lang$core$Json_Decode$map3,
+	_minekoa$elm_text_editor$TextEditor$MouseEvent,
+	A2(_elm_lang$core$Json_Decode$field, 'pageX', _elm_lang$core$Json_Decode$int),
+	A2(_elm_lang$core$Json_Decode$field, 'pageY', _elm_lang$core$Json_Decode$int),
+	A2(_elm_lang$core$Json_Decode$field, 'button', _minekoa$elm_text_editor$TextEditor$mouseButton));
+var _minekoa$elm_text_editor$TextEditor$onMouseDown = function (tagger) {
+	return A2(
+		_elm_lang$html$Html_Events$on,
+		'mousedown',
+		A2(_elm_lang$core$Json_Decode$map, tagger, _minekoa$elm_text_editor$TextEditor$mouseEvent));
+};
 var _minekoa$elm_text_editor$TextEditor$tapControlLayer = function (model) {
 	return A2(
 		_elm_lang$html$Html$div,
@@ -12218,19 +12651,7 @@ var _minekoa$elm_text_editor$TextEditor$tapControlLayer = function (model) {
 										_1: {
 											ctor: '::',
 											_0: {ctor: '_Tuple2', _0: 'color', _1: 'green'},
-											_1: {
-												ctor: '::',
-												_0: {ctor: '_Tuple2', _0: 'user-select', _1: 'none'},
-												_1: {
-													ctor: '::',
-													_0: {ctor: '_Tuple2', _0: '-webkit-user-select', _1: 'none'},
-													_1: {
-														ctor: '::',
-														_0: {ctor: '_Tuple2', _0: '-moz-user-select', _1: 'none'},
-														_1: {ctor: '[]'}
-													}
-												}
-											}
+											_1: {ctor: '[]'}
 										}
 									}
 								}
@@ -12473,396 +12894,6 @@ var _minekoa$elm_text_editor$TextEditor$view = function (model) {
 				}),
 			_1: {ctor: '[]'}
 		});
-};
-var _minekoa$elm_text_editor$TextEditor$CoreMsg = function (a) {
-	return {ctor: 'CoreMsg', _0: a};
-};
-var _minekoa$elm_text_editor$TextEditor$init = F3(
-	function (id, keymap, text) {
-		var _p10 = A2(_minekoa$elm_text_editor$TextEditor_Core$init, id, text);
-		var coreM = _p10._0;
-		var coreC = _p10._1;
-		return {
-			ctor: '_Tuple2',
-			_0: A5(_minekoa$elm_text_editor$TextEditor$Model, coreM, false, false, keymap, _elm_lang$core$Maybe$Nothing),
-			_1: A2(_elm_lang$core$Platform_Cmd$map, _minekoa$elm_text_editor$TextEditor$CoreMsg, coreC)
-		};
-	});
-var _minekoa$elm_text_editor$TextEditor$compositionEnd = F2(
-	function (data, model) {
-		var _p11 = A2(_minekoa$elm_text_editor$TextEditor_Core$compositionEnd, data, model.core);
-		var m = _p11._0;
-		var c = _p11._1;
-		return {
-			ctor: '_Tuple2',
-			_0: A3(
-				_minekoa$elm_text_editor$TextEditor$eventLog,
-				'compositionend',
-				data,
-				_elm_lang$core$Native_Utils.update(
-					model,
-					{core: m})),
-			_1: A2(_elm_lang$core$Platform_Cmd$map, _minekoa$elm_text_editor$TextEditor$CoreMsg, c)
-		};
-	});
-var _minekoa$elm_text_editor$TextEditor$updateMap = F2(
-	function (model, _p12) {
-		var _p13 = _p12;
-		return {
-			ctor: '_Tuple2',
-			_0: _elm_lang$core$Native_Utils.update(
-				model,
-				{core: _p13._0}),
-			_1: A2(_elm_lang$core$Platform_Cmd$map, _minekoa$elm_text_editor$TextEditor$CoreMsg, _p13._1)
-		};
-	});
-var _minekoa$elm_text_editor$TextEditor$input = F2(
-	function (s, model) {
-		var _p14 = model.enableComposer;
-		if (_p14 === true) {
-			return {
-				ctor: '_Tuple2',
-				_0: A3(_minekoa$elm_text_editor$TextEditor$eventLog, 'input (ignored)', s, model),
-				_1: _elm_lang$core$Platform_Cmd$none
-			};
-		} else {
-			return A2(
-				_elm_lang$core$Tuple$mapFirst,
-				A2(
-					_minekoa$elm_text_editor$TextEditor$eventLog,
-					'input',
-					A2(_elm_lang$core$String$right, 1, s)),
-				A2(
-					_minekoa$elm_text_editor$TextEditor$updateMap,
-					model,
-					A2(
-						_minekoa$elm_text_editor$TextEditor_Core_Commands$insert,
-						A2(_elm_lang$core$String$right, 1, s),
-						model.core)));
-		}
-	});
-var _minekoa$elm_text_editor$TextEditor$keyDown = F2(
-	function (e, model) {
-		var _p15 = A2(
-			_minekoa$elm_text_editor$TextEditor_KeyBind$find,
-			{ctor: '_Tuple4', _0: e.ctrlKey, _1: e.altKey, _2: e.shiftKey, _3: e.keyCode},
-			model.keymap);
-		if (_p15.ctor === 'Just') {
-			return A2(
-				_elm_lang$core$Tuple$mapFirst,
-				A2(
-					_minekoa$elm_text_editor$TextEditor$eventLog,
-					'keydown',
-					_minekoa$elm_text_editor$TextEditor$keyboarEvent_toString(e)),
-				A2(
-					_minekoa$elm_text_editor$TextEditor$updateMap,
-					model,
-					_p15._0(model.core)));
-		} else {
-			return {
-				ctor: '_Tuple2',
-				_0: A3(
-					_minekoa$elm_text_editor$TextEditor$eventLog,
-					'keydown',
-					_minekoa$elm_text_editor$TextEditor$keyboarEvent_toString(e),
-					model),
-				_1: _elm_lang$core$Platform_Cmd$none
-			};
-		}
-	});
-var _minekoa$elm_text_editor$TextEditor$update = F2(
-	function (msg, model) {
-		var _p16 = msg;
-		switch (_p16.ctor) {
-			case 'CoreMsg':
-				return A2(
-					_elm_lang$core$Tuple$mapSecond,
-					_elm_lang$core$Platform_Cmd$map(_minekoa$elm_text_editor$TextEditor$CoreMsg),
-					A2(
-						_elm_lang$core$Tuple$mapFirst,
-						function (cm) {
-							return _elm_lang$core$Native_Utils.update(
-								model,
-								{core: cm});
-						},
-						A2(_minekoa$elm_text_editor$TextEditor_Core$update, _p16._0, model.core)));
-			case 'Pasted':
-				var _p17 = _p16._0;
-				return A2(
-					_elm_lang$core$Tuple$mapSecond,
-					function (c) {
-						return _elm_lang$core$Platform_Cmd$batch(
-							{
-								ctor: '::',
-								_0: c,
-								_1: {
-									ctor: '::',
-									_0: A2(
-										_elm_lang$core$Platform_Cmd$map,
-										_minekoa$elm_text_editor$TextEditor$CoreMsg,
-										_minekoa$elm_text_editor$TextEditor_Core$doFocus(model.core)),
-									_1: {ctor: '[]'}
-								}
-							});
-					},
-					A2(
-						_elm_lang$core$Tuple$mapFirst,
-						A2(_minekoa$elm_text_editor$TextEditor$eventLog, 'pasted', _p17),
-						A2(
-							_elm_lang$core$Tuple$mapFirst,
-							function (m) {
-								return _elm_lang$core$Native_Utils.update(
-									m,
-									{drag: false});
-							},
-							A2(
-								_minekoa$elm_text_editor$TextEditor$updateMap,
-								model,
-								A2(_minekoa$elm_text_editor$TextEditor_Core_Commands$paste, _p17, model.core)))));
-			case 'Copied':
-				return A2(
-					_elm_lang$core$Tuple$mapSecond,
-					function (c) {
-						return _elm_lang$core$Platform_Cmd$batch(
-							{
-								ctor: '::',
-								_0: c,
-								_1: {
-									ctor: '::',
-									_0: A2(
-										_elm_lang$core$Platform_Cmd$map,
-										_minekoa$elm_text_editor$TextEditor$CoreMsg,
-										_minekoa$elm_text_editor$TextEditor_Core$doFocus(model.core)),
-									_1: {ctor: '[]'}
-								}
-							});
-					},
-					A2(
-						_elm_lang$core$Tuple$mapFirst,
-						A2(_minekoa$elm_text_editor$TextEditor$eventLog, 'copied', _p16._0),
-						A2(
-							_elm_lang$core$Tuple$mapFirst,
-							function (m) {
-								return _elm_lang$core$Native_Utils.update(
-									m,
-									{drag: false});
-							},
-							A2(
-								_minekoa$elm_text_editor$TextEditor$updateMap,
-								model,
-								_minekoa$elm_text_editor$TextEditor_Core_Commands$copy(model.core)))));
-			case 'Cutted':
-				return A2(
-					_elm_lang$core$Tuple$mapSecond,
-					function (c) {
-						return _elm_lang$core$Platform_Cmd$batch(
-							{
-								ctor: '::',
-								_0: c,
-								_1: {
-									ctor: '::',
-									_0: A2(
-										_elm_lang$core$Platform_Cmd$map,
-										_minekoa$elm_text_editor$TextEditor$CoreMsg,
-										_minekoa$elm_text_editor$TextEditor_Core$doFocus(model.core)),
-									_1: {ctor: '[]'}
-								}
-							});
-					},
-					A2(
-						_elm_lang$core$Tuple$mapFirst,
-						A2(_minekoa$elm_text_editor$TextEditor$eventLog, 'cutted', _p16._0),
-						A2(
-							_elm_lang$core$Tuple$mapFirst,
-							function (m) {
-								return _elm_lang$core$Native_Utils.update(
-									m,
-									{drag: false});
-							},
-							A2(
-								_minekoa$elm_text_editor$TextEditor$updateMap,
-								model,
-								_minekoa$elm_text_editor$TextEditor_Core_Commands$cut(model.core)))));
-			case 'Input':
-				return A2(_minekoa$elm_text_editor$TextEditor$input, _p16._0, model);
-			case 'IgnoreInput':
-				return {ctor: '_Tuple2', _0: model, _1: _elm_lang$core$Platform_Cmd$none};
-			case 'KeyDown':
-				return A2(_minekoa$elm_text_editor$TextEditor$keyDown, _p16._0, model);
-			case 'KeyPress':
-				return A2(_minekoa$elm_text_editor$TextEditor$keyPress, _p16._0, model);
-			case 'CompositionStart':
-				return A2(_minekoa$elm_text_editor$TextEditor$compositionStart, _p16._0, model);
-			case 'CompositionUpdate':
-				return A2(_minekoa$elm_text_editor$TextEditor$compositionUpdate, _p16._0, model);
-			case 'CompositionEnd':
-				return A2(_minekoa$elm_text_editor$TextEditor$compositionEnd, _p16._0, model);
-			case 'FocusIn':
-				var cm = model.core;
-				return {
-					ctor: '_Tuple2',
-					_0: _elm_lang$core$Native_Utils.update(
-						model,
-						{
-							core: _elm_lang$core$Native_Utils.update(
-								cm,
-								{focus: true})
-						}),
-					_1: _elm_lang$core$Platform_Cmd$batch(
-						{
-							ctor: '::',
-							_0: A2(
-								_elm_lang$core$Platform_Cmd$map,
-								_minekoa$elm_text_editor$TextEditor$CoreMsg,
-								_minekoa$elm_text_editor$TextEditor_Core$elaborateInputArea(model.core)),
-							_1: {
-								ctor: '::',
-								_0: A2(
-									_elm_lang$core$Platform_Cmd$map,
-									_minekoa$elm_text_editor$TextEditor$CoreMsg,
-									_minekoa$elm_text_editor$TextEditor_Core$elaborateTapArea(model.core)),
-								_1: {ctor: '[]'}
-							}
-						})
-				};
-			case 'FocusOut':
-				var cm = model.core;
-				return {
-					ctor: '_Tuple2',
-					_0: _elm_lang$core$Native_Utils.update(
-						model,
-						{
-							core: _elm_lang$core$Native_Utils.update(
-								cm,
-								{focus: false})
-						}),
-					_1: _elm_lang$core$Platform_Cmd$none
-				};
-			case 'ClickScreen':
-				return {
-					ctor: '_Tuple2',
-					_0: A3(_minekoa$elm_text_editor$TextEditor$eventLog, 'setfocus', '', model),
-					_1: A2(
-						_elm_lang$core$Platform_Cmd$map,
-						_minekoa$elm_text_editor$TextEditor$CoreMsg,
-						_minekoa$elm_text_editor$TextEditor_Core$doFocus(model.core))
-				};
-			case 'DragStart':
-				var _p19 = _p16._0;
-				var rect = _minekoa$elm_text_editor$TextEditor$getBoundingClientRect(
-					_minekoa$elm_text_editor$TextEditor_Core$codeAreaID(model.core));
-				var row = ((_p19.y - rect.top) / A2(_minekoa$elm_text_editor$TextEditor$emToPx, model.core, 1)) | 0;
-				var ln = A2(
-					_elm_lang$core$Maybe$withDefault,
-					'',
-					A2(_minekoa$elm_text_editor$TextEditor_Buffer$line, row, model.core.buffer.contents));
-				var col = A3(_minekoa$elm_text_editor$TextEditor$posToColumn, model.core, ln, _p19.x - rect.left);
-				var _p18 = A2(
-					_minekoa$elm_text_editor$TextEditor_Core_Commands$moveAt,
-					{ctor: '_Tuple2', _0: row, _1: col},
-					model.core);
-				var cm = _p18._0;
-				var cc = _p18._1;
-				return {
-					ctor: '_Tuple2',
-					_0: _minekoa$elm_text_editor$TextEditor$blinkBlock(
-						A3(
-							_minekoa$elm_text_editor$TextEditor$eventLog,
-							'dragstart',
-							A3(
-								_minekoa$elm_text_editor$TextEditor$printDragInfo,
-								rect,
-								_p19,
-								{ctor: '_Tuple2', _0: row, _1: col}),
-							_elm_lang$core$Native_Utils.update(
-								model,
-								{core: cm, drag: true}))),
-					_1: _elm_lang$core$Platform_Cmd$batch(
-						{
-							ctor: '::',
-							_0: A2(_elm_lang$core$Platform_Cmd$map, _minekoa$elm_text_editor$TextEditor$CoreMsg, cc),
-							_1: {ctor: '[]'}
-						})
-				};
-			case 'DragAt':
-				var _p21 = _p16._0;
-				var rect = _minekoa$elm_text_editor$TextEditor$getBoundingClientRect(
-					_minekoa$elm_text_editor$TextEditor_Core$codeAreaID(model.core));
-				var row = ((_p21.y - rect.top) / A2(_minekoa$elm_text_editor$TextEditor$emToPx, model.core, 1)) | 0;
-				var ln = A2(
-					_elm_lang$core$Maybe$withDefault,
-					'',
-					A2(_minekoa$elm_text_editor$TextEditor_Buffer$line, row, model.core.buffer.contents));
-				var col = A3(_minekoa$elm_text_editor$TextEditor$posToColumn, model.core, ln, _p21.x - rect.left);
-				var _p20 = A2(
-					_minekoa$elm_text_editor$TextEditor_Core_Commands$selectAt,
-					{ctor: '_Tuple2', _0: row, _1: col},
-					model.core);
-				var cm = _p20._0;
-				var cc = _p20._1;
-				return {
-					ctor: '_Tuple2',
-					_0: _minekoa$elm_text_editor$TextEditor$blinkBlock(
-						A3(
-							_minekoa$elm_text_editor$TextEditor$eventLog,
-							'dragat',
-							A3(
-								_minekoa$elm_text_editor$TextEditor$printDragInfo,
-								rect,
-								_p21,
-								{ctor: '_Tuple2', _0: row, _1: col}),
-							_elm_lang$core$Native_Utils.update(
-								model,
-								{core: cm}))),
-					_1: _elm_lang$core$Platform_Cmd$batch(
-						{
-							ctor: '::',
-							_0: A2(_elm_lang$core$Platform_Cmd$map, _minekoa$elm_text_editor$TextEditor$CoreMsg, cc),
-							_1: {ctor: '[]'}
-						})
-				};
-			default:
-				return {
-					ctor: '_Tuple2',
-					_0: A3(
-						_minekoa$elm_text_editor$TextEditor$eventLog,
-						'dragend',
-						'',
-						_elm_lang$core$Native_Utils.update(
-							model,
-							{drag: false})),
-					_1: _elm_lang$core$Platform_Cmd$none
-				};
-		}
-	});
-var _minekoa$elm_text_editor$TextEditor$subscriptions = function (model) {
-	return _elm_lang$core$Platform_Sub$batch(
-		A2(
-			_elm_lang$core$Basics_ops['++'],
-			{
-				ctor: '::',
-				_0: A2(
-					_elm_lang$core$Platform_Sub$map,
-					_minekoa$elm_text_editor$TextEditor$CoreMsg,
-					_minekoa$elm_text_editor$TextEditor_Core$subscriptions(model.core)),
-				_1: {ctor: '[]'}
-			},
-			function () {
-				var _p22 = model.drag;
-				if (_p22 === true) {
-					return {
-						ctor: '::',
-						_0: _elm_lang$mouse$Mouse$moves(_minekoa$elm_text_editor$TextEditor$DragAt),
-						_1: {
-							ctor: '::',
-							_0: _elm_lang$mouse$Mouse$ups(_minekoa$elm_text_editor$TextEditor$DragEnd),
-							_1: {ctor: '[]'}
-						}
-					};
-				} else {
-					return {ctor: '[]'};
-				}
-			}()));
 };
 
 var _minekoa$elm_text_editor$EditorDebugger$clipboardView = function (editorModel) {
