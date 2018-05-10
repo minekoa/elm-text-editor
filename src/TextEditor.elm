@@ -168,11 +168,7 @@ update msg model =
         DragStart mouseEvent  ->
             let
                 xy = { x = mouseEvent.x, y = mouseEvent.y }
-
-                rect = getBoundingClientRect (codeAreaID model.core)
-                row = (xy.y - rect.top) // (emToPx model.core 1)
-                ln = Buffer.line row model.core.buffer.contents |> Maybe.withDefault ""
-                col = posToColumn model.core ln (xy.x - rect.left)
+                (row, col) = posToRowColumn model.core xy
 
                 (cm, cc) =  Commands.moveAt (row, col) model.core
             in
@@ -181,14 +177,14 @@ update msg model =
                         ( { model | core = cm
                           , drag = True
                           }
-                            |> eventLog "dragstart" (printDragInfo rect xy (row, col) )
+                            |> eventLog "dragstart" (printDragInfo xy (row, col) )
                             |> blinkBlock
                         , Cmd.batch [ Cmd.map CoreMsg cc ]
                         )
                     RightMouse ->
                         if model.core.buffer.selection == Nothing then
                             ( { model | core = cm }
-                                |> eventLog "moveto" (printDragInfo rect xy (row, col) )
+                                |> eventLog "moveto" (printDragInfo xy (row, col) )
                                 |> blinkBlock
                             , Cmd.batch [ Cmd.map CoreMsg cc ]
                             )
@@ -200,15 +196,11 @@ update msg model =
 
         DragAt xy ->
             let
-                rect = getBoundingClientRect (codeAreaID model.core)
-                row = (xy.y - rect.top) // (emToPx model.core 1)
-                ln = Buffer.line row model.core.buffer.contents |> Maybe.withDefault ""
-                col = posToColumn model.core ln (xy.x - rect.left)
-
+                (row, col) = posToRowColumn model.core xy
                 (cm, cc) =  Commands.selectAt (row, col) model.core
             in
                 ( { model | core = cm }
-                  |> eventLog "dragat" (printDragInfo rect xy (row, col) )
+                  |> eventLog "dragat" (printDragInfo xy (row, col) )
                   |> blinkBlock
                 , Cmd.batch [ Cmd.map CoreMsg cc
                             ]
@@ -291,8 +283,24 @@ compositionEnd data model =
         , Cmd.map CoreMsg c
         )
 
-posToColumn : Core.Model -> String -> Int -> Int
-posToColumn model line pos_x =
+posToRowColumn : Core.Model -> {x : Int, y : Int } -> (Int, Int)
+posToRowColumn model xy =
+    let
+        rect = getBoundingClientRect (codeAreaID model)
+        row  = yToRow model (xy.y - rect.top)
+        line = Buffer.line row model.buffer.contents |> Maybe.withDefault ""
+        col = xToColumn model line (xy.x - rect.left)
+    in
+        (row, col)
+
+yToRow : Core.Model -> Int -> Int
+yToRow model pos_y =
+    Basics.min
+        (pos_y // (emToPx model 1))
+        (model.buffer.contents |> List.length  |> flip (-) 1)
+
+xToColumn : Core.Model -> String -> Int -> Int
+xToColumn model line pos_x =
     let
         calc_w  = calcTextWidth (rulerID model)
         calc_col = (\ ln c x ->
@@ -302,10 +310,9 @@ posToColumn model line pos_x =
     in
         calc_col line 0 pos_x
 
-printDragInfo: Rect -> Mouse.Position -> (Int, Int) -> String
-printDragInfo rect xy (row, col) =
+printDragInfo: Mouse.Position -> (Int, Int) -> String
+printDragInfo xy (row, col) =
     "pos=" ++ (toString xy.x) ++ "," ++ (toString xy.y)
-        ++ "; offset_pos=" ++ (toString (xy.x - rect.left)) ++ "," ++ (toString (xy.y - rect.top))
         ++ "; row_col=" ++ (toString row) ++ "," ++(toString col)
 
 ------------------------------------------------------------
