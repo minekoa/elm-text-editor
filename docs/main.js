@@ -12720,7 +12720,11 @@ var _minekoa$elm_text_editor$TextEditor$codeArea = function (model) {
 									_1: {
 										ctor: '::',
 										_0: {ctor: '_Tuple2', _0: 'flex-grow', _1: '1'},
-										_1: {ctor: '[]'}
+										_1: {
+											ctor: '::',
+											_0: {ctor: '_Tuple2', _0: 'position', _1: 'relative'},
+											_1: {ctor: '[]'}
+										}
 									}
 								}
 							}

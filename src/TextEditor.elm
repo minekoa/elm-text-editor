@@ -415,6 +415,7 @@ codeArea model =
         , class "code-area"
         , style [ ("margin", "0"), ("padding", "0"), ("border", "none")
                 , ("flex-grow", "1") -- "line" の行末以降のタップでもカーソル移動したいので、いっぱいまで伸びるようにしておく
+                , ("position", "relative")
                 ]
         ]
         [ ruler model
@@ -444,7 +445,6 @@ codeLayer model =
                                   , ("white-space", "pre")
                                   , ("pointer-events", "auto") -- マウスイベントの対象にする
                                   ]
---                          , onMouseDown (DragStart n)
                           ] <|
                           if n == cursor.row && model.compositionPreview /= Nothing then
                               [ span [ style [ ("position", "relative")
