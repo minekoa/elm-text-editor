@@ -11,6 +11,9 @@ module TextEditor.Core.Commands exposing
     , selectPrevios
     , selectNext
     , selectAt
+    , markSet
+    , markClear
+    , gotoMark
     , insert
     , backspace
     , delete
@@ -27,33 +30,23 @@ import TextEditor.Core as Core  exposing (Model, Msg)
 -- cursor moving
 ------------------------------------------------------------
 
--- Tools
-
-moveF : (Buffer.Model -> Buffer.Model) -> Model -> (Model, Cmd Msg)
-moveF f model =
-    { model | buffer = (f >> Buffer.selectionClear) model.buffer }
-        |> Core.blinkBlock
-        |> Core.withEnsureVisibleCmd
-
--- API
-
 moveForward : Model -> (Model, Cmd Msg)
-moveForward = moveF Buffer.moveForward
+moveForward = editF Buffer.moveForward
 
 moveBackward : Model -> (Model, Cmd Msg)
-moveBackward = moveF Buffer.moveBackward
+moveBackward = editF Buffer.moveBackward
 
 movePrevios : Model -> (Model, Cmd Msg)
-movePrevios = moveF Buffer.movePrevios
+movePrevios = editF Buffer.movePrevios
 
 moveNext : Model -> (Model, Cmd Msg)
-moveNext = moveF Buffer.moveNext
+moveNext = editF Buffer.moveNext
 
 moveBOL : Model -> (Model, Cmd Msg)
-moveBOL = moveF (\m -> {m | cursor = Buffer.Cursor m.cursor.row 0})
+moveBOL = editF (\m -> {m | cursor = Buffer.Cursor m.cursor.row 0})
 
 moveEOL : Model -> (Model, Cmd Msg)
-moveEOL = moveF (\m ->
+moveEOL = editF (\m ->
                      {m | cursor = Buffer.Cursor m.cursor.row (Buffer.line m.cursor.row m.contents
                                                               |> Maybe.withDefault ""
                                                               |> String.length
@@ -62,36 +55,40 @@ moveEOL = moveF (\m ->
                 )
 
 moveAt : (Int, Int) -> Model -> (Model, Cmd Msg)
-moveAt pos =  moveF (Buffer.moveAt pos)
+moveAt pos =  editF (Buffer.moveAt pos)
 
 ------------------------------------------------------------
 -- selection
 ------------------------------------------------------------
 
--- Tools
-
-selectF : (Buffer.Model -> Buffer.Model) -> Model -> (Model, Cmd Msg)
-selectF f model =
-    { model | buffer = f model.buffer }
-        |> Core.blinkBlock
-        |> Core.withEnsureVisibleCmd
-
--- API
-
 selectBackward: Model -> (Model, Cmd Msg)
-selectBackward = selectF Buffer.selectBackward
+selectBackward = editF Buffer.selectBackward
 
 selectForward: Model -> (Model, Cmd Msg)
-selectForward = selectF Buffer.selectForward
+selectForward = editF Buffer.selectForward
 
 selectPrevios: Model -> (Model, Cmd Msg)
-selectPrevios = selectF Buffer.selectPrevios
+selectPrevios = editF Buffer.selectPrevios
 
 selectNext: Model -> (Model, Cmd Msg)
-selectNext = selectF Buffer.selectNext
+selectNext = editF Buffer.selectNext
 
 selectAt: (Int, Int) -> Model -> (Model, Cmd Msg)
-selectAt pos = selectF (Buffer.selectAt pos)
+selectAt pos = editF (Buffer.selectAt pos)
+
+------------------------------------------------------------
+-- mark
+------------------------------------------------------------
+
+markSet : Model -> (Model, Cmd Msg)
+markSet = editF Buffer.markSet
+
+markClear : Model -> (Model, Cmd Msg)
+markClear = editF Buffer.markClear
+
+gotoMark : Model -> (Model, Cmd Msg)
+gotoMark = editF Buffer.gotoMark
+
 
 ------------------------------------------------------------
 -- edit buffer

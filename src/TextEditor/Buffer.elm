@@ -20,13 +20,17 @@ module TextEditor.Buffer exposing ( Model
                                   , moveAt
 
                                   -- selection
-                                  , markSet
                                   , selectBackward
                                   , selectForward
                                   , selectPrevios
                                   , selectNext
                                   , selectAt
                                   , selectionClear
+
+                                  -- mark
+                                  , markSet
+                                  , markClear
+                                  , gotoMark
 
                                   -- edit
                                   , insert
@@ -43,6 +47,7 @@ module TextEditor.Buffer exposing ( Model
 type alias Model =
     { cursor : Cursor
     , selection : Maybe Range
+    , mark : Maybe Mark
     , contents : List String
     , history : List EditCommand
     }
@@ -51,6 +56,7 @@ init : String -> Model
 init text =
     Model (Cursor 0 0)           -- cursor
           Nothing                -- selection
+          Nothing                -- mark
           (String.lines text)    -- contents
           []                     -- history
 
@@ -130,6 +136,53 @@ selectedString : Model -> Maybe String
 selectedString model =
     Maybe.andThen (\sel-> readRange sel model |> Just ) model.selection 
 
+-- mark
+
+type alias Mark =
+    { pos : (Int, Int)
+    , actived : Bool
+    }
+
+markSet : Model -> Model
+markSet model =
+    let
+        pos = nowCursorPos model
+        new_mark = { pos = pos
+                   , actived = True
+                   }
+    in
+        { model
+            | mark = Just new_mark 
+            , selection = Just <| Range pos pos
+        }
+
+markClear : Model -> Model
+markClear model =
+    case model.mark of
+        Just mk ->
+            { model
+                | mark      = Just <| { mk | actived = False }
+                , selection = Nothing
+            }
+        Nothing ->
+            model
+
+isMarkActive : Model -> Bool
+isMarkActive model =
+    case model.mark of
+        Just mk -> mk.actived
+        Nothing -> False
+
+gotoMark : Model -> Model 
+gotoMark model =
+    case model.mark of
+        Just mk ->
+            model
+                |> markSet
+                |> moveAt mk.pos
+        Nothing ->
+            model
+
 
 ------------------------------------------------------------
 -- History
@@ -172,6 +225,37 @@ appendHistory cmd model =
 
 moveForward : Model -> Model
 moveForward model =
+    case isMarkActive model of
+        True  -> selectWithMove moveForwardProc model
+        False -> model |> moveForwardProc |> selectionClear
+
+moveBackward : Model -> Model
+moveBackward model =
+    case isMarkActive model of
+        True  -> selectWithMove moveBackwardProc model
+        False -> model |> moveBackwardProc |> selectionClear
+
+movePrevios : Model -> Model
+movePrevios model =
+    case isMarkActive model of
+        True  -> selectWithMove movePreviosProc model
+        False -> model |> movePreviosProc |> selectionClear
+
+moveNext : Model -> Model
+moveNext model =
+    case isMarkActive model of
+        True  -> selectWithMove moveNextProc model
+        False -> model |>  moveNextProc |> selectionClear
+
+moveAt : (Int, Int) -> Model -> Model
+moveAt (row, col) model =
+    case isMarkActive model of
+        True  -> selectWithMove (moveAtProc (row, col)) model
+        False -> model |>  moveAtProc (row, col) |> selectionClear
+
+
+moveForwardProc : Model -> Model
+moveForwardProc model =
     let
         cur = model.cursor
     in
@@ -187,8 +271,8 @@ moveForward model =
         |> Maybe.withDefault (defaultCursor model.contents)
         |> (λ c -> {model | cursor = c})
 
-moveBackward : Model -> Model
-moveBackward model =
+moveBackwardProc : Model -> Model
+moveBackwardProc model =
     let
         cur = model.cursor
         pln = line (cur.row - 1) model.contents |> Maybe.withDefault ""
@@ -205,8 +289,8 @@ moveBackward model =
         |> Maybe.withDefault (defaultCursor model.contents)
         |> (λ c -> {model | cursor = c})
 
-movePrevios : Model -> Model
-movePrevios model =
+movePreviosProc : Model -> Model
+movePreviosProc model =
     let
         cur = model.cursor
     in
@@ -220,8 +304,8 @@ movePrevios model =
         |> Maybe.withDefault cur
         |> (λ c -> {model | cursor = c})
 
-moveNext : Model -> Model
-moveNext model =
+moveNextProc : Model -> Model
+moveNextProc model =
     let
         cur = model.cursor
     in
@@ -235,20 +319,10 @@ moveNext model =
         |> Maybe.withDefault cur
         |> (λ c -> {model | cursor = c})
 
-moveAt : (Int, Int) -> Model -> Model
-moveAt (row, col) model =
+moveAtProc : (Int, Int) -> Model -> Model
+moveAtProc (row, col) model =
     { model | cursor = Cursor row col }
 
-------------------------------------------------------------
--- selection (markset)
-------------------------------------------------------------
-
-markSet: Model -> Model
-markSet model =
-    let
-        pos = nowCursorPos model
-    in
-        { model | selection = Range pos pos |> Just }
 
 
 ------------------------------------------------------------
@@ -256,19 +330,19 @@ markSet model =
 ------------------------------------------------------------
 
 selectBackward: Model -> Model
-selectBackward = selectWithMove moveBackward
+selectBackward = selectWithMove moveBackwardProc
 
 selectForward: Model -> Model
-selectForward = selectWithMove moveForward
+selectForward = selectWithMove moveForwardProc
 
 selectPrevios: Model -> Model
-selectPrevios = selectWithMove movePrevios
+selectPrevios = selectWithMove movePreviosProc
 
 selectNext: Model -> Model
-selectNext = selectWithMove moveNext
+selectNext = selectWithMove moveNextProc
 
 selectAt: (Int, Int) -> Model -> Model
-selectAt pos = selectWithMove (moveAt pos)
+selectAt pos = selectWithMove (moveAtProc pos)
 
 selectionClear: Model -> Model
 selectionClear model =
