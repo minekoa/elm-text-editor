@@ -383,6 +383,19 @@ modeline model =
             \ compositionData -> compositionData
                           |> Maybe.andThen (\d -> Just <| "[IME] " ++ d )
                           |> Maybe.withDefault ""
+
+        toMarkSetString =
+            \ mark -> mark
+                      |> Maybe.andThen (\mk -> Just <|
+                                            if mk.actived then
+                                                " mark-set:("
+                                                ++ (mk.pos |> Tuple.first |> toString) ++ "," ++ (mk.pos |> Tuple.second |> toString)
+                                                ++ ")"
+                                            else
+                                                ""
+                                       )
+                      |> Maybe.withDefault ""
+
         toSelectionString =
             \ selection -> selection
                         |> Maybe.andThen (\s-> Just <|
@@ -400,6 +413,7 @@ modeline model =
             ]
             [ text <| toCursorString model.editor.core.buffer.cursor
             , text <| toIMEString model.editor.core.compositionPreview
+            , text <| toMarkSetString model.editor.core.buffer.mark
             , text <| toSelectionString model.editor.core.buffer.selection
             ]
 
