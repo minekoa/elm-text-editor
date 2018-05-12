@@ -22,11 +22,30 @@ module TextEditor.Commands exposing
     , copy
     , cut
     , paste
+
+    , batch
     )
 
 import TextEditor.Core as Core
 import TextEditor.Core.Commands as CoreCommands
 import TextEditor exposing (Model, Msg)
+
+
+batch : List (Model -> (Model, Cmd Msg)) -> (Model -> (Model, Cmd Msg))
+batch commands =
+    let
+        batch_proc = (\ cmdMsgs editorCmds model ->
+                          case editorCmds of
+                              x :: xs ->
+                                  let
+                                      (m1, c1) = x model
+                                  in
+                                      batch_proc (c1 :: cmdMsgs) xs m1
+                              [] ->
+                                  (model, Cmd.batch cmdMsgs)
+                     )
+    in
+        batch_proc [] commands
 
 
 -- Tools

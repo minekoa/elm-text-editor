@@ -332,22 +332,34 @@ moveAtProc (row, col) model =
 
 selectBackward: Model -> Model
 selectBackward = selectWithMove moveBackwardProc
+                 >> (\m -> { m| mark = m.mark |> Maybe.andThen (\mk -> Just { mk | actived = False } ) } )
 
 selectForward: Model -> Model
 selectForward = selectWithMove moveForwardProc
+                >> (\m -> { m| mark = m.mark |> Maybe.andThen (\mk -> Just { mk | actived = False } ) } )
 
 selectPrevios: Model -> Model
 selectPrevios = selectWithMove movePreviosProc
+                >> (\m -> { m| mark = m.mark |> Maybe.andThen (\mk -> Just { mk | actived = False } ) } )
 
 selectNext: Model -> Model
 selectNext = selectWithMove moveNextProc
+             >> (\m -> { m| mark = m.mark |> Maybe.andThen (\mk -> Just { mk | actived = False } ) } )
 
 selectAt: (Int, Int) -> Model -> Model
 selectAt pos = selectWithMove (moveAtProc pos)
+               >> (\m -> { m| mark = m.mark |> Maybe.andThen (\mk -> Just { mk | actived = False } ) } )
+
 
 selectionClear: Model -> Model
 selectionClear model =
-    { model | selection = Nothing }
+    { model
+        | selection = Nothing
+        , mark = model.mark |> Maybe.andThen (\mk -> Just { mk | actived = False })
+    }
+
+
+
 
 -- Tool
 

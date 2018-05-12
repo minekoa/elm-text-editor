@@ -170,7 +170,10 @@ update msg model =
                 xy = { x = mouseEvent.x, y = mouseEvent.y }
                 (row, col) = posToRowColumn model.core xy
 
-                (cm, cc) =  Commands.moveAt (row, col) model.core
+                (cm, cc) =  model.core
+                              |> Commands.batch [ Commands.moveAt (row, col)
+                                                , Commands.markClear
+                                                ]
             in
                 case mouseEvent.button of
                     LeftMouse ->
