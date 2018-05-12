@@ -13,6 +13,7 @@ module TextEditor.Core.Commands exposing
     , selectAt
     , markSet
     , markClear
+    , markFlip
     , gotoMark
     , insert
     , backspace
@@ -85,6 +86,9 @@ markSet = editF Buffer.markSet
 
 markClear : Model -> (Model, Cmd Msg)
 markClear = editF Buffer.markClear
+
+markFlip : Model -> (Model, Cmd Msg)
+markFlip = editF (\m -> if Buffer.isMarkActive m then Buffer.markClear m else Buffer.markSet m)
 
 gotoMark : Model -> (Model, Cmd Msg)
 gotoMark = editF Buffer.gotoMark

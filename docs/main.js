@@ -10463,6 +10463,10 @@ var _minekoa$elm_text_editor$TextEditor_Core_Commands$insert = function (text) {
 var _minekoa$elm_text_editor$TextEditor_Core_Commands$backspace = _minekoa$elm_text_editor$TextEditor_Core_Commands$editF(_minekoa$elm_text_editor$TextEditor_Buffer$backspace);
 var _minekoa$elm_text_editor$TextEditor_Core_Commands$delete = _minekoa$elm_text_editor$TextEditor_Core_Commands$editF(_minekoa$elm_text_editor$TextEditor_Buffer$delete);
 var _minekoa$elm_text_editor$TextEditor_Core_Commands$gotoMark = _minekoa$elm_text_editor$TextEditor_Core_Commands$editF(_minekoa$elm_text_editor$TextEditor_Buffer$gotoMark);
+var _minekoa$elm_text_editor$TextEditor_Core_Commands$markFlip = _minekoa$elm_text_editor$TextEditor_Core_Commands$editF(
+	function (m) {
+		return _minekoa$elm_text_editor$TextEditor_Buffer$isMarkActive(m) ? _minekoa$elm_text_editor$TextEditor_Buffer$markClear(m) : _minekoa$elm_text_editor$TextEditor_Buffer$markSet(m);
+	});
 var _minekoa$elm_text_editor$TextEditor_Core_Commands$markClear = _minekoa$elm_text_editor$TextEditor_Core_Commands$editF(_minekoa$elm_text_editor$TextEditor_Buffer$markClear);
 var _minekoa$elm_text_editor$TextEditor_Core_Commands$markSet = _minekoa$elm_text_editor$TextEditor_Core_Commands$editF(_minekoa$elm_text_editor$TextEditor_Buffer$markSet);
 var _minekoa$elm_text_editor$TextEditor_Core_Commands$selectAt = function (pos) {
@@ -10555,7 +10559,11 @@ var _minekoa$elm_text_editor$TextEditor_KeyBind$emacsLike = {
 														return A2(_minekoa$elm_text_editor$TextEditor_Core_Commands$paste, m.copyStore, m);
 													}
 												},
-												_1: {ctor: '[]'}
+												_1: {
+													ctor: '::',
+													_0: {ctrl: true, alt: false, shift: false, code: 32, f: _minekoa$elm_text_editor$TextEditor_Core_Commands$markFlip},
+													_1: {ctor: '[]'}
+												}
 											}
 										}
 									}
@@ -14616,6 +14624,30 @@ var _minekoa$elm_text_editor$TextEditor_Commands$selectAt = F2(
 			model,
 			A2(_minekoa$elm_text_editor$TextEditor_Core_Commands$selectAt, pos, model.core));
 	});
+var _minekoa$elm_text_editor$TextEditor_Commands$markSet = function (model) {
+	return A2(
+		_minekoa$elm_text_editor$TextEditor_Commands$updateMap,
+		model,
+		_minekoa$elm_text_editor$TextEditor_Core_Commands$markSet(model.core));
+};
+var _minekoa$elm_text_editor$TextEditor_Commands$markClear = function (model) {
+	return A2(
+		_minekoa$elm_text_editor$TextEditor_Commands$updateMap,
+		model,
+		_minekoa$elm_text_editor$TextEditor_Core_Commands$markFlip(model.core));
+};
+var _minekoa$elm_text_editor$TextEditor_Commands$markFlip = function (model) {
+	return A2(
+		_minekoa$elm_text_editor$TextEditor_Commands$updateMap,
+		model,
+		_minekoa$elm_text_editor$TextEditor_Core_Commands$markFlip(model.core));
+};
+var _minekoa$elm_text_editor$TextEditor_Commands$gotoMark = function (model) {
+	return A2(
+		_minekoa$elm_text_editor$TextEditor_Commands$updateMap,
+		model,
+		_minekoa$elm_text_editor$TextEditor_Core_Commands$gotoMark(model.core));
+};
 var _minekoa$elm_text_editor$TextEditor_Commands$insert = F2(
 	function (text, model) {
 		return A2(

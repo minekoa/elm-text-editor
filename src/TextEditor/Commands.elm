@@ -11,6 +11,10 @@ module TextEditor.Commands exposing
     , selectPrevios
     , selectNext
     , selectAt
+    , markSet
+    , markClear
+    , markFlip
+    , gotoMark
     , insert
     , backspace
     , delete
@@ -69,6 +73,18 @@ selectNext model = updateMap model (CoreCommands.selectNext model.core)
 
 selectAt: (Int, Int) -> Model -> (Model, Cmd Msg)
 selectAt pos model = updateMap model (CoreCommands.selectAt pos model.core)
+
+markSet : Model -> (Model, Cmd Msg)
+markSet model = updateMap model (CoreCommands.markSet model.core)
+
+markClear : Model -> (Model, Cmd Msg)
+markClear model = updateMap model (CoreCommands.markFlip model.core)
+
+markFlip : Model -> (Model, Cmd Msg)
+markFlip model = updateMap model (CoreCommands.markFlip model.core)
+
+gotoMark : Model -> (Model, Cmd Msg)
+gotoMark model = updateMap model (CoreCommands.gotoMark model.core)
 
 insert: String -> Model-> (Model, Cmd Msg)
 insert text model = updateMap model (CoreCommands.insert text model.core)

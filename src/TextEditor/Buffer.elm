@@ -31,6 +31,7 @@ module TextEditor.Buffer exposing ( Model
                                   , markSet
                                   , markClear
                                   , gotoMark
+                                  , isMarkActive
 
                                   -- edit
                                   , insert

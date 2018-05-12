@@ -70,5 +70,6 @@ emacsLike =
     , {ctrl=True , alt=False, shift=False, code= 87, f=EditorCmds.cut  }         -- 'C-w' (注: クリップボード連携なし)
     , {ctrl=True , alt=False, shift=False, code= 77, f=EditorCmds.insert "\n" } -- 'C-m'
     , {ctrl=True , alt=False, shift=False, code= 89, f=\m -> EditorCmds.paste m.copyStore m } -- 'C-y'
+    , {ctrl=True , alt=False, shift=False, code= 32, f=EditorCmds.markFlip } -- 'C-SPE'
     ]
 
