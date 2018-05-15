@@ -10579,29 +10579,25 @@ var _minekoa$elm_text_editor$TextEditor_Core_Commands$moveAt = function (pos) {
 	return _minekoa$elm_text_editor$TextEditor_Core_Commands$editF(
 		_minekoa$elm_text_editor$TextEditor_Buffer$moveAt(pos));
 };
-var _minekoa$elm_text_editor$TextEditor_Core_Commands$moveEOL = _minekoa$elm_text_editor$TextEditor_Core_Commands$editF(
-	function (m) {
-		return _elm_lang$core$Native_Utils.update(
-			m,
-			{
-				cursor: A2(
-					_minekoa$elm_text_editor$TextEditor_Buffer$Cursor,
-					m.cursor.row,
-					_elm_lang$core$String$length(
-						A2(
-							_elm_lang$core$Maybe$withDefault,
-							'',
-							A2(_minekoa$elm_text_editor$TextEditor_Buffer$line, m.cursor.row, m.contents))))
-			});
-	});
-var _minekoa$elm_text_editor$TextEditor_Core_Commands$moveBOL = _minekoa$elm_text_editor$TextEditor_Core_Commands$editF(
-	function (m) {
-		return _elm_lang$core$Native_Utils.update(
-			m,
-			{
-				cursor: A2(_minekoa$elm_text_editor$TextEditor_Buffer$Cursor, m.cursor.row, 0)
-			});
-	});
+var _minekoa$elm_text_editor$TextEditor_Core_Commands$moveEOL = function (model) {
+	var col = _elm_lang$core$String$length(
+		A2(
+			_elm_lang$core$Maybe$withDefault,
+			'',
+			A2(_minekoa$elm_text_editor$TextEditor_Buffer$line, model.buffer.cursor.row, model.buffer.contents)));
+	return A2(
+		_minekoa$elm_text_editor$TextEditor_Core_Commands$editF,
+		_minekoa$elm_text_editor$TextEditor_Buffer$moveAt(
+			{ctor: '_Tuple2', _0: model.buffer.cursor.row, _1: col}),
+		model);
+};
+var _minekoa$elm_text_editor$TextEditor_Core_Commands$moveBOL = function (model) {
+	return A2(
+		_minekoa$elm_text_editor$TextEditor_Core_Commands$editF,
+		_minekoa$elm_text_editor$TextEditor_Buffer$moveAt(
+			{ctor: '_Tuple2', _0: model.buffer.cursor.row, _1: 0}),
+		model);
+};
 var _minekoa$elm_text_editor$TextEditor_Core_Commands$moveNext = _minekoa$elm_text_editor$TextEditor_Core_Commands$editF(_minekoa$elm_text_editor$TextEditor_Buffer$moveNext);
 var _minekoa$elm_text_editor$TextEditor_Core_Commands$movePrevios = _minekoa$elm_text_editor$TextEditor_Core_Commands$editF(_minekoa$elm_text_editor$TextEditor_Buffer$movePrevios);
 var _minekoa$elm_text_editor$TextEditor_Core_Commands$moveBackward = _minekoa$elm_text_editor$TextEditor_Core_Commands$editF(_minekoa$elm_text_editor$TextEditor_Buffer$moveBackward);

@@ -64,16 +64,16 @@ moveNext : Model -> (Model, Cmd Msg)
 moveNext = editF Buffer.moveNext
 
 moveBOL : Model -> (Model, Cmd Msg)
-moveBOL = editF (\m -> {m | cursor = Buffer.Cursor m.cursor.row 0})
+moveBOL model = editF (Buffer.moveAt (model.buffer.cursor.row, 0)) model
 
 moveEOL : Model -> (Model, Cmd Msg)
-moveEOL = editF (\m ->
-                     {m | cursor = Buffer.Cursor m.cursor.row (Buffer.line m.cursor.row m.contents
-                                                              |> Maybe.withDefault ""
-                                                              |> String.length
-                                                              )
-                     }
-                )
+moveEOL model =
+    let
+        col = Buffer.line model.buffer.cursor.row model.buffer.contents
+                |> Maybe.withDefault ""
+                |> String.length
+    in
+        editF (Buffer.moveAt (model.buffer.cursor.row, col)) model
 
 moveAt : (Int, Int) -> Model -> (Model, Cmd Msg)
 moveAt pos =  editF (Buffer.moveAt pos)
