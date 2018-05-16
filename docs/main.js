@@ -9909,98 +9909,45 @@ var _minekoa$elm_text_editor$TextEditor_Buffer$gotoMark = function (model) {
 	}
 };
 var _minekoa$elm_text_editor$TextEditor_Buffer$selectBackward = function (_p53) {
-	return function (m) {
-		return _elm_lang$core$Native_Utils.update(
-			m,
-			{
-				mark: A2(
-					_elm_lang$core$Maybe$andThen,
-					function (mk) {
-						return _elm_lang$core$Maybe$Just(
-							_elm_lang$core$Native_Utils.update(
-								mk,
-								{actived: false}));
-					},
-					m.mark)
-			});
-	}(
-		A2(_minekoa$elm_text_editor$TextEditor_Buffer$selectWithMove, _minekoa$elm_text_editor$TextEditor_Buffer$moveBackwardProc, _p53));
+	return A2(
+		_minekoa$elm_text_editor$TextEditor_Buffer$selectWithMove,
+		_minekoa$elm_text_editor$TextEditor_Buffer$moveBackwardProc,
+		function (m) {
+			return _minekoa$elm_text_editor$TextEditor_Buffer$isMarkActive(m) ? _minekoa$elm_text_editor$TextEditor_Buffer$markClear(m) : m;
+		}(_p53));
 };
 var _minekoa$elm_text_editor$TextEditor_Buffer$selectForward = function (_p54) {
-	return function (m) {
-		return _elm_lang$core$Native_Utils.update(
-			m,
-			{
-				mark: A2(
-					_elm_lang$core$Maybe$andThen,
-					function (mk) {
-						return _elm_lang$core$Maybe$Just(
-							_elm_lang$core$Native_Utils.update(
-								mk,
-								{actived: false}));
-					},
-					m.mark)
-			});
-	}(
-		A2(_minekoa$elm_text_editor$TextEditor_Buffer$selectWithMove, _minekoa$elm_text_editor$TextEditor_Buffer$moveForwardProc, _p54));
+	return A2(
+		_minekoa$elm_text_editor$TextEditor_Buffer$selectWithMove,
+		_minekoa$elm_text_editor$TextEditor_Buffer$moveForwardProc,
+		function (m) {
+			return _minekoa$elm_text_editor$TextEditor_Buffer$isMarkActive(m) ? _minekoa$elm_text_editor$TextEditor_Buffer$markClear(m) : m;
+		}(_p54));
 };
 var _minekoa$elm_text_editor$TextEditor_Buffer$selectPrevios = function (_p55) {
-	return function (m) {
-		return _elm_lang$core$Native_Utils.update(
-			m,
-			{
-				mark: A2(
-					_elm_lang$core$Maybe$andThen,
-					function (mk) {
-						return _elm_lang$core$Maybe$Just(
-							_elm_lang$core$Native_Utils.update(
-								mk,
-								{actived: false}));
-					},
-					m.mark)
-			});
-	}(
-		A2(_minekoa$elm_text_editor$TextEditor_Buffer$selectWithMove, _minekoa$elm_text_editor$TextEditor_Buffer$movePreviosProc, _p55));
+	return A2(
+		_minekoa$elm_text_editor$TextEditor_Buffer$selectWithMove,
+		_minekoa$elm_text_editor$TextEditor_Buffer$movePreviosProc,
+		function (m) {
+			return _minekoa$elm_text_editor$TextEditor_Buffer$isMarkActive(m) ? _minekoa$elm_text_editor$TextEditor_Buffer$markClear(m) : m;
+		}(_p55));
 };
 var _minekoa$elm_text_editor$TextEditor_Buffer$selectNext = function (_p56) {
-	return function (m) {
-		return _elm_lang$core$Native_Utils.update(
-			m,
-			{
-				mark: A2(
-					_elm_lang$core$Maybe$andThen,
-					function (mk) {
-						return _elm_lang$core$Maybe$Just(
-							_elm_lang$core$Native_Utils.update(
-								mk,
-								{actived: false}));
-					},
-					m.mark)
-			});
-	}(
-		A2(_minekoa$elm_text_editor$TextEditor_Buffer$selectWithMove, _minekoa$elm_text_editor$TextEditor_Buffer$moveNextProc, _p56));
+	return A2(
+		_minekoa$elm_text_editor$TextEditor_Buffer$selectWithMove,
+		_minekoa$elm_text_editor$TextEditor_Buffer$moveNextProc,
+		function (m) {
+			return _minekoa$elm_text_editor$TextEditor_Buffer$isMarkActive(m) ? _minekoa$elm_text_editor$TextEditor_Buffer$markClear(m) : m;
+		}(_p56));
 };
 var _minekoa$elm_text_editor$TextEditor_Buffer$selectAt = function (pos) {
 	return function (_p57) {
-		return function (m) {
-			return _elm_lang$core$Native_Utils.update(
-				m,
-				{
-					mark: A2(
-						_elm_lang$core$Maybe$andThen,
-						function (mk) {
-							return _elm_lang$core$Maybe$Just(
-								_elm_lang$core$Native_Utils.update(
-									mk,
-									{actived: false}));
-						},
-						m.mark)
-				});
-		}(
-			A2(
-				_minekoa$elm_text_editor$TextEditor_Buffer$selectWithMove,
-				_minekoa$elm_text_editor$TextEditor_Buffer$moveAtProc(pos),
-				_p57));
+		return A2(
+			_minekoa$elm_text_editor$TextEditor_Buffer$selectWithMove,
+			_minekoa$elm_text_editor$TextEditor_Buffer$moveAtProc(pos),
+			function (m) {
+				return _minekoa$elm_text_editor$TextEditor_Buffer$isMarkActive(m) ? _minekoa$elm_text_editor$TextEditor_Buffer$markClear(m) : m;
+			}(_p57));
 	};
 };
 var _minekoa$elm_text_editor$TextEditor_Buffer$Mark = F2(

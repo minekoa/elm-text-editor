@@ -333,23 +333,24 @@ moveAtProc (row, col) model =
 
 selectBackward: Model -> Model
 selectBackward = selectWithMove moveBackwardProc
-                 >> (\m -> { m| mark = m.mark |> Maybe.andThen (\mk -> Just { mk | actived = False } ) } )
+                 << \m -> if isMarkActive m then markClear m else m
 
 selectForward: Model -> Model
 selectForward = selectWithMove moveForwardProc
-                >> (\m -> { m| mark = m.mark |> Maybe.andThen (\mk -> Just { mk | actived = False } ) } )
+                 << \m -> if isMarkActive m then markClear m else m
+
 
 selectPrevios: Model -> Model
 selectPrevios = selectWithMove movePreviosProc
-                >> (\m -> { m| mark = m.mark |> Maybe.andThen (\mk -> Just { mk | actived = False } ) } )
+                 << \m -> if isMarkActive m then markClear m else m
 
 selectNext: Model -> Model
 selectNext = selectWithMove moveNextProc
-             >> (\m -> { m| mark = m.mark |> Maybe.andThen (\mk -> Just { mk | actived = False } ) } )
+                 << \m -> if isMarkActive m then markClear m else m
 
 selectAt: (Int, Int) -> Model -> Model
 selectAt pos = selectWithMove (moveAtProc pos)
-               >> (\m -> { m| mark = m.mark |> Maybe.andThen (\mk -> Just { mk | actived = False } ) } )
+                 << \m -> if isMarkActive m then markClear m else m
 
 
 selectionClear: Model -> Model

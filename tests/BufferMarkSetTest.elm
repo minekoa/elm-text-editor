@@ -147,9 +147,8 @@ suite =
                       |> Buffer.moveForward
                       |> Buffer.selectForward
                       |> Expect.all [ \m -> Expect.equal (Buffer.Mark (0,1) False  |> Just) m.mark
-                                    , \m -> Expect.equal (Buffer.Range (0,1) (0,3) |> Just) m.selection
+                                    , \m -> Expect.equal (Buffer.Range (0,2) (0,3) |> Just) m.selection
                                     ]
-                         -- Markでセレクトした部分を引き継いでしまう振る舞いが正しいのか悩ましい部分がある
 
         , test "mark-clear by select-backward" <|
               \_ ->
@@ -159,9 +158,8 @@ suite =
                       |> Buffer.moveBackward
                       |> Buffer.selectBackward
                       |> Expect.all [ \m -> Expect.equal (Buffer.Mark (0,2) False  |> Just) m.mark
-                                    , \m -> Expect.equal (Buffer.Range (0,2) (0,0) |> Just) m.selection
+                                    , \m -> Expect.equal (Buffer.Range (0,1) (0,0) |> Just) m.selection
                                     ]
-                         -- Markでセレクトした部分を引き継いでしまう振る舞いが正しいのか悩ましい部分がある
 
         , test "mark-clear by select-next" <|
               \_ ->
@@ -171,9 +169,9 @@ suite =
                       |> Buffer.moveNext
                       |> Buffer.selectNext
                       |> Expect.all [ \m -> Expect.equal (Buffer.Mark (1,0) False  |> Just) m.mark
-                                    , \m -> Expect.equal (Buffer.Range (1,0) (3,0) |> Just) m.selection
+                                    , \m -> Expect.equal (Buffer.Range (2,0) (3,0) |> Just) m.selection
                                     ]
-                         -- Markでセレクトした部分を引き継いでしまう振る舞いが正しいのか悩ましい部分がある
+
         , test "mark-clear by select-previos" <|
               \_ ->
                   Buffer.init "ABC\nDE\nGHIJ\nK\n"
@@ -182,9 +180,9 @@ suite =
                       |> Buffer.movePrevios
                       |> Buffer.selectPrevios
                       |> Expect.all [ \m -> Expect.equal (Buffer.Mark (3,0) False  |> Just) m.mark
-                                    , \m -> Expect.equal (Buffer.Range (3,0) (1,0) |> Just) m.selection
+                                    , \m -> Expect.equal (Buffer.Range (2,0) (1,0) |> Just) m.selection
                                     ]
-                         -- Markでセレクトした部分を引き継いでしまう振る舞いが正しいのか悩ましい部分がある
+
         , test "mark-clear by select-at" <|
               \_ ->
                   Buffer.init "ABC\nDE\nGHIJ\nK\n"
@@ -193,9 +191,9 @@ suite =
                       |> Buffer.moveAt (3,0)
                       |> Buffer.selectAt (1,0)
                       |> Expect.all [ \m -> Expect.equal (Buffer.Mark (2,3) False  |> Just) m.mark
-                                    , \m -> Expect.equal (Buffer.Range (2,3) (1,0) |> Just) m.selection
+                                    , \m -> Expect.equal (Buffer.Range (3,0) (1,0) |> Just) m.selection
                                     ]
-                         -- Markでセレクトした部分を引き継いでしまう振る舞いが正しいのか悩ましい部分がある
+
 
         , test "goto mark" <|
               \_ ->
