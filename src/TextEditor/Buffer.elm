@@ -28,6 +28,7 @@ module TextEditor.Buffer exposing ( Model
                                   , selectionClear
 
                                   -- mark
+                                  , Mark -- for elm-test
                                   , markSet
                                   , markClear
                                   , gotoMark
