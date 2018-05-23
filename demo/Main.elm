@@ -12,10 +12,10 @@ import TextEditor.Commands as Commands
 import TextEditor.Buffer
 import TextEditor.KeyBind as KeyBind
 
-import EditorDebugger
+import DebugMenu
 import SoftwareKeyboard
-import StyleSetter
-import Filer
+import StyleMenu
+import FileMenu
 
 main : Program Never Model Msg
 main =
@@ -32,19 +32,19 @@ type alias Model =
     , currentBufferIndex : Int
     , currentBufferName : String
 
-    , pane : Pane
-    , debugger : EditorDebugger.Model
+    , pane : MenuPane
+    , debugger : DebugMenu.Model
     , swkeyboard : SoftwareKeyboard.Model
-    , style : StyleSetter.Model
-    , filer : Filer.Model
+    , style : StyleMenu.Model
+    , filer : FileMenu.Model
     }
 
-type Pane
+type MenuPane
     = NoPane
-    | DebugPane
+    | DebugMenuPane
     | KeyboardPane
-    | StyleEditorPane
-    | FilerPane
+    | StyleMenuPane
+    | FileMenuPane
     | AboutPane
 
 type alias Buffer =
@@ -70,10 +70,10 @@ init =
               0
               buf.name
               NoPane
-              EditorDebugger.init
+              DebugMenu.init
               SoftwareKeyboard.init
-              StyleSetter.init
-              Filer.init
+              StyleMenu.init
+              FileMenu.init
         , Cmd.map EditorMsg bc
         )
 
@@ -87,11 +87,11 @@ type Msg
     = EditorMsg (Editor.Msg)
     | ChangeBuffer Int
     | CloseBuffer Int
-    | ChangePane Pane
-    | DebuggerMsg (EditorDebugger.Msg)
+    | ChangePane MenuPane
+    | DebugMenuMsg (DebugMenu.Msg)
     | SWKeyboardMsg (SoftwareKeyboard.Msg)
-    | StyleSetterMsg (StyleSetter.Msg)
-    | FilerMsg (Filer.Msg)
+    | StyleMenuMsg (StyleMenu.Msg)
+    | FileMenuMsg (FileMenu.Msg)
 
 
 updateMap: Model -> (Editor.Model, Cmd Editor.Msg) -> (Model, Cmd Msg)
@@ -137,15 +137,15 @@ update msg model =
                 , Cmd.map EditorMsg c
                 )
 
-        DebuggerMsg dmsg ->
+        DebugMenuMsg dmsg ->
             let
-                (em, dm, dc) = EditorDebugger.update dmsg model.editor model.debugger
+                (em, dm, dc) = DebugMenu.update dmsg model.editor model.debugger
             in
                 ( { model
                       | editor = em
                       , debugger = dm
                   }
-                , Cmd.map DebuggerMsg dc
+                , Cmd.map DebugMenuMsg dc
                 )
 
         SWKeyboardMsg swmsg ->
@@ -161,35 +161,35 @@ update msg model =
                             ]
                 )
 
-        StyleSetterMsg smsg ->
+        StyleMenuMsg smsg ->
             let
-                (m, c) = StyleSetter.update smsg model.style
+                (m, c) = StyleMenu.update smsg model.style
             in
                 ( { model
                       | style = m
                   }
-                , Cmd.map StyleSetterMsg c
+                , Cmd.map StyleMenuMsg c
                 )
 
-        -- Filer
-        FilerMsg fmsg ->
+        -- FileMenu
+        FileMenuMsg fmsg ->
             let
                 bufname = bufferName model.currentBufferIndex model
                               |> Maybe.withDefault ""
 
-                (m, c) = Filer.update fmsg (bufname, Editor.buffer model.editor) model.filer
+                (m, c) = FileMenu.update fmsg (bufname, Editor.buffer model.editor) model.filer
 
             in
                 case fmsg of
-                    Filer.CreateNewBuffer name ->
+                    FileMenu.CreateNewBuffer name ->
                         ( { model | filer = m }
                               |> updateBufferContent model.currentBufferIndex (Editor.buffer model.editor)
                               |> insertBuffer (model.currentBufferIndex + 1) (makeBuffer name "")
                               |> selectBuffer (model.currentBufferIndex + 1)
-                        , Cmd.map FilerMsg c
+                        , Cmd.map FileMenuMsg c
                         )
 
-                    Filer.ReadFile file ->
+                    FileMenu.ReadFile file ->
                         case file.data of
                             Ok content ->
                                 let
@@ -199,21 +199,21 @@ update msg model =
                                         |> updateBufferContent model.currentBufferIndex (Editor.buffer model.editor)
                                         |> insertBuffer (model.currentBufferIndex + 1) newbuf
                                         |> selectBuffer (model.currentBufferIndex + 1)
-                                    , Cmd.map FilerMsg c
+                                    , Cmd.map FileMenuMsg c
                                     )
                             Err err ->
                                 ( { model | filer = m}
-                                , Cmd.map FilerMsg c
+                                , Cmd.map FileMenuMsg c
                                 )
-                    Filer.SaveFileAs name ->
+                    FileMenu.SaveFileAs name ->
                         ( { model | filer = m  }
                               |> updateBufferName model.currentBufferIndex name
-                        , Cmd.map FilerMsg c
+                        , Cmd.map FileMenuMsg c
                         )
 
                     _ ->
                         ( { model | filer = m}
-                        , Cmd.map FilerMsg c
+                        , Cmd.map FileMenuMsg c
                         )
 
 
@@ -316,14 +316,14 @@ applicationMenu model =
         , case model.pane of
               NoPane ->
                   text ""
-              DebugPane ->
-                  Html.map DebuggerMsg (EditorDebugger.view model.editor model.debugger)
+              DebugMenuPane ->
+                  Html.map DebugMenuMsg (DebugMenu.view model.editor model.debugger)
               KeyboardPane ->
                   Html.map SWKeyboardMsg (SoftwareKeyboard.view model.swkeyboard)
-              StyleEditorPane ->
-                  Html.map StyleSetterMsg (StyleSetter.view model.style)
-              FilerPane ->
-                  Html.map FilerMsg (Filer.view model.filer)
+              StyleMenuPane ->
+                  Html.map StyleMenuMsg (StyleMenu.view model.style)
+              FileMenuPane ->
+                  Html.map FileMenuMsg (FileMenu.view model.filer)
               AboutPane ->
                   div [ style [ ("flex-grow", "2")
                               , ("min-height", "13em")
@@ -351,10 +351,10 @@ paneChanger model =
               , onClick <| ChangePane NoPane
               ]
               [text "x"]
-        , tab FilerPane "File"
-        , tab StyleEditorPane "Style"
+        , tab FileMenuPane "File"
+        , tab StyleMenuPane "Style"
         , tab KeyboardPane "Keyboard"
-        , tab DebugPane "Debug"
+        , tab DebugMenuPane "Debug"
         , tab AboutPane "About"
         ]
 

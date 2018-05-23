@@ -1,4 +1,4 @@
-module EditorDebugger exposing
+module DebugMenu exposing
     ( Model
     , Msg
     , init

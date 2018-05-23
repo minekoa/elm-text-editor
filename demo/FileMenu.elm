@@ -1,4 +1,4 @@
-module Filer exposing
+module FileMenu exposing
     ( Model
     , Msg(ReadFile, CreateNewBuffer, SaveFileAs)
     , init

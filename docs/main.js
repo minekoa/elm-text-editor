@@ -13133,7 +13133,7 @@ var _minekoa$elm_text_editor$TextEditor$view = function (model) {
 		});
 };
 
-var _minekoa$elm_text_editor$EditorDebugger$clipboardView = function (editorModel) {
+var _minekoa$elm_text_editor$DebugMenu$clipboardView = function (editorModel) {
 	return A2(
 		_elm_lang$html$Html$div,
 		{
@@ -13219,7 +13219,7 @@ var _minekoa$elm_text_editor$EditorDebugger$clipboardView = function (editorMode
 			}
 		});
 };
-var _minekoa$elm_text_editor$EditorDebugger$historyView = function (editorModel) {
+var _minekoa$elm_text_editor$DebugMenu$historyView = function (editorModel) {
 	return A2(
 		_elm_lang$html$Html$div,
 		{
@@ -13392,7 +13392,7 @@ var _minekoa$elm_text_editor$EditorDebugger$historyView = function (editorModel)
 			}
 		});
 };
-var _minekoa$elm_text_editor$EditorDebugger$update = F3(
+var _minekoa$elm_text_editor$DebugMenu$update = F3(
 	function (msg, editorModel, model) {
 		var _p1 = msg;
 		if (_p1.ctor === 'SelectSubMenu') {
@@ -13429,17 +13429,17 @@ var _minekoa$elm_text_editor$EditorDebugger$update = F3(
 			}
 		}
 	});
-var _minekoa$elm_text_editor$EditorDebugger$Model = function (a) {
+var _minekoa$elm_text_editor$DebugMenu$Model = function (a) {
 	return {selectedSubMenu: a};
 };
-var _minekoa$elm_text_editor$EditorDebugger$EventLog = {ctor: 'EventLog'};
-var _minekoa$elm_text_editor$EditorDebugger$Clipboard = {ctor: 'Clipboard'};
-var _minekoa$elm_text_editor$EditorDebugger$EditHistory = {ctor: 'EditHistory'};
-var _minekoa$elm_text_editor$EditorDebugger$init = {selectedSubMenu: _minekoa$elm_text_editor$EditorDebugger$EditHistory};
-var _minekoa$elm_text_editor$EditorDebugger$SetEventlogEnable = function (a) {
+var _minekoa$elm_text_editor$DebugMenu$EventLog = {ctor: 'EventLog'};
+var _minekoa$elm_text_editor$DebugMenu$Clipboard = {ctor: 'Clipboard'};
+var _minekoa$elm_text_editor$DebugMenu$EditHistory = {ctor: 'EditHistory'};
+var _minekoa$elm_text_editor$DebugMenu$init = {selectedSubMenu: _minekoa$elm_text_editor$DebugMenu$EditHistory};
+var _minekoa$elm_text_editor$DebugMenu$SetEventlogEnable = function (a) {
 	return {ctor: 'SetEventlogEnable', _0: a};
 };
-var _minekoa$elm_text_editor$EditorDebugger$eventlogView = function (editorModel) {
+var _minekoa$elm_text_editor$DebugMenu$eventlogView = function (editorModel) {
 	return A2(
 		_elm_lang$html$Html$div,
 		{
@@ -13477,7 +13477,7 @@ var _minekoa$elm_text_editor$EditorDebugger$eventlogView = function (editorModel
 							{
 								ctor: '::',
 								_0: _elm_lang$html$Html_Events$onClick(
-									_minekoa$elm_text_editor$EditorDebugger$SetEventlogEnable(
+									_minekoa$elm_text_editor$DebugMenu$SetEventlogEnable(
 										_elm_lang$core$Native_Utils.eq(editorModel.event_log, _elm_lang$core$Maybe$Nothing))),
 								_1: {
 									ctor: '::',
@@ -13566,7 +13566,7 @@ var _minekoa$elm_text_editor$EditorDebugger$eventlogView = function (editorModel
 			}
 		});
 };
-var _minekoa$elm_text_editor$EditorDebugger$menuPalette = F2(
+var _minekoa$elm_text_editor$DebugMenu$menuPalette = F2(
 	function (editorModel, model) {
 		var _p2 = model.selectedSubMenu;
 		switch (_p2.ctor) {
@@ -13580,7 +13580,7 @@ var _minekoa$elm_text_editor$EditorDebugger$menuPalette = F2(
 					},
 					{
 						ctor: '::',
-						_0: _minekoa$elm_text_editor$EditorDebugger$historyView(editorModel),
+						_0: _minekoa$elm_text_editor$DebugMenu$historyView(editorModel),
 						_1: {ctor: '[]'}
 					});
 			case 'Clipboard':
@@ -13593,7 +13593,7 @@ var _minekoa$elm_text_editor$EditorDebugger$menuPalette = F2(
 					},
 					{
 						ctor: '::',
-						_0: _minekoa$elm_text_editor$EditorDebugger$clipboardView(editorModel),
+						_0: _minekoa$elm_text_editor$DebugMenu$clipboardView(editorModel),
 						_1: {ctor: '[]'}
 					});
 			default:
@@ -13606,15 +13606,15 @@ var _minekoa$elm_text_editor$EditorDebugger$menuPalette = F2(
 					},
 					{
 						ctor: '::',
-						_0: _minekoa$elm_text_editor$EditorDebugger$eventlogView(editorModel),
+						_0: _minekoa$elm_text_editor$DebugMenu$eventlogView(editorModel),
 						_1: {ctor: '[]'}
 					});
 		}
 	});
-var _minekoa$elm_text_editor$EditorDebugger$SelectSubMenu = function (a) {
+var _minekoa$elm_text_editor$DebugMenu$SelectSubMenu = function (a) {
 	return {ctor: 'SelectSubMenu', _0: a};
 };
-var _minekoa$elm_text_editor$EditorDebugger$menuItemsView = function (model) {
+var _minekoa$elm_text_editor$DebugMenu$menuItemsView = function (model) {
 	return A2(
 		_elm_lang$html$Html$div,
 		{
@@ -13629,11 +13629,11 @@ var _minekoa$elm_text_editor$EditorDebugger$menuItemsView = function (model) {
 				{
 					ctor: '::',
 					_0: _elm_lang$html$Html_Events$onClick(
-						_minekoa$elm_text_editor$EditorDebugger$SelectSubMenu(_minekoa$elm_text_editor$EditorDebugger$EditHistory)),
+						_minekoa$elm_text_editor$DebugMenu$SelectSubMenu(_minekoa$elm_text_editor$DebugMenu$EditHistory)),
 					_1: {
 						ctor: '::',
 						_0: _elm_lang$html$Html_Attributes$class(
-							_elm_lang$core$Native_Utils.eq(model.selectedSubMenu, _minekoa$elm_text_editor$EditorDebugger$EditHistory) ? 'menu-item-active' : 'menu-item'),
+							_elm_lang$core$Native_Utils.eq(model.selectedSubMenu, _minekoa$elm_text_editor$DebugMenu$EditHistory) ? 'menu-item-active' : 'menu-item'),
 						_1: {ctor: '[]'}
 					}
 				},
@@ -13656,11 +13656,11 @@ var _minekoa$elm_text_editor$EditorDebugger$menuItemsView = function (model) {
 					{
 						ctor: '::',
 						_0: _elm_lang$html$Html_Events$onClick(
-							_minekoa$elm_text_editor$EditorDebugger$SelectSubMenu(_minekoa$elm_text_editor$EditorDebugger$Clipboard)),
+							_minekoa$elm_text_editor$DebugMenu$SelectSubMenu(_minekoa$elm_text_editor$DebugMenu$Clipboard)),
 						_1: {
 							ctor: '::',
 							_0: _elm_lang$html$Html_Attributes$class(
-								_elm_lang$core$Native_Utils.eq(model.selectedSubMenu, _minekoa$elm_text_editor$EditorDebugger$Clipboard) ? 'menu-item-active' : 'menu-item'),
+								_elm_lang$core$Native_Utils.eq(model.selectedSubMenu, _minekoa$elm_text_editor$DebugMenu$Clipboard) ? 'menu-item-active' : 'menu-item'),
 							_1: {ctor: '[]'}
 						}
 					},
@@ -13683,11 +13683,11 @@ var _minekoa$elm_text_editor$EditorDebugger$menuItemsView = function (model) {
 						{
 							ctor: '::',
 							_0: _elm_lang$html$Html_Events$onClick(
-								_minekoa$elm_text_editor$EditorDebugger$SelectSubMenu(_minekoa$elm_text_editor$EditorDebugger$EventLog)),
+								_minekoa$elm_text_editor$DebugMenu$SelectSubMenu(_minekoa$elm_text_editor$DebugMenu$EventLog)),
 							_1: {
 								ctor: '::',
 								_0: _elm_lang$html$Html_Attributes$class(
-									_elm_lang$core$Native_Utils.eq(model.selectedSubMenu, _minekoa$elm_text_editor$EditorDebugger$EventLog) ? 'menu-item-active' : 'menu-item'),
+									_elm_lang$core$Native_Utils.eq(model.selectedSubMenu, _minekoa$elm_text_editor$DebugMenu$EventLog) ? 'menu-item-active' : 'menu-item'),
 								_1: {ctor: '[]'}
 							}
 						},
@@ -13708,7 +13708,7 @@ var _minekoa$elm_text_editor$EditorDebugger$menuItemsView = function (model) {
 			}
 		});
 };
-var _minekoa$elm_text_editor$EditorDebugger$view = F2(
+var _minekoa$elm_text_editor$DebugMenu$view = F2(
 	function (editorModel, model) {
 		return A2(
 			_elm_lang$html$Html$div,
@@ -13732,10 +13732,10 @@ var _minekoa$elm_text_editor$EditorDebugger$view = F2(
 			},
 			{
 				ctor: '::',
-				_0: _minekoa$elm_text_editor$EditorDebugger$menuItemsView(model),
+				_0: _minekoa$elm_text_editor$DebugMenu$menuItemsView(model),
 				_1: {
 					ctor: '::',
-					_0: A2(_minekoa$elm_text_editor$EditorDebugger$menuPalette, editorModel, model),
+					_0: A2(_minekoa$elm_text_editor$DebugMenu$menuPalette, editorModel, model),
 					_1: {ctor: '[]'}
 				}
 			});
@@ -13964,20 +13964,20 @@ var _minekoa$elm_text_editor$FilerPorts$filer_saveFile = _elm_lang$core$Native_P
 		return [v._0, v._1];
 	});
 
-var _minekoa$elm_text_editor$Filer$Model = F3(
+var _minekoa$elm_text_editor$FileMenu$Model = F3(
 	function (a, b, c) {
 		return {selectedSubMenu: a, inDropZone: b, newFileName: c};
 	});
-var _minekoa$elm_text_editor$Filer$SaveAs = {ctor: 'SaveAs'};
-var _minekoa$elm_text_editor$Filer$Save = {ctor: 'Save'};
-var _minekoa$elm_text_editor$Filer$Load = {ctor: 'Load'};
-var _minekoa$elm_text_editor$Filer$New = {ctor: 'New'};
-var _minekoa$elm_text_editor$Filer$init = {selectedSubMenu: _minekoa$elm_text_editor$Filer$New, inDropZone: false, newFileName: ''};
-var _minekoa$elm_text_editor$Filer$SaveFileAs = function (a) {
+var _minekoa$elm_text_editor$FileMenu$SaveAs = {ctor: 'SaveAs'};
+var _minekoa$elm_text_editor$FileMenu$Save = {ctor: 'Save'};
+var _minekoa$elm_text_editor$FileMenu$Load = {ctor: 'Load'};
+var _minekoa$elm_text_editor$FileMenu$New = {ctor: 'New'};
+var _minekoa$elm_text_editor$FileMenu$init = {selectedSubMenu: _minekoa$elm_text_editor$FileMenu$New, inDropZone: false, newFileName: ''};
+var _minekoa$elm_text_editor$FileMenu$SaveFileAs = function (a) {
 	return {ctor: 'SaveFileAs', _0: a};
 };
-var _minekoa$elm_text_editor$Filer$SaveFile = {ctor: 'SaveFile'};
-var _minekoa$elm_text_editor$Filer$fileSaveView = function (model) {
+var _minekoa$elm_text_editor$FileMenu$SaveFile = {ctor: 'SaveFile'};
+var _minekoa$elm_text_editor$FileMenu$fileSaveView = function (model) {
 	return A2(
 		_elm_lang$html$Html$div,
 		{
@@ -13994,7 +13994,7 @@ var _minekoa$elm_text_editor$Filer$fileSaveView = function (model) {
 					_0: _elm_lang$html$Html_Attributes$class('file_input_label'),
 					_1: {
 						ctor: '::',
-						_0: _elm_lang$html$Html_Events$onClick(_minekoa$elm_text_editor$Filer$SaveFile),
+						_0: _elm_lang$html$Html_Events$onClick(_minekoa$elm_text_editor$FileMenu$SaveFile),
 						_1: {ctor: '[]'}
 					}
 				},
@@ -14006,10 +14006,10 @@ var _minekoa$elm_text_editor$Filer$fileSaveView = function (model) {
 			_1: {ctor: '[]'}
 		});
 };
-var _minekoa$elm_text_editor$Filer$ReadFile = function (a) {
+var _minekoa$elm_text_editor$FileMenu$ReadFile = function (a) {
 	return {ctor: 'ReadFile', _0: a};
 };
-var _minekoa$elm_text_editor$Filer$update = F3(
+var _minekoa$elm_text_editor$FileMenu$update = F3(
 	function (msg, _p0, model) {
 		var _p1 = _p0;
 		var _p4 = _p1._1;
@@ -14065,7 +14065,7 @@ var _minekoa$elm_text_editor$Filer$update = F3(
 							{inDropZone: false}),
 						_1: A2(
 							_elm_lang$core$Task$perform,
-							_minekoa$elm_text_editor$Filer$ReadFile,
+							_minekoa$elm_text_editor$FileMenu$ReadFile,
 							_elm_lang$core$Task$succeed(_p3._0))
 					};
 				} else {
@@ -14097,12 +14097,12 @@ var _minekoa$elm_text_editor$Filer$update = F3(
 				};
 		}
 	});
-var _minekoa$elm_text_editor$Filer$FilesDropped = function (a) {
+var _minekoa$elm_text_editor$FileMenu$FilesDropped = function (a) {
 	return {ctor: 'FilesDropped', _0: a};
 };
-var _minekoa$elm_text_editor$Filer$DropZoneLeaved = {ctor: 'DropZoneLeaved'};
-var _minekoa$elm_text_editor$Filer$DropZoneEntered = {ctor: 'DropZoneEntered'};
-var _minekoa$elm_text_editor$Filer$fileLoadView = function (model) {
+var _minekoa$elm_text_editor$FileMenu$DropZoneLeaved = {ctor: 'DropZoneLeaved'};
+var _minekoa$elm_text_editor$FileMenu$DropZoneEntered = {ctor: 'DropZoneEntered'};
+var _minekoa$elm_text_editor$FileMenu$fileLoadView = function (model) {
 	return A2(
 		_elm_lang$html$Html$div,
 		A2(
@@ -14124,9 +14124,9 @@ var _minekoa$elm_text_editor$Filer$fileLoadView = function (model) {
 			_norpan$elm_file_reader$FileReader$dropZone(
 				{
 					dataFormat: _norpan$elm_file_reader$FileReader$Text('utf-8'),
-					enterMsg: _minekoa$elm_text_editor$Filer$DropZoneEntered,
-					leaveMsg: _minekoa$elm_text_editor$Filer$DropZoneLeaved,
-					filesMsg: _minekoa$elm_text_editor$Filer$FilesDropped
+					enterMsg: _minekoa$elm_text_editor$FileMenu$DropZoneEntered,
+					leaveMsg: _minekoa$elm_text_editor$FileMenu$DropZoneLeaved,
+					filesMsg: _minekoa$elm_text_editor$FileMenu$FilesDropped
 				})),
 		{
 			ctor: '::',
@@ -14174,7 +14174,7 @@ var _minekoa$elm_text_editor$Filer$fileLoadView = function (model) {
 													A2(
 														_norpan$elm_file_reader$FileReader$fileInput,
 														_norpan$elm_file_reader$FileReader$Text('utf-8'),
-														_minekoa$elm_text_editor$Filer$ReadFile),
+														_minekoa$elm_text_editor$FileMenu$ReadFile),
 													{ctor: '[]'}),
 												_1: {ctor: '[]'}
 											}
@@ -14188,13 +14188,13 @@ var _minekoa$elm_text_editor$Filer$fileLoadView = function (model) {
 			_1: {ctor: '[]'}
 		});
 };
-var _minekoa$elm_text_editor$Filer$CreateNewBuffer = function (a) {
+var _minekoa$elm_text_editor$FileMenu$CreateNewBuffer = function (a) {
 	return {ctor: 'CreateNewBuffer', _0: a};
 };
-var _minekoa$elm_text_editor$Filer$InputFileName = function (a) {
+var _minekoa$elm_text_editor$FileMenu$InputFileName = function (a) {
 	return {ctor: 'InputFileName', _0: a};
 };
-var _minekoa$elm_text_editor$Filer$fileNewView = function (model) {
+var _minekoa$elm_text_editor$FileMenu$fileNewView = function (model) {
 	return A2(
 		_elm_lang$html$Html$div,
 		{
@@ -14230,7 +14230,7 @@ var _minekoa$elm_text_editor$Filer$fileNewView = function (model) {
 												_0: _elm_lang$html$Html_Attributes$value(model.newFileName),
 												_1: {
 													ctor: '::',
-													_0: _elm_lang$html$Html_Events$onInput(_minekoa$elm_text_editor$Filer$InputFileName),
+													_0: _elm_lang$html$Html_Events$onInput(_minekoa$elm_text_editor$FileMenu$InputFileName),
 													_1: {
 														ctor: '::',
 														_0: _elm_lang$html$Html_Attributes$style(
@@ -14281,7 +14281,7 @@ var _minekoa$elm_text_editor$Filer$fileNewView = function (model) {
 										_1: {
 											ctor: '::',
 											_0: _elm_lang$html$Html_Events$onClick(
-												_minekoa$elm_text_editor$Filer$CreateNewBuffer(model.newFileName)),
+												_minekoa$elm_text_editor$FileMenu$CreateNewBuffer(model.newFileName)),
 											_1: {ctor: '[]'}
 										}
 									},
@@ -14298,7 +14298,7 @@ var _minekoa$elm_text_editor$Filer$fileNewView = function (model) {
 			_1: {ctor: '[]'}
 		});
 };
-var _minekoa$elm_text_editor$Filer$fileSaveAsView = function (model) {
+var _minekoa$elm_text_editor$FileMenu$fileSaveAsView = function (model) {
 	return A2(
 		_elm_lang$html$Html$div,
 		{
@@ -14334,7 +14334,7 @@ var _minekoa$elm_text_editor$Filer$fileSaveAsView = function (model) {
 												_0: _elm_lang$html$Html_Attributes$value(model.newFileName),
 												_1: {
 													ctor: '::',
-													_0: _elm_lang$html$Html_Events$onInput(_minekoa$elm_text_editor$Filer$InputFileName),
+													_0: _elm_lang$html$Html_Events$onInput(_minekoa$elm_text_editor$FileMenu$InputFileName),
 													_1: {
 														ctor: '::',
 														_0: _elm_lang$html$Html_Attributes$style(
@@ -14385,7 +14385,7 @@ var _minekoa$elm_text_editor$Filer$fileSaveAsView = function (model) {
 										_1: {
 											ctor: '::',
 											_0: _elm_lang$html$Html_Events$onClick(
-												_minekoa$elm_text_editor$Filer$SaveFileAs(model.newFileName)),
+												_minekoa$elm_text_editor$FileMenu$SaveFileAs(model.newFileName)),
 											_1: {ctor: '[]'}
 										}
 									},
@@ -14402,7 +14402,7 @@ var _minekoa$elm_text_editor$Filer$fileSaveAsView = function (model) {
 			_1: {ctor: '[]'}
 		});
 };
-var _minekoa$elm_text_editor$Filer$menuPalette = function (model) {
+var _minekoa$elm_text_editor$FileMenu$menuPalette = function (model) {
 	var _p5 = model.selectedSubMenu;
 	switch (_p5.ctor) {
 		case 'New':
@@ -14415,7 +14415,7 @@ var _minekoa$elm_text_editor$Filer$menuPalette = function (model) {
 				},
 				{
 					ctor: '::',
-					_0: _minekoa$elm_text_editor$Filer$fileNewView(model),
+					_0: _minekoa$elm_text_editor$FileMenu$fileNewView(model),
 					_1: {ctor: '[]'}
 				});
 		case 'Load':
@@ -14428,7 +14428,7 @@ var _minekoa$elm_text_editor$Filer$menuPalette = function (model) {
 				},
 				{
 					ctor: '::',
-					_0: _minekoa$elm_text_editor$Filer$fileLoadView(model),
+					_0: _minekoa$elm_text_editor$FileMenu$fileLoadView(model),
 					_1: {ctor: '[]'}
 				});
 		case 'Save':
@@ -14441,7 +14441,7 @@ var _minekoa$elm_text_editor$Filer$menuPalette = function (model) {
 				},
 				{
 					ctor: '::',
-					_0: _minekoa$elm_text_editor$Filer$fileSaveView(model),
+					_0: _minekoa$elm_text_editor$FileMenu$fileSaveView(model),
 					_1: {ctor: '[]'}
 				});
 		default:
@@ -14454,15 +14454,15 @@ var _minekoa$elm_text_editor$Filer$menuPalette = function (model) {
 				},
 				{
 					ctor: '::',
-					_0: _minekoa$elm_text_editor$Filer$fileSaveAsView(model),
+					_0: _minekoa$elm_text_editor$FileMenu$fileSaveAsView(model),
 					_1: {ctor: '[]'}
 				});
 	}
 };
-var _minekoa$elm_text_editor$Filer$TouchSubMenuSelect = function (a) {
+var _minekoa$elm_text_editor$FileMenu$TouchSubMenuSelect = function (a) {
 	return {ctor: 'TouchSubMenuSelect', _0: a};
 };
-var _minekoa$elm_text_editor$Filer$menuItemsView = function (model) {
+var _minekoa$elm_text_editor$FileMenu$menuItemsView = function (model) {
 	return A2(
 		_elm_lang$html$Html$div,
 		{
@@ -14477,11 +14477,11 @@ var _minekoa$elm_text_editor$Filer$menuItemsView = function (model) {
 				{
 					ctor: '::',
 					_0: _elm_lang$html$Html_Events$onClick(
-						_minekoa$elm_text_editor$Filer$TouchSubMenuSelect(_minekoa$elm_text_editor$Filer$New)),
+						_minekoa$elm_text_editor$FileMenu$TouchSubMenuSelect(_minekoa$elm_text_editor$FileMenu$New)),
 					_1: {
 						ctor: '::',
 						_0: _elm_lang$html$Html_Attributes$class(
-							_elm_lang$core$Native_Utils.eq(model.selectedSubMenu, _minekoa$elm_text_editor$Filer$New) ? 'menu-item-active' : 'menu-item'),
+							_elm_lang$core$Native_Utils.eq(model.selectedSubMenu, _minekoa$elm_text_editor$FileMenu$New) ? 'menu-item-active' : 'menu-item'),
 						_1: {ctor: '[]'}
 					}
 				},
@@ -14504,11 +14504,11 @@ var _minekoa$elm_text_editor$Filer$menuItemsView = function (model) {
 					{
 						ctor: '::',
 						_0: _elm_lang$html$Html_Events$onClick(
-							_minekoa$elm_text_editor$Filer$TouchSubMenuSelect(_minekoa$elm_text_editor$Filer$Load)),
+							_minekoa$elm_text_editor$FileMenu$TouchSubMenuSelect(_minekoa$elm_text_editor$FileMenu$Load)),
 						_1: {
 							ctor: '::',
 							_0: _elm_lang$html$Html_Attributes$class(
-								_elm_lang$core$Native_Utils.eq(model.selectedSubMenu, _minekoa$elm_text_editor$Filer$Load) ? 'menu-item-active' : 'menu-item'),
+								_elm_lang$core$Native_Utils.eq(model.selectedSubMenu, _minekoa$elm_text_editor$FileMenu$Load) ? 'menu-item-active' : 'menu-item'),
 							_1: {ctor: '[]'}
 						}
 					},
@@ -14531,11 +14531,11 @@ var _minekoa$elm_text_editor$Filer$menuItemsView = function (model) {
 						{
 							ctor: '::',
 							_0: _elm_lang$html$Html_Events$onClick(
-								_minekoa$elm_text_editor$Filer$TouchSubMenuSelect(_minekoa$elm_text_editor$Filer$Save)),
+								_minekoa$elm_text_editor$FileMenu$TouchSubMenuSelect(_minekoa$elm_text_editor$FileMenu$Save)),
 							_1: {
 								ctor: '::',
 								_0: _elm_lang$html$Html_Attributes$class(
-									_elm_lang$core$Native_Utils.eq(model.selectedSubMenu, _minekoa$elm_text_editor$Filer$Save) ? 'menu-item-active' : 'menu-item'),
+									_elm_lang$core$Native_Utils.eq(model.selectedSubMenu, _minekoa$elm_text_editor$FileMenu$Save) ? 'menu-item-active' : 'menu-item'),
 								_1: {ctor: '[]'}
 							}
 						},
@@ -14558,11 +14558,11 @@ var _minekoa$elm_text_editor$Filer$menuItemsView = function (model) {
 							{
 								ctor: '::',
 								_0: _elm_lang$html$Html_Events$onClick(
-									_minekoa$elm_text_editor$Filer$TouchSubMenuSelect(_minekoa$elm_text_editor$Filer$SaveAs)),
+									_minekoa$elm_text_editor$FileMenu$TouchSubMenuSelect(_minekoa$elm_text_editor$FileMenu$SaveAs)),
 								_1: {
 									ctor: '::',
 									_0: _elm_lang$html$Html_Attributes$class(
-										_elm_lang$core$Native_Utils.eq(model.selectedSubMenu, _minekoa$elm_text_editor$Filer$SaveAs) ? 'menu-item-active' : 'menu-item'),
+										_elm_lang$core$Native_Utils.eq(model.selectedSubMenu, _minekoa$elm_text_editor$FileMenu$SaveAs) ? 'menu-item-active' : 'menu-item'),
 									_1: {ctor: '[]'}
 								}
 							},
@@ -14584,7 +14584,7 @@ var _minekoa$elm_text_editor$Filer$menuItemsView = function (model) {
 			}
 		});
 };
-var _minekoa$elm_text_editor$Filer$view = function (model) {
+var _minekoa$elm_text_editor$FileMenu$view = function (model) {
 	return A2(
 		_elm_lang$html$Html$div,
 		{
@@ -14611,10 +14611,10 @@ var _minekoa$elm_text_editor$Filer$view = function (model) {
 		},
 		{
 			ctor: '::',
-			_0: _minekoa$elm_text_editor$Filer$menuItemsView(model),
+			_0: _minekoa$elm_text_editor$FileMenu$menuItemsView(model),
 			_1: {
 				ctor: '::',
-				_0: _minekoa$elm_text_editor$Filer$menuPalette(model),
+				_0: _minekoa$elm_text_editor$FileMenu$menuPalette(model),
 				_1: {ctor: '[]'}
 			}
 		});
@@ -17033,7 +17033,7 @@ var _minekoa$elm_text_editor$SoftwareKeyboard$view = function (model) {
 		});
 };
 
-var _minekoa$elm_text_editor$StyleSetter$selectList = F3(
+var _minekoa$elm_text_editor$StyleMenu$selectList = F3(
 	function (idx, values, tagger) {
 		return A2(
 			_elm_lang$html$Html$select,
@@ -17082,7 +17082,7 @@ var _minekoa$elm_text_editor$StyleSetter$selectList = F3(
 				},
 				values));
 	});
-var _minekoa$elm_text_editor$StyleSetter$fontSizeSelector = F2(
+var _minekoa$elm_text_editor$StyleMenu$fontSizeSelector = F2(
 	function (tagger, fontsizeList) {
 		return A2(
 			_elm_lang$html$Html$div,
@@ -17149,7 +17149,7 @@ var _minekoa$elm_text_editor$StyleSetter$fontSizeSelector = F2(
 				},
 				fontsizeList.list));
 	});
-var _minekoa$elm_text_editor$StyleSetter$fontFamilySelector = F2(
+var _minekoa$elm_text_editor$StyleMenu$fontFamilySelector = F2(
 	function (tagger, fontList) {
 		return A2(
 			_elm_lang$html$Html$div,
@@ -17224,7 +17224,7 @@ var _minekoa$elm_text_editor$StyleSetter$fontFamilySelector = F2(
 				},
 				fontList.list));
 	});
-var _minekoa$elm_text_editor$StyleSetter$colorPalette = F2(
+var _minekoa$elm_text_editor$StyleMenu$colorPalette = F2(
 	function (tagger, colorList) {
 		return A2(
 			_elm_lang$html$Html$div,
@@ -17335,7 +17335,7 @@ var _minekoa$elm_text_editor$StyleSetter$colorPalette = F2(
 				},
 				colorList.list));
 	});
-var _minekoa$elm_text_editor$StyleSetter$initFontColor = {
+var _minekoa$elm_text_editor$StyleMenu$initFontColor = {
 	value: 'inherit',
 	list: {
 		ctor: '::',
@@ -17379,7 +17379,7 @@ var _minekoa$elm_text_editor$StyleSetter$initFontColor = {
 		}
 	}
 };
-var _minekoa$elm_text_editor$StyleSetter$initFontFamily = {
+var _minekoa$elm_text_editor$StyleMenu$initFontFamily = {
 	value: 'inherit',
 	list: {
 		ctor: '::',
@@ -17407,7 +17407,7 @@ var _minekoa$elm_text_editor$StyleSetter$initFontFamily = {
 		}
 	}
 };
-var _minekoa$elm_text_editor$StyleSetter$initFgColor = {
+var _minekoa$elm_text_editor$StyleMenu$initFgColor = {
 	value: 'inherit',
 	list: {
 		ctor: '::',
@@ -17463,7 +17463,7 @@ var _minekoa$elm_text_editor$StyleSetter$initFgColor = {
 		}
 	}
 };
-var _minekoa$elm_text_editor$StyleSetter$initBgColor = {
+var _minekoa$elm_text_editor$StyleMenu$initBgColor = {
 	value: 'inherit',
 	list: {
 		ctor: '::',
@@ -17519,7 +17519,7 @@ var _minekoa$elm_text_editor$StyleSetter$initBgColor = {
 		}
 	}
 };
-var _minekoa$elm_text_editor$StyleSetter$targetName = function (target) {
+var _minekoa$elm_text_editor$StyleMenu$targetName = function (target) {
 	var _p0 = target;
 	switch (_p0.ctor) {
 		case 'EditColor':
@@ -17530,31 +17530,31 @@ var _minekoa$elm_text_editor$StyleSetter$targetName = function (target) {
 			return _p0._0;
 	}
 };
-var _minekoa$elm_text_editor$StyleSetter$Model = F5(
+var _minekoa$elm_text_editor$StyleMenu$Model = F5(
 	function (a, b, c, d, e) {
 		return {bgColor: a, fgColor: b, fontFamily: c, fontSize: d, editTarget: e};
 	});
-var _minekoa$elm_text_editor$StyleSetter$SelectableList = F2(
+var _minekoa$elm_text_editor$StyleMenu$SelectableList = F2(
 	function (a, b) {
 		return {value: a, list: b};
 	});
-var _minekoa$elm_text_editor$StyleSetter$EditFontSize = F3(
+var _minekoa$elm_text_editor$StyleMenu$EditFontSize = F3(
 	function (a, b, c) {
 		return {ctor: 'EditFontSize', _0: a, _1: b, _2: c};
 	});
-var _minekoa$elm_text_editor$StyleSetter$EditFontFamily = F3(
+var _minekoa$elm_text_editor$StyleMenu$EditFontFamily = F3(
 	function (a, b, c) {
 		return {ctor: 'EditFontFamily', _0: a, _1: b, _2: c};
 	});
-var _minekoa$elm_text_editor$StyleSetter$EditColor = F3(
+var _minekoa$elm_text_editor$StyleMenu$EditColor = F3(
 	function (a, b, c) {
 		return {ctor: 'EditColor', _0: a, _1: b, _2: c};
 	});
-var _minekoa$elm_text_editor$StyleSetter$TouchFontFalily = {ctor: 'TouchFontFalily'};
-var _minekoa$elm_text_editor$StyleSetter$TouchFontSize = {ctor: 'TouchFontSize'};
-var _minekoa$elm_text_editor$StyleSetter$TouchForegroundColor = {ctor: 'TouchForegroundColor'};
-var _minekoa$elm_text_editor$StyleSetter$TouchBackgroundColor = {ctor: 'TouchBackgroundColor'};
-var _minekoa$elm_text_editor$StyleSetter$view = function (model) {
+var _minekoa$elm_text_editor$StyleMenu$TouchFontFalily = {ctor: 'TouchFontFalily'};
+var _minekoa$elm_text_editor$StyleMenu$TouchFontSize = {ctor: 'TouchFontSize'};
+var _minekoa$elm_text_editor$StyleMenu$TouchForegroundColor = {ctor: 'TouchForegroundColor'};
+var _minekoa$elm_text_editor$StyleMenu$TouchBackgroundColor = {ctor: 'TouchBackgroundColor'};
+var _minekoa$elm_text_editor$StyleMenu$view = function (model) {
 	return A2(
 		_elm_lang$html$Html$div,
 		{
@@ -17594,12 +17594,12 @@ var _minekoa$elm_text_editor$StyleSetter$view = function (model) {
 						_elm_lang$html$Html$div,
 						{
 							ctor: '::',
-							_0: _elm_lang$html$Html_Events$onClick(_minekoa$elm_text_editor$StyleSetter$TouchBackgroundColor),
+							_0: _elm_lang$html$Html_Events$onClick(_minekoa$elm_text_editor$StyleMenu$TouchBackgroundColor),
 							_1: {
 								ctor: '::',
 								_0: _elm_lang$html$Html_Attributes$class(
 									_elm_lang$core$Native_Utils.eq(
-										_minekoa$elm_text_editor$StyleSetter$targetName(model.editTarget),
+										_minekoa$elm_text_editor$StyleMenu$targetName(model.editTarget),
 										'bg-color') ? 'menu-item-active' : 'menu-item'),
 								_1: {ctor: '[]'}
 							}
@@ -17633,12 +17633,12 @@ var _minekoa$elm_text_editor$StyleSetter$view = function (model) {
 							_elm_lang$html$Html$div,
 							{
 								ctor: '::',
-								_0: _elm_lang$html$Html_Events$onClick(_minekoa$elm_text_editor$StyleSetter$TouchForegroundColor),
+								_0: _elm_lang$html$Html_Events$onClick(_minekoa$elm_text_editor$StyleMenu$TouchForegroundColor),
 								_1: {
 									ctor: '::',
 									_0: _elm_lang$html$Html_Attributes$class(
 										_elm_lang$core$Native_Utils.eq(
-											_minekoa$elm_text_editor$StyleSetter$targetName(model.editTarget),
+											_minekoa$elm_text_editor$StyleMenu$targetName(model.editTarget),
 											'fg-color') ? 'menu-item-active' : 'menu-item'),
 									_1: {ctor: '[]'}
 								}
@@ -17672,12 +17672,12 @@ var _minekoa$elm_text_editor$StyleSetter$view = function (model) {
 								_elm_lang$html$Html$div,
 								{
 									ctor: '::',
-									_0: _elm_lang$html$Html_Events$onClick(_minekoa$elm_text_editor$StyleSetter$TouchFontFalily),
+									_0: _elm_lang$html$Html_Events$onClick(_minekoa$elm_text_editor$StyleMenu$TouchFontFalily),
 									_1: {
 										ctor: '::',
 										_0: _elm_lang$html$Html_Attributes$class(
 											_elm_lang$core$Native_Utils.eq(
-												_minekoa$elm_text_editor$StyleSetter$targetName(model.editTarget),
+												_minekoa$elm_text_editor$StyleMenu$targetName(model.editTarget),
 												'font-family') ? 'menu-item-active' : 'menu-item'),
 										_1: {ctor: '[]'}
 									}
@@ -17711,12 +17711,12 @@ var _minekoa$elm_text_editor$StyleSetter$view = function (model) {
 									_elm_lang$html$Html$div,
 									{
 										ctor: '::',
-										_0: _elm_lang$html$Html_Events$onClick(_minekoa$elm_text_editor$StyleSetter$TouchFontSize),
+										_0: _elm_lang$html$Html_Events$onClick(_minekoa$elm_text_editor$StyleMenu$TouchFontSize),
 										_1: {
 											ctor: '::',
 											_0: _elm_lang$html$Html_Attributes$class(
 												_elm_lang$core$Native_Utils.eq(
-													_minekoa$elm_text_editor$StyleSetter$targetName(model.editTarget),
+													_minekoa$elm_text_editor$StyleMenu$targetName(model.editTarget),
 													'font-size') ? 'menu-item-active' : 'menu-item'),
 											_1: {ctor: '[]'}
 										}
@@ -17755,37 +17755,37 @@ var _minekoa$elm_text_editor$StyleSetter$view = function (model) {
 					var _p1 = model.editTarget;
 					switch (_p1.ctor) {
 						case 'EditColor':
-							return A2(_minekoa$elm_text_editor$StyleSetter$colorPalette, _p1._1, _p1._2);
+							return A2(_minekoa$elm_text_editor$StyleMenu$colorPalette, _p1._1, _p1._2);
 						case 'EditFontFamily':
-							return A2(_minekoa$elm_text_editor$StyleSetter$fontFamilySelector, _p1._1, _p1._2);
+							return A2(_minekoa$elm_text_editor$StyleMenu$fontFamilySelector, _p1._1, _p1._2);
 						default:
-							return A2(_minekoa$elm_text_editor$StyleSetter$fontSizeSelector, _p1._1, _p1._2);
+							return A2(_minekoa$elm_text_editor$StyleMenu$fontSizeSelector, _p1._1, _p1._2);
 					}
 				}(),
 				_1: {ctor: '[]'}
 			}
 		});
 };
-var _minekoa$elm_text_editor$StyleSetter$ChangeFontSize = function (a) {
+var _minekoa$elm_text_editor$StyleMenu$ChangeFontSize = function (a) {
 	return {ctor: 'ChangeFontSize', _0: a};
 };
-var _minekoa$elm_text_editor$StyleSetter$ChangeFontFamily = function (a) {
+var _minekoa$elm_text_editor$StyleMenu$ChangeFontFamily = function (a) {
 	return {ctor: 'ChangeFontFamily', _0: a};
 };
-var _minekoa$elm_text_editor$StyleSetter$ChangeFGColor = function (a) {
+var _minekoa$elm_text_editor$StyleMenu$ChangeFGColor = function (a) {
 	return {ctor: 'ChangeFGColor', _0: a};
 };
-var _minekoa$elm_text_editor$StyleSetter$ChangeBGColor = function (a) {
+var _minekoa$elm_text_editor$StyleMenu$ChangeBGColor = function (a) {
 	return {ctor: 'ChangeBGColor', _0: a};
 };
-var _minekoa$elm_text_editor$StyleSetter$init = A5(
-	_minekoa$elm_text_editor$StyleSetter$Model,
-	_minekoa$elm_text_editor$StyleSetter$initBgColor,
-	_minekoa$elm_text_editor$StyleSetter$initFgColor,
-	_minekoa$elm_text_editor$StyleSetter$initFontFamily,
-	_minekoa$elm_text_editor$StyleSetter$initFontColor,
-	A3(_minekoa$elm_text_editor$StyleSetter$EditColor, 'bg-color', _minekoa$elm_text_editor$StyleSetter$ChangeBGColor, _minekoa$elm_text_editor$StyleSetter$initBgColor));
-var _minekoa$elm_text_editor$StyleSetter$update = F2(
+var _minekoa$elm_text_editor$StyleMenu$init = A5(
+	_minekoa$elm_text_editor$StyleMenu$Model,
+	_minekoa$elm_text_editor$StyleMenu$initBgColor,
+	_minekoa$elm_text_editor$StyleMenu$initFgColor,
+	_minekoa$elm_text_editor$StyleMenu$initFontFamily,
+	_minekoa$elm_text_editor$StyleMenu$initFontColor,
+	A3(_minekoa$elm_text_editor$StyleMenu$EditColor, 'bg-color', _minekoa$elm_text_editor$StyleMenu$ChangeBGColor, _minekoa$elm_text_editor$StyleMenu$initBgColor));
+var _minekoa$elm_text_editor$StyleMenu$update = F2(
 	function (msg, model) {
 		var _p2 = msg;
 		switch (_p2.ctor) {
@@ -17801,9 +17801,9 @@ var _minekoa$elm_text_editor$StyleSetter$update = F2(
 								bgColor,
 								{value: _p3}),
 							editTarget: A3(
-								_minekoa$elm_text_editor$StyleSetter$EditColor,
+								_minekoa$elm_text_editor$StyleMenu$EditColor,
 								'bg-color',
-								_minekoa$elm_text_editor$StyleSetter$ChangeBGColor,
+								_minekoa$elm_text_editor$StyleMenu$ChangeBGColor,
 								_elm_lang$core$Native_Utils.update(
 									bgColor,
 									{value: _p3}))
@@ -17822,9 +17822,9 @@ var _minekoa$elm_text_editor$StyleSetter$update = F2(
 								fgColor,
 								{value: _p4}),
 							editTarget: A3(
-								_minekoa$elm_text_editor$StyleSetter$EditColor,
+								_minekoa$elm_text_editor$StyleMenu$EditColor,
 								'fg-color',
-								_minekoa$elm_text_editor$StyleSetter$ChangeFGColor,
+								_minekoa$elm_text_editor$StyleMenu$ChangeFGColor,
 								_elm_lang$core$Native_Utils.update(
 									fgColor,
 									{value: _p4}))
@@ -17843,9 +17843,9 @@ var _minekoa$elm_text_editor$StyleSetter$update = F2(
 								fontFamily,
 								{value: _p5}),
 							editTarget: A3(
-								_minekoa$elm_text_editor$StyleSetter$EditFontFamily,
+								_minekoa$elm_text_editor$StyleMenu$EditFontFamily,
 								'font-family',
-								_minekoa$elm_text_editor$StyleSetter$ChangeFontFamily,
+								_minekoa$elm_text_editor$StyleMenu$ChangeFontFamily,
 								_elm_lang$core$Native_Utils.update(
 									fontFamily,
 									{value: _p5}))
@@ -17864,9 +17864,9 @@ var _minekoa$elm_text_editor$StyleSetter$update = F2(
 								fontSize,
 								{value: _p6}),
 							editTarget: A3(
-								_minekoa$elm_text_editor$StyleSetter$EditFontSize,
+								_minekoa$elm_text_editor$StyleMenu$EditFontSize,
 								'font-size',
-								_minekoa$elm_text_editor$StyleSetter$ChangeFontSize,
+								_minekoa$elm_text_editor$StyleMenu$ChangeFontSize,
 								_elm_lang$core$Native_Utils.update(
 									fontSize,
 									{value: _p6}))
@@ -17879,7 +17879,7 @@ var _minekoa$elm_text_editor$StyleSetter$update = F2(
 					_0: _elm_lang$core$Native_Utils.update(
 						model,
 						{
-							editTarget: A3(_minekoa$elm_text_editor$StyleSetter$EditColor, 'bg-color', _minekoa$elm_text_editor$StyleSetter$ChangeBGColor, model.bgColor)
+							editTarget: A3(_minekoa$elm_text_editor$StyleMenu$EditColor, 'bg-color', _minekoa$elm_text_editor$StyleMenu$ChangeBGColor, model.bgColor)
 						}),
 					_1: _elm_lang$core$Platform_Cmd$none
 				};
@@ -17889,7 +17889,7 @@ var _minekoa$elm_text_editor$StyleSetter$update = F2(
 					_0: _elm_lang$core$Native_Utils.update(
 						model,
 						{
-							editTarget: A3(_minekoa$elm_text_editor$StyleSetter$EditColor, 'fg-color', _minekoa$elm_text_editor$StyleSetter$ChangeFGColor, model.fgColor)
+							editTarget: A3(_minekoa$elm_text_editor$StyleMenu$EditColor, 'fg-color', _minekoa$elm_text_editor$StyleMenu$ChangeFGColor, model.fgColor)
 						}),
 					_1: _elm_lang$core$Platform_Cmd$none
 				};
@@ -17899,7 +17899,7 @@ var _minekoa$elm_text_editor$StyleSetter$update = F2(
 					_0: _elm_lang$core$Native_Utils.update(
 						model,
 						{
-							editTarget: A3(_minekoa$elm_text_editor$StyleSetter$EditFontFamily, 'font-family', _minekoa$elm_text_editor$StyleSetter$ChangeFontFamily, model.fontFamily)
+							editTarget: A3(_minekoa$elm_text_editor$StyleMenu$EditFontFamily, 'font-family', _minekoa$elm_text_editor$StyleMenu$ChangeFontFamily, model.fontFamily)
 						}),
 					_1: _elm_lang$core$Platform_Cmd$none
 				};
@@ -17909,7 +17909,7 @@ var _minekoa$elm_text_editor$StyleSetter$update = F2(
 					_0: _elm_lang$core$Native_Utils.update(
 						model,
 						{
-							editTarget: A3(_minekoa$elm_text_editor$StyleSetter$EditFontSize, 'font-size', _minekoa$elm_text_editor$StyleSetter$ChangeFontSize, model.fontSize)
+							editTarget: A3(_minekoa$elm_text_editor$StyleMenu$EditFontSize, 'font-size', _minekoa$elm_text_editor$StyleMenu$ChangeFontSize, model.fontSize)
 						}),
 					_1: _elm_lang$core$Platform_Cmd$none
 				};
@@ -18185,22 +18185,22 @@ var _minekoa$elm_text_editor$Main$Buffer = F2(
 		return {name: a, buffer: b};
 	});
 var _minekoa$elm_text_editor$Main$AboutPane = {ctor: 'AboutPane'};
-var _minekoa$elm_text_editor$Main$FilerPane = {ctor: 'FilerPane'};
-var _minekoa$elm_text_editor$Main$StyleEditorPane = {ctor: 'StyleEditorPane'};
+var _minekoa$elm_text_editor$Main$FileMenuPane = {ctor: 'FileMenuPane'};
+var _minekoa$elm_text_editor$Main$StyleMenuPane = {ctor: 'StyleMenuPane'};
 var _minekoa$elm_text_editor$Main$KeyboardPane = {ctor: 'KeyboardPane'};
-var _minekoa$elm_text_editor$Main$DebugPane = {ctor: 'DebugPane'};
+var _minekoa$elm_text_editor$Main$DebugMenuPane = {ctor: 'DebugMenuPane'};
 var _minekoa$elm_text_editor$Main$NoPane = {ctor: 'NoPane'};
-var _minekoa$elm_text_editor$Main$FilerMsg = function (a) {
-	return {ctor: 'FilerMsg', _0: a};
+var _minekoa$elm_text_editor$Main$FileMenuMsg = function (a) {
+	return {ctor: 'FileMenuMsg', _0: a};
 };
-var _minekoa$elm_text_editor$Main$StyleSetterMsg = function (a) {
-	return {ctor: 'StyleSetterMsg', _0: a};
+var _minekoa$elm_text_editor$Main$StyleMenuMsg = function (a) {
+	return {ctor: 'StyleMenuMsg', _0: a};
 };
 var _minekoa$elm_text_editor$Main$SWKeyboardMsg = function (a) {
 	return {ctor: 'SWKeyboardMsg', _0: a};
 };
-var _minekoa$elm_text_editor$Main$DebuggerMsg = function (a) {
-	return {ctor: 'DebuggerMsg', _0: a};
+var _minekoa$elm_text_editor$Main$DebugMenuMsg = function (a) {
+	return {ctor: 'DebugMenuMsg', _0: a};
 };
 var _minekoa$elm_text_editor$Main$ChangePane = function (a) {
 	return {ctor: 'ChangePane', _0: a};
@@ -18256,16 +18256,16 @@ var _minekoa$elm_text_editor$Main$paneChanger = function (model) {
 				}),
 			_1: {
 				ctor: '::',
-				_0: A2(tab, _minekoa$elm_text_editor$Main$FilerPane, 'File'),
+				_0: A2(tab, _minekoa$elm_text_editor$Main$FileMenuPane, 'File'),
 				_1: {
 					ctor: '::',
-					_0: A2(tab, _minekoa$elm_text_editor$Main$StyleEditorPane, 'Style'),
+					_0: A2(tab, _minekoa$elm_text_editor$Main$StyleMenuPane, 'Style'),
 					_1: {
 						ctor: '::',
 						_0: A2(tab, _minekoa$elm_text_editor$Main$KeyboardPane, 'Keyboard'),
 						_1: {
 							ctor: '::',
-							_0: A2(tab, _minekoa$elm_text_editor$Main$DebugPane, 'Debug'),
+							_0: A2(tab, _minekoa$elm_text_editor$Main$DebugMenuPane, 'Debug'),
 							_1: {
 								ctor: '::',
 								_0: A2(tab, _minekoa$elm_text_editor$Main$AboutPane, 'About'),
@@ -18295,26 +18295,26 @@ var _minekoa$elm_text_editor$Main$applicationMenu = function (model) {
 					switch (_p4.ctor) {
 						case 'NoPane':
 							return _elm_lang$html$Html$text('');
-						case 'DebugPane':
+						case 'DebugMenuPane':
 							return A2(
 								_elm_lang$html$Html$map,
-								_minekoa$elm_text_editor$Main$DebuggerMsg,
-								A2(_minekoa$elm_text_editor$EditorDebugger$view, model.editor, model.$debugger));
+								_minekoa$elm_text_editor$Main$DebugMenuMsg,
+								A2(_minekoa$elm_text_editor$DebugMenu$view, model.editor, model.$debugger));
 						case 'KeyboardPane':
 							return A2(
 								_elm_lang$html$Html$map,
 								_minekoa$elm_text_editor$Main$SWKeyboardMsg,
 								_minekoa$elm_text_editor$SoftwareKeyboard$view(model.swkeyboard));
-						case 'StyleEditorPane':
+						case 'StyleMenuPane':
 							return A2(
 								_elm_lang$html$Html$map,
-								_minekoa$elm_text_editor$Main$StyleSetterMsg,
-								_minekoa$elm_text_editor$StyleSetter$view(model.style));
-						case 'FilerPane':
+								_minekoa$elm_text_editor$Main$StyleMenuMsg,
+								_minekoa$elm_text_editor$StyleMenu$view(model.style));
+						case 'FileMenuPane':
 							return A2(
 								_elm_lang$html$Html$map,
-								_minekoa$elm_text_editor$Main$FilerMsg,
-								_minekoa$elm_text_editor$Filer$view(model.filer));
+								_minekoa$elm_text_editor$Main$FileMenuMsg,
+								_minekoa$elm_text_editor$FileMenu$view(model.filer));
 						default:
 							return A2(
 								_elm_lang$html$Html$div,
@@ -18472,10 +18472,10 @@ var _minekoa$elm_text_editor$Main$init = function () {
 			0,
 			buf.name,
 			_minekoa$elm_text_editor$Main$NoPane,
-			_minekoa$elm_text_editor$EditorDebugger$init,
+			_minekoa$elm_text_editor$DebugMenu$init,
 			_minekoa$elm_text_editor$SoftwareKeyboard$init,
-			_minekoa$elm_text_editor$StyleSetter$init,
-			_minekoa$elm_text_editor$Filer$init),
+			_minekoa$elm_text_editor$StyleMenu$init,
+			_minekoa$elm_text_editor$FileMenu$init),
 		_1: A2(_elm_lang$core$Platform_Cmd$map, _minekoa$elm_text_editor$Main$EditorMsg, bc)
 	};
 }();
@@ -18538,8 +18538,8 @@ var _minekoa$elm_text_editor$Main$update = F2(
 						{editor: m}),
 					_1: A2(_elm_lang$core$Platform_Cmd$map, _minekoa$elm_text_editor$Main$EditorMsg, c)
 				};
-			case 'DebuggerMsg':
-				var _p11 = A3(_minekoa$elm_text_editor$EditorDebugger$update, _p8._0, model.editor, model.$debugger);
+			case 'DebugMenuMsg':
+				var _p11 = A3(_minekoa$elm_text_editor$DebugMenu$update, _p8._0, model.editor, model.$debugger);
 				var em = _p11._0;
 				var dm = _p11._1;
 				var dc = _p11._2;
@@ -18548,7 +18548,7 @@ var _minekoa$elm_text_editor$Main$update = F2(
 					_0: _elm_lang$core$Native_Utils.update(
 						model,
 						{editor: em, $debugger: dm}),
-					_1: A2(_elm_lang$core$Platform_Cmd$map, _minekoa$elm_text_editor$Main$DebuggerMsg, dc)
+					_1: A2(_elm_lang$core$Platform_Cmd$map, _minekoa$elm_text_editor$Main$DebugMenuMsg, dc)
 				};
 			case 'SWKeyboardMsg':
 				var _p12 = A3(_minekoa$elm_text_editor$SoftwareKeyboard$update, _p8._0, model.swkeyboard, model.editor);
@@ -18579,8 +18579,8 @@ var _minekoa$elm_text_editor$Main$update = F2(
 							}
 						})
 				};
-			case 'StyleSetterMsg':
-				var _p13 = A2(_minekoa$elm_text_editor$StyleSetter$update, _p8._0, model.style);
+			case 'StyleMenuMsg':
+				var _p13 = A2(_minekoa$elm_text_editor$StyleMenu$update, _p8._0, model.style);
 				var m = _p13._0;
 				var c = _p13._1;
 				return {
@@ -18588,7 +18588,7 @@ var _minekoa$elm_text_editor$Main$update = F2(
 					_0: _elm_lang$core$Native_Utils.update(
 						model,
 						{style: m}),
-					_1: A2(_elm_lang$core$Platform_Cmd$map, _minekoa$elm_text_editor$Main$StyleSetterMsg, c)
+					_1: A2(_elm_lang$core$Platform_Cmd$map, _minekoa$elm_text_editor$Main$StyleMenuMsg, c)
 				};
 			default:
 				var _p18 = _p8._0;
@@ -18597,7 +18597,7 @@ var _minekoa$elm_text_editor$Main$update = F2(
 					'',
 					A2(_minekoa$elm_text_editor$Main$bufferName, model.currentBufferIndex, model));
 				var _p14 = A3(
-					_minekoa$elm_text_editor$Filer$update,
+					_minekoa$elm_text_editor$FileMenu$update,
 					_p18,
 					{
 						ctor: '_Tuple2',
@@ -18626,7 +18626,7 @@ var _minekoa$elm_text_editor$Main$update = F2(
 										_elm_lang$core$Native_Utils.update(
 											model,
 											{filer: m})))),
-							_1: A2(_elm_lang$core$Platform_Cmd$map, _minekoa$elm_text_editor$Main$FilerMsg, c)
+							_1: A2(_elm_lang$core$Platform_Cmd$map, _minekoa$elm_text_editor$Main$FileMenuMsg, c)
 						};
 					case 'ReadFile':
 						var _p17 = _p15._0;
@@ -18649,7 +18649,7 @@ var _minekoa$elm_text_editor$Main$update = F2(
 											_elm_lang$core$Native_Utils.update(
 												model,
 												{filer: m})))),
-								_1: A2(_elm_lang$core$Platform_Cmd$map, _minekoa$elm_text_editor$Main$FilerMsg, c)
+								_1: A2(_elm_lang$core$Platform_Cmd$map, _minekoa$elm_text_editor$Main$FileMenuMsg, c)
 							};
 						} else {
 							return {
@@ -18657,7 +18657,7 @@ var _minekoa$elm_text_editor$Main$update = F2(
 								_0: _elm_lang$core$Native_Utils.update(
 									model,
 									{filer: m}),
-								_1: A2(_elm_lang$core$Platform_Cmd$map, _minekoa$elm_text_editor$Main$FilerMsg, c)
+								_1: A2(_elm_lang$core$Platform_Cmd$map, _minekoa$elm_text_editor$Main$FileMenuMsg, c)
 							};
 						}
 					case 'SaveFileAs':
@@ -18670,7 +18670,7 @@ var _minekoa$elm_text_editor$Main$update = F2(
 								_elm_lang$core$Native_Utils.update(
 									model,
 									{filer: m})),
-							_1: A2(_elm_lang$core$Platform_Cmd$map, _minekoa$elm_text_editor$Main$FilerMsg, c)
+							_1: A2(_elm_lang$core$Platform_Cmd$map, _minekoa$elm_text_editor$Main$FileMenuMsg, c)
 						};
 					default:
 						return {
@@ -18678,7 +18678,7 @@ var _minekoa$elm_text_editor$Main$update = F2(
 							_0: _elm_lang$core$Native_Utils.update(
 								model,
 								{filer: m}),
-							_1: A2(_elm_lang$core$Platform_Cmd$map, _minekoa$elm_text_editor$Main$FilerMsg, c)
+							_1: A2(_elm_lang$core$Platform_Cmd$map, _minekoa$elm_text_editor$Main$FileMenuMsg, c)
 						};
 				}
 		}

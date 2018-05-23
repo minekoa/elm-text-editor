@@ -1,4 +1,4 @@
-module StyleSetter exposing
+module StyleMenu exposing
     ( Model
     , init
     , Msg
