@@ -9,6 +9,7 @@ module DebugMenu exposing
 import Html exposing (..)
 import Html.Attributes exposing (..)
 import Html.Events exposing (..)
+import Date
 
 import TextEditor as Editor
 import TextEditor.Buffer as Buffer
@@ -155,6 +156,42 @@ eventlogView editorModel =
                       , ("color", "gray")
                       ]
               ]
-              ( List.map (λ ln -> span [ style [("margin-right","0.2em")]] [text ln]) (Maybe.withDefault [] editorModel.event_log) )
+              ( List.map (λ ev -> div [ style [("margin-right","0.2em")]] [text <| (dateToString ev.date) ++ " | " ++ (String.pad 16 ' ' ev.name) ++ ":" ++ ev.data]) (Maybe.withDefault [] editorModel.event_log) )
         ]
 
+dateToString : Date.Date -> String
+dateToString date =
+    [ Date.year date |> toString |> String.padLeft 4 '0'
+    , "-"
+    , Date.month date |> monthToInt |> toString |> String.padLeft 2 '0'
+    , "-"
+    , Date.day date |> toString |> String.padLeft 2 '0'
+    , " "
+    , Date.hour date |> toString |> String.padLeft 2 '0'
+    , ":"
+    , Date.minute date |> toString |> String.padLeft 2 '0'
+    , ":"
+    , Date.second date |> toString |> String.padLeft 2 '0'
+    , "."
+    , Date.millisecond date |> toString |> String.padRight 3 '0'
+    ] |> String.concat
+
+
+
+monthToInt : Date.Month -> Int
+monthToInt month =
+    case month of
+        Date.Jan -> 1
+        Date.Feb -> 2
+        Date.Mar -> 3
+        Date.Apr -> 4
+        Date.May -> 5
+        Date.Jun -> 6
+        Date.Jul -> 7
+        Date.Aug -> 8
+        Date.Sep -> 9
+        Date.Oct -> 10
+        Date.Nov -> 11
+        Date.Dec -> 12
+
+    

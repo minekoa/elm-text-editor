@@ -7,6 +7,7 @@ module TextEditor exposing ( Model
 
                            , buffer
                            , setBuffer
+                           , EventInfo
                            )
 
 import Html exposing (..)
@@ -16,6 +17,7 @@ import Json.Decode as Json
 import Json.Encode
 import Mouse
 import Task exposing (Task)
+import Date
 
 import TextEditor.Buffer as Buffer
 import TextEditor.Core as Core exposing (..)
@@ -40,7 +42,13 @@ type alias Model =
     , keymap : List KeyBind.KeyBind
 
     -- for debug
-    , event_log : Maybe (List String)
+    , event_log : Maybe (List EventInfo)
+    }
+
+type alias EventInfo =
+    { date : Date.Date
+    , name : String
+    , data : String
     }
 
 init : String -> List KeyBind.KeyBind -> String -> (Model, Cmd Msg)
@@ -92,6 +100,7 @@ type Msg
     | DragStart MouseEvent
     | DragAt Mouse.Position
     | DragEnd Mouse.Position
+    | Logging String String Date.Date
 
 update : Msg -> Model -> (Model, Cmd Msg)
 update msg model =
@@ -106,19 +115,19 @@ update msg model =
         Pasted s ->
             updateMap model (Commands.paste s model.core)
                 |> Tuple.mapFirst (\m -> {m|drag=False})
-                |> Tuple.mapFirst (eventLog "pasted" s)
+                |> logging "pasted" s
                 |> Tuple.mapSecond (\c -> Cmd.batch [c, Cmd.map CoreMsg (Core.doFocus model.core)] )
 
         Copied s ->
             updateMap model (Commands.copy model.core)
                 |> Tuple.mapFirst (\m -> {m|drag=False})
-                |> Tuple.mapFirst (eventLog "copied" s)
+                |> logging "copied" s
                 |> Tuple.mapSecond (\c -> Cmd.batch [c, Cmd.map CoreMsg (Core.doFocus model.core)] )
 
         Cutted s ->
             updateMap model (Commands.cut model.core)
                 |> Tuple.mapFirst (\m -> {m|drag=False})
-                |> Tuple.mapFirst (eventLog "cutted" s)
+                |> logging "cutted" s
                 |> Tuple.mapSecond (\c -> Cmd.batch [c, Cmd.map CoreMsg (Core.doFocus model.core)] )
 
         -- View Operation Event
@@ -161,9 +170,9 @@ update msg model =
 
         ClickScreen ->
             ( model
-                |> eventLog "setfocus" ""
             , Cmd.map CoreMsg (Core.doFocus model.core)
             )
+                |> logging "setfocus" ""
 
         DragStart mouseEvent  ->
             let
@@ -180,17 +189,19 @@ update msg model =
                         ( { model | core = cm
                           , drag = True
                           }
-                            |> eventLog "dragstart" (printDragInfo xy (row, col) )
                             |> blinkBlock
                         , Cmd.batch [ Cmd.map CoreMsg cc ]
                         )
+                            |> logging "dragstart" (printDragInfo xy (row, col))
+
                     RightMouse ->
                         if model.core.buffer.selection == Nothing then
                             ( { model | core = cm }
-                                |> eventLog "moveto" (printDragInfo xy (row, col) )
                                 |> blinkBlock
                             , Cmd.batch [ Cmd.map CoreMsg cc ]
                             )
+                                |> logging "moveto" (printDragInfo xy (row, col) )
+                                                    
                         else
                             (model, Cmd.none)
                     _ ->
@@ -203,28 +214,41 @@ update msg model =
                 (cm, cc) =  Commands.selectAt (row, col) model.core
             in
                 ( { model | core = cm }
-                  |> eventLog "dragat" (printDragInfo xy (row, col) )
                   |> blinkBlock
                 , Cmd.batch [ Cmd.map CoreMsg cc
                             ]
                 )
+                    |> logging "dragat" (printDragInfo xy (row, col) )
 
         DragEnd xy ->
             ( {model | drag = False }
-                  |> eventLog "dragend" ""
             , Cmd.none
             )
+                |> logging "dragend" ""
+
+        Logging name data date ->
+            let
+                new_event = { name = name
+                            , data = data
+                            , date = date
+                            }
+            in
+                ( { model | event_log = Maybe.andThen (\logs -> Just (new_event :: logs)) model.event_log }
+                , Cmd.none
+                )
+
 
 input: String -> Model -> (Model, Cmd Msg)
 input s model =
     case model.enableComposer of
         True ->
             ( model
-              |> eventLog "input (ignored)" s
-            , Cmd.none )
+            , Cmd.none
+            )
+                |> logging "input (ignored)" s
         False ->
             updateMap model (Commands.insert (String.right 1 s) model.core)
-                |> Tuple.mapFirst (eventLog "input" (String.right 1 s))
+                |> logging "input" (String.right 1 s)
 
 
 keyDown : KeyboardEvent -> Model -> (Model, Cmd Msg)
@@ -232,12 +256,13 @@ keyDown e model =
     case KeyBind.find (e.ctrlKey, e.altKey, e.shiftKey, e.keyCode) model.keymap of
         Just editorcmd ->
             updateMap model (editorcmd model.core)
-                |> Tuple.mapFirst (eventLog "keydown" (keyboarEvent_toString e))
+                |> logging "keydown" (keyboarEvent_toString e)
         Nothing ->
             ( model
-                |> eventLog "keydown" (keyboarEvent_toString e)
             , Cmd.none
             )
+                |> logging "keydown" (keyboarEvent_toString e)
+
 
 keyPress : Int -> Model -> (Model, Cmd Msg)
 keyPress code model =
@@ -247,9 +272,10 @@ keyPress code model =
     --        firefox ::   (null)    -> compositionend s -> input s
     ( model
         |> composerDisable
-        |> eventLog "keypress" (toString code)
     , Cmd.none
     )
+        |> logging "keypress" (toString code)
+
 
 compositionStart : String -> Model -> (Model, Cmd Msg)
 compositionStart data model =
@@ -258,18 +284,19 @@ compositionStart data model =
           | core = Core.compositionStart model.core
       }
       |> composerEnable
-      |> eventLog "compositoinstart" data
     , Cmd.none
     )
+      |> logging "compositoinstart" data
+
 
 compositionUpdate : String -> Model -> (Model, Cmd Msg)
 compositionUpdate data model =
     ( { model
           | core = Core.compositionUpdate data model.core
       }
-      |> eventLog "compositionupdate" data
     , Cmd.none
     )
+      |> logging "compositionupdate" data
 
 compositionEnd : String -> Model -> (Model, Cmd Msg)
 compositionEnd data model =
@@ -282,9 +309,10 @@ compositionEnd data model =
         ( { model
               | core = m
           }
-          |> eventLog "compositionend" data
         , Cmd.map CoreMsg c
         )
+          |> logging "compositionend" data
+
 
 posToRowColumn : Core.Model -> {x : Int, y : Int } -> (Int, Int)
 posToRowColumn model xy =
@@ -322,12 +350,18 @@ printDragInfo xy (row, col) =
 -- control state update
 ------------------------------------------------------------
 
-eventLog : String -> String -> Model -> Model
-eventLog ev data model =
-    let
-        s = "(" ++ ev ++ ":" ++ data ++ ") "
-    in
-        { model | event_log = Maybe.andThen (\logs -> Just (s :: logs)) model.event_log }
+logging : String -> String -> (Model, Cmd Msg) -> (Model, Cmd Msg)
+logging ev_name ev_data (model, cmd_msg) =
+    case model.event_log of
+        Just log ->
+            ( model
+            , Cmd.batch [ cmd_msg
+                        , Task.perform (Logging ev_name ev_data) Date.now
+                        ]
+            )
+        Nothing ->
+            (model, cmd_msg)
+
 
 blinkBlock : Model -> Model
 blinkBlock model =
@@ -753,7 +787,6 @@ subscriptions model =
         ++ case model.drag of
                True -> [Mouse.moves DragAt, Mouse.ups DragEnd]
                False -> []
-
 
 ------------------------------------------------------------
 -- html events / attributes (extra)
