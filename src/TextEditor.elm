@@ -593,7 +593,6 @@ tapControlLayer model =
                 , ("opacity", "0")
                 ]
         , contenteditable True
-        , onClick ClickScreen
         , onPasted Pasted
         , onCopied Copied
         , onCutted Cutted
@@ -784,8 +783,9 @@ cursorView model =
 subscriptions : Model -> Sub Msg
 subscriptions model =
     Sub.batch <| [ Sub.map CoreMsg  (Core.subscriptions model.core) ]
+        ++ [ Mouse.ups DragEnd ]
         ++ case model.drag of
-               True -> [Mouse.moves DragAt, Mouse.ups DragEnd]
+               True -> [ Mouse.moves DragAt ]
                False -> []
 
 ------------------------------------------------------------

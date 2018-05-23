@@ -12892,22 +12892,25 @@ var _minekoa$elm_text_editor$TextEditor$subscriptions = function (model) {
 					_minekoa$elm_text_editor$TextEditor_Core$subscriptions(model.core)),
 				_1: {ctor: '[]'}
 			},
-			function () {
-				var _p32 = model.drag;
-				if (_p32 === true) {
-					return {
-						ctor: '::',
-						_0: _elm_lang$mouse$Mouse$moves(_minekoa$elm_text_editor$TextEditor$DragAt),
-						_1: {
+			A2(
+				_elm_lang$core$Basics_ops['++'],
+				{
+					ctor: '::',
+					_0: _elm_lang$mouse$Mouse$ups(_minekoa$elm_text_editor$TextEditor$DragEnd),
+					_1: {ctor: '[]'}
+				},
+				function () {
+					var _p32 = model.drag;
+					if (_p32 === true) {
+						return {
 							ctor: '::',
-							_0: _elm_lang$mouse$Mouse$ups(_minekoa$elm_text_editor$TextEditor$DragEnd),
+							_0: _elm_lang$mouse$Mouse$moves(_minekoa$elm_text_editor$TextEditor$DragAt),
 							_1: {ctor: '[]'}
-						}
-					};
-				} else {
-					return {ctor: '[]'};
-				}
-			}()));
+						};
+					} else {
+						return {ctor: '[]'};
+					}
+				}())));
 };
 var _minekoa$elm_text_editor$TextEditor$X2Mouse = {ctor: 'X2Mouse'};
 var _minekoa$elm_text_editor$TextEditor$X1Mouse = {ctor: 'X1Mouse'};
@@ -12993,25 +12996,21 @@ var _minekoa$elm_text_editor$TextEditor$tapControlLayer = function (model) {
 					_0: _elm_lang$html$Html_Attributes$contenteditable(true),
 					_1: {
 						ctor: '::',
-						_0: _elm_lang$html$Html_Events$onClick(_minekoa$elm_text_editor$TextEditor$ClickScreen),
+						_0: _minekoa$elm_text_editor$TextEditor$onPasted(_minekoa$elm_text_editor$TextEditor$Pasted),
 						_1: {
 							ctor: '::',
-							_0: _minekoa$elm_text_editor$TextEditor$onPasted(_minekoa$elm_text_editor$TextEditor$Pasted),
+							_0: _minekoa$elm_text_editor$TextEditor$onCopied(_minekoa$elm_text_editor$TextEditor$Copied),
 							_1: {
 								ctor: '::',
-								_0: _minekoa$elm_text_editor$TextEditor$onCopied(_minekoa$elm_text_editor$TextEditor$Copied),
+								_0: _minekoa$elm_text_editor$TextEditor$onCutted(_minekoa$elm_text_editor$TextEditor$Cutted),
 								_1: {
 									ctor: '::',
-									_0: _minekoa$elm_text_editor$TextEditor$onCutted(_minekoa$elm_text_editor$TextEditor$Cutted),
+									_0: _minekoa$elm_text_editor$TextEditor$onMouseDown(_minekoa$elm_text_editor$TextEditor$DragStart),
 									_1: {
 										ctor: '::',
-										_0: _minekoa$elm_text_editor$TextEditor$onMouseDown(_minekoa$elm_text_editor$TextEditor$DragStart),
-										_1: {
-											ctor: '::',
-											_0: _minekoa$elm_text_editor$TextEditor$selecteddata(
-												_minekoa$elm_text_editor$TextEditor_Buffer$selectedString(model.buffer)),
-											_1: {ctor: '[]'}
-										}
+										_0: _minekoa$elm_text_editor$TextEditor$selecteddata(
+											_minekoa$elm_text_editor$TextEditor_Buffer$selectedString(model.buffer)),
+										_1: {ctor: '[]'}
 									}
 								}
 							}
