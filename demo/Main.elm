@@ -64,6 +64,7 @@ init =
         content = ""
         buf = makeBuffer "*scratch*" content
         (bm, bc) = Editor.init "editor-sample1" (KeyBind.basic ++ KeyBind.gates ++ KeyBind.emacsLike) content
+        (smm, smc) = StyleMenu.init
     in
         ( Model bm
               [ buf ]
@@ -72,9 +73,11 @@ init =
               NoPane
               DebugMenu.init
               SoftwareKeyboard.init
-              StyleMenu.init
+              smm
               FileMenu.init
-        , Cmd.map EditorMsg bc
+        , Cmd.batch [ Cmd.map EditorMsg bc
+                    , Cmd.map StyleMenuMsg smc
+                    ]
         )
 
 
@@ -279,7 +282,9 @@ removeBuffer i model =
 
 subscriptions : Model -> Sub Msg
 subscriptions model =
-    Sub.batch [ Sub.map EditorMsg  (Editor.subscriptions model.editor) ]
+    Sub.batch [ Sub.map EditorMsg  (Editor.subscriptions model.editor)
+              , Sub.map StyleMenuMsg (StyleMenu.subscriptions model.style)
+              ]
 
 
 ------------------------------------------------------------

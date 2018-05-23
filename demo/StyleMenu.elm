@@ -3,6 +3,7 @@ module StyleMenu exposing
     , init
     , Msg
     , update
+    , subscriptions
     , view
     )
 
@@ -10,6 +11,8 @@ import Html exposing (..)
 import Html.Attributes exposing (..)
 import Html.Events exposing (..)
 import Json.Decode as Json
+
+import WebStrage
 
 type alias Model =
     { bgColor : SelectableList
@@ -37,14 +40,21 @@ targetName target =
         EditFontFamily s _ _ -> s
         EditFontSize s _ _ -> s
 
-init: Model
+init: (Model , Cmd Msg)
 init =
-    Model
-    initBgColor
-    initFgColor
-    initFontFamily
-    initFontColor
-    (EditColor "bg-color" ChangeBGColor initBgColor)
+    ( Model
+          initBgColor
+          initFgColor
+          initFontFamily
+          initFontColor
+          (EditColor "bg-color" ChangeBGColor initBgColor)
+    , Cmd.batch [ WebStrage.localStrage_getItem "bg-color"
+                , WebStrage.localStrage_getItem "fg-color"
+                , WebStrage.localStrage_getItem "font-family"
+                , WebStrage.localStrage_getItem "font-size"
+                ]
+    )
+
 
 initBgColor : SelectableList
 initBgColor = { value = "inherit", list = ["inherit", "black", "white", "linen", "dimgray", "whitesmoke", "midnightblue", "darkolivegreen", "aquamarine", "beige", "mediumvioletred", "darkslategray", "lavender"] }
@@ -59,6 +69,10 @@ initFontColor : SelectableList
 initFontColor = { value = "inherit", list = ["inherit", "0.5em", "1em", "1.2em", "1.5em", "2em", "3em", "5em", "7em", "10em"] }
 
 
+selectValue : String -> SelectableList -> SelectableList
+selectValue s m =
+    { m | value = s }
+
 type Msg
     = ChangeBGColor String
     | ChangeFGColor String
@@ -68,11 +82,26 @@ type Msg
     | TouchForegroundColor
     | TouchFontSize
     | TouchFontFalily
+    | LoadSetting (String, Maybe String)
 
 
 update : Msg -> Model -> (Model, Cmd Msg)
 update msg model =
     case msg of
+        LoadSetting (key, maybe_value) ->
+            ( case maybe_value of
+                  Just v ->
+                      (case key of
+                          "bg-color"    -> { model | bgColor    = selectValue v model.bgColor }
+                          "fg-color"    -> { model | fgColor    = selectValue v model.fgColor }
+                          "font-family" -> { model | fontFamily = selectValue v model.fontFamily }
+                          "font-size"   -> { model | fontSize   = selectValue v model.fontSize }
+                          _ -> model
+                      )
+                  Nothing -> model
+            , Cmd.none
+            )
+
         ChangeBGColor s ->
             let
                 bgColor = model.bgColor
@@ -81,7 +110,7 @@ update msg model =
                       | bgColor    = { bgColor | value = s }
                       , editTarget = EditColor "bg-color" ChangeBGColor { bgColor | value = s }
                   }
-                , Cmd.none
+                , WebStrage.localStrage_setItem ("bg-color", s)
                 )
         ChangeFGColor s ->
             let
@@ -91,7 +120,7 @@ update msg model =
                       | fgColor    = { fgColor | value = s }
                       , editTarget = EditColor "fg-color" ChangeFGColor { fgColor | value = s }
                   }
-                , Cmd.none
+                , WebStrage.localStrage_setItem ("fg-color", s)
                 )
         ChangeFontFamily s ->
             let
@@ -101,7 +130,7 @@ update msg model =
                       | fontFamily = { fontFamily | value = s }
                       , editTarget = EditFontFamily "font-family" ChangeFontFamily { fontFamily | value = s }
                   }
-                , Cmd.none
+                , WebStrage.localStrage_setItem ("font-family", s)
                 )
         ChangeFontSize s ->
             let
@@ -111,7 +140,7 @@ update msg model =
                       | fontSize = { fontSize | value = s }
                       , editTarget = EditFontSize "font-size" ChangeFontSize { fontSize | value = s }
                   }
-                , Cmd.none
+                , WebStrage.localStrage_setItem ("font-size", s)
                 )
 
         TouchBackgroundColor ->
@@ -139,6 +168,22 @@ update msg model =
             , Cmd.none
             )
 
+
+
+
+------------------------------------------------------------
+-- Subscriptions
+------------------------------------------------------------
+
+subscriptions : Model -> Sub Msg
+subscriptions model =
+    Sub.batch [ WebStrage.localStrage_getItemEnded LoadSetting
+              ]
+
+
+------------------------------------------------------------
+-- View
+------------------------------------------------------------
 
 
 view : Model -> Html Msg

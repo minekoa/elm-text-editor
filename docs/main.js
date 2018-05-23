@@ -17270,6 +17270,76 @@ var _minekoa$elm_text_editor$SoftwareKeyboard$view = function (model) {
 		});
 };
 
+var _minekoa$elm_text_editor$WebStrage$localStrage_setItem = _elm_lang$core$Native_Platform.outgoingPort(
+	'localStrage_setItem',
+	function (v) {
+		return [v._0, v._1];
+	});
+var _minekoa$elm_text_editor$WebStrage$localStrage_setItemEnded = _elm_lang$core$Native_Platform.incomingPort(
+	'localStrage_setItemEnded',
+	A2(
+		_elm_lang$core$Json_Decode$andThen,
+		function (x0) {
+			return A2(
+				_elm_lang$core$Json_Decode$andThen,
+				function (x1) {
+					return _elm_lang$core$Json_Decode$succeed(
+						{ctor: '_Tuple2', _0: x0, _1: x1});
+				},
+				A2(_elm_lang$core$Json_Decode$index, 1, _elm_lang$core$Json_Decode$bool));
+		},
+		A2(_elm_lang$core$Json_Decode$index, 0, _elm_lang$core$Json_Decode$string)));
+var _minekoa$elm_text_editor$WebStrage$localStrage_getItem = _elm_lang$core$Native_Platform.outgoingPort(
+	'localStrage_getItem',
+	function (v) {
+		return v;
+	});
+var _minekoa$elm_text_editor$WebStrage$localStrage_getItemEnded = _elm_lang$core$Native_Platform.incomingPort(
+	'localStrage_getItemEnded',
+	A2(
+		_elm_lang$core$Json_Decode$andThen,
+		function (x0) {
+			return A2(
+				_elm_lang$core$Json_Decode$andThen,
+				function (x1) {
+					return _elm_lang$core$Json_Decode$succeed(
+						{ctor: '_Tuple2', _0: x0, _1: x1});
+				},
+				A2(
+					_elm_lang$core$Json_Decode$index,
+					1,
+					_elm_lang$core$Json_Decode$oneOf(
+						{
+							ctor: '::',
+							_0: _elm_lang$core$Json_Decode$null(_elm_lang$core$Maybe$Nothing),
+							_1: {
+								ctor: '::',
+								_0: A2(_elm_lang$core$Json_Decode$map, _elm_lang$core$Maybe$Just, _elm_lang$core$Json_Decode$string),
+								_1: {ctor: '[]'}
+							}
+						})));
+		},
+		A2(_elm_lang$core$Json_Decode$index, 0, _elm_lang$core$Json_Decode$string)));
+var _minekoa$elm_text_editor$WebStrage$localStrage_removeItem = _elm_lang$core$Native_Platform.outgoingPort(
+	'localStrage_removeItem',
+	function (v) {
+		return v;
+	});
+var _minekoa$elm_text_editor$WebStrage$localStrage_removeItemEnded = _elm_lang$core$Native_Platform.incomingPort(
+	'localStrage_removeItemEnded',
+	A2(
+		_elm_lang$core$Json_Decode$andThen,
+		function (x0) {
+			return A2(
+				_elm_lang$core$Json_Decode$andThen,
+				function (x1) {
+					return _elm_lang$core$Json_Decode$succeed(
+						{ctor: '_Tuple2', _0: x0, _1: x1});
+				},
+				A2(_elm_lang$core$Json_Decode$index, 1, _elm_lang$core$Json_Decode$bool));
+		},
+		A2(_elm_lang$core$Json_Decode$index, 0, _elm_lang$core$Json_Decode$string)));
+
 var _minekoa$elm_text_editor$StyleMenu$selectList = F3(
 	function (idx, values, tagger) {
 		return A2(
@@ -17572,6 +17642,12 @@ var _minekoa$elm_text_editor$StyleMenu$colorPalette = F2(
 				},
 				colorList.list));
 	});
+var _minekoa$elm_text_editor$StyleMenu$selectValue = F2(
+	function (s, m) {
+		return _elm_lang$core$Native_Utils.update(
+			m,
+			{value: s});
+	});
 var _minekoa$elm_text_editor$StyleMenu$initFontColor = {
 	value: 'inherit',
 	list: {
@@ -17787,6 +17863,17 @@ var _minekoa$elm_text_editor$StyleMenu$EditColor = F3(
 	function (a, b, c) {
 		return {ctor: 'EditColor', _0: a, _1: b, _2: c};
 	});
+var _minekoa$elm_text_editor$StyleMenu$LoadSetting = function (a) {
+	return {ctor: 'LoadSetting', _0: a};
+};
+var _minekoa$elm_text_editor$StyleMenu$subscriptions = function (model) {
+	return _elm_lang$core$Platform_Sub$batch(
+		{
+			ctor: '::',
+			_0: _minekoa$elm_text_editor$WebStrage$localStrage_getItemEnded(_minekoa$elm_text_editor$StyleMenu$LoadSetting),
+			_1: {ctor: '[]'}
+		});
+};
 var _minekoa$elm_text_editor$StyleMenu$TouchFontFalily = {ctor: 'TouchFontFalily'};
 var _minekoa$elm_text_editor$StyleMenu$TouchFontSize = {ctor: 'TouchFontSize'};
 var _minekoa$elm_text_editor$StyleMenu$TouchForegroundColor = {ctor: 'TouchForegroundColor'};
@@ -18015,19 +18102,82 @@ var _minekoa$elm_text_editor$StyleMenu$ChangeFGColor = function (a) {
 var _minekoa$elm_text_editor$StyleMenu$ChangeBGColor = function (a) {
 	return {ctor: 'ChangeBGColor', _0: a};
 };
-var _minekoa$elm_text_editor$StyleMenu$init = A5(
-	_minekoa$elm_text_editor$StyleMenu$Model,
-	_minekoa$elm_text_editor$StyleMenu$initBgColor,
-	_minekoa$elm_text_editor$StyleMenu$initFgColor,
-	_minekoa$elm_text_editor$StyleMenu$initFontFamily,
-	_minekoa$elm_text_editor$StyleMenu$initFontColor,
-	A3(_minekoa$elm_text_editor$StyleMenu$EditColor, 'bg-color', _minekoa$elm_text_editor$StyleMenu$ChangeBGColor, _minekoa$elm_text_editor$StyleMenu$initBgColor));
+var _minekoa$elm_text_editor$StyleMenu$init = {
+	ctor: '_Tuple2',
+	_0: A5(
+		_minekoa$elm_text_editor$StyleMenu$Model,
+		_minekoa$elm_text_editor$StyleMenu$initBgColor,
+		_minekoa$elm_text_editor$StyleMenu$initFgColor,
+		_minekoa$elm_text_editor$StyleMenu$initFontFamily,
+		_minekoa$elm_text_editor$StyleMenu$initFontColor,
+		A3(_minekoa$elm_text_editor$StyleMenu$EditColor, 'bg-color', _minekoa$elm_text_editor$StyleMenu$ChangeBGColor, _minekoa$elm_text_editor$StyleMenu$initBgColor)),
+	_1: _elm_lang$core$Platform_Cmd$batch(
+		{
+			ctor: '::',
+			_0: _minekoa$elm_text_editor$WebStrage$localStrage_getItem('bg-color'),
+			_1: {
+				ctor: '::',
+				_0: _minekoa$elm_text_editor$WebStrage$localStrage_getItem('fg-color'),
+				_1: {
+					ctor: '::',
+					_0: _minekoa$elm_text_editor$WebStrage$localStrage_getItem('font-family'),
+					_1: {
+						ctor: '::',
+						_0: _minekoa$elm_text_editor$WebStrage$localStrage_getItem('font-size'),
+						_1: {ctor: '[]'}
+					}
+				}
+			}
+		})
+};
 var _minekoa$elm_text_editor$StyleMenu$update = F2(
 	function (msg, model) {
 		var _p2 = msg;
 		switch (_p2.ctor) {
+			case 'LoadSetting':
+				return {
+					ctor: '_Tuple2',
+					_0: function () {
+						var _p3 = _p2._0._1;
+						if (_p3.ctor === 'Just') {
+							var _p5 = _p3._0;
+							var _p4 = _p2._0._0;
+							switch (_p4) {
+								case 'bg-color':
+									return _elm_lang$core$Native_Utils.update(
+										model,
+										{
+											bgColor: A2(_minekoa$elm_text_editor$StyleMenu$selectValue, _p5, model.bgColor)
+										});
+								case 'fg-color':
+									return _elm_lang$core$Native_Utils.update(
+										model,
+										{
+											fgColor: A2(_minekoa$elm_text_editor$StyleMenu$selectValue, _p5, model.fgColor)
+										});
+								case 'font-family':
+									return _elm_lang$core$Native_Utils.update(
+										model,
+										{
+											fontFamily: A2(_minekoa$elm_text_editor$StyleMenu$selectValue, _p5, model.fontFamily)
+										});
+								case 'font-size':
+									return _elm_lang$core$Native_Utils.update(
+										model,
+										{
+											fontSize: A2(_minekoa$elm_text_editor$StyleMenu$selectValue, _p5, model.fontSize)
+										});
+								default:
+									return model;
+							}
+						} else {
+							return model;
+						}
+					}(),
+					_1: _elm_lang$core$Platform_Cmd$none
+				};
 			case 'ChangeBGColor':
-				var _p3 = _p2._0;
+				var _p6 = _p2._0;
 				var bgColor = model.bgColor;
 				return {
 					ctor: '_Tuple2',
@@ -18036,19 +18186,20 @@ var _minekoa$elm_text_editor$StyleMenu$update = F2(
 						{
 							bgColor: _elm_lang$core$Native_Utils.update(
 								bgColor,
-								{value: _p3}),
+								{value: _p6}),
 							editTarget: A3(
 								_minekoa$elm_text_editor$StyleMenu$EditColor,
 								'bg-color',
 								_minekoa$elm_text_editor$StyleMenu$ChangeBGColor,
 								_elm_lang$core$Native_Utils.update(
 									bgColor,
-									{value: _p3}))
+									{value: _p6}))
 						}),
-					_1: _elm_lang$core$Platform_Cmd$none
+					_1: _minekoa$elm_text_editor$WebStrage$localStrage_setItem(
+						{ctor: '_Tuple2', _0: 'bg-color', _1: _p6})
 				};
 			case 'ChangeFGColor':
-				var _p4 = _p2._0;
+				var _p7 = _p2._0;
 				var fgColor = model.fgColor;
 				return {
 					ctor: '_Tuple2',
@@ -18057,19 +18208,20 @@ var _minekoa$elm_text_editor$StyleMenu$update = F2(
 						{
 							fgColor: _elm_lang$core$Native_Utils.update(
 								fgColor,
-								{value: _p4}),
+								{value: _p7}),
 							editTarget: A3(
 								_minekoa$elm_text_editor$StyleMenu$EditColor,
 								'fg-color',
 								_minekoa$elm_text_editor$StyleMenu$ChangeFGColor,
 								_elm_lang$core$Native_Utils.update(
 									fgColor,
-									{value: _p4}))
+									{value: _p7}))
 						}),
-					_1: _elm_lang$core$Platform_Cmd$none
+					_1: _minekoa$elm_text_editor$WebStrage$localStrage_setItem(
+						{ctor: '_Tuple2', _0: 'fg-color', _1: _p7})
 				};
 			case 'ChangeFontFamily':
-				var _p5 = _p2._0;
+				var _p8 = _p2._0;
 				var fontFamily = model.fontFamily;
 				return {
 					ctor: '_Tuple2',
@@ -18078,19 +18230,20 @@ var _minekoa$elm_text_editor$StyleMenu$update = F2(
 						{
 							fontFamily: _elm_lang$core$Native_Utils.update(
 								fontFamily,
-								{value: _p5}),
+								{value: _p8}),
 							editTarget: A3(
 								_minekoa$elm_text_editor$StyleMenu$EditFontFamily,
 								'font-family',
 								_minekoa$elm_text_editor$StyleMenu$ChangeFontFamily,
 								_elm_lang$core$Native_Utils.update(
 									fontFamily,
-									{value: _p5}))
+									{value: _p8}))
 						}),
-					_1: _elm_lang$core$Platform_Cmd$none
+					_1: _minekoa$elm_text_editor$WebStrage$localStrage_setItem(
+						{ctor: '_Tuple2', _0: 'font-family', _1: _p8})
 				};
 			case 'ChangeFontSize':
-				var _p6 = _p2._0;
+				var _p9 = _p2._0;
 				var fontSize = model.fontSize;
 				return {
 					ctor: '_Tuple2',
@@ -18099,16 +18252,17 @@ var _minekoa$elm_text_editor$StyleMenu$update = F2(
 						{
 							fontSize: _elm_lang$core$Native_Utils.update(
 								fontSize,
-								{value: _p6}),
+								{value: _p9}),
 							editTarget: A3(
 								_minekoa$elm_text_editor$StyleMenu$EditFontSize,
 								'font-size',
 								_minekoa$elm_text_editor$StyleMenu$ChangeFontSize,
 								_elm_lang$core$Native_Utils.update(
 									fontSize,
-									{value: _p6}))
+									{value: _p9}))
 						}),
-					_1: _elm_lang$core$Platform_Cmd$none
+					_1: _minekoa$elm_text_editor$WebStrage$localStrage_setItem(
+						{ctor: '_Tuple2', _0: 'font-size', _1: _p9})
 				};
 			case 'TouchBackgroundColor':
 				return {
@@ -18684,9 +18838,12 @@ var _minekoa$elm_text_editor$Main$EditorMsg = function (a) {
 	return {ctor: 'EditorMsg', _0: a};
 };
 var _minekoa$elm_text_editor$Main$init = function () {
+	var _p5 = _minekoa$elm_text_editor$StyleMenu$init;
+	var smm = _p5._0;
+	var smc = _p5._1;
 	var content = '';
 	var buf = A2(_minekoa$elm_text_editor$Main$makeBuffer, '*scratch*', content);
-	var _p5 = A3(
+	var _p6 = A3(
 		_minekoa$elm_text_editor$TextEditor$init,
 		'editor-sample1',
 		A2(
@@ -18694,8 +18851,8 @@ var _minekoa$elm_text_editor$Main$init = function () {
 			_minekoa$elm_text_editor$TextEditor_KeyBind$basic,
 			A2(_elm_lang$core$Basics_ops['++'], _minekoa$elm_text_editor$TextEditor_KeyBind$gates, _minekoa$elm_text_editor$TextEditor_KeyBind$emacsLike)),
 		content);
-	var bm = _p5._0;
-	var bc = _p5._1;
+	var bm = _p6._0;
+	var bc = _p6._1;
 	return {
 		ctor: '_Tuple2',
 		_0: A9(
@@ -18711,32 +18868,41 @@ var _minekoa$elm_text_editor$Main$init = function () {
 			_minekoa$elm_text_editor$Main$NoPane,
 			_minekoa$elm_text_editor$DebugMenu$init,
 			_minekoa$elm_text_editor$SoftwareKeyboard$init,
-			_minekoa$elm_text_editor$StyleMenu$init,
+			smm,
 			_minekoa$elm_text_editor$FileMenu$init),
-		_1: A2(_elm_lang$core$Platform_Cmd$map, _minekoa$elm_text_editor$Main$EditorMsg, bc)
+		_1: _elm_lang$core$Platform_Cmd$batch(
+			{
+				ctor: '::',
+				_0: A2(_elm_lang$core$Platform_Cmd$map, _minekoa$elm_text_editor$Main$EditorMsg, bc),
+				_1: {
+					ctor: '::',
+					_0: A2(_elm_lang$core$Platform_Cmd$map, _minekoa$elm_text_editor$Main$StyleMenuMsg, smc),
+					_1: {ctor: '[]'}
+				}
+			})
 	};
 }();
 var _minekoa$elm_text_editor$Main$updateMap = F2(
-	function (model, _p6) {
-		var _p7 = _p6;
+	function (model, _p7) {
+		var _p8 = _p7;
 		return {
 			ctor: '_Tuple2',
 			_0: _elm_lang$core$Native_Utils.update(
 				model,
-				{editor: _p7._0}),
-			_1: A2(_elm_lang$core$Platform_Cmd$map, _minekoa$elm_text_editor$Main$EditorMsg, _p7._1)
+				{editor: _p8._0}),
+			_1: A2(_elm_lang$core$Platform_Cmd$map, _minekoa$elm_text_editor$Main$EditorMsg, _p8._1)
 		};
 	});
 var _minekoa$elm_text_editor$Main$update = F2(
 	function (msg, model) {
-		var _p8 = msg;
-		switch (_p8.ctor) {
+		var _p9 = msg;
+		switch (_p9.ctor) {
 			case 'ChangeBuffer':
 				return {
 					ctor: '_Tuple2',
 					_0: A2(
 						_minekoa$elm_text_editor$Main$selectBuffer,
-						_p8._0,
+						_p9._0,
 						A3(
 							_minekoa$elm_text_editor$Main$updateBufferContent,
 							model.currentBufferIndex,
@@ -18745,15 +18911,15 @@ var _minekoa$elm_text_editor$Main$update = F2(
 					_1: _elm_lang$core$Platform_Cmd$none
 				};
 			case 'CloseBuffer':
-				var _p9 = _p8._0;
+				var _p10 = _p9._0;
 				return {
 					ctor: '_Tuple2',
 					_0: function (m) {
-						return _elm_lang$core$Native_Utils.eq(_p9, m.currentBufferIndex) ? A2(_minekoa$elm_text_editor$Main$selectBuffer, _p9, m) : ((_elm_lang$core$Native_Utils.cmp(_p9, m.currentBufferIndex) < 0) ? _elm_lang$core$Native_Utils.update(
+						return _elm_lang$core$Native_Utils.eq(_p10, m.currentBufferIndex) ? A2(_minekoa$elm_text_editor$Main$selectBuffer, _p10, m) : ((_elm_lang$core$Native_Utils.cmp(_p10, m.currentBufferIndex) < 0) ? _elm_lang$core$Native_Utils.update(
 							m,
 							{currentBufferIndex: m.currentBufferIndex - 1}) : m);
 					}(
-						A2(_minekoa$elm_text_editor$Main$removeBuffer, _p9, model)),
+						A2(_minekoa$elm_text_editor$Main$removeBuffer, _p10, model)),
 					_1: _elm_lang$core$Platform_Cmd$none
 				};
 			case 'ChangePane':
@@ -18761,13 +18927,13 @@ var _minekoa$elm_text_editor$Main$update = F2(
 					ctor: '_Tuple2',
 					_0: _elm_lang$core$Native_Utils.update(
 						model,
-						{pane: _p8._0}),
+						{pane: _p9._0}),
 					_1: _elm_lang$core$Platform_Cmd$none
 				};
 			case 'EditorMsg':
-				var _p10 = A2(_minekoa$elm_text_editor$TextEditor$update, _p8._0, model.editor);
-				var m = _p10._0;
-				var c = _p10._1;
+				var _p11 = A2(_minekoa$elm_text_editor$TextEditor$update, _p9._0, model.editor);
+				var m = _p11._0;
+				var c = _p11._1;
 				return {
 					ctor: '_Tuple2',
 					_0: _elm_lang$core$Native_Utils.update(
@@ -18776,10 +18942,10 @@ var _minekoa$elm_text_editor$Main$update = F2(
 					_1: A2(_elm_lang$core$Platform_Cmd$map, _minekoa$elm_text_editor$Main$EditorMsg, c)
 				};
 			case 'DebugMenuMsg':
-				var _p11 = A3(_minekoa$elm_text_editor$DebugMenu$update, _p8._0, model.editor, model.$debugger);
-				var em = _p11._0;
-				var dm = _p11._1;
-				var dc = _p11._2;
+				var _p12 = A3(_minekoa$elm_text_editor$DebugMenu$update, _p9._0, model.editor, model.$debugger);
+				var em = _p12._0;
+				var dm = _p12._1;
+				var dc = _p12._2;
 				return {
 					ctor: '_Tuple2',
 					_0: _elm_lang$core$Native_Utils.update(
@@ -18788,9 +18954,9 @@ var _minekoa$elm_text_editor$Main$update = F2(
 					_1: A2(_elm_lang$core$Platform_Cmd$map, _minekoa$elm_text_editor$Main$DebugMenuMsg, dc)
 				};
 			case 'SWKeyboardMsg':
-				var _p12 = A3(_minekoa$elm_text_editor$SoftwareKeyboard$update, _p8._0, model.swkeyboard, model.editor);
-				var kbd = _p12._0;
-				var edt = _p12._1;
+				var _p13 = A3(_minekoa$elm_text_editor$SoftwareKeyboard$update, _p9._0, model.swkeyboard, model.editor);
+				var kbd = _p13._0;
+				var edt = _p13._1;
 				return {
 					ctor: '_Tuple2',
 					_0: _elm_lang$core$Native_Utils.update(
@@ -18817,9 +18983,9 @@ var _minekoa$elm_text_editor$Main$update = F2(
 						})
 				};
 			case 'StyleMenuMsg':
-				var _p13 = A2(_minekoa$elm_text_editor$StyleMenu$update, _p8._0, model.style);
-				var m = _p13._0;
-				var c = _p13._1;
+				var _p14 = A2(_minekoa$elm_text_editor$StyleMenu$update, _p9._0, model.style);
+				var m = _p14._0;
+				var c = _p14._1;
 				return {
 					ctor: '_Tuple2',
 					_0: _elm_lang$core$Native_Utils.update(
@@ -18828,24 +18994,24 @@ var _minekoa$elm_text_editor$Main$update = F2(
 					_1: A2(_elm_lang$core$Platform_Cmd$map, _minekoa$elm_text_editor$Main$StyleMenuMsg, c)
 				};
 			default:
-				var _p18 = _p8._0;
+				var _p19 = _p9._0;
 				var bufname = A2(
 					_elm_lang$core$Maybe$withDefault,
 					'',
 					A2(_minekoa$elm_text_editor$Main$bufferName, model.currentBufferIndex, model));
-				var _p14 = A3(
+				var _p15 = A3(
 					_minekoa$elm_text_editor$FileMenu$update,
-					_p18,
+					_p19,
 					{
 						ctor: '_Tuple2',
 						_0: bufname,
 						_1: _minekoa$elm_text_editor$TextEditor$buffer(model.editor)
 					},
 					model.filer);
-				var m = _p14._0;
-				var c = _p14._1;
-				var _p15 = _p18;
-				switch (_p15.ctor) {
+				var m = _p15._0;
+				var c = _p15._1;
+				var _p16 = _p19;
+				switch (_p16.ctor) {
 					case 'CreateNewBuffer':
 						return {
 							ctor: '_Tuple2',
@@ -18855,7 +19021,7 @@ var _minekoa$elm_text_editor$Main$update = F2(
 								A3(
 									_minekoa$elm_text_editor$Main$insertBuffer,
 									model.currentBufferIndex + 1,
-									A2(_minekoa$elm_text_editor$Main$makeBuffer, _p15._0, ''),
+									A2(_minekoa$elm_text_editor$Main$makeBuffer, _p16._0, ''),
 									A3(
 										_minekoa$elm_text_editor$Main$updateBufferContent,
 										model.currentBufferIndex,
@@ -18866,10 +19032,10 @@ var _minekoa$elm_text_editor$Main$update = F2(
 							_1: A2(_elm_lang$core$Platform_Cmd$map, _minekoa$elm_text_editor$Main$FileMenuMsg, c)
 						};
 					case 'ReadFile':
-						var _p17 = _p15._0;
-						var _p16 = _p17.data;
-						if (_p16.ctor === 'Ok') {
-							var newbuf = A2(_minekoa$elm_text_editor$Main$makeBuffer, _p17.name, _p16._0);
+						var _p18 = _p16._0;
+						var _p17 = _p18.data;
+						if (_p17.ctor === 'Ok') {
+							var newbuf = A2(_minekoa$elm_text_editor$Main$makeBuffer, _p18.name, _p17._0);
 							return {
 								ctor: '_Tuple2',
 								_0: A2(
@@ -18903,7 +19069,7 @@ var _minekoa$elm_text_editor$Main$update = F2(
 							_0: A3(
 								_minekoa$elm_text_editor$Main$updateBufferName,
 								model.currentBufferIndex,
-								_p15._0,
+								_p16._0,
 								_elm_lang$core$Native_Utils.update(
 									model,
 									{filer: m})),
@@ -18928,7 +19094,14 @@ var _minekoa$elm_text_editor$Main$subscriptions = function (model) {
 				_elm_lang$core$Platform_Sub$map,
 				_minekoa$elm_text_editor$Main$EditorMsg,
 				_minekoa$elm_text_editor$TextEditor$subscriptions(model.editor)),
-			_1: {ctor: '[]'}
+			_1: {
+				ctor: '::',
+				_0: A2(
+					_elm_lang$core$Platform_Sub$map,
+					_minekoa$elm_text_editor$Main$StyleMenuMsg,
+					_minekoa$elm_text_editor$StyleMenu$subscriptions(model.style)),
+				_1: {ctor: '[]'}
+			}
 		});
 };
 var _minekoa$elm_text_editor$Main$view = function (model) {
