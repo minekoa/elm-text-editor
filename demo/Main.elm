@@ -312,7 +312,7 @@ applicationMenu : Model -> Html Msg
 applicationMenu model =
     div [ class "app-menu"
         ]
-        [ paneChanger model
+        [ menuBar model
         , case model.pane of
               NoPane ->
                   text ""
@@ -337,8 +337,8 @@ applicationMenu model =
                       ]
         ]
 
-paneChanger : Model -> Html Msg
-paneChanger model =
+menuBar : Model -> Html Msg
+menuBar model =
     let
         tab = \ tgtPane s ->
               div [ class <| if model.pane == tgtPane then "app-menu-item-active" else "app-menu-item"

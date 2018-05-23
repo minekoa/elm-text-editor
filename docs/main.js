@@ -18442,7 +18442,7 @@ var _minekoa$elm_text_editor$Main$DebugMenuMsg = function (a) {
 var _minekoa$elm_text_editor$Main$ChangePane = function (a) {
 	return {ctor: 'ChangePane', _0: a};
 };
-var _minekoa$elm_text_editor$Main$paneChanger = function (model) {
+var _minekoa$elm_text_editor$Main$menuBar = function (model) {
 	var tab = F2(
 		function (tgtPane, s) {
 			return A2(
@@ -18524,7 +18524,7 @@ var _minekoa$elm_text_editor$Main$applicationMenu = function (model) {
 		},
 		{
 			ctor: '::',
-			_0: _minekoa$elm_text_editor$Main$paneChanger(model),
+			_0: _minekoa$elm_text_editor$Main$menuBar(model),
 			_1: {
 				ctor: '::',
 				_0: function () {
