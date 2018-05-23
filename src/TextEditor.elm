@@ -88,7 +88,7 @@ type Msg
     | Pasted String
     | Copied String
     | Cutted String
-    | Input String
+    | Input String Bool
     | KeyDown KeyboardEvent
     | KeyPress Int
     | CompositionStart String
@@ -132,8 +132,8 @@ update msg model =
 
         -- View Operation Event
 
-        Input s ->
-            input s model
+        Input s iscomposing ->
+            input s iscomposing model
 
         KeyDown keyevent ->
             keyDown keyevent model
@@ -238,17 +238,28 @@ update msg model =
                 )
 
 
-input: String -> Model -> (Model, Cmd Msg)
-input s model =
+input: String -> Bool -> Model -> (Model, Cmd Msg)
+input s isComposing model =
     case model.enableComposer of
         True ->
             ( model
             , Cmd.none
             )
-                |> logging "input (ignored)" s
+                |> logging "input (ignored)" (String.concat [ "data="
+                                                            , s
+                                                            , ", isComposing="
+                                                            , toString isComposing
+                                                            ]
+                                             )
         False ->
             updateMap model (Commands.insert (String.right 1 s) model.core)
-                |> logging "input" (String.right 1 s)
+                |> logging "input" (String.concat [ "data="
+                                                  , s
+                                                  , ", isComposing="
+                                                  , toString isComposing
+                                                  ]
+                                   )
+--                |> logging "input" (String.right 1 s)
 
 
 keyDown : KeyboardEvent -> Model -> (Model, Cmd Msg)
@@ -540,7 +551,7 @@ cursorLayer model =
                , div
                      [ style [("position", "relative"), ("display" , "inline-flex")] ]
                      [ textarea [ id <| inputAreaID model
-                                , onInput Input
+                                , onInputExtra Input
                                 , onKeyDown KeyDown
                                 , onKeyPress KeyPress
                                 , onCompositionStart CompositionStart
@@ -836,6 +847,14 @@ onKeyUp: (Int -> msg) -> Attribute msg
 onKeyUp tagger =
     on "keyup" (Json.map tagger keyCode)
 
+-- InputEvent
+
+onInputExtra : (String -> Bool -> msg) -> Attribute msg
+onInputExtra tagger =
+    on "input" (Json.map2  tagger
+                    (Json.field "data" Json.string)
+                    (Json.field "isComposing" Json.bool)
+               )
 
 -- Composition Event (IME)
 

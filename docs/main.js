@@ -11196,6 +11196,16 @@ var _minekoa$elm_text_editor$TextEditor$onCompositionStart = function (tagger) {
 			tagger,
 			A2(_elm_lang$core$Json_Decode$field, 'data', _elm_lang$core$Json_Decode$string)));
 };
+var _minekoa$elm_text_editor$TextEditor$onInputExtra = function (tagger) {
+	return A2(
+		_elm_lang$html$Html_Events$on,
+		'input',
+		A3(
+			_elm_lang$core$Json_Decode$map2,
+			tagger,
+			A2(_elm_lang$core$Json_Decode$field, 'data', _elm_lang$core$Json_Decode$string),
+			A2(_elm_lang$core$Json_Decode$field, 'isComposing', _elm_lang$core$Json_Decode$bool)));
+};
 var _minekoa$elm_text_editor$TextEditor$onKeyUp = function (tagger) {
 	return A2(
 		_elm_lang$html$Html_Events$on,
@@ -12202,9 +12212,10 @@ var _minekoa$elm_text_editor$TextEditor$KeyPress = function (a) {
 var _minekoa$elm_text_editor$TextEditor$KeyDown = function (a) {
 	return {ctor: 'KeyDown', _0: a};
 };
-var _minekoa$elm_text_editor$TextEditor$Input = function (a) {
-	return {ctor: 'Input', _0: a};
-};
+var _minekoa$elm_text_editor$TextEditor$Input = F2(
+	function (a, b) {
+		return {ctor: 'Input', _0: a, _1: b};
+	});
 var _minekoa$elm_text_editor$TextEditor$Cutted = function (a) {
 	return {ctor: 'Cutted', _0: a};
 };
@@ -12320,7 +12331,7 @@ var _minekoa$elm_text_editor$TextEditor$cursorLayer = function (model) {
 											_minekoa$elm_text_editor$TextEditor_Core$inputAreaID(model)),
 										_1: {
 											ctor: '::',
-											_0: _elm_lang$html$Html_Events$onInput(_minekoa$elm_text_editor$TextEditor$Input),
+											_0: _minekoa$elm_text_editor$TextEditor$onInputExtra(_minekoa$elm_text_editor$TextEditor$Input),
 											_1: {
 												ctor: '::',
 												_0: _minekoa$elm_text_editor$TextEditor$onKeyDown(_minekoa$elm_text_editor$TextEditor$KeyDown),
@@ -12522,20 +12533,54 @@ var _minekoa$elm_text_editor$TextEditor$updateMap = F2(
 			_1: A2(_elm_lang$core$Platform_Cmd$map, _minekoa$elm_text_editor$TextEditor$CoreMsg, _p20._1)
 		};
 	});
-var _minekoa$elm_text_editor$TextEditor$input = F2(
-	function (s, model) {
+var _minekoa$elm_text_editor$TextEditor$input = F3(
+	function (s, isComposing, model) {
 		var _p21 = model.enableComposer;
 		if (_p21 === true) {
 			return A3(
 				_minekoa$elm_text_editor$TextEditor$logging,
 				'input (ignored)',
-				s,
+				_elm_lang$core$String$concat(
+					{
+						ctor: '::',
+						_0: 'data=',
+						_1: {
+							ctor: '::',
+							_0: s,
+							_1: {
+								ctor: '::',
+								_0: ', isComposing=',
+								_1: {
+									ctor: '::',
+									_0: _elm_lang$core$Basics$toString(isComposing),
+									_1: {ctor: '[]'}
+								}
+							}
+						}
+					}),
 				{ctor: '_Tuple2', _0: model, _1: _elm_lang$core$Platform_Cmd$none});
 		} else {
 			return A3(
 				_minekoa$elm_text_editor$TextEditor$logging,
 				'input',
-				A2(_elm_lang$core$String$right, 1, s),
+				_elm_lang$core$String$concat(
+					{
+						ctor: '::',
+						_0: 'data=',
+						_1: {
+							ctor: '::',
+							_0: s,
+							_1: {
+								ctor: '::',
+								_0: ', isComposing=',
+								_1: {
+									ctor: '::',
+									_0: _elm_lang$core$Basics$toString(isComposing),
+									_1: {ctor: '[]'}
+								}
+							}
+						}
+					}),
 				A2(
 					_minekoa$elm_text_editor$TextEditor$updateMap,
 					model,
@@ -12685,7 +12730,7 @@ var _minekoa$elm_text_editor$TextEditor$update = F2(
 								model,
 								_minekoa$elm_text_editor$TextEditor_Core_Commands$cut(model.core)))));
 			case 'Input':
-				return A2(_minekoa$elm_text_editor$TextEditor$input, _p23._0, model);
+				return A3(_minekoa$elm_text_editor$TextEditor$input, _p23._0, _p23._1, model);
 			case 'KeyDown':
 				return A2(_minekoa$elm_text_editor$TextEditor$keyDown, _p23._0, model);
 			case 'KeyPress':
