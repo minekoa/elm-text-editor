@@ -224,7 +224,7 @@ update msg model =
             ( {model | drag = False }
             , Cmd.none
             )
-                |> logging "dragend" ""
+                |> if model.drag then logging "dragend" "" else identity
 
         Logging name data date ->
             let

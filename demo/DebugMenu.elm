@@ -154,6 +154,9 @@ eventlogView editorModel =
         , div [ style [ ("overflow","auto")
                       , ("width", "100%")
                       , ("color", "gray")
+                      , ("user-select", "text")
+                      , ("-webkit-user-select", "text")
+                      , ("-moz-user-select", "text")
                       ]
               ]
               ( List.map (λ ev -> div [ style [("margin-right","0.2em")]] [text <| (dateToString ev.date) ++ " | " ++ (String.pad 16 ' ' ev.name) ++ ":" ++ ev.data]) (Maybe.withDefault [] editorModel.event_log) )

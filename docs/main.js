@@ -12850,10 +12850,7 @@ var _minekoa$elm_text_editor$TextEditor$update = F2(
 							})
 					});
 			case 'DragEnd':
-				return A3(
-					_minekoa$elm_text_editor$TextEditor$logging,
-					'dragend',
-					'',
+				return (model.drag ? A2(_minekoa$elm_text_editor$TextEditor$logging, 'dragend', '') : _elm_lang$core$Basics$identity)(
 					{
 						ctor: '_Tuple2',
 						_0: _elm_lang$core$Native_Utils.update(
@@ -13745,7 +13742,19 @@ var _minekoa$elm_text_editor$DebugMenu$eventlogView = function (editorModel) {
 									_1: {
 										ctor: '::',
 										_0: {ctor: '_Tuple2', _0: 'color', _1: 'gray'},
-										_1: {ctor: '[]'}
+										_1: {
+											ctor: '::',
+											_0: {ctor: '_Tuple2', _0: 'user-select', _1: 'text'},
+											_1: {
+												ctor: '::',
+												_0: {ctor: '_Tuple2', _0: '-webkit-user-select', _1: 'text'},
+												_1: {
+													ctor: '::',
+													_0: {ctor: '_Tuple2', _0: '-moz-user-select', _1: 'text'},
+													_1: {ctor: '[]'}
+												}
+											}
+										}
 									}
 								}
 							}),
