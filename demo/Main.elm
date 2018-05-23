@@ -17,6 +17,9 @@ import SoftwareKeyboard
 import StyleMenu
 import FileMenu
 
+import WebStrage
+
+
 main : Program Never Model Msg
 main =
     Html.program
@@ -95,7 +98,7 @@ type Msg
     | SWKeyboardMsg (SoftwareKeyboard.Msg)
     | StyleMenuMsg (StyleMenu.Msg)
     | FileMenuMsg (FileMenu.Msg)
-
+    | ClearSettings
 
 updateMap: Model -> (Editor.Model, Cmd Editor.Msg) -> (Model, Cmd Msg)
 updateMap model (em, ec) =
@@ -219,6 +222,11 @@ update msg model =
                         , Cmd.map FileMenuMsg c
                         )
 
+        -- about menu
+        ClearSettings ->
+            ( model
+            , WebStrage.localStrage_clear ()
+            )
 
 updateBufferContent : Int -> TextEditor.Buffer.Model -> Model -> Model
 updateBufferContent i content model =
@@ -330,16 +338,7 @@ applicationMenu model =
               FileMenuPane ->
                   Html.map FileMenuMsg (FileMenu.view model.filer)
               AboutPane ->
-                  div [ style [ ("flex-grow", "2")
-                              , ("min-height", "13em")
-                              , ("padding", "2em")
-                              , ("background-color", "whitesmoke")
-                              , ("color", "gray")
-                              ]
-                      ]
-                      [ h1 [] [ text "elm-text-editor demo" ]
-                      , a [ href "https://github.com/minekoa/elm-text-editor"] [text "https://github.com/minekoa/elm-text-editor"]
-                      ]
+                  aboutPane model
         ]
 
 menuBar : Model -> Html Msg
@@ -362,6 +361,30 @@ menuBar model =
         , tab DebugMenuPane "Debug"
         , tab AboutPane "About"
         ]
+
+aboutPane : Model -> Html Msg
+aboutPane model =
+    div [ style [ ("flex-grow", "2")
+                , ("min-height", "13em")
+                , ("padding", "2em")
+                , ("background-color", "whitesmoke")
+                , ("color", "gray")
+                ]
+        ]
+        [ h1 [] [ text "elm-text-editor demo" ]
+        , a [ href "https://github.com/minekoa/elm-text-editor"] [text "https://github.com/minekoa/elm-text-editor"]
+        , div [ style [ ("display", "flex")
+                      , ("flex-direction", "row-reverse")
+                      , ("padding", "1.5rem")
+                      ]
+              ]
+              [ div [ class "file_input_label"
+                    , onClick ClearSettings
+                    ]
+                    [ text "Clear Settings" ]
+              ]
+        ]
+
 
 
 bufferTab : Model -> Html Msg

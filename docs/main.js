@@ -17339,6 +17339,11 @@ var _minekoa$elm_text_editor$WebStrage$localStrage_removeItemEnded = _elm_lang$c
 				A2(_elm_lang$core$Json_Decode$index, 1, _elm_lang$core$Json_Decode$bool));
 		},
 		A2(_elm_lang$core$Json_Decode$index, 0, _elm_lang$core$Json_Decode$string)));
+var _minekoa$elm_text_editor$WebStrage$localStrage_clear = _elm_lang$core$Native_Platform.outgoingPort(
+	'localStrage_clear',
+	function (v) {
+		return null;
+	});
 
 var _minekoa$elm_text_editor$StyleMenu$selectList = F3(
 	function (idx, values, tagger) {
@@ -18581,6 +18586,107 @@ var _minekoa$elm_text_editor$Main$StyleMenuPane = {ctor: 'StyleMenuPane'};
 var _minekoa$elm_text_editor$Main$KeyboardPane = {ctor: 'KeyboardPane'};
 var _minekoa$elm_text_editor$Main$DebugMenuPane = {ctor: 'DebugMenuPane'};
 var _minekoa$elm_text_editor$Main$NoPane = {ctor: 'NoPane'};
+var _minekoa$elm_text_editor$Main$ClearSettings = {ctor: 'ClearSettings'};
+var _minekoa$elm_text_editor$Main$aboutPane = function (model) {
+	return A2(
+		_elm_lang$html$Html$div,
+		{
+			ctor: '::',
+			_0: _elm_lang$html$Html_Attributes$style(
+				{
+					ctor: '::',
+					_0: {ctor: '_Tuple2', _0: 'flex-grow', _1: '2'},
+					_1: {
+						ctor: '::',
+						_0: {ctor: '_Tuple2', _0: 'min-height', _1: '13em'},
+						_1: {
+							ctor: '::',
+							_0: {ctor: '_Tuple2', _0: 'padding', _1: '2em'},
+							_1: {
+								ctor: '::',
+								_0: {ctor: '_Tuple2', _0: 'background-color', _1: 'whitesmoke'},
+								_1: {
+									ctor: '::',
+									_0: {ctor: '_Tuple2', _0: 'color', _1: 'gray'},
+									_1: {ctor: '[]'}
+								}
+							}
+						}
+					}
+				}),
+			_1: {ctor: '[]'}
+		},
+		{
+			ctor: '::',
+			_0: A2(
+				_elm_lang$html$Html$h1,
+				{ctor: '[]'},
+				{
+					ctor: '::',
+					_0: _elm_lang$html$Html$text('elm-text-editor demo'),
+					_1: {ctor: '[]'}
+				}),
+			_1: {
+				ctor: '::',
+				_0: A2(
+					_elm_lang$html$Html$a,
+					{
+						ctor: '::',
+						_0: _elm_lang$html$Html_Attributes$href('https://github.com/minekoa/elm-text-editor'),
+						_1: {ctor: '[]'}
+					},
+					{
+						ctor: '::',
+						_0: _elm_lang$html$Html$text('https://github.com/minekoa/elm-text-editor'),
+						_1: {ctor: '[]'}
+					}),
+				_1: {
+					ctor: '::',
+					_0: A2(
+						_elm_lang$html$Html$div,
+						{
+							ctor: '::',
+							_0: _elm_lang$html$Html_Attributes$style(
+								{
+									ctor: '::',
+									_0: {ctor: '_Tuple2', _0: 'display', _1: 'flex'},
+									_1: {
+										ctor: '::',
+										_0: {ctor: '_Tuple2', _0: 'flex-direction', _1: 'row-reverse'},
+										_1: {
+											ctor: '::',
+											_0: {ctor: '_Tuple2', _0: 'padding', _1: '1.5rem'},
+											_1: {ctor: '[]'}
+										}
+									}
+								}),
+							_1: {ctor: '[]'}
+						},
+						{
+							ctor: '::',
+							_0: A2(
+								_elm_lang$html$Html$div,
+								{
+									ctor: '::',
+									_0: _elm_lang$html$Html_Attributes$class('file_input_label'),
+									_1: {
+										ctor: '::',
+										_0: _elm_lang$html$Html_Events$onClick(_minekoa$elm_text_editor$Main$ClearSettings),
+										_1: {ctor: '[]'}
+									}
+								},
+								{
+									ctor: '::',
+									_0: _elm_lang$html$Html$text('Clear Settings'),
+									_1: {ctor: '[]'}
+								}),
+							_1: {ctor: '[]'}
+						}),
+					_1: {ctor: '[]'}
+				}
+			}
+		});
+};
 var _minekoa$elm_text_editor$Main$FileMenuMsg = function (a) {
 	return {ctor: 'FileMenuMsg', _0: a};
 };
@@ -18707,61 +18813,7 @@ var _minekoa$elm_text_editor$Main$applicationMenu = function (model) {
 								_minekoa$elm_text_editor$Main$FileMenuMsg,
 								_minekoa$elm_text_editor$FileMenu$view(model.filer));
 						default:
-							return A2(
-								_elm_lang$html$Html$div,
-								{
-									ctor: '::',
-									_0: _elm_lang$html$Html_Attributes$style(
-										{
-											ctor: '::',
-											_0: {ctor: '_Tuple2', _0: 'flex-grow', _1: '2'},
-											_1: {
-												ctor: '::',
-												_0: {ctor: '_Tuple2', _0: 'min-height', _1: '13em'},
-												_1: {
-													ctor: '::',
-													_0: {ctor: '_Tuple2', _0: 'padding', _1: '2em'},
-													_1: {
-														ctor: '::',
-														_0: {ctor: '_Tuple2', _0: 'background-color', _1: 'whitesmoke'},
-														_1: {
-															ctor: '::',
-															_0: {ctor: '_Tuple2', _0: 'color', _1: 'gray'},
-															_1: {ctor: '[]'}
-														}
-													}
-												}
-											}
-										}),
-									_1: {ctor: '[]'}
-								},
-								{
-									ctor: '::',
-									_0: A2(
-										_elm_lang$html$Html$h1,
-										{ctor: '[]'},
-										{
-											ctor: '::',
-											_0: _elm_lang$html$Html$text('elm-text-editor demo'),
-											_1: {ctor: '[]'}
-										}),
-									_1: {
-										ctor: '::',
-										_0: A2(
-											_elm_lang$html$Html$a,
-											{
-												ctor: '::',
-												_0: _elm_lang$html$Html_Attributes$href('https://github.com/minekoa/elm-text-editor'),
-												_1: {ctor: '[]'}
-											},
-											{
-												ctor: '::',
-												_0: _elm_lang$html$Html$text('https://github.com/minekoa/elm-text-editor'),
-												_1: {ctor: '[]'}
-											}),
-										_1: {ctor: '[]'}
-									}
-								});
+							return _minekoa$elm_text_editor$Main$aboutPane(model);
 					}
 				}(),
 				_1: {ctor: '[]'}
@@ -18993,7 +19045,7 @@ var _minekoa$elm_text_editor$Main$update = F2(
 						{style: m}),
 					_1: A2(_elm_lang$core$Platform_Cmd$map, _minekoa$elm_text_editor$Main$StyleMenuMsg, c)
 				};
-			default:
+			case 'FileMenuMsg':
 				var _p19 = _p9._0;
 				var bufname = A2(
 					_elm_lang$core$Maybe$withDefault,
@@ -19084,6 +19136,13 @@ var _minekoa$elm_text_editor$Main$update = F2(
 							_1: A2(_elm_lang$core$Platform_Cmd$map, _minekoa$elm_text_editor$Main$FileMenuMsg, c)
 						};
 				}
+			default:
+				return {
+					ctor: '_Tuple2',
+					_0: model,
+					_1: _minekoa$elm_text_editor$WebStrage$localStrage_clear(
+						{ctor: '_Tuple0'})
+				};
 		}
 	});
 var _minekoa$elm_text_editor$Main$subscriptions = function (model) {
