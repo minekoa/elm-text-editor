@@ -13,7 +13,7 @@ import Task exposing (Task)
 import FileReader
 
 import TextEditor.Buffer as Buffer
-import FilerPorts exposing (..)
+import Ports.FileWriter exposing (..)
 
 type alias Model =
     { selectedSubMenu: SubMenu

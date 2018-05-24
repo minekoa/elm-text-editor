@@ -14195,7 +14195,7 @@ var _norpan$elm_file_reader$FileReader$dropZone = function (_p2) {
 		_norpan$elm_file_reader$FileReader$dataFormatAttributes(_p3.dataFormat));
 };
 
-var _minekoa$elm_text_editor$FilerPorts$filer_saveFile = _elm_lang$core$Native_Platform.outgoingPort(
+var _minekoa$elm_text_editor$Ports_FileWriter$filer_saveFile = _elm_lang$core$Native_Platform.outgoingPort(
 	'filer_saveFile',
 	function (v) {
 		return [v._0, v._1];
@@ -14314,7 +14314,7 @@ var _minekoa$elm_text_editor$FileMenu$update = F3(
 				return {
 					ctor: '_Tuple2',
 					_0: model,
-					_1: _minekoa$elm_text_editor$FilerPorts$filer_saveFile(
+					_1: _minekoa$elm_text_editor$Ports_FileWriter$filer_saveFile(
 						{
 							ctor: '_Tuple2',
 							_0: _p1._0,
@@ -14325,7 +14325,7 @@ var _minekoa$elm_text_editor$FileMenu$update = F3(
 				return {
 					ctor: '_Tuple2',
 					_0: model,
-					_1: _minekoa$elm_text_editor$FilerPorts$filer_saveFile(
+					_1: _minekoa$elm_text_editor$Ports_FileWriter$filer_saveFile(
 						{
 							ctor: '_Tuple2',
 							_0: _p2._0,
@@ -17270,12 +17270,12 @@ var _minekoa$elm_text_editor$SoftwareKeyboard$view = function (model) {
 		});
 };
 
-var _minekoa$elm_text_editor$WebStrage$localStrage_setItem = _elm_lang$core$Native_Platform.outgoingPort(
+var _minekoa$elm_text_editor$Ports_WebStrage$localStrage_setItem = _elm_lang$core$Native_Platform.outgoingPort(
 	'localStrage_setItem',
 	function (v) {
 		return [v._0, v._1];
 	});
-var _minekoa$elm_text_editor$WebStrage$localStrage_setItemEnded = _elm_lang$core$Native_Platform.incomingPort(
+var _minekoa$elm_text_editor$Ports_WebStrage$localStrage_setItemEnded = _elm_lang$core$Native_Platform.incomingPort(
 	'localStrage_setItemEnded',
 	A2(
 		_elm_lang$core$Json_Decode$andThen,
@@ -17289,12 +17289,12 @@ var _minekoa$elm_text_editor$WebStrage$localStrage_setItemEnded = _elm_lang$core
 				A2(_elm_lang$core$Json_Decode$index, 1, _elm_lang$core$Json_Decode$bool));
 		},
 		A2(_elm_lang$core$Json_Decode$index, 0, _elm_lang$core$Json_Decode$string)));
-var _minekoa$elm_text_editor$WebStrage$localStrage_getItem = _elm_lang$core$Native_Platform.outgoingPort(
+var _minekoa$elm_text_editor$Ports_WebStrage$localStrage_getItem = _elm_lang$core$Native_Platform.outgoingPort(
 	'localStrage_getItem',
 	function (v) {
 		return v;
 	});
-var _minekoa$elm_text_editor$WebStrage$localStrage_getItemEnded = _elm_lang$core$Native_Platform.incomingPort(
+var _minekoa$elm_text_editor$Ports_WebStrage$localStrage_getItemEnded = _elm_lang$core$Native_Platform.incomingPort(
 	'localStrage_getItemEnded',
 	A2(
 		_elm_lang$core$Json_Decode$andThen,
@@ -17320,12 +17320,12 @@ var _minekoa$elm_text_editor$WebStrage$localStrage_getItemEnded = _elm_lang$core
 						})));
 		},
 		A2(_elm_lang$core$Json_Decode$index, 0, _elm_lang$core$Json_Decode$string)));
-var _minekoa$elm_text_editor$WebStrage$localStrage_removeItem = _elm_lang$core$Native_Platform.outgoingPort(
+var _minekoa$elm_text_editor$Ports_WebStrage$localStrage_removeItem = _elm_lang$core$Native_Platform.outgoingPort(
 	'localStrage_removeItem',
 	function (v) {
 		return v;
 	});
-var _minekoa$elm_text_editor$WebStrage$localStrage_removeItemEnded = _elm_lang$core$Native_Platform.incomingPort(
+var _minekoa$elm_text_editor$Ports_WebStrage$localStrage_removeItemEnded = _elm_lang$core$Native_Platform.incomingPort(
 	'localStrage_removeItemEnded',
 	A2(
 		_elm_lang$core$Json_Decode$andThen,
@@ -17339,7 +17339,7 @@ var _minekoa$elm_text_editor$WebStrage$localStrage_removeItemEnded = _elm_lang$c
 				A2(_elm_lang$core$Json_Decode$index, 1, _elm_lang$core$Json_Decode$bool));
 		},
 		A2(_elm_lang$core$Json_Decode$index, 0, _elm_lang$core$Json_Decode$string)));
-var _minekoa$elm_text_editor$WebStrage$localStrage_clear = _elm_lang$core$Native_Platform.outgoingPort(
+var _minekoa$elm_text_editor$Ports_WebStrage$localStrage_clear = _elm_lang$core$Native_Platform.outgoingPort(
 	'localStrage_clear',
 	function (v) {
 		return null;
@@ -17875,7 +17875,7 @@ var _minekoa$elm_text_editor$StyleMenu$subscriptions = function (model) {
 	return _elm_lang$core$Platform_Sub$batch(
 		{
 			ctor: '::',
-			_0: _minekoa$elm_text_editor$WebStrage$localStrage_getItemEnded(_minekoa$elm_text_editor$StyleMenu$LoadSetting),
+			_0: _minekoa$elm_text_editor$Ports_WebStrage$localStrage_getItemEnded(_minekoa$elm_text_editor$StyleMenu$LoadSetting),
 			_1: {ctor: '[]'}
 		});
 };
@@ -18119,16 +18119,16 @@ var _minekoa$elm_text_editor$StyleMenu$init = {
 	_1: _elm_lang$core$Platform_Cmd$batch(
 		{
 			ctor: '::',
-			_0: _minekoa$elm_text_editor$WebStrage$localStrage_getItem('bg-color'),
+			_0: _minekoa$elm_text_editor$Ports_WebStrage$localStrage_getItem('bg-color'),
 			_1: {
 				ctor: '::',
-				_0: _minekoa$elm_text_editor$WebStrage$localStrage_getItem('fg-color'),
+				_0: _minekoa$elm_text_editor$Ports_WebStrage$localStrage_getItem('fg-color'),
 				_1: {
 					ctor: '::',
-					_0: _minekoa$elm_text_editor$WebStrage$localStrage_getItem('font-family'),
+					_0: _minekoa$elm_text_editor$Ports_WebStrage$localStrage_getItem('font-family'),
 					_1: {
 						ctor: '::',
-						_0: _minekoa$elm_text_editor$WebStrage$localStrage_getItem('font-size'),
+						_0: _minekoa$elm_text_editor$Ports_WebStrage$localStrage_getItem('font-size'),
 						_1: {ctor: '[]'}
 					}
 				}
@@ -18200,7 +18200,7 @@ var _minekoa$elm_text_editor$StyleMenu$update = F2(
 									bgColor,
 									{value: _p6}))
 						}),
-					_1: _minekoa$elm_text_editor$WebStrage$localStrage_setItem(
+					_1: _minekoa$elm_text_editor$Ports_WebStrage$localStrage_setItem(
 						{ctor: '_Tuple2', _0: 'bg-color', _1: _p6})
 				};
 			case 'ChangeFGColor':
@@ -18222,7 +18222,7 @@ var _minekoa$elm_text_editor$StyleMenu$update = F2(
 									fgColor,
 									{value: _p7}))
 						}),
-					_1: _minekoa$elm_text_editor$WebStrage$localStrage_setItem(
+					_1: _minekoa$elm_text_editor$Ports_WebStrage$localStrage_setItem(
 						{ctor: '_Tuple2', _0: 'fg-color', _1: _p7})
 				};
 			case 'ChangeFontFamily':
@@ -18244,7 +18244,7 @@ var _minekoa$elm_text_editor$StyleMenu$update = F2(
 									fontFamily,
 									{value: _p8}))
 						}),
-					_1: _minekoa$elm_text_editor$WebStrage$localStrage_setItem(
+					_1: _minekoa$elm_text_editor$Ports_WebStrage$localStrage_setItem(
 						{ctor: '_Tuple2', _0: 'font-family', _1: _p8})
 				};
 			case 'ChangeFontSize':
@@ -18266,7 +18266,7 @@ var _minekoa$elm_text_editor$StyleMenu$update = F2(
 									fontSize,
 									{value: _p9}))
 						}),
-					_1: _minekoa$elm_text_editor$WebStrage$localStrage_setItem(
+					_1: _minekoa$elm_text_editor$Ports_WebStrage$localStrage_setItem(
 						{ctor: '_Tuple2', _0: 'font-size', _1: _p9})
 				};
 			case 'TouchBackgroundColor':
@@ -19140,7 +19140,7 @@ var _minekoa$elm_text_editor$Main$update = F2(
 				return {
 					ctor: '_Tuple2',
 					_0: model,
-					_1: _minekoa$elm_text_editor$WebStrage$localStrage_clear(
+					_1: _minekoa$elm_text_editor$Ports_WebStrage$localStrage_clear(
 						{ctor: '_Tuple0'})
 				};
 		}

@@ -17,8 +17,7 @@ import SoftwareKeyboard
 import StyleMenu
 import FileMenu
 
-import WebStrage
-
+import Ports.WebStrage
 
 main : Program Never Model Msg
 main =
@@ -225,7 +224,7 @@ update msg model =
         -- about menu
         ClearSettings ->
             ( model
-            , WebStrage.localStrage_clear ()
+            , Ports.WebStrage.localStrage_clear ()
             )
 
 updateBufferContent : Int -> TextEditor.Buffer.Model -> Model -> Model

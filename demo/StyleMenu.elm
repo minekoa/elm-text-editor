@@ -12,7 +12,7 @@ import Html.Attributes exposing (..)
 import Html.Events exposing (..)
 import Json.Decode as Json
 
-import WebStrage
+import Ports.WebStrage as WebStrage
 
 type alias Model =
     { bgColor : SelectableList

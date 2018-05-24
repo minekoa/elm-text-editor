@@ -1,4 +1,4 @@
-port module WebStrage exposing (..)
+port module Ports.WebStrage exposing (..)
 
 port localStrage_setItem : (String, String) -> Cmd msg
 port localStrage_setItemEnded : ((String, Bool) -> msg) -> Sub msg
