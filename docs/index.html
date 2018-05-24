@@ -14,60 +14,13 @@
 <body>
 </body>
 <script type="text/javascript" src="./main.js"></script>
+<script type="text/javascript" src="./ports/filewriter_ports.js"></script>
+<script type="text/javascript" src="./ports/webstrage_ports.js"></script>
 <script type="text/javascript">
   const app =  Elm.Main.fullscreen();
 
-
-  app.ports.filer_saveFile.subscribe( ([fname, content]) => {
-    const URL = window.URL || window.webkitURL;
-    const blob = new Blob( [content], {"type" : "text/plain"} );
-
-    const a = document.createElement("a");
-    a.href     = URL.createObjectURL(blob);
-    a.download = fname;
-
-    a.click();
-    URL.revokeObjectURL( a.href );
-  });
-
-  app.ports.localStrage_setItem.subscribe( ([key, value]) => {
-      const strage = window.localStorage;
-      try {
-          strage.setItem( key, value );
-          app.ports.localStrage_setItemEnded.send( [key, true]);
-      }
-      catch (e) {
-          app.ports.localStrage_setItemEnded.send( [key, false] );
-      }
-  });
-
-  app.ports.localStrage_getItem.subscribe( (key) => {
-      const strage = window.localStorage;
-      try {
-          const val = strage.getItem( key );
-          app.ports.localStrage_getItemEnded.send( [key, val] );
-      }
-      catch (e) {
-          app.ports.localStrage_getItemEnded.send( [key, null] );
-      }
-  });
-
-  app.ports.localStrage_removeItem.subscribe( ([key, value]) => {
-      const strage = window.localStorage;
-      try {
-          strage.removeItem( key );
-          app.ports.localStrage_removeItemEnded.send( [key, true] );
-      }
-      catch (e) {
-          app.ports.localStrage_removeItemEnded.send( [key, false] );
-      }
-  });
-
-  app.ports.localStrage_clear.subscribe( (x) => {
-      const strage = window.localStorage;
-      strage.clear();
-  });
-
+  filewriter_ports.elaborate(app);
+  webstrage_ports.elaborate(app);
 
 </script>
 </html>
