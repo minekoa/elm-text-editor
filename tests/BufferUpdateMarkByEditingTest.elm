@@ -341,4 +341,108 @@ suite =
                       |> Expect.all [ \m -> Expect.equal "ABC\nDEF\nGHmIJ\nM\n" (m.contents |> String.join "\n")
                                     , \m -> Expect.equal (Buffer.Mark (2,2) False  |> Just) m.mark
                                     ]
+
+
+        -- update mark by backspace
+
+        , test "mark-update by backspace (before row, 1char)" <|
+              \_ ->
+                  Buffer.init "ABC\nDEF\nGHmIJ\nKLM\n"
+                      |> Buffer.moveAt (2, 2)
+                      |> Buffer.markSet
+                      |> Buffer.markClear 
+                      |> Buffer.backspaceAt (1, 2)
+                      |> .mark
+                      |> Expect.equal (Buffer.Mark (2, 2) False |> Just)
+
+        , test "mark-update by backspace (before row, 1line)" <|
+              \_ ->
+                  Buffer.init "ABC\nDEF\nGHmIJ\nKLM\n"
+                      |> Buffer.moveAt (2, 2)
+                      |> Buffer.markSet
+                      |> Buffer.markClear 
+                      |> Buffer.backspaceAt (1, 0)
+                      |> Expect.all [ \m -> Expect.equal "ABCDEF\nGHmIJ\nKLM\n" (m.contents |> String.join "\n")
+                                    , \m -> Expect.equal (Buffer.Mark (1,2) False  |> Just) m.mark
+                                    ]
+
+        , test "mark-update by backspace (before row, concat before and mark line)" <|
+              \_ ->
+                  Buffer.init "ABC\nDEF\nGHmIJ\nKLM\n"
+                      |> Buffer.moveAt (2, 2)
+                      |> Buffer.markSet
+                      |> Buffer.markClear 
+                      |> Buffer.backspaceAt (2, 0)
+                      |> Expect.all [ \m -> Expect.equal "ABC\nDEFGHmIJ\nKLM\n" (m.contents |> String.join "\n")
+                                    , \m -> Expect.equal (Buffer.Mark (1, 5) False  |> Just) m.mark
+                                    ]
+
+        , test "mark-update by backspace (just row, before column, 1char)" <|
+              \_ ->
+                  Buffer.init "ABC\nDEF\nGHmIJ\nKLM\n"
+                      |> Buffer.moveAt (2, 2)
+                      |> Buffer.markSet
+                      |> Buffer.markClear 
+                      |> Buffer.backspaceAt (2, 1)
+                      |> Expect.all [ \m -> Expect.equal "ABC\nDEF\nHmIJ\nKLM\n" (m.contents |> String.join "\n")
+                                    , \m -> Expect.equal (Buffer.Mark (2, 1) False  |> Just) m.mark
+                                    ]
+
+        , test "mark-update by backspace (just row, just column, 1char (deleted pre-char))" <|
+              \_ ->
+                  Buffer.init "ABC\nDEF\nGHmIJ\nKLM\n"
+                      |> Buffer.moveAt (2, 2)
+                      |> Buffer.markSet
+                      |> Buffer.markClear 
+                      |> Buffer.backspaceAt (2, 2)
+                      |> Expect.all [ \m -> Expect.equal "ABC\nDEF\nGmIJ\nKLM\n" (m.contents |> String.join "\n")
+                                    , \m -> Expect.equal (Buffer.Mark (2,1) False  |> Just) m.mark
+                                    ]
+
+        , test "mark-update by backspace (just row, after column, (deleted just marked))" <|
+              \_ ->
+                  Buffer.init "ABC\nDEF\nGHmIJ\nKLM\n"
+                      |> Buffer.moveAt (2, 2)
+                      |> Buffer.markSet
+                      |> Buffer.markClear 
+                      |> Buffer.backspaceAt (2, 3)
+                      |> Expect.all [ \m -> Expect.equal "ABC\nDEF\nGHIJ\nKLM\n" (m.contents |> String.join "\n")
+                                    , \m -> Expect.equal (Buffer.Mark (2,2) False  |> Just) m.mark
+                                    ]
+
+        , test "mark-update by backspace one (just row, after column, 1car)" <|
+              \_ ->
+                  Buffer.init "ABC\nDEF\nGHmIJ\nKLM\n"
+                      |> Buffer.moveAt (2, 2)
+                      |> Buffer.markSet
+                      |> Buffer.markClear 
+                      |> Buffer.backspaceAt (2, 4)
+                      |> Expect.all [ \m -> Expect.equal "ABC\nDEF\nGHmJ\nKLM\n" (m.contents |> String.join "\n")
+                                    , \m -> Expect.equal (Buffer.Mark (2,2) False  |> Just) m.mark
+                                    ]
+
+        , test "mark-update by backspace (after row, concat mark and after line)" <|
+              \_ ->
+                  Buffer.init "ABC\nDEF\nGHmIJ\nKLM\n"
+                      |> Buffer.moveAt (2, 2)
+                      |> Buffer.markSet
+                      |> Buffer.markClear 
+                      |> Buffer.backspaceAt (3, 0)
+                      |> Expect.all [ \m -> Expect.equal "ABC\nDEF\nGHmIJKLM\n" (m.contents |> String.join "\n")
+                                    , \m -> Expect.equal (Buffer.Mark (2,2) False  |> Just) m.mark
+                                    ]
+
+        , test "mark-update by backspace (after row)" <|
+              \_ ->
+                  Buffer.init "ABC\nDEF\nGHmIJ\nKLM\n"
+                      |> Buffer.moveAt (2, 2)
+                      |> Buffer.markSet
+                      |> Buffer.markClear 
+                      |> Buffer.backspaceAt (3, 1)
+                      |> Expect.all [ \m -> Expect.equal "ABC\nDEF\nGHmIJ\nLM\n" (m.contents |> String.join "\n")
+                                    , \m -> Expect.equal (Buffer.Mark (2,2) False  |> Just) m.mark
+                                    ]
         ]
+
+
+        
