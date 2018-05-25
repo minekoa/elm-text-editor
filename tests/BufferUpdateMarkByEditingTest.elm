@@ -47,7 +47,7 @@ suite =
                       |> Buffer.markClear 
                       |> Buffer.insertAt (2, 1) "a"
                       |> Expect.all [ \m -> Expect.equal "ABC\nDEF\nGaHmIJ\nK\n" (m.contents |> String.join "\n")
-                                    , \m -> Expect.equal (Buffer.Mark (3,0) False  |> Just) m.mark
+                                    , \m -> Expect.equal (Buffer.Mark (2, 3) False  |> Just) m.mark
                                     ]
 
         , test "mark-update by insert (just row, before column, 1line)" <|
@@ -58,7 +58,7 @@ suite =
                       |> Buffer.markClear 
                       |> Buffer.insertAt (2, 1) "\n"
                       |> Expect.all [ \m -> Expect.equal "ABC\nDEF\nG\nHmIJ\nK\n" (m.contents |> String.join "\n")
-                                    , \m -> Expect.equal (Buffer.Mark (3,0) False  |> Just) m.mark
+                                    , \m -> Expect.equal (Buffer.Mark (3, 1) False  |> Just) m.mark
                                     ]
 
         , test "mark-update by insert (just row, just column, 1char)" <|
@@ -139,7 +139,7 @@ suite =
                       |> Buffer.markClear 
                       |> Buffer.deleteAt (1, 3)
                       |> Expect.all [ \m -> Expect.equal "ABC\nDEFGHmIJ\nK\n" (m.contents |> String.join "\n")
-                                    , \m -> Expect.equal (Buffer.Mark (2,1) False  |> Just) m.mark
+                                    , \m -> Expect.equal (Buffer.Mark (1, 5) False  |> Just) m.mark
                                     ]
 
         , test "mark-update by delete one (just row, before column, 1char)" <|

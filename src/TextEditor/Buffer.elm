@@ -185,6 +185,77 @@ gotoMark model =
         Nothing ->
             model
 
+updateMark : EditCommand -> Model -> Model
+updateMark cmd model =
+    case model.mark of
+        Just mk ->
+            let
+                mk_row = mk.pos |> Tuple.first
+                mk_col = mk.pos |> Tuple.second
+
+                count_lf             = String.lines >> List.length >> flip (-) 1
+                count_last_line_char = String.lines >> List.reverse >> List.head >> Maybe.withDefault "" >> String.length
+            in
+                case cmd of
+                    Cmd_Insert (bfr_row, bfr_col) (afr_row, afr_col) s ->
+                        if mk_row > bfr_row then
+                            { model | mark = Just { mk | pos = (mk_row + afr_row - bfr_row, mk_col) } }
+                        else if (mk_row == bfr_row) && (bfr_col <= mk_col) then
+                            let
+                                add_line_cnt = count_lf s
+                                new_col = if add_line_cnt == 0 then mk_col + (afr_col - bfr_col)
+                                                               else (count_last_line_char s) + (mk_col - bfr_col)
+                            in
+                                { model | mark = Just { mk | pos = (mk_row + add_line_cnt, new_col) } }
+                        else
+                           model
+
+                    Cmd_Backspace before_pos after_pos s ->
+                        { model
+                              | mark = Just <| { mk | pos = updateMarkPos_byDelete after_pos s mk.pos}
+                        }
+
+                    Cmd_Delete before_pos after_pos s ->
+                        { model
+                            | mark = Just <| { mk | pos = updateMarkPos_byDelete before_pos s mk.pos}
+                        }
+                            
+        Nothing ->
+            model
+
+
+updateMarkPos_byDelete : (Int, Int) -> String -> (Int, Int) -> (Int, Int)
+updateMarkPos_byDelete bgn_pos s (mk_row, mk_col) =
+    let
+        count_lf             = String.lines >> List.length >> flip (-) 1
+        count_last_line_char = String.lines >> List.reverse >> List.head >> Maybe.withDefault "" >> String.length
+
+        deleted_lf_cnt            = count_lf s
+        deleted_lastline_char_cnt = count_last_line_char s
+
+        (bgn_row, bgn_col) = bgn_pos
+        (end_row, end_col) = ( bgn_row + deleted_lf_cnt
+                             , if (deleted_lf_cnt == 0) then bgn_col + deleted_lastline_char_cnt else deleted_lastline_char_cnt
+                             )
+    in
+        -- before mark
+        if end_row < mk_row then
+            (mk_row - deleted_lf_cnt, mk_col)
+
+        else if (mk_row == end_row) && (end_col < mk_col) then
+            if ( end_row /= bgn_row) then
+                (mk_row - deleted_lf_cnt, mk_col + bgn_col)
+            else
+                (mk_row, mk_col - deleted_lastline_char_cnt)
+
+        -- contain mark
+        else if    ( (bgn_row < mk_row) || (bgn_row == mk_row && bgn_col <= mk_col) )
+                && ( (mk_row < end_row) || (end_row == mk_row && mk_col <= end_col ) ) then
+            (bgn_row, bgn_col)
+
+        -- after mark
+        else
+            (mk_row, mk_col)
 
 ------------------------------------------------------------
 -- History
@@ -392,8 +463,13 @@ insertAt: (Int, Int) -> String -> Model -> Model
 insertAt (row, col) text model =
     model
     |> insert_proc (row, col) text
-    |> (\m -> appendHistory (Cmd_Insert (row, col) (nowCursorPos m) text) m)
-
+    |> (\m ->
+            let
+                edtcmd = Cmd_Insert (row, col) (nowCursorPos m) text
+            in
+                m |> appendHistory edtcmd
+                  |> updateMark edtcmd
+       )
 
 backspace : Model -> Model
 backspace model =
@@ -415,7 +491,13 @@ backspaceAt (row, col) model =
                 m
             Just s ->
                 m
-                |> (\m -> appendHistory (Cmd_Backspace (row, col) (nowCursorPos m) s) m)
+                |> (\m ->
+                        let
+                            edtcmd = Cmd_Backspace (row, col) (nowCursorPos m) s
+                        in
+                            m |> appendHistory edtcmd
+                              |> updateMark edtcmd
+       )
 
 delete : Model -> Model
 delete model =
@@ -437,8 +519,13 @@ deleteAt (row, col) model =
                 m
             Just s ->
                 m
-                |> (\m -> appendHistory (Cmd_Delete (row, col) (nowCursorPos m) s) m)
-
+                |> (\m ->
+                        let
+                            edtcmd = Cmd_Delete (row, col) (nowCursorPos m) s
+                        in
+                            m |> appendHistory edtcmd
+                              |> updateMark edtcmd
+                   )
 
 deleteRange: Range -> Model -> Model
 deleteRange range model =
@@ -452,7 +539,13 @@ deleteRange range model =
             _ ->
                 model
                     |> delete_range_proc range
-                    |> (\m -> appendHistory (Cmd_Delete head_pos (nowCursorPos m) deleted) m)
+                    |> (\m ->
+                            let
+                                edtcmd = Cmd_Delete head_pos (nowCursorPos m) deleted
+                            in
+                                m |> appendHistory edtcmd
+                                  |> updateMark edtcmd
+                       )
 
 
 deleteSelection: Model -> Model
