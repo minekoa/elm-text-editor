@@ -22,6 +22,7 @@ type SubMenu
     = EditHistory
     | Clipboard
     | EventLog
+    | BufferInspector
 
 type Msg
     = SelectSubMenu SubMenu
@@ -81,7 +82,13 @@ menuItemsView model =
           ]
           [ span [] [text "Event log"]
           ]
+    , div [ onClick <| SelectSubMenu BufferInspector
+          , class <| if model.selectedSubMenu == BufferInspector then "menu-item-active" else "menu-item"
+          ]
+          [ span [] [text "Buffer Inspector"]
+          ]
     ]
+
 
 menuPalette : Editor.Model -> Model ->  Html Msg
 menuPalette editorModel model =
@@ -92,6 +99,8 @@ menuPalette editorModel model =
             div [class "menu-palette"] [ clipboardView editorModel ]
         EventLog ->
             div [class "menu-palette"] [ eventlogView editorModel ]
+        BufferInspector ->
+            div [class "menu-palette"] [ bufferInspectorView editorModel ]
 
 
 historyView : Editor.Model -> Html Msg
@@ -161,6 +170,65 @@ eventlogView editorModel =
               ]
               ( List.map (λ ev -> div [ style [("margin-right","0.2em")]] [text <| (dateToString ev.date) ++ " | " ++ (String.pad 16 ' ' ev.name) ++ ":" ++ ev.data]) (Maybe.withDefault [] editorModel.event_log) )
         ]
+
+
+bufferInspectorView : Editor.Model -> Html Msg
+bufferInspectorView editorModel =
+    div [ id "debug-pane-eventlog"
+        , class "debugger-vbox"
+        ]
+        [ table
+              []
+              [ tr [] [ th [] [ text "cursor"   ], td [] [ editorModel.core.buffer.cursor |> cursorToString |> text ] ]
+              , tr [] [ th [] [ text "selection"], td [] [ editorModel.core.buffer.selection |> selectionToString |> text ] ]
+              , tr [] [ th [] [ text "mark"     ], td [] [ editorModel.core.buffer.mark |> markToString |> text ]]
+              ]
+        ]
+
+cursorToString : Buffer.Cursor -> String
+cursorToString cur =
+    [ cur.row |> toString
+    , ", "
+    , cur.column |> toString
+    ]
+        |> String.concat
+
+selectionToString : Maybe Buffer.Range -> String
+selectionToString maybe_sel =
+    case maybe_sel of
+        Just sel ->
+            [ "("
+            , sel.begin |> Tuple.first |> toString
+            , ","
+            , sel.begin |> Tuple.second |> toString
+            , ") ~ ("
+            , sel.end |> Tuple.first |> toString
+            , ","
+            , sel.end |> Tuple.second |> toString
+            , ")"
+            ]
+                 |> String.concat
+        Nothing ->
+            "nothing"
+
+markToString : Maybe Buffer.Mark -> String
+markToString maybe_mark =
+    case maybe_mark of
+        Just mark ->
+            [ "pos=("
+            , mark.pos |> Tuple.first |> toString
+            , ","
+            , mark.pos |> Tuple.second |> toString
+            , "), actived="
+            , mark.actived |> toString
+            ]
+                 |> String.concat
+        Nothing ->
+            "nothing"
+
+------------------------------------------------------------
+-- date tools
+------------------------------------------------------------
 
 dateToString : Date.Date -> String
 dateToString date =
