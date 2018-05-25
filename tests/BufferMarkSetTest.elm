@@ -204,6 +204,93 @@ suite =
                       |> Buffer.gotoMark
                       |> Buffer.nowCursorPos
                       |> Expect.equal (3, 0)
+
+
+        , test "mark-update by insert (before row, 1char)" <|
+              \_ ->
+                  Buffer.init "ABC\nDEF\nGHmIJ\nK\n"
+                      |> Buffer.moveAt (2, 2)
+                      |> Buffer.markSet
+                      |> Buffer.markClear 
+                      |> Buffer.insertAt (1, 1) "a"
+                      |> .mark
+                      |> Expect.equal (Buffer.Mark (2, 2) False |> Just)
+
+        , test "mark-update by insert (before row, 1line)" <|
+              \_ ->
+                  Buffer.init "ABC\nDEF\nGHmIJ\nK\n"
+                      |> Buffer.moveAt (2, 2)
+                      |> Buffer.markSet
+                      |> Buffer.markClear 
+                      |> Buffer.insertAt (1, 1) "a\nb"
+                      |> .mark
+                      |> Expect.equal (Buffer.Mark (3, 2) False |> Just)
+
+        , test "mark-update by insert (just row, before column, 1char)" <|
+              \_ ->
+                  Buffer.init "ABC\nDEF\nGHmIJ\nK\n"
+                      |> Buffer.moveAt (2, 2)
+                      |> Buffer.markSet
+                      |> Buffer.markClear 
+                      |> Buffer.insertAt (2, 1) "a"
+                      |> Expect.all [ \m -> Expect.equal "ABC\nDEF\nGaHmIJ\nK\n" (m.contents |> String.join "\n")
+                                    , \m -> Expect.equal (Buffer.Mark (3,0) False  |> Just) m.mark
+                                    ]
+
+        , test "mark-update by insert (just row, before column, 1line)" <|
+              \_ ->
+                  Buffer.init "ABC\nDEF\nGHmIJ\nK\n"
+                      |> Buffer.moveAt (2, 2)
+                      |> Buffer.markSet
+                      |> Buffer.markClear 
+                      |> Buffer.insertAt (2, 1) "\n"
+                      |> Expect.all [ \m -> Expect.equal "ABC\nDEF\nG\nHmIJ\nK\n" (m.contents |> String.join "\n")
+                                    , \m -> Expect.equal (Buffer.Mark (3,0) False  |> Just) m.mark
+                                    ]
+
+        , test "mark-update by insert (just row, just column, 1char)" <|
+              \_ ->
+                  Buffer.init "ABC\nDEF\nGHmIJ\nK\n"
+                      |> Buffer.moveAt (2, 2)
+                      |> Buffer.markSet
+                      |> Buffer.markClear 
+                      |> Buffer.insertAt (2, 2) "a"
+                      |> Expect.all [ \m -> Expect.equal "ABC\nDEF\nGHamIJ\nK\n" (m.contents |> String.join "\n")
+                                    , \m -> Expect.equal (Buffer.Mark (2,3) False  |> Just) m.mark
+                                    ]
+
+        , test "mark-update by insert (just row, after column, 1car)" <|
+              \_ ->
+                  Buffer.init "ABC\nDEF\nGHmIJ\nK\n"
+                      |> Buffer.moveAt (2, 2)
+                      |> Buffer.markSet
+                      |> Buffer.markClear 
+                      |> Buffer.insertAt (2, 3) "a"
+                      |> Expect.all [ \m -> Expect.equal "ABC\nDEF\nGHmaIJ\nK\n" (m.contents |> String.join "\n")
+                                    , \m -> Expect.equal (Buffer.Mark (2,2) False  |> Just) m.mark
+                                    ]
+
+        , test "mark-update by insert (just row, after column, 1line)" <|
+              \_ ->
+                  Buffer.init "ABC\nDEF\nGHmIJ\nK\n"
+                      |> Buffer.moveAt (2, 2)
+                      |> Buffer.markSet
+                      |> Buffer.markClear 
+                      |> Buffer.insertAt (2, 3) "\n"
+                      |> Expect.all [ \m -> Expect.equal "ABC\nDEF\nGHm\nIJ\nK\n" (m.contents |> String.join "\n")
+                                    , \m -> Expect.equal (Buffer.Mark (2,2) False  |> Just) m.mark
+                                    ]
+
+
+        , test "mark-update by insert (after row)" <|
+              \_ ->
+                  Buffer.init "ABC\nDEF\nGHmIJ\nK\n"
+                      |> Buffer.moveAt (2, 2)
+                      |> Buffer.markSet
+                      |> Buffer.markClear 
+                      |> Buffer.insertAt (3, 0) "a\nb"
+                      |> .mark
+                      |> Expect.equal (Buffer.Mark (2, 2) False |> Just)
         ]
 
 
