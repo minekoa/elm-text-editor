@@ -206,6 +206,8 @@ suite =
                       |> Expect.equal (3, 0)
 
 
+        -- update mark by insert
+
         , test "mark-update by insert (before row, 1char)" <|
               \_ ->
                   Buffer.init "ABC\nDEF\nGHmIJ\nK\n"
@@ -291,6 +293,87 @@ suite =
                       |> Buffer.insertAt (3, 0) "a\nb"
                       |> .mark
                       |> Expect.equal (Buffer.Mark (2, 2) False |> Just)
+
+
+
+        -- update mark by delete one
+
+        , test "mark-update by delete one (before row, 1char)" <|
+              \_ ->
+                  Buffer.init "ABC\nDEF\nGHmIJ\nK\n"
+                      |> Buffer.moveAt (2, 2)
+                      |> Buffer.markSet
+                      |> Buffer.markClear 
+                      |> Buffer.deleteAt (1, 1)
+                      |> .mark
+                      |> Expect.equal (Buffer.Mark (2, 2) False |> Just)
+
+        , test "mark-update by delete one (before row, 1line)" <|
+              \_ ->
+                  Buffer.init "ABC\nDEF\nGHmIJ\nK\n"
+                      |> Buffer.moveAt (2, 2)
+                      |> Buffer.markSet
+                      |> Buffer.markClear 
+                      |> Buffer.deleteAt (1, 3)
+                      |> .mark
+                      |> Expect.equal (Buffer.Mark (1, 2) False |> Just)
+
+        , test "mark-update by delete one (just row, before column, 1char)" <|
+              \_ ->
+                  Buffer.init "ABC\nDEF\nGHmIJ\nK\n"
+                      |> Buffer.moveAt (2, 2)
+                      |> Buffer.markSet
+                      |> Buffer.markClear 
+                      |> Buffer.deleteAt (2, 1)
+                      |> Expect.all [ \m -> Expect.equal "ABC\nDEF\nGmIJ\nK\n" (m.contents |> String.join "\n")
+                                    , \m -> Expect.equal (Buffer.Mark (2,1) False  |> Just) m.mark
+                                    ]
+
+        , test "mark-update by delete one (just row, just column, 1char)" <|
+              \_ ->
+                  Buffer.init "ABC\nDEF\nGHmIJ\nK\n"
+                      |> Buffer.moveAt (2, 2)
+                      |> Buffer.markSet
+                      |> Buffer.markClear 
+                      |> Buffer.deleteAt (2, 2)
+                      |> Expect.all [ \m -> Expect.equal "ABC\nDEF\nGHIJ\nK\n" (m.contents |> String.join "\n")
+                                    , \m -> Expect.equal (Buffer.Mark (2,2) False  |> Just) m.mark
+                                    ]
+
+        , test "mark-update by delete one (just row, after column, 1car)" <|
+              \_ ->
+                  Buffer.init "ABC\nDEF\nGHmIJ\nK\n"
+                      |> Buffer.moveAt (2, 2)
+                      |> Buffer.markSet
+                      |> Buffer.markClear 
+                      |> Buffer.deleteAt (2, 3)
+                      |> Expect.all [ \m -> Expect.equal "ABC\nDEF\nGHmJ\nK\n" (m.contents |> String.join "\n")
+                                    , \m -> Expect.equal (Buffer.Mark (2,2) False  |> Just) m.mark
+                                    ]
+
+        , test "mark-update by delete one (just row, after column, 1line)" <|
+              \_ ->
+                  Buffer.init "ABC\nDEF\nGHmIJ\nK\n"
+                      |> Buffer.moveAt (2, 2)
+                      |> Buffer.markSet
+                      |> Buffer.markClear 
+                      |> Buffer.deleteAt (2, 5)
+                      |> Expect.all [ \m -> Expect.equal "ABC\nDEF\nGHmIJK\n" (m.contents |> String.join "\n")
+                                    , \m -> Expect.equal (Buffer.Mark (2,2) False  |> Just) m.mark
+                                    ]
+
+        , test "mark-update by delete one (after row)" <|
+              \_ ->
+                  Buffer.init "ABC\nDEF\nGHmIJ\nK\n"
+                      |> Buffer.moveAt (2, 2)
+                      |> Buffer.markSet
+                      |> Buffer.markClear 
+                      |> Buffer.deleteAt (3, 0)
+                      |> .mark
+                      |> Expect.equal (Buffer.Mark (2, 2) False |> Just)
+
+
+
         ]
 
 
