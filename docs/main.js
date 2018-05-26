@@ -10115,11 +10115,26 @@ var _minekoa$elm_text_editor$TextEditor_Buffer$undo = function (model) {
 				var _p73 = _p72._0;
 				switch (_p73.ctor) {
 					case 'Cmd_Insert':
-						return A4(_minekoa$elm_text_editor$TextEditor_Buffer$undo_insert_proc, _p73._0, _p73._1, _p73._2, model);
+						return function (m) {
+							return _elm_lang$core$Native_Utils.update(
+								m,
+								{mark: _p73._3});
+						}(
+							A4(_minekoa$elm_text_editor$TextEditor_Buffer$undo_insert_proc, _p73._0, _p73._1, _p73._2, model));
 					case 'Cmd_Backspace':
-						return A4(_minekoa$elm_text_editor$TextEditor_Buffer$undo_backspace_proc, _p73._0, _p73._1, _p73._2, model);
+						return function (m) {
+							return _elm_lang$core$Native_Utils.update(
+								m,
+								{mark: _p73._3});
+						}(
+							A4(_minekoa$elm_text_editor$TextEditor_Buffer$undo_backspace_proc, _p73._0, _p73._1, _p73._2, model));
 					default:
-						return A4(_minekoa$elm_text_editor$TextEditor_Buffer$undo_delete_proc, _p73._0, _p73._1, _p73._2, model);
+						return function (m) {
+							return _elm_lang$core$Native_Utils.update(
+								m,
+								{mark: _p73._3});
+						}(
+							A4(_minekoa$elm_text_editor$TextEditor_Buffer$undo_delete_proc, _p73._0, _p73._1, _p73._2, model));
 				}
 			}());
 	}
@@ -10128,17 +10143,17 @@ var _minekoa$elm_text_editor$TextEditor_Buffer$Mark = F2(
 	function (a, b) {
 		return {pos: a, actived: b};
 	});
-var _minekoa$elm_text_editor$TextEditor_Buffer$Cmd_Delete = F3(
-	function (a, b, c) {
-		return {ctor: 'Cmd_Delete', _0: a, _1: b, _2: c};
+var _minekoa$elm_text_editor$TextEditor_Buffer$Cmd_Delete = F4(
+	function (a, b, c, d) {
+		return {ctor: 'Cmd_Delete', _0: a, _1: b, _2: c, _3: d};
 	});
-var _minekoa$elm_text_editor$TextEditor_Buffer$Cmd_Backspace = F3(
-	function (a, b, c) {
-		return {ctor: 'Cmd_Backspace', _0: a, _1: b, _2: c};
+var _minekoa$elm_text_editor$TextEditor_Buffer$Cmd_Backspace = F4(
+	function (a, b, c, d) {
+		return {ctor: 'Cmd_Backspace', _0: a, _1: b, _2: c, _3: d};
 	});
-var _minekoa$elm_text_editor$TextEditor_Buffer$Cmd_Insert = F3(
-	function (a, b, c) {
-		return {ctor: 'Cmd_Insert', _0: a, _1: b, _2: c};
+var _minekoa$elm_text_editor$TextEditor_Buffer$Cmd_Insert = F4(
+	function (a, b, c, d) {
+		return {ctor: 'Cmd_Insert', _0: a, _1: b, _2: c, _3: d};
 	});
 var _minekoa$elm_text_editor$TextEditor_Buffer$appendHistory = F2(
 	function (cmd, model) {
@@ -10166,11 +10181,12 @@ var _minekoa$elm_text_editor$TextEditor_Buffer$appendHistory = F2(
 								{
 									history: {
 										ctor: '::',
-										_0: A3(
+										_0: A4(
 											_minekoa$elm_text_editor$TextEditor_Buffer$Cmd_Insert,
 											_p76,
 											_p74._0._1,
-											A2(_elm_lang$core$Basics_ops['++'], _p74._1._0._2, _p74._0._2)),
+											A2(_elm_lang$core$Basics_ops['++'], _p74._1._0._2, _p74._0._2),
+											_p74._1._0._3),
 										_1: A2(_elm_lang$core$List$drop, 1, model.history)
 									}
 								}) : _elm_lang$core$Native_Utils.update(
@@ -10194,11 +10210,12 @@ var _minekoa$elm_text_editor$TextEditor_Buffer$appendHistory = F2(
 								{
 									history: {
 										ctor: '::',
-										_0: A3(
+										_0: A4(
 											_minekoa$elm_text_editor$TextEditor_Buffer$Cmd_Backspace,
 											_p78,
 											_p74._0._1,
-											A2(_elm_lang$core$Basics_ops['++'], _p74._0._2, _p74._1._0._2)),
+											A2(_elm_lang$core$Basics_ops['++'], _p74._0._2, _p74._1._0._2),
+											_p74._1._0._3),
 										_1: A2(_elm_lang$core$List$drop, 1, model.history)
 									}
 								}) : _elm_lang$core$Native_Utils.update(
@@ -10222,11 +10239,12 @@ var _minekoa$elm_text_editor$TextEditor_Buffer$appendHistory = F2(
 								{
 									history: {
 										ctor: '::',
-										_0: A3(
+										_0: A4(
 											_minekoa$elm_text_editor$TextEditor_Buffer$Cmd_Delete,
 											_p80,
 											_p74._0._1,
-											A2(_elm_lang$core$Basics_ops['++'], _p74._1._0._2, _p74._0._2)),
+											A2(_elm_lang$core$Basics_ops['++'], _p74._1._0._2, _p74._0._2),
+											_p74._1._0._3),
 										_1: A2(_elm_lang$core$List$drop, 1, model.history)
 									}
 								}) : _elm_lang$core$Native_Utils.update(
@@ -10264,11 +10282,12 @@ var _minekoa$elm_text_editor$TextEditor_Buffer$backspaceAt = F2(
 			return m;
 		} else {
 			return function (m) {
-				var edtcmd = A3(
+				var edtcmd = A4(
 					_minekoa$elm_text_editor$TextEditor_Buffer$Cmd_Backspace,
 					{ctor: '_Tuple2', _0: _p86, _1: _p85},
 					_minekoa$elm_text_editor$TextEditor_Buffer$nowCursorPos(m),
-					_p84._0);
+					_p84._0,
+					m.mark);
 				return A2(
 					_minekoa$elm_text_editor$TextEditor_Buffer$updateMark,
 					edtcmd,
@@ -10292,11 +10311,12 @@ var _minekoa$elm_text_editor$TextEditor_Buffer$deleteAt = F2(
 			return m;
 		} else {
 			return function (m) {
-				var edtcmd = A3(
+				var edtcmd = A4(
 					_minekoa$elm_text_editor$TextEditor_Buffer$Cmd_Delete,
 					{ctor: '_Tuple2', _0: _p92, _1: _p91},
 					_minekoa$elm_text_editor$TextEditor_Buffer$nowCursorPos(m),
-					_p90._0);
+					_p90._0,
+					m.mark);
 				return A2(
 					_minekoa$elm_text_editor$TextEditor_Buffer$updateMark,
 					edtcmd,
@@ -10313,11 +10333,12 @@ var _minekoa$elm_text_editor$TextEditor_Buffer$deleteRange = F2(
 			return model;
 		} else {
 			return function (m) {
-				var edtcmd = A3(
+				var edtcmd = A4(
 					_minekoa$elm_text_editor$TextEditor_Buffer$Cmd_Delete,
 					head_pos,
 					_minekoa$elm_text_editor$TextEditor_Buffer$nowCursorPos(m),
-					deleted);
+					deleted,
+					m.mark);
 				return A2(
 					_minekoa$elm_text_editor$TextEditor_Buffer$updateMark,
 					edtcmd,
@@ -10365,11 +10386,12 @@ var _minekoa$elm_text_editor$TextEditor_Buffer$insertAt = F3(
 		var _p100 = _p98._0;
 		var _p99 = _p98._1;
 		return function (m) {
-			var edtcmd = A3(
+			var edtcmd = A4(
 				_minekoa$elm_text_editor$TextEditor_Buffer$Cmd_Insert,
 				{ctor: '_Tuple2', _0: _p100, _1: _p99},
 				_minekoa$elm_text_editor$TextEditor_Buffer$nowCursorPos(m),
-				text);
+				text,
+				m.mark);
 			return A2(
 				_minekoa$elm_text_editor$TextEditor_Buffer$updateMark,
 				edtcmd,
@@ -13832,8 +13854,62 @@ var _minekoa$elm_text_editor$DebugMenu$historyView = function (editorModel) {
 													_elm_lang$core$Basics$toString(col),
 													')'))));
 								});
-							var _p5 = c;
-							switch (_p5.ctor) {
+							var mark2str = function (mk) {
+								var _p5 = mk;
+								if (_p5.ctor === 'Just') {
+									var _p6 = _p5._0;
+									return A2(
+										_elm_lang$core$Basics_ops['++'],
+										'{pos=',
+										A2(
+											_elm_lang$core$Basics_ops['++'],
+											A2(
+												pos2str,
+												_elm_lang$core$Tuple$first(_p6.pos),
+												_elm_lang$core$Tuple$second(_p6.pos)),
+											A2(
+												_elm_lang$core$Basics_ops['++'],
+												', actived=',
+												A2(
+													_elm_lang$core$Basics_ops['++'],
+													_elm_lang$core$Basics$toString(_p6.actived),
+													'}'))));
+								} else {
+									return 'Nothing';
+								}
+							};
+							var editParm2str = F4(
+								function (_p8, _p7, str, mk) {
+									var _p9 = _p8;
+									var _p10 = _p7;
+									return A2(
+										_elm_lang$core$Basics_ops['++'],
+										'{begin=',
+										A2(
+											_elm_lang$core$Basics_ops['++'],
+											A2(pos2str, _p9._0, _p9._1),
+											A2(
+												_elm_lang$core$Basics_ops['++'],
+												', end=',
+												A2(
+													_elm_lang$core$Basics_ops['++'],
+													A2(pos2str, _p10._0, _p10._1),
+													A2(
+														_elm_lang$core$Basics_ops['++'],
+														', str=\"',
+														A2(
+															_elm_lang$core$Basics_ops['++'],
+															str,
+															A2(
+																_elm_lang$core$Basics_ops['++'],
+																'\", mark=',
+																A2(
+																	_elm_lang$core$Basics_ops['++'],
+																	mark2str(mk),
+																	'}'))))))));
+								});
+							var _p11 = c;
+							switch (_p11.ctor) {
 								case 'Cmd_Insert':
 									return A2(
 										_elm_lang$html$Html$div,
@@ -13847,20 +13923,13 @@ var _minekoa$elm_text_editor$DebugMenu$historyView = function (editorModel) {
 											_0: _elm_lang$html$Html$text(
 												A2(
 													_elm_lang$core$Basics_ops['++'],
-													'Ins',
-													A2(
-														_elm_lang$core$Basics_ops['++'],
-														A2(pos2str, _p5._0._0, _p5._0._1),
-														A2(
-															_elm_lang$core$Basics_ops['++'],
-															' -> ',
-															A2(
-																_elm_lang$core$Basics_ops['++'],
-																A2(pos2str, _p5._1._0, _p5._1._1),
-																A2(
-																	_elm_lang$core$Basics_ops['++'],
-																	'{',
-																	A2(_elm_lang$core$Basics_ops['++'], _p5._2, '}'))))))),
+													'Insert ',
+													A4(
+														editParm2str,
+														{ctor: '_Tuple2', _0: _p11._0._0, _1: _p11._0._1},
+														{ctor: '_Tuple2', _0: _p11._1._0, _1: _p11._1._1},
+														_p11._2,
+														_p11._3))),
 											_1: {ctor: '[]'}
 										});
 								case 'Cmd_Backspace':
@@ -13876,20 +13945,13 @@ var _minekoa$elm_text_editor$DebugMenu$historyView = function (editorModel) {
 											_0: _elm_lang$html$Html$text(
 												A2(
 													_elm_lang$core$Basics_ops['++'],
-													'Bs_',
-													A2(
-														_elm_lang$core$Basics_ops['++'],
-														A2(pos2str, _p5._0._0, _p5._0._1),
-														A2(
-															_elm_lang$core$Basics_ops['++'],
-															' -> ',
-															A2(
-																_elm_lang$core$Basics_ops['++'],
-																A2(pos2str, _p5._1._0, _p5._1._1),
-																A2(
-																	_elm_lang$core$Basics_ops['++'],
-																	'{',
-																	A2(_elm_lang$core$Basics_ops['++'], _p5._2, '}'))))))),
+													'Backspace ',
+													A4(
+														editParm2str,
+														{ctor: '_Tuple2', _0: _p11._0._0, _1: _p11._0._1},
+														{ctor: '_Tuple2', _0: _p11._1._0, _1: _p11._1._1},
+														_p11._2,
+														_p11._3))),
 											_1: {ctor: '[]'}
 										});
 								default:
@@ -13905,20 +13967,13 @@ var _minekoa$elm_text_editor$DebugMenu$historyView = function (editorModel) {
 											_0: _elm_lang$html$Html$text(
 												A2(
 													_elm_lang$core$Basics_ops['++'],
-													'Del',
-													A2(
-														_elm_lang$core$Basics_ops['++'],
-														A2(pos2str, _p5._0._0, _p5._0._1),
-														A2(
-															_elm_lang$core$Basics_ops['++'],
-															' -> ',
-															A2(
-																_elm_lang$core$Basics_ops['++'],
-																A2(pos2str, _p5._1._0, _p5._1._1),
-																A2(
-																	_elm_lang$core$Basics_ops['++'],
-																	'{',
-																	A2(_elm_lang$core$Basics_ops['++'], _p5._2, '}'))))))),
+													'Delete ',
+													A4(
+														editParm2str,
+														{ctor: '_Tuple2', _0: _p11._0._0, _1: _p11._0._1},
+														{ctor: '_Tuple2', _0: _p11._1._0, _1: _p11._1._1},
+														_p11._2,
+														_p11._3))),
 											_1: {ctor: '[]'}
 										});
 							}
@@ -13930,18 +13985,18 @@ var _minekoa$elm_text_editor$DebugMenu$historyView = function (editorModel) {
 };
 var _minekoa$elm_text_editor$DebugMenu$update = F3(
 	function (msg, editorModel, model) {
-		var _p6 = msg;
-		if (_p6.ctor === 'SelectSubMenu') {
+		var _p12 = msg;
+		if (_p12.ctor === 'SelectSubMenu') {
 			return {
 				ctor: '_Tuple3',
 				_0: editorModel,
 				_1: _elm_lang$core$Native_Utils.update(
 					model,
-					{selectedSubMenu: _p6._0}),
+					{selectedSubMenu: _p12._0}),
 				_2: _elm_lang$core$Platform_Cmd$none
 			};
 		} else {
-			if (_p6._0 === true) {
+			if (_p12._0 === true) {
 				return {
 					ctor: '_Tuple3',
 					_0: _elm_lang$core$Native_Utils.update(
@@ -14131,8 +14186,8 @@ var _minekoa$elm_text_editor$DebugMenu$eventlogView = function (editorModel) {
 };
 var _minekoa$elm_text_editor$DebugMenu$menuPalette = F2(
 	function (editorModel, model) {
-		var _p7 = model.selectedSubMenu;
-		switch (_p7.ctor) {
+		var _p13 = model.selectedSubMenu;
+		switch (_p13.ctor) {
 			case 'EditHistory':
 				return A2(
 					_elm_lang$html$Html$div,

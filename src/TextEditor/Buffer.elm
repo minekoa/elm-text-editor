@@ -197,7 +197,7 @@ updateMark cmd model =
                 count_last_line_char = String.lines >> List.reverse >> List.head >> Maybe.withDefault "" >> String.length
             in
                 case cmd of
-                    Cmd_Insert (bfr_row, bfr_col) (afr_row, afr_col) s ->
+                    Cmd_Insert (bfr_row, bfr_col) (afr_row, afr_col) s _ ->
                         if mk_row > bfr_row then
                             { model | mark = Just { mk | pos = (mk_row + afr_row - bfr_row, mk_col) } }
                         else if (mk_row == bfr_row) && (bfr_col <= mk_col) then
@@ -210,12 +210,12 @@ updateMark cmd model =
                         else
                            model
 
-                    Cmd_Backspace before_pos after_pos s ->
+                    Cmd_Backspace before_pos after_pos s _ ->
                         { model
                               | mark = Just <| { mk | pos = updateMarkPos_byDelete after_pos s mk.pos}
                         }
 
-                    Cmd_Delete before_pos after_pos s ->
+                    Cmd_Delete before_pos after_pos s _ ->
                         { model
                             | mark = Just <| { mk | pos = updateMarkPos_byDelete before_pos s mk.pos}
                         }
@@ -262,9 +262,9 @@ updateMarkPos_byDelete bgn_pos s (mk_row, mk_col) =
 ------------------------------------------------------------
 
 type EditCommand
-    = Cmd_Insert (Int, Int) (Int, Int) String    -- befor-cur after-cur inserted_str
-    | Cmd_Backspace (Int, Int) (Int, Int) String -- befor-cur after-cur deleted_str
-    | Cmd_Delete (Int, Int) (Int, Int) String    -- befor-cur after-cur deleted_str
+    = Cmd_Insert (Int, Int) (Int, Int) String (Maybe Mark)    -- befor-cur after-cur inserted_str
+    | Cmd_Backspace (Int, Int) (Int, Int) String (Maybe Mark) -- befor-cur after-cur deleted_str
+    | Cmd_Delete (Int, Int) (Int, Int) String (Maybe Mark)    -- befor-cur after-cur deleted_str
 --    | Cmd_Undo EditCommand
 
 appendHistory: EditCommand -> Model -> Model
@@ -274,19 +274,19 @@ appendHistory cmd model =
         col = Tuple.second
     in
     case (cmd, List.head model.history) of
-        ( (Cmd_Insert befor after s), Just (Cmd_Insert old_befor old_after old_s) ) ->
+        ( (Cmd_Insert befor after s mk), Just (Cmd_Insert old_befor old_after old_s old_mk) ) ->
             if ((befor |> row) == (old_befor |> row)) && ((befor |> col) == (old_after |> col))
-            then { model | history = (Cmd_Insert old_befor after (old_s ++ s)) :: List.drop 1 model.history }
+            then { model | history = (Cmd_Insert old_befor after (old_s ++ s) old_mk) :: List.drop 1 model.history }
             else { model | history = cmd :: model.history }
 
-        ( (Cmd_Backspace befor after s), Just (Cmd_Backspace old_befor old_after old_s) ) ->
+        ( (Cmd_Backspace befor after s mk), Just (Cmd_Backspace old_befor old_after old_s old_mk) ) ->
             if ((befor |> row) == (old_befor |> row)) && ((befor |> col) == (old_after |> col))
-            then { model | history = (Cmd_Backspace old_befor after (s ++ old_s)) :: List.drop 1 model.history }
+            then { model | history = (Cmd_Backspace old_befor after (s ++ old_s) old_mk) :: List.drop 1 model.history }
             else { model | history = cmd :: model.history }
 
-        ( (Cmd_Delete befor after s), Just (Cmd_Delete old_befor old_after old_s) ) ->
+        ( (Cmd_Delete befor after s mk), Just (Cmd_Delete old_befor old_after old_s old_mk) ) ->
             if ((befor |> row) == (old_befor |> row)) && ((befor |> col) == (old_befor |> col))
-            then { model | history = (Cmd_Delete old_befor after (old_s ++ s)) :: List.drop 1 model.history }
+            then { model | history = (Cmd_Delete old_befor after (old_s ++ s) old_mk) :: List.drop 1 model.history }
             else { model | history = cmd :: model.history }
 
         (_ , _) ->
@@ -465,7 +465,7 @@ insertAt (row, col) text model =
     |> insert_proc (row, col) text
     |> (\m ->
             let
-                edtcmd = Cmd_Insert (row, col) (nowCursorPos m) text
+                edtcmd = Cmd_Insert (row, col) (nowCursorPos m) text m.mark
             in
                 m |> appendHistory edtcmd
                   |> updateMark edtcmd
@@ -493,7 +493,7 @@ backspaceAt (row, col) model =
                 m
                 |> (\m ->
                         let
-                            edtcmd = Cmd_Backspace (row, col) (nowCursorPos m) s
+                            edtcmd = Cmd_Backspace (row, col) (nowCursorPos m) s m.mark
                         in
                             m |> appendHistory edtcmd
                               |> updateMark edtcmd
@@ -521,7 +521,7 @@ deleteAt (row, col) model =
                 m
                 |> (\m ->
                         let
-                            edtcmd = Cmd_Delete (row, col) (nowCursorPos m) s
+                            edtcmd = Cmd_Delete (row, col) (nowCursorPos m) s m.mark
                         in
                             m |> appendHistory edtcmd
                               |> updateMark edtcmd
@@ -541,7 +541,7 @@ deleteRange range model =
                     |> delete_range_proc range
                     |> (\m ->
                             let
-                                edtcmd = Cmd_Delete head_pos (nowCursorPos m) deleted
+                                edtcmd = Cmd_Delete head_pos (nowCursorPos m) deleted m.mark
                             in
                                 m |> appendHistory edtcmd
                                   |> updateMark edtcmd
@@ -565,14 +565,20 @@ undo model =
         Nothing -> model
         Just cmd ->
             ( case cmd of
-                  Cmd_Insert before_cur after_cur str    ->
-                      undo_insert_proc before_cur after_cur str model
+                  Cmd_Insert before_cur after_cur str mk   ->
+                      model
+                          |> undo_insert_proc before_cur after_cur str
+                          |> \m -> { m | mark = mk}
 
-                  Cmd_Backspace before_cur after_cur str ->
-                      undo_backspace_proc before_cur after_cur str model
+                  Cmd_Backspace before_cur after_cur str mk ->
+                      model
+                          |> undo_backspace_proc before_cur after_cur str
+                          |> \m -> { m | mark = mk }
 
-                  Cmd_Delete before_cur after_cur str    ->
-                      undo_delete_proc before_cur after_cur str model
+                  Cmd_Delete before_cur after_cur str mk    ->
+                      model
+                          |> undo_delete_proc before_cur after_cur str
+                          |> \m -> { m | mark = mk }
             )
             |> (\ m -> {m | history = List.drop 1 m.history })
 

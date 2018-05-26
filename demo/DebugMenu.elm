@@ -115,15 +115,20 @@ historyView editorModel =
                     (\ c ->
                          let
                              pos2str = \ row col -> "(" ++ (toString row) ++ ", " ++ (toString col) ++")" 
+                             mark2str = \ mk -> case mk of
+                                                    Just m -> "{pos=" ++ (pos2str (Tuple.first m.pos) (Tuple.second m.pos) ) ++ ", actived=" ++ (toString m.actived) ++ "}"
+                                                    Nothing -> "Nothing"
+                             editParm2str = \ (bfr_row, bfr_col) (afr_row, afr_col) str mk ->
+                                 "{begin=" ++ (pos2str bfr_row bfr_col) ++ ", end=" ++ (pos2str afr_row afr_col) ++ ", str=\"" ++ str ++ "\", mark=" ++ (mark2str mk) ++ "}"
                              celstyle = style [("text-wrap", "none"), ("white-space","nowrap"), ("color", "gray")]
                          in
                              case c of
-                                 Buffer.Cmd_Insert (row, col) (ar, ac) str ->
-                                     div [celstyle] [ "Ins" ++ (pos2str row col) ++ " -> " ++ (pos2str ar ac) ++ "{" ++ str ++ "}" |> text ]
-                                 Buffer.Cmd_Backspace (row, col) (ar, ac) str ->
-                                     div [celstyle] [ "Bs_" ++ (pos2str row col) ++ " -> " ++ (pos2str ar ac) ++ "{" ++ str ++ "}" |> text ]
-                                 Buffer.Cmd_Delete (row, col) (ar, ac) str ->
-                                     div [celstyle] [ "Del" ++ (pos2str row col) ++ " -> " ++ (pos2str ar ac) ++ "{" ++ str ++ "}" |> text ]
+                                 Buffer.Cmd_Insert (row, col) (ar, ac) str mk ->
+                                     div [celstyle] [ "Insert " ++ editParm2str (row, col) (ar, ac) str mk |> text ]
+                                 Buffer.Cmd_Backspace (row, col) (ar, ac) str mk->
+                                     div [celstyle] [ "Backspace " ++ editParm2str (row, col) (ar, ac) str mk  |> text ]
+                                 Buffer.Cmd_Delete (row, col) (ar, ac) str mk ->
+                                     div [celstyle] [ "Delete " ++ editParm2str (row, col) (ar, ac) str mk  |> text ]
                     ) editorModel.core.buffer.history
               )
         ]
