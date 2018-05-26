@@ -9910,82 +9910,25 @@ var _minekoa$elm_text_editor$TextEditor_Buffer$delete_range_proc = F2(
 				});
 		}
 	});
-var _minekoa$elm_text_editor$TextEditor_Buffer$undo_insert_proc = F4(
+var _minekoa$elm_text_editor$TextEditor_Buffer$undo_delete_proc = F4(
 	function (_p48, _p47, str, model) {
 		var _p49 = _p48;
+		var _p52 = _p49._0;
+		var _p51 = _p49._1;
 		var _p50 = _p47;
-		var delete_n = F2(
-			function (c, m) {
-				delete_n:
-				while (true) {
-					if (_elm_lang$core$Native_Utils.cmp(c, 0) < 1) {
-						return m;
-					} else {
-						var _v22 = c - 1,
-							_v23 = _elm_lang$core$Tuple$first(
-							A2(
-								_minekoa$elm_text_editor$TextEditor_Buffer$backspace_proc,
-								{ctor: '_Tuple2', _0: m.cursor.row, _1: m.cursor.column},
-								m));
-						c = _v22;
-						m = _v23;
-						continue delete_n;
-					}
-				}
-			});
-		return A2(
-			delete_n,
-			_elm_lang$core$String$length(str),
-			_elm_lang$core$Native_Utils.update(
-				model,
-				{
-					cursor: A2(_minekoa$elm_text_editor$TextEditor_Buffer$Cursor, _p50._0, _p50._1)
-				}));
-	});
-var _minekoa$elm_text_editor$TextEditor_Buffer$undo_delete_proc = F4(
-	function (_p52, _p51, str, model) {
-		var _p53 = _p52;
-		var _p56 = _p53._0;
-		var _p55 = _p53._1;
-		var _p54 = _p51;
 		return function (m) {
 			return _elm_lang$core$Native_Utils.update(
 				m,
 				{
-					cursor: A2(_minekoa$elm_text_editor$TextEditor_Buffer$Cursor, _p56, _p55)
+					cursor: A2(_minekoa$elm_text_editor$TextEditor_Buffer$Cursor, _p52, _p51)
 				});
 		}(
 			A3(
 				_minekoa$elm_text_editor$TextEditor_Buffer$insert_proc,
-				{ctor: '_Tuple2', _0: _p56, _1: _p55},
+				{ctor: '_Tuple2', _0: _p52, _1: _p51},
 				str,
 				model));
 	});
-var _minekoa$elm_text_editor$TextEditor_Buffer$undo = function (model) {
-	var _p57 = _elm_lang$core$List$head(model.history);
-	if (_p57.ctor === 'Nothing') {
-		return model;
-	} else {
-		return function (m) {
-			return _elm_lang$core$Native_Utils.update(
-				m,
-				{
-					history: A2(_elm_lang$core$List$drop, 1, m.history)
-				});
-		}(
-			function () {
-				var _p58 = _p57._0;
-				switch (_p58.ctor) {
-					case 'Cmd_Insert':
-						return A4(_minekoa$elm_text_editor$TextEditor_Buffer$undo_insert_proc, _p58._0, _p58._1, _p58._2, model);
-					case 'Cmd_Backspace':
-						return A4(_minekoa$elm_text_editor$TextEditor_Buffer$undo_backspace_proc, _p58._0, _p58._1, _p58._2, model);
-					default:
-						return A4(_minekoa$elm_text_editor$TextEditor_Buffer$undo_delete_proc, _p58._0, _p58._1, _p58._2, model);
-				}
-			}());
-	}
-};
 var _minekoa$elm_text_editor$TextEditor_Buffer$Range = F2(
 	function (a, b) {
 		return {begin: a, end: b};
@@ -10036,8 +9979,8 @@ var _minekoa$elm_text_editor$TextEditor_Buffer$selectWithMove = F2(
 		}(model);
 	});
 var _minekoa$elm_text_editor$TextEditor_Buffer$moveForward = function (model) {
-	var _p59 = _minekoa$elm_text_editor$TextEditor_Buffer$isMarkActive(model);
-	if (_p59 === true) {
+	var _p53 = _minekoa$elm_text_editor$TextEditor_Buffer$isMarkActive(model);
+	if (_p53 === true) {
 		return A2(_minekoa$elm_text_editor$TextEditor_Buffer$selectWithMove, _minekoa$elm_text_editor$TextEditor_Buffer$moveForwardProc, model);
 	} else {
 		return _minekoa$elm_text_editor$TextEditor_Buffer$selectionClear(
@@ -10045,8 +9988,8 @@ var _minekoa$elm_text_editor$TextEditor_Buffer$moveForward = function (model) {
 	}
 };
 var _minekoa$elm_text_editor$TextEditor_Buffer$moveBackward = function (model) {
-	var _p60 = _minekoa$elm_text_editor$TextEditor_Buffer$isMarkActive(model);
-	if (_p60 === true) {
+	var _p54 = _minekoa$elm_text_editor$TextEditor_Buffer$isMarkActive(model);
+	if (_p54 === true) {
 		return A2(_minekoa$elm_text_editor$TextEditor_Buffer$selectWithMove, _minekoa$elm_text_editor$TextEditor_Buffer$moveBackwardProc, model);
 	} else {
 		return _minekoa$elm_text_editor$TextEditor_Buffer$selectionClear(
@@ -10054,8 +9997,8 @@ var _minekoa$elm_text_editor$TextEditor_Buffer$moveBackward = function (model) {
 	}
 };
 var _minekoa$elm_text_editor$TextEditor_Buffer$movePrevios = function (model) {
-	var _p61 = _minekoa$elm_text_editor$TextEditor_Buffer$isMarkActive(model);
-	if (_p61 === true) {
+	var _p55 = _minekoa$elm_text_editor$TextEditor_Buffer$isMarkActive(model);
+	if (_p55 === true) {
 		return A2(_minekoa$elm_text_editor$TextEditor_Buffer$selectWithMove, _minekoa$elm_text_editor$TextEditor_Buffer$movePreviosProc, model);
 	} else {
 		return _minekoa$elm_text_editor$TextEditor_Buffer$selectionClear(
@@ -10063,8 +10006,8 @@ var _minekoa$elm_text_editor$TextEditor_Buffer$movePrevios = function (model) {
 	}
 };
 var _minekoa$elm_text_editor$TextEditor_Buffer$moveNext = function (model) {
-	var _p62 = _minekoa$elm_text_editor$TextEditor_Buffer$isMarkActive(model);
-	if (_p62 === true) {
+	var _p56 = _minekoa$elm_text_editor$TextEditor_Buffer$isMarkActive(model);
+	if (_p56 === true) {
 		return A2(_minekoa$elm_text_editor$TextEditor_Buffer$selectWithMove, _minekoa$elm_text_editor$TextEditor_Buffer$moveNextProc, model);
 	} else {
 		return _minekoa$elm_text_editor$TextEditor_Buffer$selectionClear(
@@ -10072,77 +10015,114 @@ var _minekoa$elm_text_editor$TextEditor_Buffer$moveNext = function (model) {
 	}
 };
 var _minekoa$elm_text_editor$TextEditor_Buffer$moveAt = F2(
-	function (_p63, model) {
-		var _p64 = _p63;
-		var _p67 = _p64._0;
-		var _p66 = _p64._1;
-		var _p65 = _minekoa$elm_text_editor$TextEditor_Buffer$isMarkActive(model);
-		if (_p65 === true) {
+	function (_p57, model) {
+		var _p58 = _p57;
+		var _p61 = _p58._0;
+		var _p60 = _p58._1;
+		var _p59 = _minekoa$elm_text_editor$TextEditor_Buffer$isMarkActive(model);
+		if (_p59 === true) {
 			return A2(
 				_minekoa$elm_text_editor$TextEditor_Buffer$selectWithMove,
 				_minekoa$elm_text_editor$TextEditor_Buffer$moveAtProc(
-					{ctor: '_Tuple2', _0: _p67, _1: _p66}),
+					{ctor: '_Tuple2', _0: _p61, _1: _p60}),
 				model);
 		} else {
 			return _minekoa$elm_text_editor$TextEditor_Buffer$selectionClear(
 				A2(
 					_minekoa$elm_text_editor$TextEditor_Buffer$moveAtProc,
-					{ctor: '_Tuple2', _0: _p67, _1: _p66},
+					{ctor: '_Tuple2', _0: _p61, _1: _p60},
 					model));
 		}
 	});
 var _minekoa$elm_text_editor$TextEditor_Buffer$gotoMark = function (model) {
-	var _p68 = model.mark;
-	if (_p68.ctor === 'Just') {
+	var _p62 = model.mark;
+	if (_p62.ctor === 'Just') {
 		return A2(
 			_minekoa$elm_text_editor$TextEditor_Buffer$moveAt,
-			_p68._0.pos,
+			_p62._0.pos,
 			_minekoa$elm_text_editor$TextEditor_Buffer$markSet(model));
 	} else {
 		return model;
 	}
 };
-var _minekoa$elm_text_editor$TextEditor_Buffer$selectBackward = function (_p69) {
+var _minekoa$elm_text_editor$TextEditor_Buffer$selectBackward = function (_p63) {
 	return A2(
 		_minekoa$elm_text_editor$TextEditor_Buffer$selectWithMove,
 		_minekoa$elm_text_editor$TextEditor_Buffer$moveBackwardProc,
 		function (m) {
 			return _minekoa$elm_text_editor$TextEditor_Buffer$isMarkActive(m) ? _minekoa$elm_text_editor$TextEditor_Buffer$markClear(m) : m;
-		}(_p69));
+		}(_p63));
 };
-var _minekoa$elm_text_editor$TextEditor_Buffer$selectForward = function (_p70) {
+var _minekoa$elm_text_editor$TextEditor_Buffer$selectForward = function (_p64) {
 	return A2(
 		_minekoa$elm_text_editor$TextEditor_Buffer$selectWithMove,
 		_minekoa$elm_text_editor$TextEditor_Buffer$moveForwardProc,
 		function (m) {
 			return _minekoa$elm_text_editor$TextEditor_Buffer$isMarkActive(m) ? _minekoa$elm_text_editor$TextEditor_Buffer$markClear(m) : m;
-		}(_p70));
+		}(_p64));
 };
-var _minekoa$elm_text_editor$TextEditor_Buffer$selectPrevios = function (_p71) {
+var _minekoa$elm_text_editor$TextEditor_Buffer$selectPrevios = function (_p65) {
 	return A2(
 		_minekoa$elm_text_editor$TextEditor_Buffer$selectWithMove,
 		_minekoa$elm_text_editor$TextEditor_Buffer$movePreviosProc,
 		function (m) {
 			return _minekoa$elm_text_editor$TextEditor_Buffer$isMarkActive(m) ? _minekoa$elm_text_editor$TextEditor_Buffer$markClear(m) : m;
-		}(_p71));
+		}(_p65));
 };
-var _minekoa$elm_text_editor$TextEditor_Buffer$selectNext = function (_p72) {
+var _minekoa$elm_text_editor$TextEditor_Buffer$selectNext = function (_p66) {
 	return A2(
 		_minekoa$elm_text_editor$TextEditor_Buffer$selectWithMove,
 		_minekoa$elm_text_editor$TextEditor_Buffer$moveNextProc,
 		function (m) {
 			return _minekoa$elm_text_editor$TextEditor_Buffer$isMarkActive(m) ? _minekoa$elm_text_editor$TextEditor_Buffer$markClear(m) : m;
-		}(_p72));
+		}(_p66));
 };
 var _minekoa$elm_text_editor$TextEditor_Buffer$selectAt = function (pos) {
-	return function (_p73) {
+	return function (_p67) {
 		return A2(
 			_minekoa$elm_text_editor$TextEditor_Buffer$selectWithMove,
 			_minekoa$elm_text_editor$TextEditor_Buffer$moveAtProc(pos),
 			function (m) {
 				return _minekoa$elm_text_editor$TextEditor_Buffer$isMarkActive(m) ? _minekoa$elm_text_editor$TextEditor_Buffer$markClear(m) : m;
-			}(_p73));
+			}(_p67));
 	};
+};
+var _minekoa$elm_text_editor$TextEditor_Buffer$undo_insert_proc = F4(
+	function (_p69, _p68, str, model) {
+		var _p70 = _p69;
+		var _p71 = _p68;
+		return A2(
+			_minekoa$elm_text_editor$TextEditor_Buffer$delete_range_proc,
+			A2(
+				_minekoa$elm_text_editor$TextEditor_Buffer$Range,
+				{ctor: '_Tuple2', _0: _p70._0, _1: _p70._1},
+				{ctor: '_Tuple2', _0: _p71._0, _1: _p71._1}),
+			model);
+	});
+var _minekoa$elm_text_editor$TextEditor_Buffer$undo = function (model) {
+	var _p72 = _elm_lang$core$List$head(model.history);
+	if (_p72.ctor === 'Nothing') {
+		return model;
+	} else {
+		return function (m) {
+			return _elm_lang$core$Native_Utils.update(
+				m,
+				{
+					history: A2(_elm_lang$core$List$drop, 1, m.history)
+				});
+		}(
+			function () {
+				var _p73 = _p72._0;
+				switch (_p73.ctor) {
+					case 'Cmd_Insert':
+						return A4(_minekoa$elm_text_editor$TextEditor_Buffer$undo_insert_proc, _p73._0, _p73._1, _p73._2, model);
+					case 'Cmd_Backspace':
+						return A4(_minekoa$elm_text_editor$TextEditor_Buffer$undo_backspace_proc, _p73._0, _p73._1, _p73._2, model);
+					default:
+						return A4(_minekoa$elm_text_editor$TextEditor_Buffer$undo_delete_proc, _p73._0, _p73._1, _p73._2, model);
+				}
+			}());
+	}
 };
 var _minekoa$elm_text_editor$TextEditor_Buffer$Mark = F2(
 	function (a, b) {
@@ -10169,7 +10149,7 @@ var _minekoa$elm_text_editor$TextEditor_Buffer$appendHistory = F2(
 			_0: cmd,
 			_1: _elm_lang$core$List$head(model.history)
 		};
-		_v35_3:
+		_v33_3:
 		do {
 			if (_p74._1.ctor === 'Just') {
 				switch (_p74._0.ctor) {
@@ -10199,7 +10179,7 @@ var _minekoa$elm_text_editor$TextEditor_Buffer$appendHistory = F2(
 									history: {ctor: '::', _0: cmd, _1: model.history}
 								});
 						} else {
-							break _v35_3;
+							break _v33_3;
 						}
 					case 'Cmd_Backspace':
 						if (_p74._1._0.ctor === 'Cmd_Backspace') {
@@ -10227,7 +10207,7 @@ var _minekoa$elm_text_editor$TextEditor_Buffer$appendHistory = F2(
 									history: {ctor: '::', _0: cmd, _1: model.history}
 								});
 						} else {
-							break _v35_3;
+							break _v33_3;
 						}
 					default:
 						if (_p74._1._0.ctor === 'Cmd_Delete') {
@@ -10255,11 +10235,11 @@ var _minekoa$elm_text_editor$TextEditor_Buffer$appendHistory = F2(
 									history: {ctor: '::', _0: cmd, _1: model.history}
 								});
 						} else {
-							break _v35_3;
+							break _v33_3;
 						}
 				}
 			} else {
-				break _v35_3;
+				break _v33_3;
 			}
 		} while(false);
 		return _elm_lang$core$Native_Utils.update(

@@ -737,20 +737,7 @@ delete_range_proc sel model =
     
 undo_insert_proc : (Int, Int) -> (Int, Int) -> String -> Model -> Model
 undo_insert_proc (bf_row, bf_col) (af_row, af_col) str model =
-    -- todo: ちゃんと実装する。
-    --       現存の編集イベントを組み合わせて強引に実現している。汚い。
-    let
-        delete_n = (\ c m ->
-                        if c <= 0 then m
-                        else backspace_proc (m.cursor.row, m.cursor.column) m
-                             |> Tuple.first
-                             |> delete_n (c - 1)
-                   )
-    in
-        delete_n (String.length str)
-            { model
-                | cursor = Cursor af_row af_col
-            }
+    delete_range_proc (Range (bf_row, bf_col) (af_row, af_col)) model
 
 undo_backspace_proc : (Int, Int) -> (Int, Int) -> String -> Model ->Model
 undo_backspace_proc (bf_row, bf_col) (af_row, af_col) str model =
