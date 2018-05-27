@@ -16,6 +16,7 @@ module TextEditor.Core exposing
     , tapAreaID
 
     , BlinkState(..)
+    , blinkStateToString
     , blinkBlock
     , compositionStart
     , compositionUpdate
@@ -162,6 +163,12 @@ blinkBlock : Model -> Model
 blinkBlock model =
     {model | blink = BlinkBlocked}
 
+blinkStateToString : BlinkState -> String
+blinkStateToString blnk =
+    case blnk of
+        BlinkBlocked -> "BlinkBlocked"
+        Blink True   -> "Blink (True)"
+        Blink False  -> "Blink (False)"
 
 -- Composition Input
 

@@ -10441,6 +10441,18 @@ var _minekoa$elm_text_editor$TextEditor_Core$elaborateInputAreaTask = function (
 	return _elm_lang$core$Task$succeed(
 		_minekoa$elm_text_editor$Native_Mice.elaborateInputArea(input_area_id));
 };
+var _minekoa$elm_text_editor$TextEditor_Core$blinkStateToString = function (blnk) {
+	var _p0 = blnk;
+	if (_p0.ctor === 'BlinkBlocked') {
+		return 'BlinkBlocked';
+	} else {
+		if (_p0._0 === true) {
+			return 'Blink (True)';
+		} else {
+			return 'Blink (False)';
+		}
+	}
+};
 var _minekoa$elm_text_editor$TextEditor_Core$tapAreaID = function (model) {
 	return A2(_elm_lang$core$Basics_ops['++'], model.id, '-editor-tap');
 };
@@ -10494,7 +10506,7 @@ var _minekoa$elm_text_editor$TextEditor_Core$withEnsureVisibleCmd = function (mo
 		_0: model,
 		_1: A2(
 			_elm_lang$core$Task$perform,
-			function (_p0) {
+			function (_p1) {
 				return _minekoa$elm_text_editor$TextEditor_Core$EnsureVisible;
 			},
 			_elm_lang$core$Task$succeed(true))
@@ -10504,7 +10516,7 @@ var _minekoa$elm_text_editor$TextEditor_Core$IgnoreResult = {ctor: 'IgnoreResult
 var _minekoa$elm_text_editor$TextEditor_Core$doFocus = function (model) {
 	return A2(
 		_elm_lang$core$Task$attempt,
-		function (_p1) {
+		function (_p2) {
 			return _minekoa$elm_text_editor$TextEditor_Core$IgnoreResult;
 		},
 		_elm_lang$dom$Dom$focus(
@@ -10513,7 +10525,7 @@ var _minekoa$elm_text_editor$TextEditor_Core$doFocus = function (model) {
 var _minekoa$elm_text_editor$TextEditor_Core$elaborateInputArea = function (model) {
 	return A2(
 		_elm_lang$core$Task$perform,
-		function (_p2) {
+		function (_p3) {
 			return _minekoa$elm_text_editor$TextEditor_Core$IgnoreResult;
 		},
 		_minekoa$elm_text_editor$TextEditor_Core$elaborateInputAreaTask(
@@ -10522,7 +10534,7 @@ var _minekoa$elm_text_editor$TextEditor_Core$elaborateInputArea = function (mode
 var _minekoa$elm_text_editor$TextEditor_Core$elaborateTapArea = function (model) {
 	return A2(
 		_elm_lang$core$Task$perform,
-		function (_p3) {
+		function (_p4) {
 			return _minekoa$elm_text_editor$TextEditor_Core$IgnoreResult;
 		},
 		_minekoa$elm_text_editor$TextEditor_Core$elaborateTapAreaTask(
@@ -10531,7 +10543,7 @@ var _minekoa$elm_text_editor$TextEditor_Core$elaborateTapArea = function (model)
 var _minekoa$elm_text_editor$TextEditor_Core$ensureVisible = function (model) {
 	return A2(
 		_elm_lang$core$Task$perform,
-		function (_p4) {
+		function (_p5) {
 			return _minekoa$elm_text_editor$TextEditor_Core$IgnoreResult;
 		},
 		A2(
@@ -10593,11 +10605,11 @@ var _minekoa$elm_text_editor$TextEditor_Core$Blink = function (a) {
 	return {ctor: 'Blink', _0: a};
 };
 var _minekoa$elm_text_editor$TextEditor_Core$blinkTransition = function (blnk) {
-	var _p5 = blnk;
-	if (_p5.ctor === 'BlinkBlocked') {
+	var _p6 = blnk;
+	if (_p6.ctor === 'BlinkBlocked') {
 		return _minekoa$elm_text_editor$TextEditor_Core$Blink(true);
 	} else {
-		if (_p5._0 === true) {
+		if (_p6._0 === true) {
 			return _minekoa$elm_text_editor$TextEditor_Core$Blink(false);
 		} else {
 			return _minekoa$elm_text_editor$TextEditor_Core$Blink(true);
@@ -10606,8 +10618,8 @@ var _minekoa$elm_text_editor$TextEditor_Core$blinkTransition = function (blnk) {
 };
 var _minekoa$elm_text_editor$TextEditor_Core$update = F2(
 	function (msg, model) {
-		var _p6 = msg;
-		switch (_p6.ctor) {
+		var _p7 = msg;
+		switch (_p7.ctor) {
 			case 'IgnoreResult':
 				return {ctor: '_Tuple2', _0: model, _1: _elm_lang$core$Platform_Cmd$none};
 			case 'EnsureVisible':
@@ -13511,7 +13523,7 @@ var _minekoa$elm_text_editor$DebugMenu$markToString = function (maybe_mark) {
 				}
 			});
 	} else {
-		return 'nothing';
+		return 'Nothing';
 	}
 };
 var _minekoa$elm_text_editor$DebugMenu$selectionToString = function (maybe_sel) {
@@ -13561,7 +13573,7 @@ var _minekoa$elm_text_editor$DebugMenu$selectionToString = function (maybe_sel) 
 				}
 			});
 	} else {
-		return 'nothing';
+		return 'Nothing';
 	}
 };
 var _minekoa$elm_text_editor$DebugMenu$cursorToString = function (cur) {
@@ -13580,7 +13592,7 @@ var _minekoa$elm_text_editor$DebugMenu$cursorToString = function (cur) {
 			}
 		});
 };
-var _minekoa$elm_text_editor$DebugMenu$bufferInspectorView = function (editorModel) {
+var _minekoa$elm_text_editor$DebugMenu$inspectorView = function (editorModel) {
 	return A2(
 		_elm_lang$html$Html$div,
 		{
@@ -13596,7 +13608,11 @@ var _minekoa$elm_text_editor$DebugMenu$bufferInspectorView = function (editorMod
 			ctor: '::',
 			_0: A2(
 				_elm_lang$html$Html$table,
-				{ctor: '[]'},
+				{
+					ctor: '::',
+					_0: _elm_lang$html$Html_Attributes$class('debuger-table'),
+					_1: {ctor: '[]'}
+				},
 				{
 					ctor: '::',
 					_0: A2(
@@ -13609,7 +13625,7 @@ var _minekoa$elm_text_editor$DebugMenu$bufferInspectorView = function (editorMod
 								{ctor: '[]'},
 								{
 									ctor: '::',
-									_0: _elm_lang$html$Html$text('cursor'),
+									_0: _elm_lang$html$Html$text('buffer.cursor'),
 									_1: {ctor: '[]'}
 								}),
 							_1: {
@@ -13638,7 +13654,7 @@ var _minekoa$elm_text_editor$DebugMenu$bufferInspectorView = function (editorMod
 									{ctor: '[]'},
 									{
 										ctor: '::',
-										_0: _elm_lang$html$Html$text('selection'),
+										_0: _elm_lang$html$Html$text('buffer.selection'),
 										_1: {ctor: '[]'}
 									}),
 								_1: {
@@ -13667,7 +13683,7 @@ var _minekoa$elm_text_editor$DebugMenu$bufferInspectorView = function (editorMod
 										{ctor: '[]'},
 										{
 											ctor: '::',
-											_0: _elm_lang$html$Html$text('mark'),
+											_0: _elm_lang$html$Html$text('buffer.mark'),
 											_1: {ctor: '[]'}
 										}),
 									_1: {
@@ -13684,7 +13700,186 @@ var _minekoa$elm_text_editor$DebugMenu$bufferInspectorView = function (editorMod
 										_1: {ctor: '[]'}
 									}
 								}),
-							_1: {ctor: '[]'}
+							_1: {
+								ctor: '::',
+								_0: A2(
+									_elm_lang$html$Html$tr,
+									{ctor: '[]'},
+									{
+										ctor: '::',
+										_0: A2(
+											_elm_lang$html$Html$th,
+											{ctor: '[]'},
+											{
+												ctor: '::',
+												_0: _elm_lang$html$Html$text('core.id'),
+												_1: {ctor: '[]'}
+											}),
+										_1: {
+											ctor: '::',
+											_0: A2(
+												_elm_lang$html$Html$td,
+												{ctor: '[]'},
+												{
+													ctor: '::',
+													_0: _elm_lang$html$Html$text(editorModel.core.id),
+													_1: {ctor: '[]'}
+												}),
+											_1: {ctor: '[]'}
+										}
+									}),
+								_1: {
+									ctor: '::',
+									_0: A2(
+										_elm_lang$html$Html$tr,
+										{ctor: '[]'},
+										{
+											ctor: '::',
+											_0: A2(
+												_elm_lang$html$Html$th,
+												{ctor: '[]'},
+												{
+													ctor: '::',
+													_0: _elm_lang$html$Html$text('core.compositionPreview'),
+													_1: {ctor: '[]'}
+												}),
+											_1: {
+												ctor: '::',
+												_0: A2(
+													_elm_lang$html$Html$td,
+													{ctor: '[]'},
+													{
+														ctor: '::',
+														_0: _elm_lang$html$Html$text(
+															A2(_elm_lang$core$Maybe$withDefault, 'Nothing', editorModel.core.compositionPreview)),
+														_1: {ctor: '[]'}
+													}),
+												_1: {ctor: '[]'}
+											}
+										}),
+									_1: {
+										ctor: '::',
+										_0: A2(
+											_elm_lang$html$Html$tr,
+											{ctor: '[]'},
+											{
+												ctor: '::',
+												_0: A2(
+													_elm_lang$html$Html$th,
+													{ctor: '[]'},
+													{
+														ctor: '::',
+														_0: _elm_lang$html$Html$text('core.focus'),
+														_1: {ctor: '[]'}
+													}),
+												_1: {
+													ctor: '::',
+													_0: A2(
+														_elm_lang$html$Html$td,
+														{ctor: '[]'},
+														{
+															ctor: '::',
+															_0: _elm_lang$html$Html$text(
+																_elm_lang$core$Basics$toString(editorModel.core.focus)),
+															_1: {ctor: '[]'}
+														}),
+													_1: {ctor: '[]'}
+												}
+											}),
+										_1: {
+											ctor: '::',
+											_0: A2(
+												_elm_lang$html$Html$tr,
+												{ctor: '[]'},
+												{
+													ctor: '::',
+													_0: A2(
+														_elm_lang$html$Html$th,
+														{ctor: '[]'},
+														{
+															ctor: '::',
+															_0: _elm_lang$html$Html$text('core.blink'),
+															_1: {ctor: '[]'}
+														}),
+													_1: {
+														ctor: '::',
+														_0: A2(
+															_elm_lang$html$Html$td,
+															{ctor: '[]'},
+															{
+																ctor: '::',
+																_0: _elm_lang$html$Html$text(
+																	_minekoa$elm_text_editor$TextEditor_Core$blinkStateToString(editorModel.core.blink)),
+																_1: {ctor: '[]'}
+															}),
+														_1: {ctor: '[]'}
+													}
+												}),
+											_1: {
+												ctor: '::',
+												_0: A2(
+													_elm_lang$html$Html$tr,
+													{ctor: '[]'},
+													{
+														ctor: '::',
+														_0: A2(
+															_elm_lang$html$Html$th,
+															{ctor: '[]'},
+															{
+																ctor: '::',
+																_0: _elm_lang$html$Html$text('texteditor.enableComposer'),
+																_1: {ctor: '[]'}
+															}),
+														_1: {
+															ctor: '::',
+															_0: A2(
+																_elm_lang$html$Html$td,
+																{ctor: '[]'},
+																{
+																	ctor: '::',
+																	_0: _elm_lang$html$Html$text(
+																		_elm_lang$core$Basics$toString(editorModel.enableComposer)),
+																	_1: {ctor: '[]'}
+																}),
+															_1: {ctor: '[]'}
+														}
+													}),
+												_1: {
+													ctor: '::',
+													_0: A2(
+														_elm_lang$html$Html$tr,
+														{ctor: '[]'},
+														{
+															ctor: '::',
+															_0: A2(
+																_elm_lang$html$Html$th,
+																{ctor: '[]'},
+																{
+																	ctor: '::',
+																	_0: _elm_lang$html$Html$text('texteditor.drag'),
+																	_1: {ctor: '[]'}
+																}),
+															_1: {
+																ctor: '::',
+																_0: A2(
+																	_elm_lang$html$Html$td,
+																	{ctor: '[]'},
+																	{
+																		ctor: '::',
+																		_0: _elm_lang$html$Html$text(
+																			_elm_lang$core$Basics$toString(editorModel.drag)),
+																		_1: {ctor: '[]'}
+																	}),
+																_1: {ctor: '[]'}
+															}
+														}),
+													_1: {ctor: '[]'}
+												}
+											}
+										}
+									}
+								}
+							}
 						}
 					}
 				}),
@@ -14023,7 +14218,7 @@ var _minekoa$elm_text_editor$DebugMenu$update = F3(
 var _minekoa$elm_text_editor$DebugMenu$Model = function (a) {
 	return {selectedSubMenu: a};
 };
-var _minekoa$elm_text_editor$DebugMenu$BufferInspector = {ctor: 'BufferInspector'};
+var _minekoa$elm_text_editor$DebugMenu$Inspector = {ctor: 'Inspector'};
 var _minekoa$elm_text_editor$DebugMenu$EventLog = {ctor: 'EventLog'};
 var _minekoa$elm_text_editor$DebugMenu$Clipboard = {ctor: 'Clipboard'};
 var _minekoa$elm_text_editor$DebugMenu$EditHistory = {ctor: 'EditHistory'};
@@ -14237,7 +14432,7 @@ var _minekoa$elm_text_editor$DebugMenu$menuPalette = F2(
 					},
 					{
 						ctor: '::',
-						_0: _minekoa$elm_text_editor$DebugMenu$bufferInspectorView(editorModel),
+						_0: _minekoa$elm_text_editor$DebugMenu$inspectorView(editorModel),
 						_1: {ctor: '[]'}
 					});
 		}
@@ -14341,11 +14536,11 @@ var _minekoa$elm_text_editor$DebugMenu$menuItemsView = function (model) {
 							{
 								ctor: '::',
 								_0: _elm_lang$html$Html_Events$onClick(
-									_minekoa$elm_text_editor$DebugMenu$SelectSubMenu(_minekoa$elm_text_editor$DebugMenu$BufferInspector)),
+									_minekoa$elm_text_editor$DebugMenu$SelectSubMenu(_minekoa$elm_text_editor$DebugMenu$Inspector)),
 								_1: {
 									ctor: '::',
 									_0: _elm_lang$html$Html_Attributes$class(
-										_elm_lang$core$Native_Utils.eq(model.selectedSubMenu, _minekoa$elm_text_editor$DebugMenu$BufferInspector) ? 'menu-item-active' : 'menu-item'),
+										_elm_lang$core$Native_Utils.eq(model.selectedSubMenu, _minekoa$elm_text_editor$DebugMenu$Inspector) ? 'menu-item-active' : 'menu-item'),
 									_1: {ctor: '[]'}
 								}
 							},
@@ -14356,7 +14551,7 @@ var _minekoa$elm_text_editor$DebugMenu$menuItemsView = function (model) {
 									{ctor: '[]'},
 									{
 										ctor: '::',
-										_0: _elm_lang$html$Html$text('Buffer Inspector'),
+										_0: _elm_lang$html$Html$text('Inspector'),
 										_1: {ctor: '[]'}
 									}),
 								_1: {ctor: '[]'}

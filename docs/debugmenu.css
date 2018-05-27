@@ -20,3 +20,6 @@
     width: 10ex;
 }
 
+.debuger-table th {
+    text-align: left;
+}

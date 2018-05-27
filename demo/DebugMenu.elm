@@ -13,6 +13,7 @@ import Date
 
 import TextEditor as Editor
 import TextEditor.Buffer as Buffer
+import TextEditor.Core as Core
 
 type alias Model =
     { selectedSubMenu : SubMenu
@@ -22,7 +23,7 @@ type SubMenu
     = EditHistory
     | Clipboard
     | EventLog
-    | BufferInspector
+    | Inspector
 
 type Msg
     = SelectSubMenu SubMenu
@@ -82,10 +83,10 @@ menuItemsView model =
           ]
           [ span [] [text "Event log"]
           ]
-    , div [ onClick <| SelectSubMenu BufferInspector
-          , class <| if model.selectedSubMenu == BufferInspector then "menu-item-active" else "menu-item"
+    , div [ onClick <| SelectSubMenu Inspector
+          , class <| if model.selectedSubMenu == Inspector then "menu-item-active" else "menu-item"
           ]
-          [ span [] [text "Buffer Inspector"]
+          [ span [] [text "Inspector"]
           ]
     ]
 
@@ -99,8 +100,8 @@ menuPalette editorModel model =
             div [class "menu-palette"] [ clipboardView editorModel ]
         EventLog ->
             div [class "menu-palette"] [ eventlogView editorModel ]
-        BufferInspector ->
-            div [class "menu-palette"] [ bufferInspectorView editorModel ]
+        Inspector ->
+            div [class "menu-palette"] [ inspectorView editorModel ]
 
 
 historyView : Editor.Model -> Html Msg
@@ -177,18 +178,26 @@ eventlogView editorModel =
         ]
 
 
-bufferInspectorView : Editor.Model -> Html Msg
-bufferInspectorView editorModel =
+inspectorView : Editor.Model -> Html Msg
+inspectorView editorModel =
     div [ id "debug-pane-eventlog"
         , class "debugger-vbox"
         ]
         [ table
-              []
-              [ tr [] [ th [] [ text "cursor"   ], td [] [ editorModel.core.buffer.cursor |> cursorToString |> text ] ]
-              , tr [] [ th [] [ text "selection"], td [] [ editorModel.core.buffer.selection |> selectionToString |> text ] ]
-              , tr [] [ th [] [ text "mark"     ], td [] [ editorModel.core.buffer.mark |> markToString |> text ]]
+              [class "debuger-table" ]
+              [ tr [] [ th [] [ text "buffer.cursor"   ], td [] [ editorModel.core.buffer.cursor |> cursorToString |> text ] ]
+              , tr [] [ th [] [ text "buffer.selection"], td [] [ editorModel.core.buffer.selection |> selectionToString |> text ] ]
+              , tr [] [ th [] [ text "buffer.mark"     ], td [] [ editorModel.core.buffer.mark |> markToString |> text ]]
+              , tr [] [ th [] [ text "core.id"                  ], td [] [ editorModel.core.id |> text ] ]
+--              , tr [] [ th [] [ text "core.copyStore"           ],
+              , tr [] [ th [] [ text "core.compositionPreview"  ], td [] [ editorModel.core.compositionPreview |> Maybe.withDefault "Nothing" |> text ] ]
+              , tr [] [ th [] [ text "core.focus"               ], td [] [ editorModel.core.focus |> toString |> text ] ]
+              , tr [] [ th [] [ text "core.blink"               ], td [] [ editorModel.core.blink |> Core.blinkStateToString |> text ] ]
+              , tr [] [ th [] [ text "texteditor.enableComposer"], td [] [ editorModel.enableComposer |> toString |> text ] ]
+              , tr [] [ th [] [ text "texteditor.drag"          ], td [] [ editorModel.drag |> toString |> text ] ]
               ]
         ]
+
 
 cursorToString : Buffer.Cursor -> String
 cursorToString cur =
@@ -214,7 +223,7 @@ selectionToString maybe_sel =
             ]
                  |> String.concat
         Nothing ->
-            "nothing"
+            "Nothing"
 
 markToString : Maybe Buffer.Mark -> String
 markToString maybe_mark =
@@ -229,7 +238,7 @@ markToString maybe_mark =
             ]
                  |> String.concat
         Nothing ->
-            "nothing"
+            "Nothing"
 
 ------------------------------------------------------------
 -- date tools
