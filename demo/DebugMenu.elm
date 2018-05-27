@@ -31,7 +31,7 @@ type Msg
 
 init : Model
 init =
-    { selectedSubMenu = EditHistory
+    { selectedSubMenu = Inspector
     }
 
 
@@ -68,7 +68,12 @@ view editorModel model =
 menuItemsView : Model -> Html Msg
 menuItemsView model =                
     div [ class "menu-itemlist" ]
-    [ div [ onClick <| SelectSubMenu EditHistory
+    [ div [ onClick <| SelectSubMenu Inspector
+          , class <| if model.selectedSubMenu == Inspector then "menu-item-active" else "menu-item"
+          ]
+          [ span [] [text "Inspector (overview)"]
+          ]
+    , div [ onClick <| SelectSubMenu EditHistory
           , class <| if model.selectedSubMenu == EditHistory then "menu-item-active" else "menu-item"
           ]
           [ span [] [text "History"]
@@ -82,11 +87,6 @@ menuItemsView model =
           , class <| if model.selectedSubMenu == EventLog then "menu-item-active" else "menu-item"
           ]
           [ span [] [text "Event log"]
-          ]
-    , div [ onClick <| SelectSubMenu Inspector
-          , class <| if model.selectedSubMenu == Inspector then "menu-item-active" else "menu-item"
-          ]
-          [ span [] [text "Inspector"]
           ]
     ]
 
@@ -180,23 +180,46 @@ eventlogView editorModel =
 
 inspectorView : Editor.Model -> Html Msg
 inspectorView editorModel =
-    div [ id "debug-pane-eventlog"
-        , class "debugger-vbox"
-        ]
-        [ table
-              [class "debuger-table" ]
-              [ tr [] [ th [] [ text "buffer.cursor"   ], td [] [ editorModel.core.buffer.cursor |> cursorToString |> text ] ]
-              , tr [] [ th [] [ text "buffer.selection"], td [] [ editorModel.core.buffer.selection |> selectionToString |> text ] ]
-              , tr [] [ th [] [ text "buffer.mark"     ], td [] [ editorModel.core.buffer.mark |> markToString |> text ]]
-              , tr [] [ th [] [ text "core.id"                  ], td [] [ editorModel.core.id |> text ] ]
---              , tr [] [ th [] [ text "core.copyStore"           ],
-              , tr [] [ th [] [ text "core.compositionPreview"  ], td [] [ editorModel.core.compositionPreview |> Maybe.withDefault "Nothing" |> text ] ]
-              , tr [] [ th [] [ text "core.focus"               ], td [] [ editorModel.core.focus |> toString |> text ] ]
-              , tr [] [ th [] [ text "core.blink"               ], td [] [ editorModel.core.blink |> Core.blinkStateToString |> text ] ]
-              , tr [] [ th [] [ text "texteditor.enableComposer"], td [] [ editorModel.enableComposer |> toString |> text ] ]
-              , tr [] [ th [] [ text "texteditor.drag"          ], td [] [ editorModel.drag |> toString |> text ] ]
-              ]
-        ]
+    let
+        string_cut_n = (\ n str ->
+                            str |> String.left n
+                                |> flip (++) (if String.length str <= n then "" else "…")
+                       )
+
+
+        histToString = (\ hist ->
+                             case hist of
+                                 Buffer.Cmd_Insert (row, col) (ar, ac) str mk ->
+                                    "ins(" ++ (String.length str |> toString) ++ "char)"
+                                 Buffer.Cmd_Backspace (row, col) (ar, ac) str mk->
+                                    "bs(" ++ (String.length str |> toString) ++ "char)"
+                                 Buffer.Cmd_Delete (row, col) (ar, ac) str mk ->
+                                    "del(" ++ (String.length str |> toString) ++ "char)"
+                       )
+    in
+        div [ id "debug-pane-eventlog"
+            , class "debugger-vbox"
+            ]
+            [ table
+                  [class "debuger-table" ]
+                  [ tr [] [ th [] [ text "buffer.cursor"   ], td [] [ editorModel.core.buffer.cursor |> cursorToString |> text ] ]
+                  , tr [] [ th [] [ text "buffer.contents" ], td [] [ editorModel.core.buffer.contents |> List.take 80 |> String.join "↵" |> string_cut_n 80 |> text ] ]
+                  , tr [] [ th [] [ text "buffer.selection"], td [] [ editorModel.core.buffer.selection |> selectionToString |> text ] ]
+                  , tr [] [ th [] [ text "buffer.mark"     ], td [] [ editorModel.core.buffer.mark |> markToString |> text ]]
+                  , tr [] [ th [] [ text "buffer.history"  ], td [] [ editorModel.core.buffer.history |> List.take 10 |> List.map histToString |> String.join ", " |> flip (++) (if List.length editorModel.core.buffer.history <= 10 then "" else "…") |> text ] ]
+
+--                  , tr [] [ th [] [ text "texteditor.core.id"                  ], td [] [ editorModel.core.id |> text ] ]
+                  , tr [] [ th [] [ text "texteditor.core.copyStore"           ], td [] [ editorModel.core.copyStore |> string_cut_n 80 |> text ]]
+                  , tr [] [ th [] [ text "texteditor.core.compositionPreview"  ], td [] [ editorModel.core.compositionPreview |> Maybe.withDefault "Nothing" |> text ] ]
+                  , tr [] [ th [] [ text "texteditor.core.focus"               ], td [] [ editorModel.core.focus |> toString |> text ] ]
+                  , tr [] [ th [] [ text "texteditor.core.blink"               ], td [] [ editorModel.core.blink |> Core.blinkStateToString |> text ] ]
+
+                  , tr [] [ th [] [ text "texteditor.enableComposer"], td [] [ editorModel.enableComposer |> toString |> text ] ]
+                  , tr [] [ th [] [ text "texteditor.drag"          ], td [] [ editorModel.drag |> toString |> text ] ]
+                  , tr [] [ th [] [ text "texteditor.keymap"        ], td [] [ editorModel.keymap |> List.length |> toString |> flip (++) " binds" |> text ] ]
+                  , tr [] [ th [] [ text "texteditor.event_log"     ], td [] [ editorModel.event_log |> Maybe.andThen (\ evs -> Just "(Enabled)") |> Maybe.withDefault "(Disabled)" |> text ] ]
+                  ]
+            ]
 
 
 cursorToString : Buffer.Cursor -> String

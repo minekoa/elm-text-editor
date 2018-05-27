@@ -13593,6 +13593,51 @@ var _minekoa$elm_text_editor$DebugMenu$cursorToString = function (cur) {
 		});
 };
 var _minekoa$elm_text_editor$DebugMenu$inspectorView = function (editorModel) {
+	var histToString = function (hist) {
+		var _p5 = hist;
+		switch (_p5.ctor) {
+			case 'Cmd_Insert':
+				return A2(
+					_elm_lang$core$Basics_ops['++'],
+					'ins(',
+					A2(
+						_elm_lang$core$Basics_ops['++'],
+						_elm_lang$core$Basics$toString(
+							_elm_lang$core$String$length(_p5._2)),
+						'char)'));
+			case 'Cmd_Backspace':
+				return A2(
+					_elm_lang$core$Basics_ops['++'],
+					'bs(',
+					A2(
+						_elm_lang$core$Basics_ops['++'],
+						_elm_lang$core$Basics$toString(
+							_elm_lang$core$String$length(_p5._2)),
+						'char)'));
+			default:
+				return A2(
+					_elm_lang$core$Basics_ops['++'],
+					'del(',
+					A2(
+						_elm_lang$core$Basics_ops['++'],
+						_elm_lang$core$Basics$toString(
+							_elm_lang$core$String$length(_p5._2)),
+						'char)'));
+		}
+	};
+	var string_cut_n = F2(
+		function (n, str) {
+			return A3(
+				_elm_lang$core$Basics$flip,
+				F2(
+					function (x, y) {
+						return A2(_elm_lang$core$Basics_ops['++'], x, y);
+					}),
+				(_elm_lang$core$Native_Utils.cmp(
+					_elm_lang$core$String$length(str),
+					n) < 1) ? '' : '…',
+				A2(_elm_lang$core$String$left, n, str));
+		});
 	return A2(
 		_elm_lang$html$Html$div,
 		{
@@ -13654,7 +13699,7 @@ var _minekoa$elm_text_editor$DebugMenu$inspectorView = function (editorModel) {
 									{ctor: '[]'},
 									{
 										ctor: '::',
-										_0: _elm_lang$html$Html$text('buffer.selection'),
+										_0: _elm_lang$html$Html$text('buffer.contents'),
 										_1: {ctor: '[]'}
 									}),
 								_1: {
@@ -13665,7 +13710,13 @@ var _minekoa$elm_text_editor$DebugMenu$inspectorView = function (editorModel) {
 										{
 											ctor: '::',
 											_0: _elm_lang$html$Html$text(
-												_minekoa$elm_text_editor$DebugMenu$selectionToString(editorModel.core.buffer.selection)),
+												A2(
+													string_cut_n,
+													80,
+													A2(
+														_elm_lang$core$String$join,
+														'↵',
+														A2(_elm_lang$core$List$take, 80, editorModel.core.buffer.contents)))),
 											_1: {ctor: '[]'}
 										}),
 									_1: {ctor: '[]'}
@@ -13683,7 +13734,7 @@ var _minekoa$elm_text_editor$DebugMenu$inspectorView = function (editorModel) {
 										{ctor: '[]'},
 										{
 											ctor: '::',
-											_0: _elm_lang$html$Html$text('buffer.mark'),
+											_0: _elm_lang$html$Html$text('buffer.selection'),
 											_1: {ctor: '[]'}
 										}),
 									_1: {
@@ -13694,7 +13745,7 @@ var _minekoa$elm_text_editor$DebugMenu$inspectorView = function (editorModel) {
 											{
 												ctor: '::',
 												_0: _elm_lang$html$Html$text(
-													_minekoa$elm_text_editor$DebugMenu$markToString(editorModel.core.buffer.mark)),
+													_minekoa$elm_text_editor$DebugMenu$selectionToString(editorModel.core.buffer.selection)),
 												_1: {ctor: '[]'}
 											}),
 										_1: {ctor: '[]'}
@@ -13712,7 +13763,7 @@ var _minekoa$elm_text_editor$DebugMenu$inspectorView = function (editorModel) {
 											{ctor: '[]'},
 											{
 												ctor: '::',
-												_0: _elm_lang$html$Html$text('core.id'),
+												_0: _elm_lang$html$Html$text('buffer.mark'),
 												_1: {ctor: '[]'}
 											}),
 										_1: {
@@ -13722,7 +13773,8 @@ var _minekoa$elm_text_editor$DebugMenu$inspectorView = function (editorModel) {
 												{ctor: '[]'},
 												{
 													ctor: '::',
-													_0: _elm_lang$html$Html$text(editorModel.core.id),
+													_0: _elm_lang$html$Html$text(
+														_minekoa$elm_text_editor$DebugMenu$markToString(editorModel.core.buffer.mark)),
 													_1: {ctor: '[]'}
 												}),
 											_1: {ctor: '[]'}
@@ -13740,7 +13792,7 @@ var _minekoa$elm_text_editor$DebugMenu$inspectorView = function (editorModel) {
 												{ctor: '[]'},
 												{
 													ctor: '::',
-													_0: _elm_lang$html$Html$text('core.compositionPreview'),
+													_0: _elm_lang$html$Html$text('buffer.history'),
 													_1: {ctor: '[]'}
 												}),
 											_1: {
@@ -13751,7 +13803,22 @@ var _minekoa$elm_text_editor$DebugMenu$inspectorView = function (editorModel) {
 													{
 														ctor: '::',
 														_0: _elm_lang$html$Html$text(
-															A2(_elm_lang$core$Maybe$withDefault, 'Nothing', editorModel.core.compositionPreview)),
+															A3(
+																_elm_lang$core$Basics$flip,
+																F2(
+																	function (x, y) {
+																		return A2(_elm_lang$core$Basics_ops['++'], x, y);
+																	}),
+																(_elm_lang$core$Native_Utils.cmp(
+																	_elm_lang$core$List$length(editorModel.core.buffer.history),
+																	10) < 1) ? '' : '…',
+																A2(
+																	_elm_lang$core$String$join,
+																	', ',
+																	A2(
+																		_elm_lang$core$List$map,
+																		histToString,
+																		A2(_elm_lang$core$List$take, 10, editorModel.core.buffer.history))))),
 														_1: {ctor: '[]'}
 													}),
 												_1: {ctor: '[]'}
@@ -13769,7 +13836,7 @@ var _minekoa$elm_text_editor$DebugMenu$inspectorView = function (editorModel) {
 													{ctor: '[]'},
 													{
 														ctor: '::',
-														_0: _elm_lang$html$Html$text('core.focus'),
+														_0: _elm_lang$html$Html$text('texteditor.core.copyStore'),
 														_1: {ctor: '[]'}
 													}),
 												_1: {
@@ -13780,7 +13847,7 @@ var _minekoa$elm_text_editor$DebugMenu$inspectorView = function (editorModel) {
 														{
 															ctor: '::',
 															_0: _elm_lang$html$Html$text(
-																_elm_lang$core$Basics$toString(editorModel.core.focus)),
+																A2(string_cut_n, 80, editorModel.core.copyStore)),
 															_1: {ctor: '[]'}
 														}),
 													_1: {ctor: '[]'}
@@ -13798,7 +13865,7 @@ var _minekoa$elm_text_editor$DebugMenu$inspectorView = function (editorModel) {
 														{ctor: '[]'},
 														{
 															ctor: '::',
-															_0: _elm_lang$html$Html$text('core.blink'),
+															_0: _elm_lang$html$Html$text('texteditor.core.compositionPreview'),
 															_1: {ctor: '[]'}
 														}),
 													_1: {
@@ -13809,7 +13876,7 @@ var _minekoa$elm_text_editor$DebugMenu$inspectorView = function (editorModel) {
 															{
 																ctor: '::',
 																_0: _elm_lang$html$Html$text(
-																	_minekoa$elm_text_editor$TextEditor_Core$blinkStateToString(editorModel.core.blink)),
+																	A2(_elm_lang$core$Maybe$withDefault, 'Nothing', editorModel.core.compositionPreview)),
 																_1: {ctor: '[]'}
 															}),
 														_1: {ctor: '[]'}
@@ -13827,7 +13894,7 @@ var _minekoa$elm_text_editor$DebugMenu$inspectorView = function (editorModel) {
 															{ctor: '[]'},
 															{
 																ctor: '::',
-																_0: _elm_lang$html$Html$text('texteditor.enableComposer'),
+																_0: _elm_lang$html$Html$text('texteditor.core.focus'),
 																_1: {ctor: '[]'}
 															}),
 														_1: {
@@ -13838,7 +13905,7 @@ var _minekoa$elm_text_editor$DebugMenu$inspectorView = function (editorModel) {
 																{
 																	ctor: '::',
 																	_0: _elm_lang$html$Html$text(
-																		_elm_lang$core$Basics$toString(editorModel.enableComposer)),
+																		_elm_lang$core$Basics$toString(editorModel.core.focus)),
 																	_1: {ctor: '[]'}
 																}),
 															_1: {ctor: '[]'}
@@ -13856,7 +13923,7 @@ var _minekoa$elm_text_editor$DebugMenu$inspectorView = function (editorModel) {
 																{ctor: '[]'},
 																{
 																	ctor: '::',
-																	_0: _elm_lang$html$Html$text('texteditor.drag'),
+																	_0: _elm_lang$html$Html$text('texteditor.core.blink'),
 																	_1: {ctor: '[]'}
 																}),
 															_1: {
@@ -13867,13 +13934,149 @@ var _minekoa$elm_text_editor$DebugMenu$inspectorView = function (editorModel) {
 																	{
 																		ctor: '::',
 																		_0: _elm_lang$html$Html$text(
-																			_elm_lang$core$Basics$toString(editorModel.drag)),
+																			_minekoa$elm_text_editor$TextEditor_Core$blinkStateToString(editorModel.core.blink)),
 																		_1: {ctor: '[]'}
 																	}),
 																_1: {ctor: '[]'}
 															}
 														}),
-													_1: {ctor: '[]'}
+													_1: {
+														ctor: '::',
+														_0: A2(
+															_elm_lang$html$Html$tr,
+															{ctor: '[]'},
+															{
+																ctor: '::',
+																_0: A2(
+																	_elm_lang$html$Html$th,
+																	{ctor: '[]'},
+																	{
+																		ctor: '::',
+																		_0: _elm_lang$html$Html$text('texteditor.enableComposer'),
+																		_1: {ctor: '[]'}
+																	}),
+																_1: {
+																	ctor: '::',
+																	_0: A2(
+																		_elm_lang$html$Html$td,
+																		{ctor: '[]'},
+																		{
+																			ctor: '::',
+																			_0: _elm_lang$html$Html$text(
+																				_elm_lang$core$Basics$toString(editorModel.enableComposer)),
+																			_1: {ctor: '[]'}
+																		}),
+																	_1: {ctor: '[]'}
+																}
+															}),
+														_1: {
+															ctor: '::',
+															_0: A2(
+																_elm_lang$html$Html$tr,
+																{ctor: '[]'},
+																{
+																	ctor: '::',
+																	_0: A2(
+																		_elm_lang$html$Html$th,
+																		{ctor: '[]'},
+																		{
+																			ctor: '::',
+																			_0: _elm_lang$html$Html$text('texteditor.drag'),
+																			_1: {ctor: '[]'}
+																		}),
+																	_1: {
+																		ctor: '::',
+																		_0: A2(
+																			_elm_lang$html$Html$td,
+																			{ctor: '[]'},
+																			{
+																				ctor: '::',
+																				_0: _elm_lang$html$Html$text(
+																					_elm_lang$core$Basics$toString(editorModel.drag)),
+																				_1: {ctor: '[]'}
+																			}),
+																		_1: {ctor: '[]'}
+																	}
+																}),
+															_1: {
+																ctor: '::',
+																_0: A2(
+																	_elm_lang$html$Html$tr,
+																	{ctor: '[]'},
+																	{
+																		ctor: '::',
+																		_0: A2(
+																			_elm_lang$html$Html$th,
+																			{ctor: '[]'},
+																			{
+																				ctor: '::',
+																				_0: _elm_lang$html$Html$text('texteditor.keymap'),
+																				_1: {ctor: '[]'}
+																			}),
+																		_1: {
+																			ctor: '::',
+																			_0: A2(
+																				_elm_lang$html$Html$td,
+																				{ctor: '[]'},
+																				{
+																					ctor: '::',
+																					_0: _elm_lang$html$Html$text(
+																						A3(
+																							_elm_lang$core$Basics$flip,
+																							F2(
+																								function (x, y) {
+																									return A2(_elm_lang$core$Basics_ops['++'], x, y);
+																								}),
+																							' binds',
+																							_elm_lang$core$Basics$toString(
+																								_elm_lang$core$List$length(editorModel.keymap)))),
+																					_1: {ctor: '[]'}
+																				}),
+																			_1: {ctor: '[]'}
+																		}
+																	}),
+																_1: {
+																	ctor: '::',
+																	_0: A2(
+																		_elm_lang$html$Html$tr,
+																		{ctor: '[]'},
+																		{
+																			ctor: '::',
+																			_0: A2(
+																				_elm_lang$html$Html$th,
+																				{ctor: '[]'},
+																				{
+																					ctor: '::',
+																					_0: _elm_lang$html$Html$text('texteditor.event_log'),
+																					_1: {ctor: '[]'}
+																				}),
+																			_1: {
+																				ctor: '::',
+																				_0: A2(
+																					_elm_lang$html$Html$td,
+																					{ctor: '[]'},
+																					{
+																						ctor: '::',
+																						_0: _elm_lang$html$Html$text(
+																							A2(
+																								_elm_lang$core$Maybe$withDefault,
+																								'(Disabled)',
+																								A2(
+																									_elm_lang$core$Maybe$andThen,
+																									function (evs) {
+																										return _elm_lang$core$Maybe$Just('(Enabled)');
+																									},
+																									editorModel.event_log))),
+																						_1: {ctor: '[]'}
+																					}),
+																				_1: {ctor: '[]'}
+																			}
+																		}),
+																	_1: {ctor: '[]'}
+																}
+															}
+														}
+													}
 												}
 											}
 										}
@@ -14050,9 +14253,9 @@ var _minekoa$elm_text_editor$DebugMenu$historyView = function (editorModel) {
 													')'))));
 								});
 							var mark2str = function (mk) {
-								var _p5 = mk;
-								if (_p5.ctor === 'Just') {
-									var _p6 = _p5._0;
+								var _p6 = mk;
+								if (_p6.ctor === 'Just') {
+									var _p7 = _p6._0;
 									return A2(
 										_elm_lang$core$Basics_ops['++'],
 										'{pos=',
@@ -14060,35 +14263,35 @@ var _minekoa$elm_text_editor$DebugMenu$historyView = function (editorModel) {
 											_elm_lang$core$Basics_ops['++'],
 											A2(
 												pos2str,
-												_elm_lang$core$Tuple$first(_p6.pos),
-												_elm_lang$core$Tuple$second(_p6.pos)),
+												_elm_lang$core$Tuple$first(_p7.pos),
+												_elm_lang$core$Tuple$second(_p7.pos)),
 											A2(
 												_elm_lang$core$Basics_ops['++'],
 												', actived=',
 												A2(
 													_elm_lang$core$Basics_ops['++'],
-													_elm_lang$core$Basics$toString(_p6.actived),
+													_elm_lang$core$Basics$toString(_p7.actived),
 													'}'))));
 								} else {
 									return 'Nothing';
 								}
 							};
 							var editParm2str = F4(
-								function (_p8, _p7, str, mk) {
-									var _p9 = _p8;
-									var _p10 = _p7;
+								function (_p9, _p8, str, mk) {
+									var _p10 = _p9;
+									var _p11 = _p8;
 									return A2(
 										_elm_lang$core$Basics_ops['++'],
 										'{begin=',
 										A2(
 											_elm_lang$core$Basics_ops['++'],
-											A2(pos2str, _p9._0, _p9._1),
+											A2(pos2str, _p10._0, _p10._1),
 											A2(
 												_elm_lang$core$Basics_ops['++'],
 												', end=',
 												A2(
 													_elm_lang$core$Basics_ops['++'],
-													A2(pos2str, _p10._0, _p10._1),
+													A2(pos2str, _p11._0, _p11._1),
 													A2(
 														_elm_lang$core$Basics_ops['++'],
 														', str=\"',
@@ -14103,8 +14306,8 @@ var _minekoa$elm_text_editor$DebugMenu$historyView = function (editorModel) {
 																	mark2str(mk),
 																	'}'))))))));
 								});
-							var _p11 = c;
-							switch (_p11.ctor) {
+							var _p12 = c;
+							switch (_p12.ctor) {
 								case 'Cmd_Insert':
 									return A2(
 										_elm_lang$html$Html$div,
@@ -14121,10 +14324,10 @@ var _minekoa$elm_text_editor$DebugMenu$historyView = function (editorModel) {
 													'Insert ',
 													A4(
 														editParm2str,
-														{ctor: '_Tuple2', _0: _p11._0._0, _1: _p11._0._1},
-														{ctor: '_Tuple2', _0: _p11._1._0, _1: _p11._1._1},
-														_p11._2,
-														_p11._3))),
+														{ctor: '_Tuple2', _0: _p12._0._0, _1: _p12._0._1},
+														{ctor: '_Tuple2', _0: _p12._1._0, _1: _p12._1._1},
+														_p12._2,
+														_p12._3))),
 											_1: {ctor: '[]'}
 										});
 								case 'Cmd_Backspace':
@@ -14143,10 +14346,10 @@ var _minekoa$elm_text_editor$DebugMenu$historyView = function (editorModel) {
 													'Backspace ',
 													A4(
 														editParm2str,
-														{ctor: '_Tuple2', _0: _p11._0._0, _1: _p11._0._1},
-														{ctor: '_Tuple2', _0: _p11._1._0, _1: _p11._1._1},
-														_p11._2,
-														_p11._3))),
+														{ctor: '_Tuple2', _0: _p12._0._0, _1: _p12._0._1},
+														{ctor: '_Tuple2', _0: _p12._1._0, _1: _p12._1._1},
+														_p12._2,
+														_p12._3))),
 											_1: {ctor: '[]'}
 										});
 								default:
@@ -14165,10 +14368,10 @@ var _minekoa$elm_text_editor$DebugMenu$historyView = function (editorModel) {
 													'Delete ',
 													A4(
 														editParm2str,
-														{ctor: '_Tuple2', _0: _p11._0._0, _1: _p11._0._1},
-														{ctor: '_Tuple2', _0: _p11._1._0, _1: _p11._1._1},
-														_p11._2,
-														_p11._3))),
+														{ctor: '_Tuple2', _0: _p12._0._0, _1: _p12._0._1},
+														{ctor: '_Tuple2', _0: _p12._1._0, _1: _p12._1._1},
+														_p12._2,
+														_p12._3))),
 											_1: {ctor: '[]'}
 										});
 							}
@@ -14180,18 +14383,18 @@ var _minekoa$elm_text_editor$DebugMenu$historyView = function (editorModel) {
 };
 var _minekoa$elm_text_editor$DebugMenu$update = F3(
 	function (msg, editorModel, model) {
-		var _p12 = msg;
-		if (_p12.ctor === 'SelectSubMenu') {
+		var _p13 = msg;
+		if (_p13.ctor === 'SelectSubMenu') {
 			return {
 				ctor: '_Tuple3',
 				_0: editorModel,
 				_1: _elm_lang$core$Native_Utils.update(
 					model,
-					{selectedSubMenu: _p12._0}),
+					{selectedSubMenu: _p13._0}),
 				_2: _elm_lang$core$Platform_Cmd$none
 			};
 		} else {
-			if (_p12._0 === true) {
+			if (_p13._0 === true) {
 				return {
 					ctor: '_Tuple3',
 					_0: _elm_lang$core$Native_Utils.update(
@@ -14219,10 +14422,10 @@ var _minekoa$elm_text_editor$DebugMenu$Model = function (a) {
 	return {selectedSubMenu: a};
 };
 var _minekoa$elm_text_editor$DebugMenu$Inspector = {ctor: 'Inspector'};
+var _minekoa$elm_text_editor$DebugMenu$init = {selectedSubMenu: _minekoa$elm_text_editor$DebugMenu$Inspector};
 var _minekoa$elm_text_editor$DebugMenu$EventLog = {ctor: 'EventLog'};
 var _minekoa$elm_text_editor$DebugMenu$Clipboard = {ctor: 'Clipboard'};
 var _minekoa$elm_text_editor$DebugMenu$EditHistory = {ctor: 'EditHistory'};
-var _minekoa$elm_text_editor$DebugMenu$init = {selectedSubMenu: _minekoa$elm_text_editor$DebugMenu$EditHistory};
 var _minekoa$elm_text_editor$DebugMenu$SetEventlogEnable = function (a) {
 	return {ctor: 'SetEventlogEnable', _0: a};
 };
@@ -14381,8 +14584,8 @@ var _minekoa$elm_text_editor$DebugMenu$eventlogView = function (editorModel) {
 };
 var _minekoa$elm_text_editor$DebugMenu$menuPalette = F2(
 	function (editorModel, model) {
-		var _p13 = model.selectedSubMenu;
-		switch (_p13.ctor) {
+		var _p14 = model.selectedSubMenu;
+		switch (_p14.ctor) {
 			case 'EditHistory':
 				return A2(
 					_elm_lang$html$Html$div,
@@ -14455,11 +14658,11 @@ var _minekoa$elm_text_editor$DebugMenu$menuItemsView = function (model) {
 				{
 					ctor: '::',
 					_0: _elm_lang$html$Html_Events$onClick(
-						_minekoa$elm_text_editor$DebugMenu$SelectSubMenu(_minekoa$elm_text_editor$DebugMenu$EditHistory)),
+						_minekoa$elm_text_editor$DebugMenu$SelectSubMenu(_minekoa$elm_text_editor$DebugMenu$Inspector)),
 					_1: {
 						ctor: '::',
 						_0: _elm_lang$html$Html_Attributes$class(
-							_elm_lang$core$Native_Utils.eq(model.selectedSubMenu, _minekoa$elm_text_editor$DebugMenu$EditHistory) ? 'menu-item-active' : 'menu-item'),
+							_elm_lang$core$Native_Utils.eq(model.selectedSubMenu, _minekoa$elm_text_editor$DebugMenu$Inspector) ? 'menu-item-active' : 'menu-item'),
 						_1: {ctor: '[]'}
 					}
 				},
@@ -14470,7 +14673,7 @@ var _minekoa$elm_text_editor$DebugMenu$menuItemsView = function (model) {
 						{ctor: '[]'},
 						{
 							ctor: '::',
-							_0: _elm_lang$html$Html$text('History'),
+							_0: _elm_lang$html$Html$text('Inspector (overview)'),
 							_1: {ctor: '[]'}
 						}),
 					_1: {ctor: '[]'}
@@ -14482,11 +14685,11 @@ var _minekoa$elm_text_editor$DebugMenu$menuItemsView = function (model) {
 					{
 						ctor: '::',
 						_0: _elm_lang$html$Html_Events$onClick(
-							_minekoa$elm_text_editor$DebugMenu$SelectSubMenu(_minekoa$elm_text_editor$DebugMenu$Clipboard)),
+							_minekoa$elm_text_editor$DebugMenu$SelectSubMenu(_minekoa$elm_text_editor$DebugMenu$EditHistory)),
 						_1: {
 							ctor: '::',
 							_0: _elm_lang$html$Html_Attributes$class(
-								_elm_lang$core$Native_Utils.eq(model.selectedSubMenu, _minekoa$elm_text_editor$DebugMenu$Clipboard) ? 'menu-item-active' : 'menu-item'),
+								_elm_lang$core$Native_Utils.eq(model.selectedSubMenu, _minekoa$elm_text_editor$DebugMenu$EditHistory) ? 'menu-item-active' : 'menu-item'),
 							_1: {ctor: '[]'}
 						}
 					},
@@ -14497,7 +14700,7 @@ var _minekoa$elm_text_editor$DebugMenu$menuItemsView = function (model) {
 							{ctor: '[]'},
 							{
 								ctor: '::',
-								_0: _elm_lang$html$Html$text('Clipboard'),
+								_0: _elm_lang$html$Html$text('History'),
 								_1: {ctor: '[]'}
 							}),
 						_1: {ctor: '[]'}
@@ -14509,11 +14712,11 @@ var _minekoa$elm_text_editor$DebugMenu$menuItemsView = function (model) {
 						{
 							ctor: '::',
 							_0: _elm_lang$html$Html_Events$onClick(
-								_minekoa$elm_text_editor$DebugMenu$SelectSubMenu(_minekoa$elm_text_editor$DebugMenu$EventLog)),
+								_minekoa$elm_text_editor$DebugMenu$SelectSubMenu(_minekoa$elm_text_editor$DebugMenu$Clipboard)),
 							_1: {
 								ctor: '::',
 								_0: _elm_lang$html$Html_Attributes$class(
-									_elm_lang$core$Native_Utils.eq(model.selectedSubMenu, _minekoa$elm_text_editor$DebugMenu$EventLog) ? 'menu-item-active' : 'menu-item'),
+									_elm_lang$core$Native_Utils.eq(model.selectedSubMenu, _minekoa$elm_text_editor$DebugMenu$Clipboard) ? 'menu-item-active' : 'menu-item'),
 								_1: {ctor: '[]'}
 							}
 						},
@@ -14524,7 +14727,7 @@ var _minekoa$elm_text_editor$DebugMenu$menuItemsView = function (model) {
 								{ctor: '[]'},
 								{
 									ctor: '::',
-									_0: _elm_lang$html$Html$text('Event log'),
+									_0: _elm_lang$html$Html$text('Clipboard'),
 									_1: {ctor: '[]'}
 								}),
 							_1: {ctor: '[]'}
@@ -14536,11 +14739,11 @@ var _minekoa$elm_text_editor$DebugMenu$menuItemsView = function (model) {
 							{
 								ctor: '::',
 								_0: _elm_lang$html$Html_Events$onClick(
-									_minekoa$elm_text_editor$DebugMenu$SelectSubMenu(_minekoa$elm_text_editor$DebugMenu$Inspector)),
+									_minekoa$elm_text_editor$DebugMenu$SelectSubMenu(_minekoa$elm_text_editor$DebugMenu$EventLog)),
 								_1: {
 									ctor: '::',
 									_0: _elm_lang$html$Html_Attributes$class(
-										_elm_lang$core$Native_Utils.eq(model.selectedSubMenu, _minekoa$elm_text_editor$DebugMenu$Inspector) ? 'menu-item-active' : 'menu-item'),
+										_elm_lang$core$Native_Utils.eq(model.selectedSubMenu, _minekoa$elm_text_editor$DebugMenu$EventLog) ? 'menu-item-active' : 'menu-item'),
 									_1: {ctor: '[]'}
 								}
 							},
@@ -14551,7 +14754,7 @@ var _minekoa$elm_text_editor$DebugMenu$menuItemsView = function (model) {
 									{ctor: '[]'},
 									{
 										ctor: '::',
-										_0: _elm_lang$html$Html$text('Inspector'),
+										_0: _elm_lang$html$Html$text('Event log'),
 										_1: {ctor: '[]'}
 									}),
 								_1: {ctor: '[]'}
