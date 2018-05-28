@@ -68,26 +68,30 @@
 
 .keybind-edit-mod-enable {
 
+    font-size: 0.8em;
+
     color: white;
     background-color: royalblue;
     border: 1px solid gray;
 
-    padding: 1em;
-    margin: 1em;
+    padding: 0.8em;
+    margin: 0.8em;
 }
 
 .keybind-edit-mod-disable {
+
+    font-size: 0.8em;
 
     color: silver;
     background-color: gainsboro;
     border: 1px solid gray;
 
-    padding: 1em;
-    margin: 1em;
+    padding: 0.8em;
+    margin: 0.8em;
 }
 
 .keybind-edit-keycode {
-    font-size: 1.5em;
+    font-size: 1em;
     border: 1px solid gray;
 
     padding: 1rem;
@@ -97,10 +101,11 @@
 
 .keybind-edit-command {
     border: 1px solid gray;
+    font-size: 0.8em;
 
     padding: 1em;
     margin: 1em;
-    width: 12em;
+    width: 10em;
 }
 
 
@@ -114,11 +119,13 @@
     content: "";
 
     position: absolute;
-    top: 0.5em;
-    left: 0.5em;
-    width: calc( 100% - 1em );
-    height: calc( 100% - 1em );
+    top: 0.2em;
+    left: 0.2em;
+    width: calc( 100% - 0.4em );
+    height: calc( 100% - 0.4em );
     border: 1px solid lightgrey;
+    background-color: blue;
+    opacity: 0.2;
     border-radius: 0.5em;
 }
 
@@ -133,11 +140,13 @@
 .keybindmenu-cmdselector-focus::before {
     content: "";
     position: absolute;
-    top: 0.5em;
-    left: 0.5em;
-    width: calc( 100% - 1em );
-    height: calc( 100% - 1em );
+    top: 0.2em;
+    left: 0.2em;
+    width: calc( 100% - 0.4em );
+    height: calc( 100% - 0.4em );
     border: 1px solid lightgrey;
+    background-color: blue;
+    opacity: 0.2;
     border-radius: 0.5em;
 }
 
