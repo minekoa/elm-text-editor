@@ -1,0 +1,90 @@
+
+.keybind-menu {
+    --menu-item-list-width: 12em;
+}
+
+
+.keybind-hbox {
+    flex-grow: 2;
+    width: 100%;
+    height: 100%;
+
+    display: flex;
+    flex-direction: row;
+}
+
+.keybind-item-active {
+    background-color: lightskyblue;
+    font-size: 1.2em;
+
+}
+
+.keybind-item {
+    font-size: 1m;
+}
+
+.keybind-item-list {
+    flex-grow: 1;
+    max-height: 100%;
+    overflow: auto;
+}
+
+.keybind-next-button {
+    padding: 0 1.5em;
+    width: 1em;
+    max-width: 1em;
+    height: 100%;
+    display: flex;
+    align-items: center;
+
+    border-left: 1px solid black;
+}
+
+.keybind-prev-button {
+    padding: 0 1em;
+    width: 1em;
+    max-width: 1em;
+    height: 100%;
+    display: flex;
+    align-items: center;
+
+    border-right: 1px solid black;
+}
+
+
+.keybind-edit-mod-enable {
+
+    color: white;
+    background-color: royalblue;
+    border: 1px solid gray;
+
+    padding: 1em;
+    margin: 1em;
+}
+
+.keybind-edit-mod-disable {
+
+    color: silver;
+    background-color: gainsboro;
+    border: 1px solid gray;
+
+    padding: 1em;
+    margin: 1em;
+}
+
+.keybind-edit-keycode {
+    font-size: 1.5em;
+    border: 1px solid gray;
+
+    padding: 1em;
+    margin: 1em;
+    width: 3em;
+}
+
+.keybind-edit-command {
+    border: 1px solid gray;
+
+    padding: 1em;
+    margin: 1em;
+    width: 12em;
+}
