@@ -143,8 +143,8 @@ markSet =
 
 markClear : Command
 markClear =
-    { id= "markFlip"
-    , f = CoreCommands.markFlip
+    { id= "markClear"
+    , f = CoreCommands.markClear
     }
 
 markFlip : Command

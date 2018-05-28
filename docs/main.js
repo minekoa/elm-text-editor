@@ -10812,7 +10812,7 @@ var _minekoa$elm_text_editor$TextEditor_Commands$insert = function (text) {
 };
 var _minekoa$elm_text_editor$TextEditor_Commands$gotoMark = {id: 'gotoMark', f: _minekoa$elm_text_editor$TextEditor_Core_Commands$gotoMark};
 var _minekoa$elm_text_editor$TextEditor_Commands$markFlip = {id: 'markFlip', f: _minekoa$elm_text_editor$TextEditor_Core_Commands$markFlip};
-var _minekoa$elm_text_editor$TextEditor_Commands$markClear = {id: 'markFlip', f: _minekoa$elm_text_editor$TextEditor_Core_Commands$markFlip};
+var _minekoa$elm_text_editor$TextEditor_Commands$markClear = {id: 'markClear', f: _minekoa$elm_text_editor$TextEditor_Core_Commands$markClear};
 var _minekoa$elm_text_editor$TextEditor_Commands$markSet = {id: 'markSet', f: _minekoa$elm_text_editor$TextEditor_Core_Commands$markSet};
 var _minekoa$elm_text_editor$TextEditor_Commands$selectAt = function (pos) {
 	return {
@@ -15732,6 +15732,28 @@ var _minekoa$elm_text_editor$FileMenu$view = function (model) {
 		});
 };
 
+var _minekoa$elm_text_editor$KeyBindMenu$onFocusOut = function (tagger) {
+	return A2(
+		_elm_lang$html$Html_Events$on,
+		'focusout',
+		A2(
+			_elm_lang$core$Json_Decode$map,
+			function (dmy) {
+				return tagger(false);
+			},
+			A2(_elm_lang$core$Json_Decode$field, 'bubbles', _elm_lang$core$Json_Decode$bool)));
+};
+var _minekoa$elm_text_editor$KeyBindMenu$onFocusIn = function (tagger) {
+	return A2(
+		_elm_lang$html$Html_Events$on,
+		'focusin',
+		A2(
+			_elm_lang$core$Json_Decode$map,
+			function (dmy) {
+				return tagger(true);
+			},
+			A2(_elm_lang$core$Json_Decode$field, 'bubbles', _elm_lang$core$Json_Decode$bool)));
+};
 var _minekoa$elm_text_editor$KeyBindMenu$keyboarEvent_toString = function (e) {
 	return _elm_lang$core$String$concat(
 		{
@@ -15973,9 +15995,9 @@ var _minekoa$elm_text_editor$KeyBindMenu$initView = function (editorModel) {
 		{ctor: '[]'},
 		{ctor: '[]'});
 };
-var _minekoa$elm_text_editor$KeyBindMenu$Model = F4(
-	function (a, b, c, d) {
-		return {selectedSubMenu: a, currentIdx: b, current: c, keyeditorFocus: d};
+var _minekoa$elm_text_editor$KeyBindMenu$Model = F5(
+	function (a, b, c, d, e) {
+		return {selectedSubMenu: a, currentIdx: b, current: c, keyeditorFocus: d, cmdselectorFocus: e};
 	});
 var _minekoa$elm_text_editor$KeyBindMenu$KeyboardEvent = F6(
 	function (a, b, c, d, e, f) {
@@ -15999,7 +16021,148 @@ var _minekoa$elm_text_editor$KeyBindMenu$onKeyDown = function (tagger) {
 var _minekoa$elm_text_editor$KeyBindMenu$InitKeybind = {ctor: 'InitKeybind'};
 var _minekoa$elm_text_editor$KeyBindMenu$EditKeybind = {ctor: 'EditKeybind'};
 var _minekoa$elm_text_editor$KeyBindMenu$KeybindList = {ctor: 'KeybindList'};
-var _minekoa$elm_text_editor$KeyBindMenu$init = {selectedSubMenu: _minekoa$elm_text_editor$KeyBindMenu$KeybindList, currentIdx: 0, current: _elm_lang$core$Maybe$Nothing, keyeditorFocus: false};
+var _minekoa$elm_text_editor$KeyBindMenu$init = {selectedSubMenu: _minekoa$elm_text_editor$KeyBindMenu$KeybindList, currentIdx: 0, current: _elm_lang$core$Maybe$Nothing, keyeditorFocus: false, cmdselectorFocus: false};
+var _minekoa$elm_text_editor$KeyBindMenu$SelectCommand = function (a) {
+	return {ctor: 'SelectCommand', _0: a};
+};
+var _minekoa$elm_text_editor$KeyBindMenu$commandListView = function (model) {
+	var cmdlist = {
+		ctor: '::',
+		_0: _minekoa$elm_text_editor$TextEditor_Commands$moveForward,
+		_1: {
+			ctor: '::',
+			_0: _minekoa$elm_text_editor$TextEditor_Commands$moveBackward,
+			_1: {
+				ctor: '::',
+				_0: _minekoa$elm_text_editor$TextEditor_Commands$movePrevios,
+				_1: {
+					ctor: '::',
+					_0: _minekoa$elm_text_editor$TextEditor_Commands$moveNext,
+					_1: {
+						ctor: '::',
+						_0: _minekoa$elm_text_editor$TextEditor_Commands$moveBOL,
+						_1: {
+							ctor: '::',
+							_0: _minekoa$elm_text_editor$TextEditor_Commands$moveEOL,
+							_1: {
+								ctor: '::',
+								_0: _minekoa$elm_text_editor$TextEditor_Commands$selectForward,
+								_1: {
+									ctor: '::',
+									_0: _minekoa$elm_text_editor$TextEditor_Commands$selectBackward,
+									_1: {
+										ctor: '::',
+										_0: _minekoa$elm_text_editor$TextEditor_Commands$selectPrevios,
+										_1: {
+											ctor: '::',
+											_0: _minekoa$elm_text_editor$TextEditor_Commands$selectNext,
+											_1: {
+												ctor: '::',
+												_0: _minekoa$elm_text_editor$TextEditor_Commands$markSet,
+												_1: {
+													ctor: '::',
+													_0: _minekoa$elm_text_editor$TextEditor_Commands$markClear,
+													_1: {
+														ctor: '::',
+														_0: _minekoa$elm_text_editor$TextEditor_Commands$markFlip,
+														_1: {
+															ctor: '::',
+															_0: _minekoa$elm_text_editor$TextEditor_Commands$gotoMark,
+															_1: {
+																ctor: '::',
+																_0: _minekoa$elm_text_editor$TextEditor_Commands$backspace,
+																_1: {
+																	ctor: '::',
+																	_0: _minekoa$elm_text_editor$TextEditor_Commands$delete,
+																	_1: {
+																		ctor: '::',
+																		_0: _minekoa$elm_text_editor$TextEditor_Commands$undo,
+																		_1: {
+																			ctor: '::',
+																			_0: _minekoa$elm_text_editor$TextEditor_Commands$copy,
+																			_1: {
+																				ctor: '::',
+																				_0: _minekoa$elm_text_editor$TextEditor_Commands$cut,
+																				_1: {
+																					ctor: '::',
+																					_0: _minekoa$elm_text_editor$TextEditor_Commands$paste,
+																					_1: {ctor: '[]'}
+																				}
+																			}
+																		}
+																	}
+																}
+															}
+														}
+													}
+												}
+											}
+										}
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+	};
+	return A2(
+		_elm_lang$html$Html$div,
+		{
+			ctor: '::',
+			_0: _elm_lang$html$Html_Attributes$class('keybindmenu-cmdlist'),
+			_1: {ctor: '[]'}
+		},
+		{
+			ctor: '::',
+			_0: _elm_lang$html$Html$text('Select edit command'),
+			_1: {
+				ctor: '::',
+				_0: A2(
+					_elm_lang$html$Html$div,
+					{
+						ctor: '::',
+						_0: _elm_lang$html$Html_Attributes$class('keybindmenu-cmdlist-inner'),
+						_1: {ctor: '[]'}
+					},
+					A2(
+						_elm_lang$core$List$map,
+						function (cmd) {
+							return A2(
+								_elm_lang$html$Html$div,
+								{
+									ctor: '::',
+									_0: _elm_lang$html$Html_Attributes$class(
+										A2(
+											_elm_lang$core$Maybe$withDefault,
+											false,
+											A2(
+												_elm_lang$core$Maybe$andThen,
+												function (c) {
+													return _elm_lang$core$Maybe$Just(
+														_elm_lang$core$Native_Utils.eq(c.f.id, cmd.id));
+												},
+												model.current)) ? 'keybindmenu-cmditem-selected' : 'keybindmenu-cmditem'),
+									_1: {
+										ctor: '::',
+										_0: _elm_lang$html$Html_Events$onClick(
+											_minekoa$elm_text_editor$KeyBindMenu$SelectCommand(cmd)),
+										_1: {ctor: '[]'}
+									}
+								},
+								{
+									ctor: '::',
+									_0: _elm_lang$html$Html$text(cmd.id),
+									_1: {ctor: '[]'}
+								});
+						},
+						cmdlist)),
+				_1: {ctor: '[]'}
+			}
+		});
+};
+var _minekoa$elm_text_editor$KeyBindMenu$ClickCmdArea = {ctor: 'ClickCmdArea'};
 var _minekoa$elm_text_editor$KeyBindMenu$KeyDown = function (a) {
 	return {ctor: 'KeyDown', _0: a};
 };
@@ -16075,35 +16238,95 @@ var _minekoa$elm_text_editor$KeyBindMenu$update = F3(
 			case 'EditAccept':
 				return {
 					ctor: '_Tuple3',
-					_0: keybinds,
+					_0: function () {
+						var _p5 = model.current;
+						if (_p5.ctor === 'Just') {
+							return A2(
+								_elm_lang$core$Basics_ops['++'],
+								A2(_elm_lang$core$List$take, model.currentIdx, keybinds),
+								{
+									ctor: '::',
+									_0: _p5._0,
+									_1: A2(_elm_lang$core$List$drop, model.currentIdx + 1, keybinds)
+								});
+						} else {
+							return keybinds;
+						}
+					}(),
 					_1: _elm_lang$core$Native_Utils.update(
 						model,
 						{selectedSubMenu: _minekoa$elm_text_editor$KeyBindMenu$KeybindList, current: _elm_lang$core$Maybe$Nothing}),
 					_2: _elm_lang$core$Platform_Cmd$none
 				};
 			case 'SetFocusToKeyEditor':
-				return {ctor: '_Tuple3', _0: keybinds, _1: model, _2: _minekoa$elm_text_editor$KeyBindMenu$doFocus};
-			default:
 				return {
 					ctor: '_Tuple3',
 					_0: keybinds,
 					_1: _elm_lang$core$Native_Utils.update(
 						model,
-						{keyeditorFocus: _p2._0}),
+						{cmdselectorFocus: false}),
+					_2: _minekoa$elm_text_editor$KeyBindMenu$doFocus
+				};
+			case 'KeyEditorFocus':
+				return {
+					ctor: '_Tuple3',
+					_0: keybinds,
+					_1: _elm_lang$core$Native_Utils.update(
+						model,
+						{keyeditorFocus: _p2._0, cmdselectorFocus: false}),
 					_2: _elm_lang$core$Platform_Cmd$none
 				};
+			case 'ClickCmdArea':
+				return {
+					ctor: '_Tuple3',
+					_0: keybinds,
+					_1: _elm_lang$core$Native_Utils.update(
+						model,
+						{cmdselectorFocus: true, keyeditorFocus: false}),
+					_2: _elm_lang$core$Platform_Cmd$none
+				};
+			default:
+				var _p6 = model.current;
+				if (_p6.ctor === 'Just') {
+					return {
+						ctor: '_Tuple3',
+						_0: keybinds,
+						_1: _elm_lang$core$Native_Utils.update(
+							model,
+							{
+								current: _elm_lang$core$Maybe$Just(
+									_elm_lang$core$Native_Utils.update(
+										_p6._0,
+										{f: _p2._0}))
+							}),
+						_2: _elm_lang$core$Platform_Cmd$none
+					};
+				} else {
+					return {ctor: '_Tuple3', _0: keybinds, _1: model, _2: _elm_lang$core$Platform_Cmd$none};
+				}
 		}
 	});
 var _minekoa$elm_text_editor$KeyBindMenu$SetFocusToKeyEditor = {ctor: 'SetFocusToKeyEditor'};
-var _minekoa$elm_text_editor$KeyBindMenu$EditAccept = {ctor: 'EditAccept'};
-var _minekoa$elm_text_editor$KeyBindMenu$EditCancel = {ctor: 'EditCancel'};
-var _minekoa$elm_text_editor$KeyBindMenu$editView = F3(
-	function (focus, idx, maybe_keybind) {
+var _minekoa$elm_text_editor$KeyBindMenu$currentKeybindView = F2(
+	function (keybind, model) {
 		return A2(
 			_elm_lang$html$Html$div,
 			{
 				ctor: '::',
-				_0: _elm_lang$html$Html_Attributes$class('keybind-hbox'),
+				_0: _elm_lang$html$Html_Attributes$style(
+					{
+						ctor: '::',
+						_0: {ctor: '_Tuple2', _0: 'display', _1: 'flex'},
+						_1: {
+							ctor: '::',
+							_0: {ctor: '_Tuple2', _0: 'flex-direction', _1: 'row'},
+							_1: {
+								ctor: '::',
+								_0: {ctor: '_Tuple2', _0: 'align-items', _1: 'center'},
+								_1: {ctor: '[]'}
+							}
+						}
+					}),
 				_1: {ctor: '[]'}
 			},
 			{
@@ -16112,11 +16335,29 @@ var _minekoa$elm_text_editor$KeyBindMenu$editView = F3(
 					_elm_lang$html$Html$div,
 					{
 						ctor: '::',
-						_0: _elm_lang$html$Html_Attributes$class('keybind-prev-button'),
+						_0: _elm_lang$html$Html_Attributes$class(
+							model.keyeditorFocus ? 'keybindmenu-keyeditor-focus' : 'keybindmenu-keyeditor-disfocus'),
 						_1: {
 							ctor: '::',
-							_0: _elm_lang$html$Html_Events$onClick(_minekoa$elm_text_editor$KeyBindMenu$EditCancel),
-							_1: {ctor: '[]'}
+							_0: _elm_lang$html$Html_Attributes$style(
+								{
+									ctor: '::',
+									_0: {ctor: '_Tuple2', _0: 'display', _1: 'flex'},
+									_1: {
+										ctor: '::',
+										_0: {ctor: '_Tuple2', _0: 'flex-direction', _1: 'row'},
+										_1: {
+											ctor: '::',
+											_0: {ctor: '_Tuple2', _0: 'align-items', _1: 'center'},
+											_1: {ctor: '[]'}
+										}
+									}
+								}),
+							_1: {
+								ctor: '::',
+								_0: _elm_lang$html$Html_Events$onClick(_minekoa$elm_text_editor$KeyBindMenu$SetFocusToKeyEditor),
+								_1: {ctor: '[]'}
+							}
 						}
 					},
 					{
@@ -16125,62 +16366,50 @@ var _minekoa$elm_text_editor$KeyBindMenu$editView = F3(
 							_elm_lang$html$Html$div,
 							{
 								ctor: '::',
-								_0: _elm_lang$html$Html_Attributes$style(
-									{
-										ctor: '::',
-										_0: {ctor: '_Tuple2', _0: 'text-align', _1: 'center'},
-										_1: {ctor: '[]'}
-									}),
+								_0: _elm_lang$html$Html_Attributes$class(
+									keybind.ctrl ? 'keybind-edit-mod-enable' : 'keybind-edit-mod-disable'),
 								_1: {ctor: '[]'}
 							},
 							{
 								ctor: '::',
-								_0: _elm_lang$html$Html$text('<'),
-								_1: {
-									ctor: '::',
-									_0: A2(
-										_elm_lang$html$Html$br,
-										{ctor: '[]'},
-										{ctor: '[]'}),
-									_1: {
-										ctor: '::',
-										_0: A2(
-											_elm_lang$html$Html$span,
-											{
-												ctor: '::',
-												_0: _elm_lang$html$Html_Attributes$style(
-													{
-														ctor: '::',
-														_0: {ctor: '_Tuple2', _0: 'font-size', _1: '0.8em'},
-														_1: {
-															ctor: '::',
-															_0: {ctor: '_Tuple2', _0: 'color', _1: 'lightgray'},
-															_1: {ctor: '[]'}
-														}
-													}),
-												_1: {ctor: '[]'}
-											},
-											{
-												ctor: '::',
-												_0: _elm_lang$html$Html$text('cancel'),
-												_1: {ctor: '[]'}
-											}),
-										_1: {ctor: '[]'}
-									}
-								}
+								_0: _elm_lang$html$Html$text('Ctrl'),
+								_1: {ctor: '[]'}
 							}),
-						_1: {ctor: '[]'}
-					}),
-				_1: {
-					ctor: '::',
-					_0: function () {
-						var _p5 = maybe_keybind;
-						if (_p5.ctor === 'Just') {
-							var _p6 = _p5._0;
-							return A2(
+						_1: {
+							ctor: '::',
+							_0: A2(
 								_elm_lang$html$Html$div,
-								{ctor: '[]'},
 								{
+									ctor: '::',
+									_0: _elm_lang$html$Html_Attributes$style(
+										{
+											ctor: '::',
+											_0: {ctor: '_Tuple2', _0: 'font-size', _1: '2em'},
+											_1: {ctor: '[]'}
+										}),
+									_1: {ctor: '[]'}
+								},
+								{
+									ctor: '::',
+									_0: _elm_lang$html$Html$text('+'),
+									_1: {ctor: '[]'}
+								}),
+							_1: {
+								ctor: '::',
+								_0: A2(
+									_elm_lang$html$Html$div,
+									{
+										ctor: '::',
+										_0: _elm_lang$html$Html_Attributes$class(
+											keybind.alt ? 'keybind-edit-mod-enable' : 'keybind-edit-mod-disable'),
+										_1: {ctor: '[]'}
+									},
+									{
+										ctor: '::',
+										_0: _elm_lang$html$Html$text('Alt'),
+										_1: {ctor: '[]'}
+									}),
+								_1: {
 									ctor: '::',
 									_0: A2(
 										_elm_lang$html$Html$div,
@@ -16189,174 +16418,49 @@ var _minekoa$elm_text_editor$KeyBindMenu$editView = F3(
 											_0: _elm_lang$html$Html_Attributes$style(
 												{
 													ctor: '::',
-													_0: {ctor: '_Tuple2', _0: 'display', _1: 'flex'},
-													_1: {
-														ctor: '::',
-														_0: {ctor: '_Tuple2', _0: 'flex-direction', _1: 'row'},
-														_1: {
-															ctor: '::',
-															_0: {ctor: '_Tuple2', _0: 'flex-grow', _1: '1'},
-															_1: {
-																ctor: '::',
-																_0: {ctor: '_Tuple2', _0: 'align-items', _1: 'center'},
-																_1: {ctor: '[]'}
-															}
-														}
-													}
+													_0: {ctor: '_Tuple2', _0: 'font-size', _1: '2em'},
+													_1: {ctor: '[]'}
 												}),
 											_1: {ctor: '[]'}
 										},
 										{
 											ctor: '::',
+											_0: _elm_lang$html$Html$text('+'),
+											_1: {ctor: '[]'}
+										}),
+									_1: {
+										ctor: '::',
+										_0: A2(
+											_elm_lang$html$Html$div,
+											{
+												ctor: '::',
+												_0: _elm_lang$html$Html_Attributes$class(
+													keybind.shift ? 'keybind-edit-mod-enable' : 'keybind-edit-mod-disable'),
+												_1: {ctor: '[]'}
+											},
+											{
+												ctor: '::',
+												_0: _elm_lang$html$Html$text('Shift'),
+												_1: {ctor: '[]'}
+											}),
+										_1: {
+											ctor: '::',
 											_0: A2(
 												_elm_lang$html$Html$div,
 												{
 													ctor: '::',
-													_0: _elm_lang$html$Html_Attributes$class(
-														focus ? 'keybindmenu-keyeditor-focus' : 'keybindmenu-keyeditor-disfocus'),
-													_1: {
-														ctor: '::',
-														_0: _elm_lang$html$Html_Attributes$style(
-															{
-																ctor: '::',
-																_0: {ctor: '_Tuple2', _0: 'display', _1: 'flex'},
-																_1: {
-																	ctor: '::',
-																	_0: {ctor: '_Tuple2', _0: 'flex-direction', _1: 'row'},
-																	_1: {ctor: '[]'}
-																}
-															}),
-														_1: {
+													_0: _elm_lang$html$Html_Attributes$style(
+														{
 															ctor: '::',
-															_0: _elm_lang$html$Html_Events$onClick(_minekoa$elm_text_editor$KeyBindMenu$SetFocusToKeyEditor),
+															_0: {ctor: '_Tuple2', _0: 'font-size', _1: '2em'},
 															_1: {ctor: '[]'}
-														}
-													}
+														}),
+													_1: {ctor: '[]'}
 												},
 												{
 													ctor: '::',
-													_0: A2(
-														_elm_lang$html$Html$div,
-														{
-															ctor: '::',
-															_0: _elm_lang$html$Html_Attributes$class(
-																_p6.ctrl ? 'keybind-edit-mod-enable' : 'keybind-edit-mod-disable'),
-															_1: {ctor: '[]'}
-														},
-														{
-															ctor: '::',
-															_0: _elm_lang$html$Html$text('Ctrl'),
-															_1: {ctor: '[]'}
-														}),
-													_1: {
-														ctor: '::',
-														_0: A2(
-															_elm_lang$html$Html$div,
-															{
-																ctor: '::',
-																_0: _elm_lang$html$Html_Attributes$style(
-																	{
-																		ctor: '::',
-																		_0: {ctor: '_Tuple2', _0: 'font-size', _1: '2em'},
-																		_1: {ctor: '[]'}
-																	}),
-																_1: {ctor: '[]'}
-															},
-															{
-																ctor: '::',
-																_0: _elm_lang$html$Html$text('+'),
-																_1: {ctor: '[]'}
-															}),
-														_1: {
-															ctor: '::',
-															_0: A2(
-																_elm_lang$html$Html$div,
-																{
-																	ctor: '::',
-																	_0: _elm_lang$html$Html_Attributes$class(
-																		_p6.alt ? 'keybind-edit-mod-enable' : 'keybind-edit-mod-disable'),
-																	_1: {ctor: '[]'}
-																},
-																{
-																	ctor: '::',
-																	_0: _elm_lang$html$Html$text('Alt'),
-																	_1: {ctor: '[]'}
-																}),
-															_1: {
-																ctor: '::',
-																_0: A2(
-																	_elm_lang$html$Html$div,
-																	{
-																		ctor: '::',
-																		_0: _elm_lang$html$Html_Attributes$style(
-																			{
-																				ctor: '::',
-																				_0: {ctor: '_Tuple2', _0: 'font-size', _1: '2em'},
-																				_1: {ctor: '[]'}
-																			}),
-																		_1: {ctor: '[]'}
-																	},
-																	{
-																		ctor: '::',
-																		_0: _elm_lang$html$Html$text('+'),
-																		_1: {ctor: '[]'}
-																	}),
-																_1: {
-																	ctor: '::',
-																	_0: A2(
-																		_elm_lang$html$Html$div,
-																		{
-																			ctor: '::',
-																			_0: _elm_lang$html$Html_Attributes$class(
-																				_p6.shift ? 'keybind-edit-mod-enable' : 'keybind-edit-mod-disable'),
-																			_1: {ctor: '[]'}
-																		},
-																		{
-																			ctor: '::',
-																			_0: _elm_lang$html$Html$text('Shift'),
-																			_1: {ctor: '[]'}
-																		}),
-																	_1: {
-																		ctor: '::',
-																		_0: A2(
-																			_elm_lang$html$Html$div,
-																			{
-																				ctor: '::',
-																				_0: _elm_lang$html$Html_Attributes$style(
-																					{
-																						ctor: '::',
-																						_0: {ctor: '_Tuple2', _0: 'font-size', _1: '2em'},
-																						_1: {ctor: '[]'}
-																					}),
-																				_1: {ctor: '[]'}
-																			},
-																			{
-																				ctor: '::',
-																				_0: _elm_lang$html$Html$text('+'),
-																				_1: {ctor: '[]'}
-																			}),
-																		_1: {
-																			ctor: '::',
-																			_0: A2(
-																				_elm_lang$html$Html$div,
-																				{
-																					ctor: '::',
-																					_0: _elm_lang$html$Html_Attributes$class('keybind-edit-keycode'),
-																					_1: {ctor: '[]'}
-																				},
-																				{
-																					ctor: '::',
-																					_0: _elm_lang$html$Html$text(
-																						_minekoa$elm_text_editor$KeyBindMenu$keyCodeToKeyName(_p6.code)),
-																					_1: {ctor: '[]'}
-																				}),
-																			_1: {ctor: '[]'}
-																		}
-																	}
-																}
-															}
-														}
-													}
+													_0: _elm_lang$html$Html$text('+'),
+													_1: {ctor: '[]'}
 												}),
 											_1: {
 												ctor: '::',
@@ -16364,81 +16468,71 @@ var _minekoa$elm_text_editor$KeyBindMenu$editView = F3(
 													_elm_lang$html$Html$div,
 													{
 														ctor: '::',
-														_0: _elm_lang$html$Html_Attributes$style(
-															{
-																ctor: '::',
-																_0: {ctor: '_Tuple2', _0: 'font-size', _1: '2em'},
-																_1: {ctor: '[]'}
-															}),
+														_0: _elm_lang$html$Html_Attributes$class('keybind-edit-keycode'),
 														_1: {ctor: '[]'}
 													},
 													{
 														ctor: '::',
-														_0: _elm_lang$html$Html$text('⇒'),
+														_0: _elm_lang$html$Html$text(
+															_minekoa$elm_text_editor$KeyBindMenu$keyCodeToKeyName(keybind.code)),
 														_1: {ctor: '[]'}
 													}),
-												_1: {
-													ctor: '::',
-													_0: A2(
-														_elm_lang$html$Html$div,
-														{
-															ctor: '::',
-															_0: _elm_lang$html$Html_Attributes$class('keybind-edit-command'),
-															_1: {ctor: '[]'}
-														},
-														{
-															ctor: '::',
-															_0: _elm_lang$html$Html$text(_p6.f.id),
-															_1: {ctor: '[]'}
-														}),
-													_1: {ctor: '[]'}
-												}
+												_1: {ctor: '[]'}
 											}
-										}),
-									_1: {
-										ctor: '::',
-										_0: A2(
-											_elm_lang$html$Html$textarea,
-											{
-												ctor: '::',
-												_0: _elm_lang$html$Html_Attributes$id('keybindmenu-keyevent-receiver'),
-												_1: {
-													ctor: '::',
-													_0: _elm_lang$html$Html_Attributes$style(
-														{
-															ctor: '::',
-															_0: {ctor: '_Tuple2', _0: 'opacity', _1: '0'},
-															_1: {ctor: '[]'}
-														}),
-													_1: {
-														ctor: '::',
-														_0: _minekoa$elm_text_editor$KeyBindMenu$onKeyDown(_minekoa$elm_text_editor$KeyBindMenu$KeyDown),
-														_1: {ctor: '[]'}
-													}
-												}
-											},
-											{ctor: '[]'}),
-										_1: {ctor: '[]'}
+										}
 									}
-								});
-						} else {
-							return A2(
-								_elm_lang$html$Html$div,
-								{ctor: '[]'},
-								{ctor: '[]'});
+								}
+							}
 						}
-					}(),
+					}),
+				_1: {
+					ctor: '::',
+					_0: A2(
+						_elm_lang$html$Html$div,
+						{
+							ctor: '::',
+							_0: _elm_lang$html$Html_Attributes$style(
+								{
+									ctor: '::',
+									_0: {ctor: '_Tuple2', _0: 'font-size', _1: '2em'},
+									_1: {ctor: '[]'}
+								}),
+							_1: {ctor: '[]'}
+						},
+						{
+							ctor: '::',
+							_0: _elm_lang$html$Html$text('⇒'),
+							_1: {ctor: '[]'}
+						}),
 					_1: {
 						ctor: '::',
 						_0: A2(
 							_elm_lang$html$Html$div,
 							{
 								ctor: '::',
-								_0: _elm_lang$html$Html_Attributes$class('keybind-next-button'),
+								_0: _elm_lang$html$Html_Attributes$class(
+									model.cmdselectorFocus ? 'keybindmenu-cmdselector-focus' : 'keybindmenu-cmdselector-disfocus'),
 								_1: {
 									ctor: '::',
-									_0: _elm_lang$html$Html_Events$onClick(_minekoa$elm_text_editor$KeyBindMenu$EditAccept),
-									_1: {ctor: '[]'}
+									_0: _elm_lang$html$Html_Attributes$style(
+										{
+											ctor: '::',
+											_0: {ctor: '_Tuple2', _0: 'display', _1: 'flex'},
+											_1: {
+												ctor: '::',
+												_0: {ctor: '_Tuple2', _0: 'flex-direction', _1: 'row'},
+												_1: {
+													ctor: '::',
+													_0: {ctor: '_Tuple2', _0: 'align-items', _1: 'center'},
+													_1: {ctor: '[]'}
+												}
+											}
+										}),
+									_1: {
+										ctor: '::',
+										_0: _elm_lang$html$Html_Events$onClick(_minekoa$elm_text_editor$KeyBindMenu$ClickCmdArea),
+										_1: {ctor: '[]'}
+									}
 								}
 							},
 							{
@@ -16447,49 +16541,13 @@ var _minekoa$elm_text_editor$KeyBindMenu$editView = F3(
 									_elm_lang$html$Html$div,
 									{
 										ctor: '::',
-										_0: _elm_lang$html$Html_Attributes$style(
-											{
-												ctor: '::',
-												_0: {ctor: '_Tuple2', _0: 'text-align', _1: 'center'},
-												_1: {ctor: '[]'}
-											}),
+										_0: _elm_lang$html$Html_Attributes$class('keybind-edit-command'),
 										_1: {ctor: '[]'}
 									},
 									{
 										ctor: '::',
-										_0: _elm_lang$html$Html$text('>'),
-										_1: {
-											ctor: '::',
-											_0: A2(
-												_elm_lang$html$Html$br,
-												{ctor: '[]'},
-												{ctor: '[]'}),
-											_1: {
-												ctor: '::',
-												_0: A2(
-													_elm_lang$html$Html$span,
-													{
-														ctor: '::',
-														_0: _elm_lang$html$Html_Attributes$style(
-															{
-																ctor: '::',
-																_0: {ctor: '_Tuple2', _0: 'font-size', _1: '0.8em'},
-																_1: {
-																	ctor: '::',
-																	_0: {ctor: '_Tuple2', _0: 'color', _1: 'lightgray'},
-																	_1: {ctor: '[]'}
-																}
-															}),
-														_1: {ctor: '[]'}
-													},
-													{
-														ctor: '::',
-														_0: _elm_lang$html$Html$text('accept'),
-														_1: {ctor: '[]'}
-													}),
-												_1: {ctor: '[]'}
-											}
-										}
+										_0: _elm_lang$html$Html$text(keybind.f.id),
+										_1: {ctor: '[]'}
 									}),
 								_1: {ctor: '[]'}
 							}),
@@ -16498,6 +16556,235 @@ var _minekoa$elm_text_editor$KeyBindMenu$editView = F3(
 				}
 			});
 	});
+var _minekoa$elm_text_editor$KeyBindMenu$EditAccept = {ctor: 'EditAccept'};
+var _minekoa$elm_text_editor$KeyBindMenu$EditCancel = {ctor: 'EditCancel'};
+var _minekoa$elm_text_editor$KeyBindMenu$editView = function (model) {
+	return A2(
+		_elm_lang$html$Html$div,
+		{
+			ctor: '::',
+			_0: _elm_lang$html$Html_Attributes$class('keybind-hbox'),
+			_1: {ctor: '[]'}
+		},
+		{
+			ctor: '::',
+			_0: A2(
+				_elm_lang$html$Html$div,
+				{
+					ctor: '::',
+					_0: _elm_lang$html$Html_Attributes$class('keybind-prev-button'),
+					_1: {
+						ctor: '::',
+						_0: _elm_lang$html$Html_Events$onClick(_minekoa$elm_text_editor$KeyBindMenu$EditCancel),
+						_1: {ctor: '[]'}
+					}
+				},
+				{
+					ctor: '::',
+					_0: A2(
+						_elm_lang$html$Html$div,
+						{
+							ctor: '::',
+							_0: _elm_lang$html$Html_Attributes$style(
+								{
+									ctor: '::',
+									_0: {ctor: '_Tuple2', _0: 'text-align', _1: 'center'},
+									_1: {ctor: '[]'}
+								}),
+							_1: {ctor: '[]'}
+						},
+						{
+							ctor: '::',
+							_0: _elm_lang$html$Html$text('<'),
+							_1: {
+								ctor: '::',
+								_0: A2(
+									_elm_lang$html$Html$br,
+									{ctor: '[]'},
+									{ctor: '[]'}),
+								_1: {
+									ctor: '::',
+									_0: A2(
+										_elm_lang$html$Html$span,
+										{
+											ctor: '::',
+											_0: _elm_lang$html$Html_Attributes$style(
+												{
+													ctor: '::',
+													_0: {ctor: '_Tuple2', _0: 'font-size', _1: '0.8em'},
+													_1: {
+														ctor: '::',
+														_0: {ctor: '_Tuple2', _0: 'color', _1: 'lightgray'},
+														_1: {ctor: '[]'}
+													}
+												}),
+											_1: {ctor: '[]'}
+										},
+										{
+											ctor: '::',
+											_0: _elm_lang$html$Html$text('cancel'),
+											_1: {ctor: '[]'}
+										}),
+									_1: {ctor: '[]'}
+								}
+							}
+						}),
+					_1: {ctor: '[]'}
+				}),
+			_1: {
+				ctor: '::',
+				_0: function () {
+					var _p7 = model.current;
+					if (_p7.ctor === 'Just') {
+						return A2(
+							_elm_lang$html$Html$div,
+							{
+								ctor: '::',
+								_0: _elm_lang$html$Html_Attributes$style(
+									{
+										ctor: '::',
+										_0: {ctor: '_Tuple2', _0: 'display', _1: 'flex'},
+										_1: {
+											ctor: '::',
+											_0: {ctor: '_Tuple2', _0: 'flex-direction', _1: 'column'},
+											_1: {
+												ctor: '::',
+												_0: {ctor: '_Tuple2', _0: 'flex-grow', _1: '1'},
+												_1: {
+													ctor: '::',
+													_0: {ctor: '_Tuple2', _0: 'align-self', _1: 'stretch'},
+													_1: {ctor: '[]'}
+												}
+											}
+										}
+									}),
+								_1: {ctor: '[]'}
+							},
+							{
+								ctor: '::',
+								_0: A2(_minekoa$elm_text_editor$KeyBindMenu$currentKeybindView, _p7._0, model),
+								_1: {
+									ctor: '::',
+									_0: A2(
+										_elm_lang$html$Html$textarea,
+										{
+											ctor: '::',
+											_0: _elm_lang$html$Html_Attributes$id('keybindmenu-keyevent-receiver'),
+											_1: {
+												ctor: '::',
+												_0: _elm_lang$html$Html_Attributes$style(
+													{
+														ctor: '::',
+														_0: {ctor: '_Tuple2', _0: 'opacity', _1: '0'},
+														_1: {
+															ctor: '::',
+															_0: {ctor: '_Tuple2', _0: 'height', _1: '1px'},
+															_1: {ctor: '[]'}
+														}
+													}),
+												_1: {
+													ctor: '::',
+													_0: _minekoa$elm_text_editor$KeyBindMenu$onKeyDown(_minekoa$elm_text_editor$KeyBindMenu$KeyDown),
+													_1: {
+														ctor: '::',
+														_0: _minekoa$elm_text_editor$KeyBindMenu$onFocusIn(_minekoa$elm_text_editor$KeyBindMenu$KeyEditorFocus),
+														_1: {
+															ctor: '::',
+															_0: _minekoa$elm_text_editor$KeyBindMenu$onFocusOut(_minekoa$elm_text_editor$KeyBindMenu$KeyEditorFocus),
+															_1: {ctor: '[]'}
+														}
+													}
+												}
+											}
+										},
+										{ctor: '[]'}),
+									_1: {
+										ctor: '::',
+										_0: model.cmdselectorFocus ? _minekoa$elm_text_editor$KeyBindMenu$commandListView(model) : A2(
+											_elm_lang$html$Html$div,
+											{ctor: '[]'},
+											{ctor: '[]'}),
+										_1: {ctor: '[]'}
+									}
+								}
+							});
+					} else {
+						return A2(
+							_elm_lang$html$Html$div,
+							{ctor: '[]'},
+							{ctor: '[]'});
+					}
+				}(),
+				_1: {
+					ctor: '::',
+					_0: A2(
+						_elm_lang$html$Html$div,
+						{
+							ctor: '::',
+							_0: _elm_lang$html$Html_Attributes$class('keybind-next-button'),
+							_1: {
+								ctor: '::',
+								_0: _elm_lang$html$Html_Events$onClick(_minekoa$elm_text_editor$KeyBindMenu$EditAccept),
+								_1: {ctor: '[]'}
+							}
+						},
+						{
+							ctor: '::',
+							_0: A2(
+								_elm_lang$html$Html$div,
+								{
+									ctor: '::',
+									_0: _elm_lang$html$Html_Attributes$style(
+										{
+											ctor: '::',
+											_0: {ctor: '_Tuple2', _0: 'text-align', _1: 'center'},
+											_1: {ctor: '[]'}
+										}),
+									_1: {ctor: '[]'}
+								},
+								{
+									ctor: '::',
+									_0: _elm_lang$html$Html$text('>'),
+									_1: {
+										ctor: '::',
+										_0: A2(
+											_elm_lang$html$Html$br,
+											{ctor: '[]'},
+											{ctor: '[]'}),
+										_1: {
+											ctor: '::',
+											_0: A2(
+												_elm_lang$html$Html$span,
+												{
+													ctor: '::',
+													_0: _elm_lang$html$Html_Attributes$style(
+														{
+															ctor: '::',
+															_0: {ctor: '_Tuple2', _0: 'font-size', _1: '0.8em'},
+															_1: {
+																ctor: '::',
+																_0: {ctor: '_Tuple2', _0: 'color', _1: 'lightgray'},
+																_1: {ctor: '[]'}
+															}
+														}),
+													_1: {ctor: '[]'}
+												},
+												{
+													ctor: '::',
+													_0: _elm_lang$html$Html$text('accept'),
+													_1: {ctor: '[]'}
+												}),
+											_1: {ctor: '[]'}
+										}
+									}
+								}),
+							_1: {ctor: '[]'}
+						}),
+					_1: {ctor: '[]'}
+				}
+			}
+		});
+};
 var _minekoa$elm_text_editor$KeyBindMenu$EditStart = F2(
 	function (a, b) {
 		return {ctor: 'EditStart', _0: a, _1: b};
@@ -16704,8 +16991,8 @@ var _minekoa$elm_text_editor$KeyBindMenu$listView = F2(
 	});
 var _minekoa$elm_text_editor$KeyBindMenu$menuPalette = F2(
 	function (keybinds, model) {
-		var _p7 = model.selectedSubMenu;
-		switch (_p7.ctor) {
+		var _p8 = model.selectedSubMenu;
+		switch (_p8.ctor) {
 			case 'KeybindList':
 				return A2(
 					_elm_lang$html$Html$div,
@@ -16729,7 +17016,7 @@ var _minekoa$elm_text_editor$KeyBindMenu$menuPalette = F2(
 					},
 					{
 						ctor: '::',
-						_0: A3(_minekoa$elm_text_editor$KeyBindMenu$editView, model.keyeditorFocus, model.currentIdx, model.current),
+						_0: _minekoa$elm_text_editor$KeyBindMenu$editView(model),
 						_1: {ctor: '[]'}
 					});
 			default:
