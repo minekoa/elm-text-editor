@@ -255,8 +255,8 @@ keyDown : KeyboardEvent -> Model -> (Model, Cmd Msg)
 keyDown e model =
     case KeyBind.find (e.ctrlKey, e.altKey, e.shiftKey, e.keyCode) model.keymap of
         Just editorcmd ->
-            updateMap model (editorcmd model.core)
-                |> logging "keydown" (keyboarEvent_toString e)
+            updateMap model (editorcmd.f model.core)
+                |> logging "keydown" ((keyboarEvent_toString e) ++ "editorcmd=" ++ editorcmd.id)
         Nothing ->
             ( model
             , Cmd.none

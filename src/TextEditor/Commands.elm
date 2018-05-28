@@ -22,107 +22,182 @@ module TextEditor.Commands exposing
     , copy
     , cut
     , paste
+    , Command
 
-    , batch
+--    , batch
     )
 
 import TextEditor.Core as Core
 import TextEditor.Core.Commands as CoreCommands
-import TextEditor exposing (Model, Msg)
+--import TextEditor exposing (Model, Msg)
 
 
-batch : List (Model -> (Model, Cmd Msg)) -> (Model -> (Model, Cmd Msg))
-batch commands =
-    let
-        batch_proc = (\ cmdMsgs editorCmds model ->
-                          case editorCmds of
-                              x :: xs ->
-                                  let
-                                      (m1, c1) = x model
-                                  in
-                                      batch_proc (c1 :: cmdMsgs) xs m1
-                              [] ->
-                                  (model, Cmd.batch cmdMsgs)
-                     )
-    in
-        batch_proc [] commands
+type alias Command =
+    { id : String
+    , f : Core.Model -> (Core.Model, Cmd Core.Msg)
+    }
 
 
--- Tools
-updateMap: Model -> (Core.Model, Cmd Core.Msg) -> (Model, Cmd Msg)
-updateMap model (em, ec) =
-    ( {model | core = em}
-    , Cmd.map TextEditor.CoreMsg ec)
+-- batch : List (Model -> (Model, Cmd Msg)) -> (Model -> (Model, Cmd Msg))
+-- batch commands =
+--     let
+--         batch_proc = (\ cmdMsgs editorCmds model ->
+--                           case editorCmds of
+--                               x :: xs ->
+--                                   let
+--                                       (m1, c1) = x model
+--                                   in
+--                                       batch_proc (c1 :: cmdMsgs) xs m1
+--                               [] ->
+--                                   (model, Cmd.batch cmdMsgs)
+--                      )
+--     in
+--         batch_proc [] commands
+
+
+-- -- Tools
+-- updateMap: Model -> (Core.Model, Cmd Core.Msg) -> (Model, Cmd Msg)
+-- updateMap model (em, ec) =
+--     ( {model | core = em}
+--     , Cmd.map TextEditor.CoreMsg ec)
 
 
 
-moveForward : Model -> (Model, Cmd Msg)
-moveForward model = updateMap model (CoreCommands.moveForward model.core)
+moveForward : Command
+moveForward =
+    { id= "moveForward"
+    , f = CoreCommands.moveForward
+    }
 
-moveBackward : Model -> (Model, Cmd Msg)
-moveBackward model = updateMap model (CoreCommands.moveBackward model.core)
+moveBackward : Command
+moveBackward =
+    { id= "moveBackward"
+    , f = CoreCommands.moveBackward
+    }
 
-movePrevios : Model -> (Model, Cmd Msg)
-movePrevios model = updateMap model (CoreCommands.movePrevios model.core)
+movePrevios : Command
+movePrevios =
+    { id= "movePrevios"
+    , f = CoreCommands.movePrevios
+    }
 
-moveNext : Model -> (Model, Cmd Msg)
-moveNext model = updateMap model (CoreCommands.moveNext model.core)
+moveNext : Command
+moveNext =
+    { id= "moveNext"
+    , f = CoreCommands.moveNext
+    }
 
-moveBOL : Model -> (Model, Cmd Msg)
-moveBOL model = updateMap model (CoreCommands.moveBOL model.core)
+moveBOL : Command
+moveBOL =
+    { id= "moveBOL"
+    , f = CoreCommands.moveBOL
+    }
 
-moveEOL : Model -> (Model, Cmd Msg)
-moveEOL model = updateMap model (CoreCommands.moveEOL model.core)
+moveEOL : Command
+moveEOL =
+    { id = "moveEOL"
+    , f  = CoreCommands.moveEOL
+    }
 
-moveAt : (Int, Int) -> Model -> (Model, Cmd Msg)
-moveAt pos model = updateMap model (CoreCommands.moveAt pos model.core)
+moveAt : (Int, Int) -> Command
+moveAt pos =
+    { id = "moveAt"
+    , f = CoreCommands.moveAt pos
+    }
 
+selectBackward : Command
+selectBackward =
+    { id= "selectBackword"
+    , f = CoreCommands.selectBackward
+    }
 
-selectBackward: Model -> (Model, Cmd Msg)
-selectBackward model = updateMap model (CoreCommands.selectBackward model.core)
+selectForward : Command
+selectForward =
+    { id= "selectForward"
+    , f = CoreCommands.selectForward
+    }
 
-selectForward: Model -> (Model, Cmd Msg)
-selectForward model = updateMap model (CoreCommands.selectForward model.core)
+selectPrevios : Command
+selectPrevios =
+    { id= "selectPrevios"
+    , f = CoreCommands.selectPrevios
+    }
 
-selectPrevios: Model -> (Model, Cmd Msg)
-selectPrevios model = updateMap model (CoreCommands.selectPrevios model.core)
+selectNext : Command
+selectNext =
+    { id= "selectNext"
+    , f = CoreCommands.selectNext
+    }
 
-selectNext: Model -> (Model, Cmd Msg)
-selectNext model = updateMap model (CoreCommands.selectNext model.core)
+selectAt: (Int, Int) -> Command
+selectAt pos =
+    { id= "selectAt"
+    , f = CoreCommands.selectAt pos
+    }
 
-selectAt: (Int, Int) -> Model -> (Model, Cmd Msg)
-selectAt pos model = updateMap model (CoreCommands.selectAt pos model.core)
+markSet : Command
+markSet = 
+    { id="markSet"
+    , f=CoreCommands.markSet
+    }
 
-markSet : Model -> (Model, Cmd Msg)
-markSet model = updateMap model (CoreCommands.markSet model.core)
+markClear : Command
+markClear =
+    { id= "markFlip"
+    , f = CoreCommands.markFlip
+    }
 
-markClear : Model -> (Model, Cmd Msg)
-markClear model = updateMap model (CoreCommands.markFlip model.core)
+markFlip : Command
+markFlip =
+    { id= "markFlip"
+    , f = CoreCommands.markFlip
+    }
 
-markFlip : Model -> (Model, Cmd Msg)
-markFlip model = updateMap model (CoreCommands.markFlip model.core)
+gotoMark : Command
+gotoMark =
+    { id = "gotoMark"
+    , f = CoreCommands.gotoMark
+    }
 
-gotoMark : Model -> (Model, Cmd Msg)
-gotoMark model = updateMap model (CoreCommands.gotoMark model.core)
+insert: String -> Command
+insert text =
+    { id = "insert"
+    , f = (CoreCommands.insert text)
+    }
 
-insert: String -> Model-> (Model, Cmd Msg)
-insert text model = updateMap model (CoreCommands.insert text model.core)
+backspace: Command
+backspace =
+    { id = "backspace"
+    , f  = CoreCommands.backspace
+    }
 
-backspace: Model -> (Model, Cmd Msg)
-backspace model = updateMap model (CoreCommands.backspace model.core)
+delete : Command
+delete =
+    { id ="delete"
+    , f= CoreCommands.delete
+    }
 
-delete: Model ->  (Model, Cmd Msg)
-delete model = updateMap model (CoreCommands.delete model.core)
+undo : Command
+undo =
+    { id = "undo"
+    , f = CoreCommands.undo
+    }
 
-undo : Model -> (Model, Cmd Msg)
-undo model = updateMap model (CoreCommands.undo model.core)
+copy : Command
+copy =
+    { id= "copy"
+    , f = CoreCommands.copy
+    }
 
-copy : Model -> (Model, Cmd Msg)
-copy model = updateMap model (CoreCommands.copy model.core)
+cut : Command
+cut =
+    { id = "cut"
+    , f = CoreCommands.cut
+    }
 
-cut : Model -> (Model, Cmd Msg)
-cut model = updateMap model (CoreCommands.cut model.core)
-
-paste : Model -> (Model, Cmd Msg)
-paste model = updateMap model (CoreCommands.paste model.core.copyStore model.core)
+paste : Command
+paste =
+    { id = "paste"
+    , f = (\m -> CoreCommands.paste m.copyStore m)
+    }
 

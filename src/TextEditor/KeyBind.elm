@@ -6,20 +6,18 @@ module TextEditor.KeyBind exposing
     , emacsLike
     )
 
-import TextEditor.Core.Commands as EditorCmds
+import TextEditor.Commands as EditorCmds
 import TextEditor.Core as Core  exposing (Model, Msg)
-
 
 type alias KeyBind =
     { ctrl: Bool
     , alt : Bool
     , shift: Bool
     , code: Int
-    , f : Model -> (Core.Model, Cmd Core.Msg)
+    , f : EditorCmds.Command
     }
 
-
-find : (Bool, Bool, Bool, Int) -> List KeyBind -> Maybe (Model -> (Model, Cmd Msg))
+find : (Bool, Bool, Bool, Int) -> List KeyBind -> Maybe EditorCmds.Command
 find (ctrl, alt, shift, keycode) keymap =
     case keymap of
         [] ->
@@ -29,7 +27,6 @@ find (ctrl, alt, shift, keycode) keymap =
                 && (ctrl == x.ctrl) && (alt == x.alt) && (shift == x.shift)
             then Just x.f
             else find (ctrl, alt, shift, keycode) xs
-
 
 basic: List KeyBind
 basic =
@@ -69,7 +66,7 @@ emacsLike =
     , {ctrl=False, alt=True , shift=False, code= 87, f=EditorCmds.copy }         -- 'M-w' (注: クリップボード連携なし)
     , {ctrl=True , alt=False, shift=False, code= 87, f=EditorCmds.cut  }         -- 'C-w' (注: クリップボード連携なし)
     , {ctrl=True , alt=False, shift=False, code= 77, f=EditorCmds.insert "\n" } -- 'C-m'
-    , {ctrl=True , alt=False, shift=False, code= 89, f=\m -> EditorCmds.paste m.copyStore m } -- 'C-y'
+    , {ctrl=True , alt=False, shift=False, code= 89, f=EditorCmds.paste } -- 'C-y'
     , {ctrl=True , alt=False, shift=False, code= 32, f=EditorCmds.markFlip } -- 'C-SPE'
     ]
 

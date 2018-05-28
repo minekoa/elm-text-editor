@@ -13,9 +13,10 @@ import TextEditor.Buffer
 import TextEditor.KeyBind as KeyBind
 
 import DebugMenu
-import SoftwareKeyboard
+--import SoftwareKeyboard
 import StyleMenu
 import FileMenu
+import KeyBindMenu
 
 import Ports.WebStrage
 
@@ -36,7 +37,7 @@ type alias Model =
 
     , pane : MenuPane
     , debugger : DebugMenu.Model
-    , swkeyboard : SoftwareKeyboard.Model
+--    , swkeyboard : SoftwareKeyboard.Model
     , style : StyleMenu.Model
     , filer : FileMenu.Model
     }
@@ -44,7 +45,7 @@ type alias Model =
 type MenuPane
     = NoPane
     | DebugMenuPane
-    | KeyboardPane
+--    | KeyboardPane
     | StyleMenuPane
     | FileMenuPane
     | AboutPane
@@ -74,7 +75,7 @@ init =
               buf.name
               NoPane
               DebugMenu.init
-              SoftwareKeyboard.init
+--              SoftwareKeyboard.init
               smm
               FileMenu.init
         , Cmd.batch [ Cmd.map EditorMsg bc
@@ -94,7 +95,7 @@ type Msg
     | CloseBuffer Int
     | ChangePane MenuPane
     | DebugMenuMsg (DebugMenu.Msg)
-    | SWKeyboardMsg (SoftwareKeyboard.Msg)
+--    | SWKeyboardMsg (SoftwareKeyboard.Msg)
     | StyleMenuMsg (StyleMenu.Msg)
     | FileMenuMsg (FileMenu.Msg)
     | ClearSettings
@@ -152,7 +153,7 @@ update msg model =
                   }
                 , Cmd.map DebugMenuMsg dc
                 )
-
+{-
         SWKeyboardMsg swmsg ->
             let
                 (kbd, edt) = SoftwareKeyboard.update swmsg model.swkeyboard model.editor
@@ -165,7 +166,7 @@ update msg model =
                             , Cmd.map SWKeyboardMsg (Tuple.second kbd)
                             ]
                 )
-
+-}
         StyleMenuMsg smsg ->
             let
                 (m, c) = StyleMenu.update smsg model.style
@@ -220,6 +221,7 @@ update msg model =
                         ( { model | filer = m}
                         , Cmd.map FileMenuMsg c
                         )
+
 
         -- about menu
         ClearSettings ->
@@ -330,8 +332,8 @@ applicationMenu model =
                   text ""
               DebugMenuPane ->
                   Html.map DebugMenuMsg (DebugMenu.view model.editor model.debugger)
-              KeyboardPane ->
-                  Html.map SWKeyboardMsg (SoftwareKeyboard.view model.swkeyboard)
+--              KeyboardPane ->
+--                  Html.map SWKeyboardMsg (SoftwareKeyboard.view model.swkeyboard)
               StyleMenuPane ->
                   Html.map StyleMenuMsg (StyleMenu.view model.style)
               FileMenuPane ->
@@ -356,7 +358,7 @@ menuBar model =
               [text "x"]
         , tab FileMenuPane "File"
         , tab StyleMenuPane "Style"
-        , tab KeyboardPane "Keyboard"
+--        , tab KeyboardPane "Keyboard"
         , tab DebugMenuPane "Debug"
         , tab AboutPane "About"
         ]
