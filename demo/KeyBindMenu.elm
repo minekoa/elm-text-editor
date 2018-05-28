@@ -95,9 +95,12 @@ menuItemsView : Model -> Html Msg
 menuItemsView model =                
     div [ class "menu-itemlist" ]
     [ div [ onClick <| SelectSubMenu KeybindList
-          , class <| if model.selectedSubMenu == KeybindList then "menu-item-active" else "menu-item"
+          , class <| if model.selectedSubMenu == KeybindList || model.selectedSubMenu == EditKeybind then "menu-item-active" else "menu-item"
           ]
-          [ span [] [text "Edit"]
+          [ span [] [ "Keybinds"
+                        |> (\s -> if model.selectedSubMenu == EditKeybind then s ++ " (Editing)" else s)
+                        |> text
+                    ]
           ]
     , div [ onClick <| SelectSubMenu InitKeybind
           , class <| if model.selectedSubMenu == InitKeybind then "menu-item-active" else "menu-item"
@@ -124,7 +127,16 @@ listView keybinds model =
         , div [ class "keybind-next-button"
               , onClick <| EditStart model.currentIdx (keybinds |> List.drop model.currentIdx |> List.head )
               ]
-            [ div [] [text ">"] ]
+            [ div [style [("text-align","center")]]
+                  [ text ">"
+                  , br [][]
+                  , span [ style [ ("font-size", "0.8em")
+                                 , ("color", "lightgray")
+                                 ]
+                         ]
+                         [text "edit"]
+                  ]
+            ]
         ]
 
 
@@ -153,7 +165,16 @@ editView idx maybe_keybind =
         [ div [ class "keybind-prev-button"
               , onClick <| EditCancel
               ]
-              [ div [] [text "<"] ]
+              [ div [style [("text-align","center")]]
+                    [ text "<"
+                    , br [][]
+                    , span [ style [ ("font-size", "0.8em")
+                                   , ("color", "lightgray")
+                                   ]
+                           ]
+                          [text "cancel"]
+                    ]
+              ]
         , case maybe_keybind of
               Just keybind ->
                   div []
@@ -179,7 +200,16 @@ editView idx maybe_keybind =
         ,  div [ class "keybind-next-button"
               , onClick <| EditAccept
               ]
-              [ div [] [text ">"] ]
+              [ div [style [("text-align","center")]]
+                    [ text ">"
+                    , br [][]
+                    , span [ style [ ("font-size", "0.8em")
+                                   , ("color", "lightgray")
+                                   ]
+                           ]
+                          [text "accept"]
+                    ]
+              ]
         ]
 
 initView : List KeyBind.KeyBind -> Html Msg

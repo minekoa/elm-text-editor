@@ -30,9 +30,10 @@
 }
 
 .keybind-next-button {
-    padding: 0 1.5em;
-    width: 1em;
-    max-width: 1em;
+    padding: 0 0.5em 0 0.5em;
+    width: 3em;
+    min-width: 3em;
+    max-width: 3em;
     height: 100%;
     display: flex;
     align-items: center;
@@ -41,9 +42,10 @@
 }
 
 .keybind-prev-button {
-    padding: 0 1em;
-    width: 1em;
-    max-width: 1em;
+    padding: 0 1em 0 0;
+    width: 3em;
+    min-width: 3em;
+    max-width: 3em;
     height: 100%;
     display: flex;
     align-items: center;
@@ -76,9 +78,9 @@
     font-size: 1.5em;
     border: 1px solid gray;
 
-    padding: 1em;
-    margin: 1em;
-    width: 3em;
+    padding: 1rem;
+    margin: 1rem;
+    width: 3rem;
 }
 
 .keybind-edit-command {

@@ -16036,11 +16036,51 @@ var _minekoa$elm_text_editor$KeyBindMenu$editView = F2(
 						ctor: '::',
 						_0: A2(
 							_elm_lang$html$Html$div,
-							{ctor: '[]'},
+							{
+								ctor: '::',
+								_0: _elm_lang$html$Html_Attributes$style(
+									{
+										ctor: '::',
+										_0: {ctor: '_Tuple2', _0: 'text-align', _1: 'center'},
+										_1: {ctor: '[]'}
+									}),
+								_1: {ctor: '[]'}
+							},
 							{
 								ctor: '::',
 								_0: _elm_lang$html$Html$text('<'),
-								_1: {ctor: '[]'}
+								_1: {
+									ctor: '::',
+									_0: A2(
+										_elm_lang$html$Html$br,
+										{ctor: '[]'},
+										{ctor: '[]'}),
+									_1: {
+										ctor: '::',
+										_0: A2(
+											_elm_lang$html$Html$span,
+											{
+												ctor: '::',
+												_0: _elm_lang$html$Html_Attributes$style(
+													{
+														ctor: '::',
+														_0: {ctor: '_Tuple2', _0: 'font-size', _1: '0.8em'},
+														_1: {
+															ctor: '::',
+															_0: {ctor: '_Tuple2', _0: 'color', _1: 'lightgray'},
+															_1: {ctor: '[]'}
+														}
+													}),
+												_1: {ctor: '[]'}
+											},
+											{
+												ctor: '::',
+												_0: _elm_lang$html$Html$text('cancel'),
+												_1: {ctor: '[]'}
+											}),
+										_1: {ctor: '[]'}
+									}
+								}
 							}),
 						_1: {ctor: '[]'}
 					}),
@@ -16265,11 +16305,51 @@ var _minekoa$elm_text_editor$KeyBindMenu$editView = F2(
 								ctor: '::',
 								_0: A2(
 									_elm_lang$html$Html$div,
-									{ctor: '[]'},
+									{
+										ctor: '::',
+										_0: _elm_lang$html$Html_Attributes$style(
+											{
+												ctor: '::',
+												_0: {ctor: '_Tuple2', _0: 'text-align', _1: 'center'},
+												_1: {ctor: '[]'}
+											}),
+										_1: {ctor: '[]'}
+									},
 									{
 										ctor: '::',
 										_0: _elm_lang$html$Html$text('>'),
-										_1: {ctor: '[]'}
+										_1: {
+											ctor: '::',
+											_0: A2(
+												_elm_lang$html$Html$br,
+												{ctor: '[]'},
+												{ctor: '[]'}),
+											_1: {
+												ctor: '::',
+												_0: A2(
+													_elm_lang$html$Html$span,
+													{
+														ctor: '::',
+														_0: _elm_lang$html$Html_Attributes$style(
+															{
+																ctor: '::',
+																_0: {ctor: '_Tuple2', _0: 'font-size', _1: '0.8em'},
+																_1: {
+																	ctor: '::',
+																	_0: {ctor: '_Tuple2', _0: 'color', _1: 'lightgray'},
+																	_1: {ctor: '[]'}
+																}
+															}),
+														_1: {ctor: '[]'}
+													},
+													{
+														ctor: '::',
+														_0: _elm_lang$html$Html$text('accept'),
+														_1: {ctor: '[]'}
+													}),
+												_1: {ctor: '[]'}
+											}
+										}
 									}),
 								_1: {ctor: '[]'}
 							}),
@@ -16430,11 +16510,51 @@ var _minekoa$elm_text_editor$KeyBindMenu$listView = F2(
 							ctor: '::',
 							_0: A2(
 								_elm_lang$html$Html$div,
-								{ctor: '[]'},
+								{
+									ctor: '::',
+									_0: _elm_lang$html$Html_Attributes$style(
+										{
+											ctor: '::',
+											_0: {ctor: '_Tuple2', _0: 'text-align', _1: 'center'},
+											_1: {ctor: '[]'}
+										}),
+									_1: {ctor: '[]'}
+								},
 								{
 									ctor: '::',
 									_0: _elm_lang$html$Html$text('>'),
-									_1: {ctor: '[]'}
+									_1: {
+										ctor: '::',
+										_0: A2(
+											_elm_lang$html$Html$br,
+											{ctor: '[]'},
+											{ctor: '[]'}),
+										_1: {
+											ctor: '::',
+											_0: A2(
+												_elm_lang$html$Html$span,
+												{
+													ctor: '::',
+													_0: _elm_lang$html$Html_Attributes$style(
+														{
+															ctor: '::',
+															_0: {ctor: '_Tuple2', _0: 'font-size', _1: '0.8em'},
+															_1: {
+																ctor: '::',
+																_0: {ctor: '_Tuple2', _0: 'color', _1: 'lightgray'},
+																_1: {ctor: '[]'}
+															}
+														}),
+													_1: {ctor: '[]'}
+												},
+												{
+													ctor: '::',
+													_0: _elm_lang$html$Html$text('edit'),
+													_1: {ctor: '[]'}
+												}),
+											_1: {ctor: '[]'}
+										}
+									}
 								}),
 							_1: {ctor: '[]'}
 						}),
@@ -16509,7 +16629,7 @@ var _minekoa$elm_text_editor$KeyBindMenu$menuItemsView = function (model) {
 					_1: {
 						ctor: '::',
 						_0: _elm_lang$html$Html_Attributes$class(
-							_elm_lang$core$Native_Utils.eq(model.selectedSubMenu, _minekoa$elm_text_editor$KeyBindMenu$KeybindList) ? 'menu-item-active' : 'menu-item'),
+							(_elm_lang$core$Native_Utils.eq(model.selectedSubMenu, _minekoa$elm_text_editor$KeyBindMenu$KeybindList) || _elm_lang$core$Native_Utils.eq(model.selectedSubMenu, _minekoa$elm_text_editor$KeyBindMenu$EditKeybind)) ? 'menu-item-active' : 'menu-item'),
 						_1: {ctor: '[]'}
 					}
 				},
@@ -16520,7 +16640,10 @@ var _minekoa$elm_text_editor$KeyBindMenu$menuItemsView = function (model) {
 						{ctor: '[]'},
 						{
 							ctor: '::',
-							_0: _elm_lang$html$Html$text('Edit'),
+							_0: _elm_lang$html$Html$text(
+								function (s) {
+									return _elm_lang$core$Native_Utils.eq(model.selectedSubMenu, _minekoa$elm_text_editor$KeyBindMenu$EditKeybind) ? A2(_elm_lang$core$Basics_ops['++'], s, ' (Editing)') : s;
+								}('Keybinds')),
 							_1: {ctor: '[]'}
 						}),
 					_1: {ctor: '[]'}
@@ -20331,10 +20454,10 @@ var _minekoa$elm_text_editor$Main$menuBar = function (model) {
 					_0: A2(tab, _minekoa$elm_text_editor$Main$StyleMenuPane, 'Style'),
 					_1: {
 						ctor: '::',
-						_0: A2(tab, _minekoa$elm_text_editor$Main$KeyboardPane, 'Keyboard'),
+						_0: A2(tab, _minekoa$elm_text_editor$Main$KeyBindMenuPane, 'Keybind'),
 						_1: {
 							ctor: '::',
-							_0: A2(tab, _minekoa$elm_text_editor$Main$KeyBindMenuPane, 'Keybinds'),
+							_0: A2(tab, _minekoa$elm_text_editor$Main$KeyboardPane, 'Keyboard'),
 							_1: {
 								ctor: '::',
 								_0: A2(tab, _minekoa$elm_text_editor$Main$DebugMenuPane, 'Debug'),

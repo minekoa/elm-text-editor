@@ -375,8 +375,8 @@ menuBar model =
               [text "x"]
         , tab FileMenuPane "File"
         , tab StyleMenuPane "Style"
+        , tab KeyBindMenuPane "Keybind"
         , tab KeyboardPane "Keyboard"
-        , tab KeyBindMenuPane "Keybinds"
         , tab DebugMenuPane "Debug"
         , tab AboutPane "About"
         ]
