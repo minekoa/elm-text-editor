@@ -10,6 +10,9 @@ import Html exposing (..)
 import Html.Attributes exposing (..)
 import Html.Events exposing (..)
 import Char
+import Json.Decode as Json
+import Dom
+import Task
 
 import TextEditor.KeyBind as KeyBind
 import TextEditor.Core as Core
@@ -19,6 +22,7 @@ type alias Model =
     { selectedSubMenu : SubMenu
     , currentIdx : Int
     , current : Maybe KeyBind.KeyBind
+    , keyeditorFocus : Bool
     }
 
 type SubMenu
@@ -33,12 +37,17 @@ type Msg
     | EditStart Int (Maybe KeyBind.KeyBind)
     | EditCancel
     | EditAccept
+    | SetFocusToKeyEditor
+    | KeyEditorFocus Bool
+    | KeyDown KeyboardEvent
+
 
 init : Model
 init =
     { selectedSubMenu = KeybindList
     , currentIdx = 0
     , current = Nothing
+    , keyeditorFocus = False
     }
 
 update : Msg -> List KeyBind.KeyBind -> Model -> (List KeyBind.KeyBind, Model, Cmd Msg)
@@ -63,6 +72,22 @@ update msg keybinds model =
               }
             , Cmd.none
             )
+        KeyDown e ->
+            case model.current of
+                Just keybind ->
+                    ( keybinds
+                    , { model | current = Just { keybind
+                                                   | ctrl = e.ctrlKey
+                                                   , alt = e.altKey
+                                                   , shift = e.shiftKey
+                                                   , code = e.keyCode
+                                               }
+                      }
+                    , Cmd.none
+                    )
+                Nothing ->
+                    ( keybinds, model, Cmd.none )
+                
         EditCancel ->
             ( keybinds
             , { model
@@ -78,6 +103,18 @@ update msg keybinds model =
                   | selectedSubMenu = KeybindList
                   , current = Nothing
               }
+            , Cmd.none
+            )
+
+        SetFocusToKeyEditor ->
+            ( keybinds
+            , model
+            , doFocus
+            )
+
+        KeyEditorFocus b ->
+            ( keybinds
+            , { model | keyeditorFocus = b }
             , Cmd.none
             )
 
@@ -115,7 +152,7 @@ menuPalette keybinds model =
         KeybindList ->
             div [class "menu-palette"] [ listView keybinds model ]
         EditKeybind -> 
-            div [class "menu-palette"] [ editView model.currentIdx model.current ]
+            div [class "menu-palette"] [ editView model.keyeditorFocus model.currentIdx model.current ]
         InitKeybind -> 
             div [class "menu-palette"] [ initView keybinds ]
 
@@ -159,8 +196,8 @@ keybindView selected_idx idx keybind =
         , div [] [ keybind.f.id |> text]
         ]
 
-editView : Int -> Maybe KeyBind.KeyBind -> Html Msg
-editView idx maybe_keybind =
+editView : Bool -> Int -> Maybe KeyBind.KeyBind -> Html Msg
+editView focus idx maybe_keybind =
     div [ class "keybind-hbox" ]
         [ div [ class "keybind-prev-button"
               , onClick <| EditCancel
@@ -184,16 +221,27 @@ editView idx maybe_keybind =
                                     , ("align-items", "center")
                                     ]
                             ]
-                            [ div [class <| if keybind.ctrl  then "keybind-edit-mod-enable" else "keybind-edit-mod-disable"] [text "Ctrl"]
-                            , div [style [("font-size","2em")]] [ text "+" ]
-                            , div [class <| if keybind.alt   then "keybind-edit-mod-enable" else "keybind-edit-mod-disable"] [text "Alt"]
-                            , div [style [("font-size","2em")]] [ text "+" ]
-                            , div [class <| if keybind.shift then "keybind-edit-mod-enable" else "keybind-edit-mod-disable"] [text "Shift"]
-                            , div [style [("font-size","2em")]] [ text "+" ]
-                            , div [class "keybind-edit-keycode"] [keybind.code |> keyCodeToKeyName |> text ]
+                            [ div [ class <| if focus then "keybindmenu-keyeditor-focus" else "keybindmenu-keyeditor-disfocus"
+                                  , style [ ("display", "flex")
+                                          , ("flex-direction", "row")
+                                          ]
+                                  , onClick SetFocusToKeyEditor
+                                  ]
+                                  [ div [class <| if keybind.ctrl  then "keybind-edit-mod-enable" else "keybind-edit-mod-disable"] [text "Ctrl"]
+                                  , div [style [("font-size","2em")]] [ text "+" ]
+                                  , div [class <| if keybind.alt   then "keybind-edit-mod-enable" else "keybind-edit-mod-disable"] [text "Alt"]
+                                  , div [style [("font-size","2em")]] [ text "+" ]
+                                  , div [class <| if keybind.shift then "keybind-edit-mod-enable" else "keybind-edit-mod-disable"] [text "Shift"]
+                                  , div [style [("font-size","2em")]] [ text "+" ]
+                                  , div [class "keybind-edit-keycode"] [keybind.code |> keyCodeToKeyName |> text ]
+                                  ]
                             , div [style [("font-size","2em")]] [ text "⇒" ]
                             , div [class "keybind-edit-command"] [ keybind.f.id |> text]
                             ]
+                      , textarea [ id "keybindmenu-keyevent-receiver"
+                                 , style [("opacity", "0")]
+                                 , onKeyDown KeyDown
+                                 ] []
                       ]
               Nothing ->
                   div [] []
@@ -324,3 +372,46 @@ keyCodeToKeyName code =
         242 -> "Kana"      -- "カタカナ/ひらがな/ローマ字
         otherwise   -> otherwise |> toString
 
+
+
+------------------------------------------------------------
+-- keyboard event (TextEditor コピペなのであとでどうにかしよう)
+------------------------------------------------------------
+type alias KeyboardEvent = 
+    { altKey : Bool
+    , ctrlKey : Bool
+    , keyCode : Int
+    , metaKey : Bool
+    , repeat : Bool
+    , shiftKey : Bool
+    }
+
+keyboarEvent_toString : KeyboardEvent -> String
+keyboarEvent_toString e =
+    String.concat
+        [ if e.ctrlKey then "C-" else ""
+        , if e.altKey then "A-" else ""
+        , if e.metaKey then "M-" else ""
+        , if e.shiftKey then "S-"else ""
+        , toString e.keyCode
+        ]
+
+decodeKeyboardEvent : Json.Decoder KeyboardEvent
+decodeKeyboardEvent =
+    Json.map6 KeyboardEvent
+        (Json.field "altKey" Json.bool)
+        (Json.field "ctrlKey" Json.bool)
+        (Json.field "keyCode" Json.int)
+        (Json.field "metaKey" Json.bool)
+        (Json.field "repeat" Json.bool)
+        (Json.field "shiftKey" Json.bool)    
+
+                
+onKeyDown : (KeyboardEvent -> msg) -> Attribute msg
+onKeyDown tagger =
+    on "keydown" (Json.map tagger decodeKeyboardEvent)
+
+
+doFocus: Cmd Msg
+doFocus  =
+    Task.attempt (\_ -> KeyEditorFocus True) (Dom.focus "keybindmenu-keyevent-receiver")

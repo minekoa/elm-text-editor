@@ -90,3 +90,23 @@
     margin: 1em;
     width: 12em;
 }
+
+.keybindmenu-keyeditor-focus {
+    position: relative;
+}
+
+.keybindmenu-keyeditor-focus::before {
+    content: "";
+    position: absolute;
+    top: 0.5em;
+    left: 0.5em;
+    width: calc( 100% - 1em );
+    height: calc( 100% - 1em );
+    border: 1px solid lightgrey;
+    border-radius: 0.5em;
+}
+
+
+. keybindmenu-keyeditor-disfocus {
+
+}
