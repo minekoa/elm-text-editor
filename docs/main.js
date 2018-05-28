@@ -10793,36 +10793,84 @@ var _minekoa$elm_text_editor$TextEditor_Core_Commands$batch = function (commands
 		commands);
 };
 
+var _minekoa$elm_text_editor$TextEditor_Commands$paste = {
+	id: 'paste',
+	f: function (m) {
+		return A2(_minekoa$elm_text_editor$TextEditor_Core_Commands$paste, m.copyStore, m);
+	}
+};
+var _minekoa$elm_text_editor$TextEditor_Commands$cut = {id: 'cut', f: _minekoa$elm_text_editor$TextEditor_Core_Commands$cut};
+var _minekoa$elm_text_editor$TextEditor_Commands$copy = {id: 'copy', f: _minekoa$elm_text_editor$TextEditor_Core_Commands$copy};
+var _minekoa$elm_text_editor$TextEditor_Commands$undo = {id: 'undo', f: _minekoa$elm_text_editor$TextEditor_Core_Commands$undo};
+var _minekoa$elm_text_editor$TextEditor_Commands$delete = {id: 'delete', f: _minekoa$elm_text_editor$TextEditor_Core_Commands$delete};
+var _minekoa$elm_text_editor$TextEditor_Commands$backspace = {id: 'backspace', f: _minekoa$elm_text_editor$TextEditor_Core_Commands$backspace};
+var _minekoa$elm_text_editor$TextEditor_Commands$insert = function (text) {
+	return {
+		id: 'insert',
+		f: _minekoa$elm_text_editor$TextEditor_Core_Commands$insert(text)
+	};
+};
+var _minekoa$elm_text_editor$TextEditor_Commands$gotoMark = {id: 'gotoMark', f: _minekoa$elm_text_editor$TextEditor_Core_Commands$gotoMark};
+var _minekoa$elm_text_editor$TextEditor_Commands$markFlip = {id: 'markFlip', f: _minekoa$elm_text_editor$TextEditor_Core_Commands$markFlip};
+var _minekoa$elm_text_editor$TextEditor_Commands$markClear = {id: 'markFlip', f: _minekoa$elm_text_editor$TextEditor_Core_Commands$markFlip};
+var _minekoa$elm_text_editor$TextEditor_Commands$markSet = {id: 'markSet', f: _minekoa$elm_text_editor$TextEditor_Core_Commands$markSet};
+var _minekoa$elm_text_editor$TextEditor_Commands$selectAt = function (pos) {
+	return {
+		id: 'selectAt',
+		f: _minekoa$elm_text_editor$TextEditor_Core_Commands$selectAt(pos)
+	};
+};
+var _minekoa$elm_text_editor$TextEditor_Commands$selectNext = {id: 'selectNext', f: _minekoa$elm_text_editor$TextEditor_Core_Commands$selectNext};
+var _minekoa$elm_text_editor$TextEditor_Commands$selectPrevios = {id: 'selectPrevios', f: _minekoa$elm_text_editor$TextEditor_Core_Commands$selectPrevios};
+var _minekoa$elm_text_editor$TextEditor_Commands$selectForward = {id: 'selectForward', f: _minekoa$elm_text_editor$TextEditor_Core_Commands$selectForward};
+var _minekoa$elm_text_editor$TextEditor_Commands$selectBackward = {id: 'selectBackword', f: _minekoa$elm_text_editor$TextEditor_Core_Commands$selectBackward};
+var _minekoa$elm_text_editor$TextEditor_Commands$moveAt = function (pos) {
+	return {
+		id: 'moveAt',
+		f: _minekoa$elm_text_editor$TextEditor_Core_Commands$moveAt(pos)
+	};
+};
+var _minekoa$elm_text_editor$TextEditor_Commands$moveEOL = {id: 'moveEOL', f: _minekoa$elm_text_editor$TextEditor_Core_Commands$moveEOL};
+var _minekoa$elm_text_editor$TextEditor_Commands$moveBOL = {id: 'moveBOL', f: _minekoa$elm_text_editor$TextEditor_Core_Commands$moveBOL};
+var _minekoa$elm_text_editor$TextEditor_Commands$moveNext = {id: 'moveNext', f: _minekoa$elm_text_editor$TextEditor_Core_Commands$moveNext};
+var _minekoa$elm_text_editor$TextEditor_Commands$movePrevios = {id: 'movePrevios', f: _minekoa$elm_text_editor$TextEditor_Core_Commands$movePrevios};
+var _minekoa$elm_text_editor$TextEditor_Commands$moveBackward = {id: 'moveBackward', f: _minekoa$elm_text_editor$TextEditor_Core_Commands$moveBackward};
+var _minekoa$elm_text_editor$TextEditor_Commands$moveForward = {id: 'moveForward', f: _minekoa$elm_text_editor$TextEditor_Core_Commands$moveForward};
+var _minekoa$elm_text_editor$TextEditor_Commands$Command = F2(
+	function (a, b) {
+		return {id: a, f: b};
+	});
+
 var _minekoa$elm_text_editor$TextEditor_KeyBind$emacsLike = {
 	ctor: '::',
-	_0: {ctrl: true, alt: false, shift: false, code: 70, f: _minekoa$elm_text_editor$TextEditor_Core_Commands$moveForward},
+	_0: {ctrl: true, alt: false, shift: false, code: 70, f: _minekoa$elm_text_editor$TextEditor_Commands$moveForward},
 	_1: {
 		ctor: '::',
-		_0: {ctrl: true, alt: false, shift: false, code: 66, f: _minekoa$elm_text_editor$TextEditor_Core_Commands$moveBackward},
+		_0: {ctrl: true, alt: false, shift: false, code: 66, f: _minekoa$elm_text_editor$TextEditor_Commands$moveBackward},
 		_1: {
 			ctor: '::',
-			_0: {ctrl: true, alt: false, shift: false, code: 78, f: _minekoa$elm_text_editor$TextEditor_Core_Commands$moveNext},
+			_0: {ctrl: true, alt: false, shift: false, code: 78, f: _minekoa$elm_text_editor$TextEditor_Commands$moveNext},
 			_1: {
 				ctor: '::',
-				_0: {ctrl: true, alt: false, shift: false, code: 80, f: _minekoa$elm_text_editor$TextEditor_Core_Commands$movePrevios},
+				_0: {ctrl: true, alt: false, shift: false, code: 80, f: _minekoa$elm_text_editor$TextEditor_Commands$movePrevios},
 				_1: {
 					ctor: '::',
-					_0: {ctrl: true, alt: false, shift: false, code: 65, f: _minekoa$elm_text_editor$TextEditor_Core_Commands$moveBOL},
+					_0: {ctrl: true, alt: false, shift: false, code: 65, f: _minekoa$elm_text_editor$TextEditor_Commands$moveBOL},
 					_1: {
 						ctor: '::',
-						_0: {ctrl: true, alt: false, shift: false, code: 69, f: _minekoa$elm_text_editor$TextEditor_Core_Commands$moveEOL},
+						_0: {ctrl: true, alt: false, shift: false, code: 69, f: _minekoa$elm_text_editor$TextEditor_Commands$moveEOL},
 						_1: {
 							ctor: '::',
-							_0: {ctrl: true, alt: false, shift: false, code: 72, f: _minekoa$elm_text_editor$TextEditor_Core_Commands$backspace},
+							_0: {ctrl: true, alt: false, shift: false, code: 72, f: _minekoa$elm_text_editor$TextEditor_Commands$backspace},
 							_1: {
 								ctor: '::',
-								_0: {ctrl: true, alt: false, shift: false, code: 68, f: _minekoa$elm_text_editor$TextEditor_Core_Commands$delete},
+								_0: {ctrl: true, alt: false, shift: false, code: 68, f: _minekoa$elm_text_editor$TextEditor_Commands$delete},
 								_1: {
 									ctor: '::',
-									_0: {ctrl: false, alt: true, shift: false, code: 87, f: _minekoa$elm_text_editor$TextEditor_Core_Commands$copy},
+									_0: {ctrl: false, alt: true, shift: false, code: 87, f: _minekoa$elm_text_editor$TextEditor_Commands$copy},
 									_1: {
 										ctor: '::',
-										_0: {ctrl: true, alt: false, shift: false, code: 87, f: _minekoa$elm_text_editor$TextEditor_Core_Commands$cut},
+										_0: {ctrl: true, alt: false, shift: false, code: 87, f: _minekoa$elm_text_editor$TextEditor_Commands$cut},
 										_1: {
 											ctor: '::',
 											_0: {
@@ -10830,22 +10878,14 @@ var _minekoa$elm_text_editor$TextEditor_KeyBind$emacsLike = {
 												alt: false,
 												shift: false,
 												code: 77,
-												f: _minekoa$elm_text_editor$TextEditor_Core_Commands$insert('\n')
+												f: _minekoa$elm_text_editor$TextEditor_Commands$insert('\n')
 											},
 											_1: {
 												ctor: '::',
-												_0: {
-													ctrl: true,
-													alt: false,
-													shift: false,
-													code: 89,
-													f: function (m) {
-														return A2(_minekoa$elm_text_editor$TextEditor_Core_Commands$paste, m.copyStore, m);
-													}
-												},
+												_0: {ctrl: true, alt: false, shift: false, code: 89, f: _minekoa$elm_text_editor$TextEditor_Commands$paste},
 												_1: {
 													ctor: '::',
-													_0: {ctrl: true, alt: false, shift: false, code: 32, f: _minekoa$elm_text_editor$TextEditor_Core_Commands$markFlip},
+													_0: {ctrl: true, alt: false, shift: false, code: 32, f: _minekoa$elm_text_editor$TextEditor_Commands$markFlip},
 													_1: {ctor: '[]'}
 												}
 											}
@@ -10862,19 +10902,19 @@ var _minekoa$elm_text_editor$TextEditor_KeyBind$emacsLike = {
 };
 var _minekoa$elm_text_editor$TextEditor_KeyBind$gates = {
 	ctor: '::',
-	_0: {ctrl: false, alt: false, shift: true, code: 37, f: _minekoa$elm_text_editor$TextEditor_Core_Commands$selectBackward},
+	_0: {ctrl: false, alt: false, shift: true, code: 37, f: _minekoa$elm_text_editor$TextEditor_Commands$selectBackward},
 	_1: {
 		ctor: '::',
-		_0: {ctrl: false, alt: false, shift: true, code: 38, f: _minekoa$elm_text_editor$TextEditor_Core_Commands$selectPrevios},
+		_0: {ctrl: false, alt: false, shift: true, code: 38, f: _minekoa$elm_text_editor$TextEditor_Commands$selectPrevios},
 		_1: {
 			ctor: '::',
-			_0: {ctrl: false, alt: false, shift: true, code: 39, f: _minekoa$elm_text_editor$TextEditor_Core_Commands$selectForward},
+			_0: {ctrl: false, alt: false, shift: true, code: 39, f: _minekoa$elm_text_editor$TextEditor_Commands$selectForward},
 			_1: {
 				ctor: '::',
-				_0: {ctrl: false, alt: false, shift: true, code: 40, f: _minekoa$elm_text_editor$TextEditor_Core_Commands$selectNext},
+				_0: {ctrl: false, alt: false, shift: true, code: 40, f: _minekoa$elm_text_editor$TextEditor_Commands$selectNext},
 				_1: {
 					ctor: '::',
-					_0: {ctrl: true, alt: false, shift: false, code: 90, f: _minekoa$elm_text_editor$TextEditor_Core_Commands$undo},
+					_0: {ctrl: true, alt: false, shift: false, code: 90, f: _minekoa$elm_text_editor$TextEditor_Commands$undo},
 					_1: {ctor: '[]'}
 				}
 			}
@@ -10883,28 +10923,28 @@ var _minekoa$elm_text_editor$TextEditor_KeyBind$gates = {
 };
 var _minekoa$elm_text_editor$TextEditor_KeyBind$basic = {
 	ctor: '::',
-	_0: {ctrl: false, alt: false, shift: false, code: 37, f: _minekoa$elm_text_editor$TextEditor_Core_Commands$moveBackward},
+	_0: {ctrl: false, alt: false, shift: false, code: 37, f: _minekoa$elm_text_editor$TextEditor_Commands$moveBackward},
 	_1: {
 		ctor: '::',
-		_0: {ctrl: false, alt: false, shift: false, code: 38, f: _minekoa$elm_text_editor$TextEditor_Core_Commands$movePrevios},
+		_0: {ctrl: false, alt: false, shift: false, code: 38, f: _minekoa$elm_text_editor$TextEditor_Commands$movePrevios},
 		_1: {
 			ctor: '::',
-			_0: {ctrl: false, alt: false, shift: false, code: 39, f: _minekoa$elm_text_editor$TextEditor_Core_Commands$moveForward},
+			_0: {ctrl: false, alt: false, shift: false, code: 39, f: _minekoa$elm_text_editor$TextEditor_Commands$moveForward},
 			_1: {
 				ctor: '::',
-				_0: {ctrl: false, alt: false, shift: false, code: 40, f: _minekoa$elm_text_editor$TextEditor_Core_Commands$moveNext},
+				_0: {ctrl: false, alt: false, shift: false, code: 40, f: _minekoa$elm_text_editor$TextEditor_Commands$moveNext},
 				_1: {
 					ctor: '::',
-					_0: {ctrl: false, alt: false, shift: false, code: 36, f: _minekoa$elm_text_editor$TextEditor_Core_Commands$moveBOL},
+					_0: {ctrl: false, alt: false, shift: false, code: 36, f: _minekoa$elm_text_editor$TextEditor_Commands$moveBOL},
 					_1: {
 						ctor: '::',
-						_0: {ctrl: false, alt: false, shift: false, code: 35, f: _minekoa$elm_text_editor$TextEditor_Core_Commands$moveEOL},
+						_0: {ctrl: false, alt: false, shift: false, code: 35, f: _minekoa$elm_text_editor$TextEditor_Commands$moveEOL},
 						_1: {
 							ctor: '::',
-							_0: {ctrl: false, alt: false, shift: false, code: 8, f: _minekoa$elm_text_editor$TextEditor_Core_Commands$backspace},
+							_0: {ctrl: false, alt: false, shift: false, code: 8, f: _minekoa$elm_text_editor$TextEditor_Commands$backspace},
 							_1: {
 								ctor: '::',
-								_0: {ctrl: false, alt: false, shift: false, code: 46, f: _minekoa$elm_text_editor$TextEditor_Core_Commands$delete},
+								_0: {ctrl: false, alt: false, shift: false, code: 46, f: _minekoa$elm_text_editor$TextEditor_Commands$delete},
 								_1: {ctor: '[]'}
 							}
 						}
@@ -12698,14 +12738,18 @@ var _minekoa$elm_text_editor$TextEditor$keyDown = F2(
 			{ctor: '_Tuple4', _0: e.ctrlKey, _1: e.altKey, _2: e.shiftKey, _3: e.keyCode},
 			model.keymap);
 		if (_p22.ctor === 'Just') {
+			var _p23 = _p22._0;
 			return A3(
 				_minekoa$elm_text_editor$TextEditor$logging,
 				'keydown',
-				_minekoa$elm_text_editor$TextEditor$keyboarEvent_toString(e),
+				A2(
+					_elm_lang$core$Basics_ops['++'],
+					_minekoa$elm_text_editor$TextEditor$keyboarEvent_toString(e),
+					A2(_elm_lang$core$Basics_ops['++'], 'editorcmd=', _p23.id)),
 				A2(
 					_minekoa$elm_text_editor$TextEditor$updateMap,
 					model,
-					_p22._0(model.core)));
+					_p23.f(model.core)));
 		} else {
 			return A3(
 				_minekoa$elm_text_editor$TextEditor$logging,
@@ -12716,8 +12760,8 @@ var _minekoa$elm_text_editor$TextEditor$keyDown = F2(
 	});
 var _minekoa$elm_text_editor$TextEditor$update = F2(
 	function (msg, model) {
-		var _p23 = msg;
-		switch (_p23.ctor) {
+		var _p24 = msg;
+		switch (_p24.ctor) {
 			case 'CoreMsg':
 				return A2(
 					_elm_lang$core$Tuple$mapSecond,
@@ -12729,9 +12773,9 @@ var _minekoa$elm_text_editor$TextEditor$update = F2(
 								model,
 								{core: cm});
 						},
-						A2(_minekoa$elm_text_editor$TextEditor_Core$update, _p23._0, model.core)));
+						A2(_minekoa$elm_text_editor$TextEditor_Core$update, _p24._0, model.core)));
 			case 'Pasted':
-				var _p24 = _p23._0;
+				var _p25 = _p24._0;
 				return A2(
 					_elm_lang$core$Tuple$mapSecond,
 					function (c) {
@@ -12752,7 +12796,7 @@ var _minekoa$elm_text_editor$TextEditor$update = F2(
 					A3(
 						_minekoa$elm_text_editor$TextEditor$logging,
 						'pasted',
-						_p24,
+						_p25,
 						A2(
 							_elm_lang$core$Tuple$mapFirst,
 							function (m) {
@@ -12763,7 +12807,7 @@ var _minekoa$elm_text_editor$TextEditor$update = F2(
 							A2(
 								_minekoa$elm_text_editor$TextEditor$updateMap,
 								model,
-								A2(_minekoa$elm_text_editor$TextEditor_Core_Commands$paste, _p24, model.core)))));
+								A2(_minekoa$elm_text_editor$TextEditor_Core_Commands$paste, _p25, model.core)))));
 			case 'Copied':
 				return A2(
 					_elm_lang$core$Tuple$mapSecond,
@@ -12785,7 +12829,7 @@ var _minekoa$elm_text_editor$TextEditor$update = F2(
 					A3(
 						_minekoa$elm_text_editor$TextEditor$logging,
 						'copied',
-						_p23._0,
+						_p24._0,
 						A2(
 							_elm_lang$core$Tuple$mapFirst,
 							function (m) {
@@ -12818,7 +12862,7 @@ var _minekoa$elm_text_editor$TextEditor$update = F2(
 					A3(
 						_minekoa$elm_text_editor$TextEditor$logging,
 						'cutted',
-						_p23._0,
+						_p24._0,
 						A2(
 							_elm_lang$core$Tuple$mapFirst,
 							function (m) {
@@ -12831,17 +12875,17 @@ var _minekoa$elm_text_editor$TextEditor$update = F2(
 								model,
 								_minekoa$elm_text_editor$TextEditor_Core_Commands$cut(model.core)))));
 			case 'Input':
-				return A2(_minekoa$elm_text_editor$TextEditor$input, _p23._0, model);
+				return A2(_minekoa$elm_text_editor$TextEditor$input, _p24._0, model);
 			case 'KeyDown':
-				return A2(_minekoa$elm_text_editor$TextEditor$keyDown, _p23._0, model);
+				return A2(_minekoa$elm_text_editor$TextEditor$keyDown, _p24._0, model);
 			case 'KeyPress':
-				return A2(_minekoa$elm_text_editor$TextEditor$keyPress, _p23._0, model);
+				return A2(_minekoa$elm_text_editor$TextEditor$keyPress, _p24._0, model);
 			case 'CompositionStart':
-				return A2(_minekoa$elm_text_editor$TextEditor$compositionStart, _p23._0, model);
+				return A2(_minekoa$elm_text_editor$TextEditor$compositionStart, _p24._0, model);
 			case 'CompositionUpdate':
-				return A2(_minekoa$elm_text_editor$TextEditor$compositionUpdate, _p23._0, model);
+				return A2(_minekoa$elm_text_editor$TextEditor$compositionUpdate, _p24._0, model);
 			case 'CompositionEnd':
-				return A2(_minekoa$elm_text_editor$TextEditor$compositionEnd, _p23._0, model);
+				return A2(_minekoa$elm_text_editor$TextEditor$compositionEnd, _p24._0, model);
 			case 'FocusIn':
 				var cm = model.core;
 				return {
@@ -12897,12 +12941,12 @@ var _minekoa$elm_text_editor$TextEditor$update = F2(
 							_minekoa$elm_text_editor$TextEditor_Core$doFocus(model.core))
 					});
 			case 'DragStart':
-				var _p28 = _p23._0;
-				var xy = {x: _p28.x, y: _p28.y};
-				var _p25 = A2(_minekoa$elm_text_editor$TextEditor$posToRowColumn, model.core, xy);
-				var row = _p25._0;
-				var col = _p25._1;
-				var _p26 = A2(
+				var _p29 = _p24._0;
+				var xy = {x: _p29.x, y: _p29.y};
+				var _p26 = A2(_minekoa$elm_text_editor$TextEditor$posToRowColumn, model.core, xy);
+				var row = _p26._0;
+				var col = _p26._1;
+				var _p27 = A2(
 					_minekoa$elm_text_editor$TextEditor_Core_Commands$batch,
 					{
 						ctor: '::',
@@ -12915,10 +12959,10 @@ var _minekoa$elm_text_editor$TextEditor$update = F2(
 						}
 					},
 					model.core);
-				var cm = _p26._0;
-				var cc = _p26._1;
-				var _p27 = _p28.button;
-				switch (_p27.ctor) {
+				var cm = _p27._0;
+				var cc = _p27._1;
+				var _p28 = _p29.button;
+				switch (_p28.ctor) {
 					case 'LeftMouse':
 						return A3(
 							_minekoa$elm_text_editor$TextEditor$logging,
@@ -12965,22 +13009,22 @@ var _minekoa$elm_text_editor$TextEditor$update = F2(
 						return {ctor: '_Tuple2', _0: model, _1: _elm_lang$core$Platform_Cmd$none};
 				}
 			case 'DragAt':
-				var _p31 = _p23._0;
-				var _p29 = A2(_minekoa$elm_text_editor$TextEditor$posToRowColumn, model.core, _p31);
-				var row = _p29._0;
-				var col = _p29._1;
-				var _p30 = A2(
+				var _p32 = _p24._0;
+				var _p30 = A2(_minekoa$elm_text_editor$TextEditor$posToRowColumn, model.core, _p32);
+				var row = _p30._0;
+				var col = _p30._1;
+				var _p31 = A2(
 					_minekoa$elm_text_editor$TextEditor_Core_Commands$selectAt,
 					{ctor: '_Tuple2', _0: row, _1: col},
 					model.core);
-				var cm = _p30._0;
-				var cc = _p30._1;
+				var cm = _p31._0;
+				var cc = _p31._1;
 				return A3(
 					_minekoa$elm_text_editor$TextEditor$logging,
 					'dragat',
 					A2(
 						_minekoa$elm_text_editor$TextEditor$printDragInfo,
-						_p31,
+						_p32,
 						{ctor: '_Tuple2', _0: row, _1: col}),
 					{
 						ctor: '_Tuple2',
@@ -13005,7 +13049,7 @@ var _minekoa$elm_text_editor$TextEditor$update = F2(
 						_1: _elm_lang$core$Platform_Cmd$none
 					});
 			default:
-				var new_event = {name: _p23._0, data: _p23._1, date: _p23._2};
+				var new_event = {name: _p24._0, data: _p24._1, date: _p24._2};
 				return {
 					ctor: '_Tuple2',
 					_0: _elm_lang$core$Native_Utils.update(
@@ -13043,8 +13087,8 @@ var _minekoa$elm_text_editor$TextEditor$subscriptions = function (model) {
 					_1: {ctor: '[]'}
 				},
 				function () {
-					var _p32 = model.drag;
-					if (_p32 === true) {
+					var _p33 = model.drag;
+					if (_p33 === true) {
 						return {
 							ctor: '::',
 							_0: _elm_lang$mouse$Mouse$moves(_minekoa$elm_text_editor$TextEditor$DragAt),
@@ -13063,8 +13107,8 @@ var _minekoa$elm_text_editor$TextEditor$LeftMouse = {ctor: 'LeftMouse'};
 var _minekoa$elm_text_editor$TextEditor$mouseButton = A2(
 	_elm_lang$core$Json_Decode$andThen,
 	function (n) {
-		var _p33 = n;
-		switch (_p33) {
+		var _p34 = n;
+		switch (_p34) {
 			case 0:
 				return _elm_lang$core$Json_Decode$succeed(_minekoa$elm_text_editor$TextEditor$LeftMouse);
 			case 1:
@@ -13082,7 +13126,7 @@ var _minekoa$elm_text_editor$TextEditor$mouseButton = A2(
 						'unknown mouse button value (',
 						A2(
 							_elm_lang$core$Basics_ops['++'],
-							_elm_lang$core$Basics$toString(_p33),
+							_elm_lang$core$Basics$toString(_p34),
 							')')));
 		}
 	},
@@ -15677,323 +15721,23 @@ var _minekoa$elm_text_editor$FileMenu$view = function (model) {
 		});
 };
 
-var _minekoa$elm_text_editor$TextEditor_Commands$updateMap = F2(
-	function (model, _p0) {
-		var _p1 = _p0;
-		return {
-			ctor: '_Tuple2',
-			_0: _elm_lang$core$Native_Utils.update(
-				model,
-				{core: _p1._0}),
-			_1: A2(_elm_lang$core$Platform_Cmd$map, _minekoa$elm_text_editor$TextEditor$CoreMsg, _p1._1)
-		};
-	});
-var _minekoa$elm_text_editor$TextEditor_Commands$moveForward = function (model) {
-	return A2(
-		_minekoa$elm_text_editor$TextEditor_Commands$updateMap,
-		model,
-		_minekoa$elm_text_editor$TextEditor_Core_Commands$moveForward(model.core));
-};
-var _minekoa$elm_text_editor$TextEditor_Commands$moveBackward = function (model) {
-	return A2(
-		_minekoa$elm_text_editor$TextEditor_Commands$updateMap,
-		model,
-		_minekoa$elm_text_editor$TextEditor_Core_Commands$moveBackward(model.core));
-};
-var _minekoa$elm_text_editor$TextEditor_Commands$movePrevios = function (model) {
-	return A2(
-		_minekoa$elm_text_editor$TextEditor_Commands$updateMap,
-		model,
-		_minekoa$elm_text_editor$TextEditor_Core_Commands$movePrevios(model.core));
-};
-var _minekoa$elm_text_editor$TextEditor_Commands$moveNext = function (model) {
-	return A2(
-		_minekoa$elm_text_editor$TextEditor_Commands$updateMap,
-		model,
-		_minekoa$elm_text_editor$TextEditor_Core_Commands$moveNext(model.core));
-};
-var _minekoa$elm_text_editor$TextEditor_Commands$moveBOL = function (model) {
-	return A2(
-		_minekoa$elm_text_editor$TextEditor_Commands$updateMap,
-		model,
-		_minekoa$elm_text_editor$TextEditor_Core_Commands$moveBOL(model.core));
-};
-var _minekoa$elm_text_editor$TextEditor_Commands$moveEOL = function (model) {
-	return A2(
-		_minekoa$elm_text_editor$TextEditor_Commands$updateMap,
-		model,
-		_minekoa$elm_text_editor$TextEditor_Core_Commands$moveEOL(model.core));
-};
-var _minekoa$elm_text_editor$TextEditor_Commands$moveAt = F2(
-	function (pos, model) {
-		return A2(
-			_minekoa$elm_text_editor$TextEditor_Commands$updateMap,
-			model,
-			A2(_minekoa$elm_text_editor$TextEditor_Core_Commands$moveAt, pos, model.core));
-	});
-var _minekoa$elm_text_editor$TextEditor_Commands$selectBackward = function (model) {
-	return A2(
-		_minekoa$elm_text_editor$TextEditor_Commands$updateMap,
-		model,
-		_minekoa$elm_text_editor$TextEditor_Core_Commands$selectBackward(model.core));
-};
-var _minekoa$elm_text_editor$TextEditor_Commands$selectForward = function (model) {
-	return A2(
-		_minekoa$elm_text_editor$TextEditor_Commands$updateMap,
-		model,
-		_minekoa$elm_text_editor$TextEditor_Core_Commands$selectForward(model.core));
-};
-var _minekoa$elm_text_editor$TextEditor_Commands$selectPrevios = function (model) {
-	return A2(
-		_minekoa$elm_text_editor$TextEditor_Commands$updateMap,
-		model,
-		_minekoa$elm_text_editor$TextEditor_Core_Commands$selectPrevios(model.core));
-};
-var _minekoa$elm_text_editor$TextEditor_Commands$selectNext = function (model) {
-	return A2(
-		_minekoa$elm_text_editor$TextEditor_Commands$updateMap,
-		model,
-		_minekoa$elm_text_editor$TextEditor_Core_Commands$selectNext(model.core));
-};
-var _minekoa$elm_text_editor$TextEditor_Commands$selectAt = F2(
-	function (pos, model) {
-		return A2(
-			_minekoa$elm_text_editor$TextEditor_Commands$updateMap,
-			model,
-			A2(_minekoa$elm_text_editor$TextEditor_Core_Commands$selectAt, pos, model.core));
-	});
-var _minekoa$elm_text_editor$TextEditor_Commands$markSet = function (model) {
-	return A2(
-		_minekoa$elm_text_editor$TextEditor_Commands$updateMap,
-		model,
-		_minekoa$elm_text_editor$TextEditor_Core_Commands$markSet(model.core));
-};
-var _minekoa$elm_text_editor$TextEditor_Commands$markClear = function (model) {
-	return A2(
-		_minekoa$elm_text_editor$TextEditor_Commands$updateMap,
-		model,
-		_minekoa$elm_text_editor$TextEditor_Core_Commands$markFlip(model.core));
-};
-var _minekoa$elm_text_editor$TextEditor_Commands$markFlip = function (model) {
-	return A2(
-		_minekoa$elm_text_editor$TextEditor_Commands$updateMap,
-		model,
-		_minekoa$elm_text_editor$TextEditor_Core_Commands$markFlip(model.core));
-};
-var _minekoa$elm_text_editor$TextEditor_Commands$gotoMark = function (model) {
-	return A2(
-		_minekoa$elm_text_editor$TextEditor_Commands$updateMap,
-		model,
-		_minekoa$elm_text_editor$TextEditor_Core_Commands$gotoMark(model.core));
-};
-var _minekoa$elm_text_editor$TextEditor_Commands$insert = F2(
-	function (text, model) {
-		return A2(
-			_minekoa$elm_text_editor$TextEditor_Commands$updateMap,
-			model,
-			A2(_minekoa$elm_text_editor$TextEditor_Core_Commands$insert, text, model.core));
-	});
-var _minekoa$elm_text_editor$TextEditor_Commands$backspace = function (model) {
-	return A2(
-		_minekoa$elm_text_editor$TextEditor_Commands$updateMap,
-		model,
-		_minekoa$elm_text_editor$TextEditor_Core_Commands$backspace(model.core));
-};
-var _minekoa$elm_text_editor$TextEditor_Commands$delete = function (model) {
-	return A2(
-		_minekoa$elm_text_editor$TextEditor_Commands$updateMap,
-		model,
-		_minekoa$elm_text_editor$TextEditor_Core_Commands$delete(model.core));
-};
-var _minekoa$elm_text_editor$TextEditor_Commands$undo = function (model) {
-	return A2(
-		_minekoa$elm_text_editor$TextEditor_Commands$updateMap,
-		model,
-		_minekoa$elm_text_editor$TextEditor_Core_Commands$undo(model.core));
-};
-var _minekoa$elm_text_editor$TextEditor_Commands$copy = function (model) {
-	return A2(
-		_minekoa$elm_text_editor$TextEditor_Commands$updateMap,
-		model,
-		_minekoa$elm_text_editor$TextEditor_Core_Commands$copy(model.core));
-};
-var _minekoa$elm_text_editor$TextEditor_Commands$cut = function (model) {
-	return A2(
-		_minekoa$elm_text_editor$TextEditor_Commands$updateMap,
-		model,
-		_minekoa$elm_text_editor$TextEditor_Core_Commands$cut(model.core));
-};
-var _minekoa$elm_text_editor$TextEditor_Commands$paste = function (model) {
-	return A2(
-		_minekoa$elm_text_editor$TextEditor_Commands$updateMap,
-		model,
-		A2(_minekoa$elm_text_editor$TextEditor_Core_Commands$paste, model.core.copyStore, model.core));
-};
-var _minekoa$elm_text_editor$TextEditor_Commands$batch = function (commands) {
-	var batch_proc = F3(
-		function (cmdMsgs, editorCmds, model) {
-			batch_proc:
-			while (true) {
-				var _p2 = editorCmds;
-				if (_p2.ctor === '::') {
-					var _p3 = _p2._0(model);
-					var m1 = _p3._0;
-					var c1 = _p3._1;
-					var _v2 = {ctor: '::', _0: c1, _1: cmdMsgs},
-						_v3 = _p2._1,
-						_v4 = m1;
-					cmdMsgs = _v2;
-					editorCmds = _v3;
-					model = _v4;
-					continue batch_proc;
-				} else {
-					return {
-						ctor: '_Tuple2',
-						_0: model,
-						_1: _elm_lang$core$Platform_Cmd$batch(cmdMsgs)
-					};
-				}
-			}
-		});
-	return A2(
-		batch_proc,
-		{ctor: '[]'},
-		commands);
-};
-
-var _minekoa$elm_text_editor$SoftwareKeyboard$pad = function (n) {
+var _minekoa$elm_text_editor$KeyBindMenu$initView = function (editorModel) {
 	return A2(
 		_elm_lang$html$Html$div,
-		{
-			ctor: '::',
-			_0: _elm_lang$html$Html_Attributes$class('kbd_pad'),
-			_1: {
-				ctor: '::',
-				_0: _elm_lang$html$Html_Attributes$style(
-					{
-						ctor: '::',
-						_0: {
-							ctor: '_Tuple2',
-							_0: 'width',
-							_1: A3(
-								_elm_lang$core$Basics$flip,
-								F2(
-									function (x, y) {
-										return A2(_elm_lang$core$Basics_ops['++'], x, y);
-									}),
-								'em',
-								_elm_lang$core$Basics$toString((n * 0.5) * 1.5))
-						},
-						_1: {ctor: '[]'}
-					}),
-				_1: {ctor: '[]'}
-			}
-		},
+		{ctor: '[]'},
 		{ctor: '[]'});
 };
-var _minekoa$elm_text_editor$SoftwareKeyboard$update = F3(
-	function (msg, model, editor) {
-		var _p0 = msg;
-		switch (_p0.ctor) {
-			case 'ChangeMode':
-				return {
-					ctor: '_Tuple2',
-					_0: {
-						ctor: '_Tuple2',
-						_0: _elm_lang$core$Native_Utils.update(
-							model,
-							{mode: _p0._0}),
-						_1: _elm_lang$core$Platform_Cmd$none
-					},
-					_1: {ctor: '_Tuple2', _0: editor, _1: _elm_lang$core$Platform_Cmd$none}
-				};
-			case 'MoveForward':
-				return {
-					ctor: '_Tuple2',
-					_0: {ctor: '_Tuple2', _0: model, _1: _elm_lang$core$Platform_Cmd$none},
-					_1: _minekoa$elm_text_editor$TextEditor_Commands$moveForward(editor)
-				};
-			case 'MoveBackword':
-				return {
-					ctor: '_Tuple2',
-					_0: {ctor: '_Tuple2', _0: model, _1: _elm_lang$core$Platform_Cmd$none},
-					_1: _minekoa$elm_text_editor$TextEditor_Commands$moveBackward(editor)
-				};
-			case 'MovePrevios':
-				return {
-					ctor: '_Tuple2',
-					_0: {ctor: '_Tuple2', _0: model, _1: _elm_lang$core$Platform_Cmd$none},
-					_1: _minekoa$elm_text_editor$TextEditor_Commands$movePrevios(editor)
-				};
-			case 'MoveNext':
-				return {
-					ctor: '_Tuple2',
-					_0: {ctor: '_Tuple2', _0: model, _1: _elm_lang$core$Platform_Cmd$none},
-					_1: _minekoa$elm_text_editor$TextEditor_Commands$moveNext(editor)
-				};
-			case 'Insert':
-				return {
-					ctor: '_Tuple2',
-					_0: {ctor: '_Tuple2', _0: model, _1: _elm_lang$core$Platform_Cmd$none},
-					_1: A2(_minekoa$elm_text_editor$TextEditor_Commands$insert, _p0._0, editor)
-				};
-			case 'Backspace':
-				return {
-					ctor: '_Tuple2',
-					_0: {ctor: '_Tuple2', _0: model, _1: _elm_lang$core$Platform_Cmd$none},
-					_1: _minekoa$elm_text_editor$TextEditor_Commands$backspace(editor)
-				};
-			case 'Delete':
-				return {
-					ctor: '_Tuple2',
-					_0: {ctor: '_Tuple2', _0: model, _1: _elm_lang$core$Platform_Cmd$none},
-					_1: _minekoa$elm_text_editor$TextEditor_Commands$delete(editor)
-				};
-			case 'Copy':
-				return {
-					ctor: '_Tuple2',
-					_0: {ctor: '_Tuple2', _0: model, _1: _elm_lang$core$Platform_Cmd$none},
-					_1: _minekoa$elm_text_editor$TextEditor_Commands$copy(editor)
-				};
-			case 'Cut':
-				return {
-					ctor: '_Tuple2',
-					_0: {ctor: '_Tuple2', _0: model, _1: _elm_lang$core$Platform_Cmd$none},
-					_1: _minekoa$elm_text_editor$TextEditor_Commands$cut(editor)
-				};
-			case 'Paste':
-				return {
-					ctor: '_Tuple2',
-					_0: {ctor: '_Tuple2', _0: model, _1: _elm_lang$core$Platform_Cmd$none},
-					_1: _minekoa$elm_text_editor$TextEditor_Commands$paste(editor)
-				};
-			default:
-				return {
-					ctor: '_Tuple2',
-					_0: {ctor: '_Tuple2', _0: model, _1: _elm_lang$core$Platform_Cmd$none},
-					_1: _minekoa$elm_text_editor$TextEditor_Commands$undo(editor)
-				};
-		}
-	});
-var _minekoa$elm_text_editor$SoftwareKeyboard$Model = function (a) {
-	return {mode: a};
-};
-var _minekoa$elm_text_editor$SoftwareKeyboard$Katakana = {ctor: 'Katakana'};
-var _minekoa$elm_text_editor$SoftwareKeyboard$Hiragana = {ctor: 'Hiragana'};
-var _minekoa$elm_text_editor$SoftwareKeyboard$SmallLetter = {ctor: 'SmallLetter'};
-var _minekoa$elm_text_editor$SoftwareKeyboard$init = _minekoa$elm_text_editor$SoftwareKeyboard$Model(_minekoa$elm_text_editor$SoftwareKeyboard$SmallLetter);
-var _minekoa$elm_text_editor$SoftwareKeyboard$CapitalLetter = {ctor: 'CapitalLetter'};
-var _minekoa$elm_text_editor$SoftwareKeyboard$Undo = {ctor: 'Undo'};
-var _minekoa$elm_text_editor$SoftwareKeyboard$Paste = {ctor: 'Paste'};
-var _minekoa$elm_text_editor$SoftwareKeyboard$Cut = {ctor: 'Cut'};
-var _minekoa$elm_text_editor$SoftwareKeyboard$Copy = {ctor: 'Copy'};
-var _minekoa$elm_text_editor$SoftwareKeyboard$Delete = {ctor: 'Delete'};
-var _minekoa$elm_text_editor$SoftwareKeyboard$editcmdkey = function (model) {
+var _minekoa$elm_text_editor$KeyBindMenu$keybindView = function (keybind) {
 	return A2(
 		_elm_lang$html$Html$div,
 		{
 			ctor: '::',
-			_0: _elm_lang$html$Html_Attributes$class('kbd_editcmd'),
+			_0: _elm_lang$html$Html_Attributes$style(
+				{
+					ctor: '::',
+					_0: {ctor: '_Tuple2', _0: 'display', _1: 'flex'},
+					_1: {ctor: '[]'}
+				}),
 			_1: {ctor: '[]'}
 		},
 		{
@@ -16001,1976 +15745,130 @@ var _minekoa$elm_text_editor$SoftwareKeyboard$editcmdkey = function (model) {
 			_0: A2(
 				_elm_lang$html$Html$div,
 				{
-					ctor: '::',
-					_0: _elm_lang$html$Html_Attributes$class('kbd_button'),
-					_1: {
-						ctor: '::',
-						_0: _elm_lang$html$Html_Events$onClick(_minekoa$elm_text_editor$SoftwareKeyboard$Undo),
-						_1: {ctor: '[]'}
-					}
-				},
-				{
-					ctor: '::',
-					_0: _elm_lang$html$Html$text('undo'),
-					_1: {ctor: '[]'}
-				}),
-			_1: {
-				ctor: '::',
-				_0: A2(
-					_elm_lang$html$Html$div,
-					{
-						ctor: '::',
-						_0: _elm_lang$html$Html_Attributes$class('kbd_button'),
-						_1: {
-							ctor: '::',
-							_0: _elm_lang$html$Html_Events$onClick(_minekoa$elm_text_editor$SoftwareKeyboard$Delete),
-							_1: {ctor: '[]'}
-						}
-					},
-					{
-						ctor: '::',
-						_0: _elm_lang$html$Html$text('Del'),
-						_1: {ctor: '[]'}
-					}),
-				_1: {
-					ctor: '::',
-					_0: A2(
-						_elm_lang$html$Html$div,
-						{
-							ctor: '::',
-							_0: _elm_lang$html$Html_Attributes$class('kbd_button'),
-							_1: {
-								ctor: '::',
-								_0: _elm_lang$html$Html_Events$onClick(_minekoa$elm_text_editor$SoftwareKeyboard$Cut),
-								_1: {ctor: '[]'}
-							}
-						},
-						{
-							ctor: '::',
-							_0: _elm_lang$html$Html$text('cut'),
-							_1: {ctor: '[]'}
-						}),
-					_1: {
-						ctor: '::',
-						_0: A2(
-							_elm_lang$html$Html$div,
-							{
-								ctor: '::',
-								_0: _elm_lang$html$Html_Attributes$class('kbd_button'),
-								_1: {
-									ctor: '::',
-									_0: _elm_lang$html$Html_Events$onClick(_minekoa$elm_text_editor$SoftwareKeyboard$Copy),
-									_1: {ctor: '[]'}
-								}
-							},
-							{
-								ctor: '::',
-								_0: _elm_lang$html$Html$text('copy'),
-								_1: {ctor: '[]'}
-							}),
-						_1: {
-							ctor: '::',
-							_0: A2(
-								_elm_lang$html$Html$div,
-								{
-									ctor: '::',
-									_0: _elm_lang$html$Html_Attributes$class('kbd_button'),
-									_1: {
-										ctor: '::',
-										_0: _elm_lang$html$Html_Events$onClick(_minekoa$elm_text_editor$SoftwareKeyboard$Paste),
-										_1: {ctor: '[]'}
-									}
-								},
-								{
-									ctor: '::',
-									_0: _elm_lang$html$Html$text('paste'),
-									_1: {ctor: '[]'}
-								}),
-							_1: {ctor: '[]'}
-						}
-					}
-				}
-			}
-		});
-};
-var _minekoa$elm_text_editor$SoftwareKeyboard$Backspace = {ctor: 'Backspace'};
-var _minekoa$elm_text_editor$SoftwareKeyboard$backspaceKey = A2(
-	_elm_lang$html$Html$div,
-	{
-		ctor: '::',
-		_0: _elm_lang$html$Html_Attributes$class('kbd_key'),
-		_1: {
-			ctor: '::',
-			_0: _elm_lang$html$Html_Events$onClick(_minekoa$elm_text_editor$SoftwareKeyboard$Backspace),
-			_1: {
-				ctor: '::',
-				_0: _elm_lang$html$Html_Attributes$style(
-					{
-						ctor: '::',
-						_0: {
-							ctor: '_Tuple2',
-							_0: 'width',
-							_1: A3(
-								_elm_lang$core$Basics$flip,
-								F2(
-									function (x, y) {
-										return A2(_elm_lang$core$Basics_ops['++'], x, y);
-									}),
-								'em',
-								_elm_lang$core$Basics$toString(1.5 * 1.5))
-						},
-						_1: {ctor: '[]'}
-					}),
-				_1: {ctor: '[]'}
-			}
-		}
-	},
-	{
-		ctor: '::',
-		_0: _elm_lang$html$Html$text('BS'),
-		_1: {ctor: '[]'}
-	});
-var _minekoa$elm_text_editor$SoftwareKeyboard$Insert = function (a) {
-	return {ctor: 'Insert', _0: a};
-};
-var _minekoa$elm_text_editor$SoftwareKeyboard$key = function (s) {
-	return A2(
-		_elm_lang$html$Html$div,
-		{
-			ctor: '::',
-			_0: _elm_lang$html$Html_Attributes$class('kbd_key'),
-			_1: {
-				ctor: '::',
-				_0: _elm_lang$html$Html_Events$onClick(
-					_minekoa$elm_text_editor$SoftwareKeyboard$Insert(s)),
-				_1: {
 					ctor: '::',
 					_0: _elm_lang$html$Html_Attributes$style(
 						{
 							ctor: '::',
-							_0: {ctor: '_Tuple2', _0: 'width', _1: '1.5em'},
+							_0: {ctor: '_Tuple2', _0: 'width', _1: '10em'},
 							_1: {ctor: '[]'}
 						}),
-					_1: {ctor: '[]'}
-				}
-			}
-		},
-		{
-			ctor: '::',
-			_0: _elm_lang$html$Html$text(s),
-			_1: {ctor: '[]'}
-		});
-};
-var _minekoa$elm_text_editor$SoftwareKeyboard$enterKey = A2(
-	_elm_lang$html$Html$div,
-	{
-		ctor: '::',
-		_0: _elm_lang$html$Html_Attributes$class('kbd_key'),
-		_1: {
-			ctor: '::',
-			_0: _elm_lang$html$Html_Events$onClick(
-				_minekoa$elm_text_editor$SoftwareKeyboard$Insert('\n')),
-			_1: {
-				ctor: '::',
-				_0: _elm_lang$html$Html_Attributes$style(
-					{
-						ctor: '::',
-						_0: {
-							ctor: '_Tuple2',
-							_0: 'width',
-							_1: A3(
-								_elm_lang$core$Basics$flip,
-								F2(
-									function (x, y) {
-										return A2(_elm_lang$core$Basics_ops['++'], x, y);
-									}),
-								'em',
-								_elm_lang$core$Basics$toString(1.5 * 1.5))
-						},
-						_1: {ctor: '[]'}
-					}),
-				_1: {ctor: '[]'}
-			}
-		}
-	},
-	{
-		ctor: '::',
-		_0: _elm_lang$html$Html$text('⏎'),
-		_1: {ctor: '[]'}
-	});
-var _minekoa$elm_text_editor$SoftwareKeyboard$tabKey = A2(
-	_elm_lang$html$Html$div,
-	{
-		ctor: '::',
-		_0: _elm_lang$html$Html_Attributes$class('kbd_key'),
-		_1: {
-			ctor: '::',
-			_0: _elm_lang$html$Html_Events$onClick(
-				_minekoa$elm_text_editor$SoftwareKeyboard$Insert('\t')),
-			_1: {
-				ctor: '::',
-				_0: _elm_lang$html$Html_Attributes$style(
-					{
-						ctor: '::',
-						_0: {
-							ctor: '_Tuple2',
-							_0: 'width',
-							_1: A3(
-								_elm_lang$core$Basics$flip,
-								F2(
-									function (x, y) {
-										return A2(_elm_lang$core$Basics_ops['++'], x, y);
-									}),
-								'em',
-								_elm_lang$core$Basics$toString(1.5 * 1.5))
-						},
-						_1: {ctor: '[]'}
-					}),
-				_1: {ctor: '[]'}
-			}
-		}
-	},
-	{
-		ctor: '::',
-		_0: _elm_lang$html$Html$text('tab'),
-		_1: {ctor: '[]'}
-	});
-var _minekoa$elm_text_editor$SoftwareKeyboard$spaceKey = A2(
-	_elm_lang$html$Html$div,
-	{
-		ctor: '::',
-		_0: _elm_lang$html$Html_Attributes$class('kbd_key'),
-		_1: {
-			ctor: '::',
-			_0: _elm_lang$html$Html_Events$onClick(
-				_minekoa$elm_text_editor$SoftwareKeyboard$Insert(' ')),
-			_1: {
-				ctor: '::',
-				_0: _elm_lang$html$Html_Attributes$style(
-					{
-						ctor: '::',
-						_0: {ctor: '_Tuple2', _0: 'width', _1: '6em'},
-						_1: {ctor: '[]'}
-					}),
-				_1: {ctor: '[]'}
-			}
-		}
-	},
-	{
-		ctor: '::',
-		_0: _elm_lang$html$Html$text('space'),
-		_1: {ctor: '[]'}
-	});
-var _minekoa$elm_text_editor$SoftwareKeyboard$zenkakuSpaceKey = A2(
-	_elm_lang$html$Html$div,
-	{
-		ctor: '::',
-		_0: _elm_lang$html$Html_Attributes$class('kbd_key'),
-		_1: {
-			ctor: '::',
-			_0: _elm_lang$html$Html_Events$onClick(
-				_minekoa$elm_text_editor$SoftwareKeyboard$Insert('　')),
-			_1: {
-				ctor: '::',
-				_0: _elm_lang$html$Html_Attributes$style(
-					{
-						ctor: '::',
-						_0: {ctor: '_Tuple2', _0: 'width', _1: '6em'},
-						_1: {ctor: '[]'}
-					}),
-				_1: {ctor: '[]'}
-			}
-		}
-	},
-	{
-		ctor: '::',
-		_0: _elm_lang$html$Html$text('スペース'),
-		_1: {ctor: '[]'}
-	});
-var _minekoa$elm_text_editor$SoftwareKeyboard$MoveNext = {ctor: 'MoveNext'};
-var _minekoa$elm_text_editor$SoftwareKeyboard$MovePrevios = {ctor: 'MovePrevios'};
-var _minekoa$elm_text_editor$SoftwareKeyboard$MoveBackword = {ctor: 'MoveBackword'};
-var _minekoa$elm_text_editor$SoftwareKeyboard$MoveForward = {ctor: 'MoveForward'};
-var _minekoa$elm_text_editor$SoftwareKeyboard$capitalKeys = function (model) {
-	return A2(
-		_elm_lang$html$Html$div,
-		{
-			ctor: '::',
-			_0: _elm_lang$html$Html_Attributes$class('kbd_mainkey'),
-			_1: {ctor: '[]'}
-		},
-		{
-			ctor: '::',
-			_0: A2(
-				_elm_lang$html$Html$div,
-				{
-					ctor: '::',
-					_0: _elm_lang$html$Html_Attributes$class('kbd_mainkey_row'),
 					_1: {ctor: '[]'}
 				},
 				{
 					ctor: '::',
-					_0: _minekoa$elm_text_editor$SoftwareKeyboard$key('!'),
-					_1: {
-						ctor: '::',
-						_0: _minekoa$elm_text_editor$SoftwareKeyboard$key('@'),
-						_1: {
-							ctor: '::',
-							_0: _minekoa$elm_text_editor$SoftwareKeyboard$key('#'),
-							_1: {
-								ctor: '::',
-								_0: _minekoa$elm_text_editor$SoftwareKeyboard$key('$'),
-								_1: {
-									ctor: '::',
-									_0: _minekoa$elm_text_editor$SoftwareKeyboard$key('%'),
-									_1: {
-										ctor: '::',
-										_0: _minekoa$elm_text_editor$SoftwareKeyboard$key('^'),
-										_1: {
-											ctor: '::',
-											_0: _minekoa$elm_text_editor$SoftwareKeyboard$key('&'),
-											_1: {
-												ctor: '::',
-												_0: _minekoa$elm_text_editor$SoftwareKeyboard$key('*'),
-												_1: {
-													ctor: '::',
-													_0: _minekoa$elm_text_editor$SoftwareKeyboard$key('('),
-													_1: {
-														ctor: '::',
-														_0: _minekoa$elm_text_editor$SoftwareKeyboard$key(')'),
-														_1: {
-															ctor: '::',
-															_0: _minekoa$elm_text_editor$SoftwareKeyboard$key('_'),
-															_1: {
-																ctor: '::',
-																_0: _minekoa$elm_text_editor$SoftwareKeyboard$key('+'),
-																_1: {
-																	ctor: '::',
-																	_0: _minekoa$elm_text_editor$SoftwareKeyboard$backspaceKey,
-																	_1: {ctor: '[]'}
-																}
-															}
-														}
-													}
-												}
-											}
-										}
-									}
-								}
-							}
-						}
-					}
-				}),
-			_1: {
-				ctor: '::',
-				_0: A2(
-					_elm_lang$html$Html$div,
-					{
-						ctor: '::',
-						_0: _elm_lang$html$Html_Attributes$class('kbd_mainkey_row'),
-						_1: {ctor: '[]'}
-					},
-					{
-						ctor: '::',
-						_0: _minekoa$elm_text_editor$SoftwareKeyboard$pad(1),
-						_1: {
-							ctor: '::',
-							_0: _minekoa$elm_text_editor$SoftwareKeyboard$key('Q'),
-							_1: {
-								ctor: '::',
-								_0: _minekoa$elm_text_editor$SoftwareKeyboard$key('W'),
-								_1: {
-									ctor: '::',
-									_0: _minekoa$elm_text_editor$SoftwareKeyboard$key('E'),
-									_1: {
-										ctor: '::',
-										_0: _minekoa$elm_text_editor$SoftwareKeyboard$key('R'),
-										_1: {
-											ctor: '::',
-											_0: _minekoa$elm_text_editor$SoftwareKeyboard$key('T'),
-											_1: {
-												ctor: '::',
-												_0: _minekoa$elm_text_editor$SoftwareKeyboard$key('Y'),
-												_1: {
-													ctor: '::',
-													_0: _minekoa$elm_text_editor$SoftwareKeyboard$key('U'),
-													_1: {
-														ctor: '::',
-														_0: _minekoa$elm_text_editor$SoftwareKeyboard$key('I'),
-														_1: {
-															ctor: '::',
-															_0: _minekoa$elm_text_editor$SoftwareKeyboard$key('O'),
-															_1: {
-																ctor: '::',
-																_0: _minekoa$elm_text_editor$SoftwareKeyboard$key('P'),
-																_1: {
-																	ctor: '::',
-																	_0: _minekoa$elm_text_editor$SoftwareKeyboard$key('{'),
-																	_1: {
-																		ctor: '::',
-																		_0: _minekoa$elm_text_editor$SoftwareKeyboard$key('}'),
-																		_1: {
-																			ctor: '::',
-																			_0: _minekoa$elm_text_editor$SoftwareKeyboard$key('|'),
-																			_1: {ctor: '[]'}
-																		}
-																	}
-																}
-															}
-														}
-													}
-												}
-											}
-										}
-									}
-								}
-							}
-						}
-					}),
-				_1: {
-					ctor: '::',
-					_0: A2(
-						_elm_lang$html$Html$div,
-						{
-							ctor: '::',
-							_0: _elm_lang$html$Html_Attributes$class('kbd_mainkey_row'),
-							_1: {ctor: '[]'}
-						},
-						{
-							ctor: '::',
-							_0: _minekoa$elm_text_editor$SoftwareKeyboard$pad(2),
-							_1: {
-								ctor: '::',
-								_0: _minekoa$elm_text_editor$SoftwareKeyboard$key('A'),
-								_1: {
-									ctor: '::',
-									_0: _minekoa$elm_text_editor$SoftwareKeyboard$key('S'),
-									_1: {
-										ctor: '::',
-										_0: _minekoa$elm_text_editor$SoftwareKeyboard$key('D'),
-										_1: {
-											ctor: '::',
-											_0: _minekoa$elm_text_editor$SoftwareKeyboard$key('F'),
-											_1: {
-												ctor: '::',
-												_0: _minekoa$elm_text_editor$SoftwareKeyboard$key('G'),
-												_1: {
-													ctor: '::',
-													_0: _minekoa$elm_text_editor$SoftwareKeyboard$key('H'),
-													_1: {
-														ctor: '::',
-														_0: _minekoa$elm_text_editor$SoftwareKeyboard$key('J'),
-														_1: {
-															ctor: '::',
-															_0: _minekoa$elm_text_editor$SoftwareKeyboard$key('K'),
-															_1: {
-																ctor: '::',
-																_0: _minekoa$elm_text_editor$SoftwareKeyboard$key('L'),
-																_1: {
-																	ctor: '::',
-																	_0: _minekoa$elm_text_editor$SoftwareKeyboard$key(':'),
-																	_1: {
-																		ctor: '::',
-																		_0: _minekoa$elm_text_editor$SoftwareKeyboard$key('\"'),
-																		_1: {
-																			ctor: '::',
-																			_0: _minekoa$elm_text_editor$SoftwareKeyboard$enterKey,
-																			_1: {ctor: '[]'}
-																		}
-																	}
-																}
-															}
-														}
-													}
-												}
-											}
-										}
-									}
-								}
-							}
-						}),
-					_1: {
-						ctor: '::',
-						_0: A2(
-							_elm_lang$html$Html$div,
+					_0: _elm_lang$html$Html$text(
+						_elm_lang$core$String$concat(
 							{
 								ctor: '::',
-								_0: _elm_lang$html$Html_Attributes$class('kbd_mainkey_row'),
-								_1: {ctor: '[]'}
-							},
-							{
-								ctor: '::',
-								_0: _minekoa$elm_text_editor$SoftwareKeyboard$tabKey,
+								_0: keybind.ctrl ? 'Ctrl-' : '',
 								_1: {
 									ctor: '::',
-									_0: _minekoa$elm_text_editor$SoftwareKeyboard$key('Z'),
+									_0: keybind.alt ? 'Alt-' : '',
 									_1: {
 										ctor: '::',
-										_0: _minekoa$elm_text_editor$SoftwareKeyboard$key('X'),
+										_0: keybind.shift ? 'Shift-' : '',
 										_1: {
 											ctor: '::',
-											_0: _minekoa$elm_text_editor$SoftwareKeyboard$key('C'),
+											_0: _elm_lang$core$Basics$toString(
+												_elm_lang$core$Char$fromCode(keybind.code)),
 											_1: {
 												ctor: '::',
-												_0: _minekoa$elm_text_editor$SoftwareKeyboard$key('V'),
+												_0: ' (',
 												_1: {
 													ctor: '::',
-													_0: _minekoa$elm_text_editor$SoftwareKeyboard$key('B'),
+													_0: _elm_lang$core$Basics$toString(keybind.code),
 													_1: {
 														ctor: '::',
-														_0: _minekoa$elm_text_editor$SoftwareKeyboard$key('N'),
-														_1: {
-															ctor: '::',
-															_0: _minekoa$elm_text_editor$SoftwareKeyboard$key('M'),
-															_1: {
-																ctor: '::',
-																_0: _minekoa$elm_text_editor$SoftwareKeyboard$key('<'),
-																_1: {
-																	ctor: '::',
-																	_0: _minekoa$elm_text_editor$SoftwareKeyboard$key('>'),
-																	_1: {
-																		ctor: '::',
-																		_0: _minekoa$elm_text_editor$SoftwareKeyboard$key('?'),
-																		_1: {
-																			ctor: '::',
-																			_0: _minekoa$elm_text_editor$SoftwareKeyboard$key('~'),
-																			_1: {ctor: '[]'}
-																		}
-																	}
-																}
-															}
-														}
-													}
-												}
-											}
-										}
-									}
-								}
-							}),
-						_1: {
-							ctor: '::',
-							_0: A2(
-								_elm_lang$html$Html$div,
-								{
-									ctor: '::',
-									_0: _elm_lang$html$Html_Attributes$class('kbd_mainkey_row'),
-									_1: {ctor: '[]'}
-								},
-								{
-									ctor: '::',
-									_0: _minekoa$elm_text_editor$SoftwareKeyboard$pad(8),
-									_1: {
-										ctor: '::',
-										_0: _minekoa$elm_text_editor$SoftwareKeyboard$spaceKey,
-										_1: {
-											ctor: '::',
-											_0: _minekoa$elm_text_editor$SoftwareKeyboard$pad(2),
-											_1: {
-												ctor: '::',
-												_0: A2(
-													_elm_lang$html$Html$div,
-													{
-														ctor: '::',
-														_0: _elm_lang$html$Html_Attributes$class('kbd_key'),
-														_1: {
-															ctor: '::',
-															_0: _elm_lang$html$Html_Events$onClick(_minekoa$elm_text_editor$SoftwareKeyboard$MoveBackword),
-															_1: {
-																ctor: '::',
-																_0: _elm_lang$html$Html_Attributes$style(
-																	{
-																		ctor: '::',
-																		_0: {ctor: '_Tuple2', _0: 'width', _1: '1.5em'},
-																		_1: {ctor: '[]'}
-																	}),
-																_1: {ctor: '[]'}
-															}
-														}
-													},
-													{
-														ctor: '::',
-														_0: _elm_lang$html$Html$text('←'),
+														_0: ')',
 														_1: {ctor: '[]'}
-													}),
-												_1: {
-													ctor: '::',
-													_0: A2(
-														_elm_lang$html$Html$div,
-														{
-															ctor: '::',
-															_0: _elm_lang$html$Html_Attributes$class('kbd_key'),
-															_1: {
-																ctor: '::',
-																_0: _elm_lang$html$Html_Events$onClick(_minekoa$elm_text_editor$SoftwareKeyboard$MovePrevios),
-																_1: {
-																	ctor: '::',
-																	_0: _elm_lang$html$Html_Attributes$style(
-																		{
-																			ctor: '::',
-																			_0: {ctor: '_Tuple2', _0: 'width', _1: '1.5em'},
-																			_1: {ctor: '[]'}
-																		}),
-																	_1: {ctor: '[]'}
-																}
-															}
-														},
-														{
-															ctor: '::',
-															_0: _elm_lang$html$Html$text('↑'),
-															_1: {ctor: '[]'}
-														}),
-													_1: {
-														ctor: '::',
-														_0: A2(
-															_elm_lang$html$Html$div,
-															{
-																ctor: '::',
-																_0: _elm_lang$html$Html_Attributes$class('kbd_key'),
-																_1: {
-																	ctor: '::',
-																	_0: _elm_lang$html$Html_Events$onClick(_minekoa$elm_text_editor$SoftwareKeyboard$MoveNext),
-																	_1: {
-																		ctor: '::',
-																		_0: _elm_lang$html$Html_Attributes$style(
-																			{
-																				ctor: '::',
-																				_0: {ctor: '_Tuple2', _0: 'width', _1: '1.5em'},
-																				_1: {ctor: '[]'}
-																			}),
-																		_1: {ctor: '[]'}
-																	}
-																}
-															},
-															{
-																ctor: '::',
-																_0: _elm_lang$html$Html$text('↓'),
-																_1: {ctor: '[]'}
-															}),
-														_1: {
-															ctor: '::',
-															_0: A2(
-																_elm_lang$html$Html$div,
-																{
-																	ctor: '::',
-																	_0: _elm_lang$html$Html_Attributes$class('kbd_key'),
-																	_1: {
-																		ctor: '::',
-																		_0: _elm_lang$html$Html_Events$onClick(_minekoa$elm_text_editor$SoftwareKeyboard$MoveForward),
-																		_1: {
-																			ctor: '::',
-																			_0: _elm_lang$html$Html_Attributes$style(
-																				{
-																					ctor: '::',
-																					_0: {ctor: '_Tuple2', _0: 'width', _1: '1.5em'},
-																					_1: {ctor: '[]'}
-																				}),
-																			_1: {ctor: '[]'}
-																		}
-																	}
-																},
-																{
-																	ctor: '::',
-																	_0: _elm_lang$html$Html$text('→'),
-																	_1: {ctor: '[]'}
-																}),
-															_1: {ctor: '[]'}
-														}
-													}
-												}
-											}
-										}
-									}
-								}),
-							_1: {ctor: '[]'}
-						}
-					}
-				}
-			}
-		});
-};
-var _minekoa$elm_text_editor$SoftwareKeyboard$smallKeys = function (model) {
-	return A2(
-		_elm_lang$html$Html$div,
-		{
-			ctor: '::',
-			_0: _elm_lang$html$Html_Attributes$class('kbd_mainkey'),
-			_1: {ctor: '[]'}
-		},
-		{
-			ctor: '::',
-			_0: A2(
-				_elm_lang$html$Html$div,
-				{
-					ctor: '::',
-					_0: _elm_lang$html$Html_Attributes$class('kbd_mainkey_row'),
-					_1: {ctor: '[]'}
-				},
-				{
-					ctor: '::',
-					_0: _minekoa$elm_text_editor$SoftwareKeyboard$key('1'),
-					_1: {
-						ctor: '::',
-						_0: _minekoa$elm_text_editor$SoftwareKeyboard$key('2'),
-						_1: {
-							ctor: '::',
-							_0: _minekoa$elm_text_editor$SoftwareKeyboard$key('3'),
-							_1: {
-								ctor: '::',
-								_0: _minekoa$elm_text_editor$SoftwareKeyboard$key('4'),
-								_1: {
-									ctor: '::',
-									_0: _minekoa$elm_text_editor$SoftwareKeyboard$key('5'),
-									_1: {
-										ctor: '::',
-										_0: _minekoa$elm_text_editor$SoftwareKeyboard$key('6'),
-										_1: {
-											ctor: '::',
-											_0: _minekoa$elm_text_editor$SoftwareKeyboard$key('7'),
-											_1: {
-												ctor: '::',
-												_0: _minekoa$elm_text_editor$SoftwareKeyboard$key('8'),
-												_1: {
-													ctor: '::',
-													_0: _minekoa$elm_text_editor$SoftwareKeyboard$key('9'),
-													_1: {
-														ctor: '::',
-														_0: _minekoa$elm_text_editor$SoftwareKeyboard$key('0'),
-														_1: {
-															ctor: '::',
-															_0: _minekoa$elm_text_editor$SoftwareKeyboard$key('-'),
-															_1: {
-																ctor: '::',
-																_0: _minekoa$elm_text_editor$SoftwareKeyboard$key('='),
-																_1: {
-																	ctor: '::',
-																	_0: _minekoa$elm_text_editor$SoftwareKeyboard$backspaceKey,
-																	_1: {ctor: '[]'}
-																}
-															}
-														}
 													}
 												}
 											}
 										}
 									}
 								}
-							}
-						}
-					}
+							})),
+					_1: {ctor: '[]'}
 				}),
 			_1: {
 				ctor: '::',
 				_0: A2(
 					_elm_lang$html$Html$div,
+					{ctor: '[]'},
 					{
 						ctor: '::',
-						_0: _elm_lang$html$Html_Attributes$class('kbd_mainkey_row'),
+						_0: _elm_lang$html$Html$text(keybind.f.id),
 						_1: {ctor: '[]'}
-					},
-					{
-						ctor: '::',
-						_0: _minekoa$elm_text_editor$SoftwareKeyboard$pad(1),
-						_1: {
-							ctor: '::',
-							_0: _minekoa$elm_text_editor$SoftwareKeyboard$key('q'),
-							_1: {
-								ctor: '::',
-								_0: _minekoa$elm_text_editor$SoftwareKeyboard$key('w'),
-								_1: {
-									ctor: '::',
-									_0: _minekoa$elm_text_editor$SoftwareKeyboard$key('e'),
-									_1: {
-										ctor: '::',
-										_0: _minekoa$elm_text_editor$SoftwareKeyboard$key('r'),
-										_1: {
-											ctor: '::',
-											_0: _minekoa$elm_text_editor$SoftwareKeyboard$key('t'),
-											_1: {
-												ctor: '::',
-												_0: _minekoa$elm_text_editor$SoftwareKeyboard$key('y'),
-												_1: {
-													ctor: '::',
-													_0: _minekoa$elm_text_editor$SoftwareKeyboard$key('u'),
-													_1: {
-														ctor: '::',
-														_0: _minekoa$elm_text_editor$SoftwareKeyboard$key('i'),
-														_1: {
-															ctor: '::',
-															_0: _minekoa$elm_text_editor$SoftwareKeyboard$key('o'),
-															_1: {
-																ctor: '::',
-																_0: _minekoa$elm_text_editor$SoftwareKeyboard$key('p'),
-																_1: {
-																	ctor: '::',
-																	_0: _minekoa$elm_text_editor$SoftwareKeyboard$key('['),
-																	_1: {
-																		ctor: '::',
-																		_0: _minekoa$elm_text_editor$SoftwareKeyboard$key(']'),
-																		_1: {
-																			ctor: '::',
-																			_0: _minekoa$elm_text_editor$SoftwareKeyboard$key('\\'),
-																			_1: {ctor: '[]'}
-																		}
-																	}
-																}
-															}
-														}
-													}
-												}
-											}
-										}
-									}
-								}
-							}
-						}
 					}),
-				_1: {
-					ctor: '::',
-					_0: A2(
-						_elm_lang$html$Html$div,
-						{
-							ctor: '::',
-							_0: _elm_lang$html$Html_Attributes$class('kbd_mainkey_row'),
-							_1: {ctor: '[]'}
-						},
-						{
-							ctor: '::',
-							_0: _minekoa$elm_text_editor$SoftwareKeyboard$pad(2),
-							_1: {
-								ctor: '::',
-								_0: _minekoa$elm_text_editor$SoftwareKeyboard$key('a'),
-								_1: {
-									ctor: '::',
-									_0: _minekoa$elm_text_editor$SoftwareKeyboard$key('s'),
-									_1: {
-										ctor: '::',
-										_0: _minekoa$elm_text_editor$SoftwareKeyboard$key('d'),
-										_1: {
-											ctor: '::',
-											_0: _minekoa$elm_text_editor$SoftwareKeyboard$key('f'),
-											_1: {
-												ctor: '::',
-												_0: _minekoa$elm_text_editor$SoftwareKeyboard$key('g'),
-												_1: {
-													ctor: '::',
-													_0: _minekoa$elm_text_editor$SoftwareKeyboard$key('h'),
-													_1: {
-														ctor: '::',
-														_0: _minekoa$elm_text_editor$SoftwareKeyboard$key('j'),
-														_1: {
-															ctor: '::',
-															_0: _minekoa$elm_text_editor$SoftwareKeyboard$key('k'),
-															_1: {
-																ctor: '::',
-																_0: _minekoa$elm_text_editor$SoftwareKeyboard$key('l'),
-																_1: {
-																	ctor: '::',
-																	_0: _minekoa$elm_text_editor$SoftwareKeyboard$key(';'),
-																	_1: {
-																		ctor: '::',
-																		_0: _minekoa$elm_text_editor$SoftwareKeyboard$key('\''),
-																		_1: {
-																			ctor: '::',
-																			_0: _minekoa$elm_text_editor$SoftwareKeyboard$enterKey,
-																			_1: {ctor: '[]'}
-																		}
-																	}
-																}
-															}
-														}
-													}
-												}
-											}
-										}
-									}
-								}
-							}
-						}),
-					_1: {
-						ctor: '::',
-						_0: A2(
-							_elm_lang$html$Html$div,
-							{
-								ctor: '::',
-								_0: _elm_lang$html$Html_Attributes$class('kbd_mainkey_row'),
-								_1: {ctor: '[]'}
-							},
-							{
-								ctor: '::',
-								_0: _minekoa$elm_text_editor$SoftwareKeyboard$tabKey,
-								_1: {
-									ctor: '::',
-									_0: _minekoa$elm_text_editor$SoftwareKeyboard$key('z'),
-									_1: {
-										ctor: '::',
-										_0: _minekoa$elm_text_editor$SoftwareKeyboard$key('x'),
-										_1: {
-											ctor: '::',
-											_0: _minekoa$elm_text_editor$SoftwareKeyboard$key('c'),
-											_1: {
-												ctor: '::',
-												_0: _minekoa$elm_text_editor$SoftwareKeyboard$key('v'),
-												_1: {
-													ctor: '::',
-													_0: _minekoa$elm_text_editor$SoftwareKeyboard$key('b'),
-													_1: {
-														ctor: '::',
-														_0: _minekoa$elm_text_editor$SoftwareKeyboard$key('n'),
-														_1: {
-															ctor: '::',
-															_0: _minekoa$elm_text_editor$SoftwareKeyboard$key('m'),
-															_1: {
-																ctor: '::',
-																_0: _minekoa$elm_text_editor$SoftwareKeyboard$key(','),
-																_1: {
-																	ctor: '::',
-																	_0: _minekoa$elm_text_editor$SoftwareKeyboard$key('.'),
-																	_1: {
-																		ctor: '::',
-																		_0: _minekoa$elm_text_editor$SoftwareKeyboard$key('/'),
-																		_1: {
-																			ctor: '::',
-																			_0: _minekoa$elm_text_editor$SoftwareKeyboard$key('`'),
-																			_1: {ctor: '[]'}
-																		}
-																	}
-																}
-															}
-														}
-													}
-												}
-											}
-										}
-									}
-								}
-							}),
-						_1: {
-							ctor: '::',
-							_0: A2(
-								_elm_lang$html$Html$div,
-								{
-									ctor: '::',
-									_0: _elm_lang$html$Html_Attributes$class('kbd_mainkey_row'),
-									_1: {ctor: '[]'}
-								},
-								{
-									ctor: '::',
-									_0: _minekoa$elm_text_editor$SoftwareKeyboard$pad(8),
-									_1: {
-										ctor: '::',
-										_0: _minekoa$elm_text_editor$SoftwareKeyboard$spaceKey,
-										_1: {
-											ctor: '::',
-											_0: _minekoa$elm_text_editor$SoftwareKeyboard$pad(2),
-											_1: {
-												ctor: '::',
-												_0: A2(
-													_elm_lang$html$Html$div,
-													{
-														ctor: '::',
-														_0: _elm_lang$html$Html_Attributes$class('kbd_key'),
-														_1: {
-															ctor: '::',
-															_0: _elm_lang$html$Html_Events$onClick(_minekoa$elm_text_editor$SoftwareKeyboard$MoveBackword),
-															_1: {
-																ctor: '::',
-																_0: _elm_lang$html$Html_Attributes$style(
-																	{
-																		ctor: '::',
-																		_0: {ctor: '_Tuple2', _0: 'width', _1: '1.5em'},
-																		_1: {ctor: '[]'}
-																	}),
-																_1: {ctor: '[]'}
-															}
-														}
-													},
-													{
-														ctor: '::',
-														_0: _elm_lang$html$Html$text('←'),
-														_1: {ctor: '[]'}
-													}),
-												_1: {
-													ctor: '::',
-													_0: A2(
-														_elm_lang$html$Html$div,
-														{
-															ctor: '::',
-															_0: _elm_lang$html$Html_Attributes$class('kbd_key'),
-															_1: {
-																ctor: '::',
-																_0: _elm_lang$html$Html_Events$onClick(_minekoa$elm_text_editor$SoftwareKeyboard$MovePrevios),
-																_1: {
-																	ctor: '::',
-																	_0: _elm_lang$html$Html_Attributes$style(
-																		{
-																			ctor: '::',
-																			_0: {ctor: '_Tuple2', _0: 'width', _1: '1.5em'},
-																			_1: {ctor: '[]'}
-																		}),
-																	_1: {ctor: '[]'}
-																}
-															}
-														},
-														{
-															ctor: '::',
-															_0: _elm_lang$html$Html$text('↑'),
-															_1: {ctor: '[]'}
-														}),
-													_1: {
-														ctor: '::',
-														_0: A2(
-															_elm_lang$html$Html$div,
-															{
-																ctor: '::',
-																_0: _elm_lang$html$Html_Attributes$class('kbd_key'),
-																_1: {
-																	ctor: '::',
-																	_0: _elm_lang$html$Html_Events$onClick(_minekoa$elm_text_editor$SoftwareKeyboard$MoveNext),
-																	_1: {
-																		ctor: '::',
-																		_0: _elm_lang$html$Html_Attributes$style(
-																			{
-																				ctor: '::',
-																				_0: {ctor: '_Tuple2', _0: 'width', _1: '1.5em'},
-																				_1: {ctor: '[]'}
-																			}),
-																		_1: {ctor: '[]'}
-																	}
-																}
-															},
-															{
-																ctor: '::',
-																_0: _elm_lang$html$Html$text('↓'),
-																_1: {ctor: '[]'}
-															}),
-														_1: {
-															ctor: '::',
-															_0: A2(
-																_elm_lang$html$Html$div,
-																{
-																	ctor: '::',
-																	_0: _elm_lang$html$Html_Attributes$class('kbd_key'),
-																	_1: {
-																		ctor: '::',
-																		_0: _elm_lang$html$Html_Events$onClick(_minekoa$elm_text_editor$SoftwareKeyboard$MoveForward),
-																		_1: {
-																			ctor: '::',
-																			_0: _elm_lang$html$Html_Attributes$style(
-																				{
-																					ctor: '::',
-																					_0: {ctor: '_Tuple2', _0: 'width', _1: '1.5em'},
-																					_1: {ctor: '[]'}
-																				}),
-																			_1: {ctor: '[]'}
-																		}
-																	}
-																},
-																{
-																	ctor: '::',
-																	_0: _elm_lang$html$Html$text('→'),
-																	_1: {ctor: '[]'}
-																}),
-															_1: {ctor: '[]'}
-														}
-													}
-												}
-											}
-										}
-									}
-								}),
-							_1: {ctor: '[]'}
-						}
-					}
-				}
-			}
-		});
-};
-var _minekoa$elm_text_editor$SoftwareKeyboard$hiraganaKeys = function (model) {
-	return A2(
-		_elm_lang$html$Html$div,
-		{
-			ctor: '::',
-			_0: _elm_lang$html$Html_Attributes$class('kbd_mainkey'),
-			_1: {ctor: '[]'}
-		},
-		{
-			ctor: '::',
-			_0: A2(
-				_elm_lang$html$Html$div,
-				{
-					ctor: '::',
-					_0: _elm_lang$html$Html_Attributes$class('kbd_mainkey_row'),
-					_1: {ctor: '[]'}
-				},
-				{
-					ctor: '::',
-					_0: _minekoa$elm_text_editor$SoftwareKeyboard$key('あ'),
-					_1: {
-						ctor: '::',
-						_0: _minekoa$elm_text_editor$SoftwareKeyboard$key('い'),
-						_1: {
-							ctor: '::',
-							_0: _minekoa$elm_text_editor$SoftwareKeyboard$key('う'),
-							_1: {
-								ctor: '::',
-								_0: _minekoa$elm_text_editor$SoftwareKeyboard$key('え'),
-								_1: {
-									ctor: '::',
-									_0: _minekoa$elm_text_editor$SoftwareKeyboard$key('お'),
-									_1: {
-										ctor: '::',
-										_0: _minekoa$elm_text_editor$SoftwareKeyboard$pad(0.5),
-										_1: {
-											ctor: '::',
-											_0: _minekoa$elm_text_editor$SoftwareKeyboard$key('な'),
-											_1: {
-												ctor: '::',
-												_0: _minekoa$elm_text_editor$SoftwareKeyboard$key('に'),
-												_1: {
-													ctor: '::',
-													_0: _minekoa$elm_text_editor$SoftwareKeyboard$key('ぬ'),
-													_1: {
-														ctor: '::',
-														_0: _minekoa$elm_text_editor$SoftwareKeyboard$key('ね'),
-														_1: {
-															ctor: '::',
-															_0: _minekoa$elm_text_editor$SoftwareKeyboard$key('の'),
-															_1: {
-																ctor: '::',
-																_0: _minekoa$elm_text_editor$SoftwareKeyboard$pad(0.5),
-																_1: {
-																	ctor: '::',
-																	_0: _minekoa$elm_text_editor$SoftwareKeyboard$key('や'),
-																	_1: {
-																		ctor: '::',
-																		_0: _minekoa$elm_text_editor$SoftwareKeyboard$key('ゆ'),
-																		_1: {
-																			ctor: '::',
-																			_0: _minekoa$elm_text_editor$SoftwareKeyboard$key('よ'),
-																			_1: {ctor: '[]'}
-																		}
-																	}
-																}
-															}
-														}
-													}
-												}
-											}
-										}
-									}
-								}
-							}
-						}
-					}
-				}),
-			_1: {
-				ctor: '::',
-				_0: A2(
-					_elm_lang$html$Html$div,
-					{
-						ctor: '::',
-						_0: _elm_lang$html$Html_Attributes$class('kbd_mainkey_row'),
-						_1: {ctor: '[]'}
-					},
-					{
-						ctor: '::',
-						_0: _minekoa$elm_text_editor$SoftwareKeyboard$key('か'),
-						_1: {
-							ctor: '::',
-							_0: _minekoa$elm_text_editor$SoftwareKeyboard$key('き'),
-							_1: {
-								ctor: '::',
-								_0: _minekoa$elm_text_editor$SoftwareKeyboard$key('く'),
-								_1: {
-									ctor: '::',
-									_0: _minekoa$elm_text_editor$SoftwareKeyboard$key('け'),
-									_1: {
-										ctor: '::',
-										_0: _minekoa$elm_text_editor$SoftwareKeyboard$key('こ'),
-										_1: {
-											ctor: '::',
-											_0: _minekoa$elm_text_editor$SoftwareKeyboard$pad(0.5),
-											_1: {
-												ctor: '::',
-												_0: _minekoa$elm_text_editor$SoftwareKeyboard$key('は'),
-												_1: {
-													ctor: '::',
-													_0: _minekoa$elm_text_editor$SoftwareKeyboard$key('ひ'),
-													_1: {
-														ctor: '::',
-														_0: _minekoa$elm_text_editor$SoftwareKeyboard$key('ふ'),
-														_1: {
-															ctor: '::',
-															_0: _minekoa$elm_text_editor$SoftwareKeyboard$key('へ'),
-															_1: {
-																ctor: '::',
-																_0: _minekoa$elm_text_editor$SoftwareKeyboard$key('ほ'),
-																_1: {
-																	ctor: '::',
-																	_0: _minekoa$elm_text_editor$SoftwareKeyboard$pad(0.5),
-																	_1: {
-																		ctor: '::',
-																		_0: _minekoa$elm_text_editor$SoftwareKeyboard$key('わ'),
-																		_1: {
-																			ctor: '::',
-																			_0: _minekoa$elm_text_editor$SoftwareKeyboard$key('ん'),
-																			_1: {
-																				ctor: '::',
-																				_0: _minekoa$elm_text_editor$SoftwareKeyboard$key('ー'),
-																				_1: {ctor: '[]'}
-																			}
-																		}
-																	}
-																}
-															}
-														}
-													}
-												}
-											}
-										}
-									}
-								}
-							}
-						}
-					}),
-				_1: {
-					ctor: '::',
-					_0: A2(
-						_elm_lang$html$Html$div,
-						{
-							ctor: '::',
-							_0: _elm_lang$html$Html_Attributes$class('kbd_mainkey_row'),
-							_1: {ctor: '[]'}
-						},
-						{
-							ctor: '::',
-							_0: _minekoa$elm_text_editor$SoftwareKeyboard$key('さ'),
-							_1: {
-								ctor: '::',
-								_0: _minekoa$elm_text_editor$SoftwareKeyboard$key('し'),
-								_1: {
-									ctor: '::',
-									_0: _minekoa$elm_text_editor$SoftwareKeyboard$key('す'),
-									_1: {
-										ctor: '::',
-										_0: _minekoa$elm_text_editor$SoftwareKeyboard$key('せ'),
-										_1: {
-											ctor: '::',
-											_0: _minekoa$elm_text_editor$SoftwareKeyboard$key('そ'),
-											_1: {
-												ctor: '::',
-												_0: _minekoa$elm_text_editor$SoftwareKeyboard$pad(0.5),
-												_1: {
-													ctor: '::',
-													_0: _minekoa$elm_text_editor$SoftwareKeyboard$key('ま'),
-													_1: {
-														ctor: '::',
-														_0: _minekoa$elm_text_editor$SoftwareKeyboard$key('み'),
-														_1: {
-															ctor: '::',
-															_0: _minekoa$elm_text_editor$SoftwareKeyboard$key('む'),
-															_1: {
-																ctor: '::',
-																_0: _minekoa$elm_text_editor$SoftwareKeyboard$key('め'),
-																_1: {
-																	ctor: '::',
-																	_0: _minekoa$elm_text_editor$SoftwareKeyboard$key('も'),
-																	_1: {
-																		ctor: '::',
-																		_0: _minekoa$elm_text_editor$SoftwareKeyboard$pad(0.5),
-																		_1: {
-																			ctor: '::',
-																			_0: _minekoa$elm_text_editor$SoftwareKeyboard$key('、'),
-																			_1: {
-																				ctor: '::',
-																				_0: _minekoa$elm_text_editor$SoftwareKeyboard$pad(0.5),
-																				_1: {
-																					ctor: '::',
-																					_0: _minekoa$elm_text_editor$SoftwareKeyboard$backspaceKey,
-																					_1: {ctor: '[]'}
-																				}
-																			}
-																		}
-																	}
-																}
-															}
-														}
-													}
-												}
-											}
-										}
-									}
-								}
-							}
-						}),
-					_1: {
-						ctor: '::',
-						_0: A2(
-							_elm_lang$html$Html$div,
-							{
-								ctor: '::',
-								_0: _elm_lang$html$Html_Attributes$class('kbd_mainkey_row'),
-								_1: {ctor: '[]'}
-							},
-							{
-								ctor: '::',
-								_0: _minekoa$elm_text_editor$SoftwareKeyboard$key('た'),
-								_1: {
-									ctor: '::',
-									_0: _minekoa$elm_text_editor$SoftwareKeyboard$key('ち'),
-									_1: {
-										ctor: '::',
-										_0: _minekoa$elm_text_editor$SoftwareKeyboard$key('つ'),
-										_1: {
-											ctor: '::',
-											_0: _minekoa$elm_text_editor$SoftwareKeyboard$key('て'),
-											_1: {
-												ctor: '::',
-												_0: _minekoa$elm_text_editor$SoftwareKeyboard$key('と'),
-												_1: {
-													ctor: '::',
-													_0: _minekoa$elm_text_editor$SoftwareKeyboard$pad(0.5),
-													_1: {
-														ctor: '::',
-														_0: _minekoa$elm_text_editor$SoftwareKeyboard$key('ら'),
-														_1: {
-															ctor: '::',
-															_0: _minekoa$elm_text_editor$SoftwareKeyboard$key('り'),
-															_1: {
-																ctor: '::',
-																_0: _minekoa$elm_text_editor$SoftwareKeyboard$key('る'),
-																_1: {
-																	ctor: '::',
-																	_0: _minekoa$elm_text_editor$SoftwareKeyboard$key('れ'),
-																	_1: {
-																		ctor: '::',
-																		_0: _minekoa$elm_text_editor$SoftwareKeyboard$key('ろ'),
-																		_1: {
-																			ctor: '::',
-																			_0: _minekoa$elm_text_editor$SoftwareKeyboard$pad(0.5),
-																			_1: {
-																				ctor: '::',
-																				_0: _minekoa$elm_text_editor$SoftwareKeyboard$key('。'),
-																				_1: {
-																					ctor: '::',
-																					_0: _minekoa$elm_text_editor$SoftwareKeyboard$pad(0.5),
-																					_1: {
-																						ctor: '::',
-																						_0: _minekoa$elm_text_editor$SoftwareKeyboard$enterKey,
-																						_1: {ctor: '[]'}
-																					}
-																				}
-																			}
-																		}
-																	}
-																}
-															}
-														}
-													}
-												}
-											}
-										}
-									}
-								}
-							}),
-						_1: {
-							ctor: '::',
-							_0: A2(
-								_elm_lang$html$Html$div,
-								{
-									ctor: '::',
-									_0: _elm_lang$html$Html_Attributes$class('kbd_mainkey_row'),
-									_1: {ctor: '[]'}
-								},
-								{
-									ctor: '::',
-									_0: _minekoa$elm_text_editor$SoftwareKeyboard$pad(8),
-									_1: {
-										ctor: '::',
-										_0: _minekoa$elm_text_editor$SoftwareKeyboard$zenkakuSpaceKey,
-										_1: {
-											ctor: '::',
-											_0: _minekoa$elm_text_editor$SoftwareKeyboard$pad(2),
-											_1: {
-												ctor: '::',
-												_0: A2(
-													_elm_lang$html$Html$div,
-													{
-														ctor: '::',
-														_0: _elm_lang$html$Html_Attributes$class('kbd_key'),
-														_1: {
-															ctor: '::',
-															_0: _elm_lang$html$Html_Events$onClick(_minekoa$elm_text_editor$SoftwareKeyboard$MoveBackword),
-															_1: {
-																ctor: '::',
-																_0: _elm_lang$html$Html_Attributes$style(
-																	{
-																		ctor: '::',
-																		_0: {ctor: '_Tuple2', _0: 'width', _1: '1.5em'},
-																		_1: {ctor: '[]'}
-																	}),
-																_1: {ctor: '[]'}
-															}
-														}
-													},
-													{
-														ctor: '::',
-														_0: _elm_lang$html$Html$text('←'),
-														_1: {ctor: '[]'}
-													}),
-												_1: {
-													ctor: '::',
-													_0: A2(
-														_elm_lang$html$Html$div,
-														{
-															ctor: '::',
-															_0: _elm_lang$html$Html_Attributes$class('kbd_key'),
-															_1: {
-																ctor: '::',
-																_0: _elm_lang$html$Html_Events$onClick(_minekoa$elm_text_editor$SoftwareKeyboard$MovePrevios),
-																_1: {
-																	ctor: '::',
-																	_0: _elm_lang$html$Html_Attributes$style(
-																		{
-																			ctor: '::',
-																			_0: {ctor: '_Tuple2', _0: 'width', _1: '1.5em'},
-																			_1: {ctor: '[]'}
-																		}),
-																	_1: {ctor: '[]'}
-																}
-															}
-														},
-														{
-															ctor: '::',
-															_0: _elm_lang$html$Html$text('↑'),
-															_1: {ctor: '[]'}
-														}),
-													_1: {
-														ctor: '::',
-														_0: A2(
-															_elm_lang$html$Html$div,
-															{
-																ctor: '::',
-																_0: _elm_lang$html$Html_Attributes$class('kbd_key'),
-																_1: {
-																	ctor: '::',
-																	_0: _elm_lang$html$Html_Events$onClick(_minekoa$elm_text_editor$SoftwareKeyboard$MoveNext),
-																	_1: {
-																		ctor: '::',
-																		_0: _elm_lang$html$Html_Attributes$style(
-																			{
-																				ctor: '::',
-																				_0: {ctor: '_Tuple2', _0: 'width', _1: '1.5em'},
-																				_1: {ctor: '[]'}
-																			}),
-																		_1: {ctor: '[]'}
-																	}
-																}
-															},
-															{
-																ctor: '::',
-																_0: _elm_lang$html$Html$text('↓'),
-																_1: {ctor: '[]'}
-															}),
-														_1: {
-															ctor: '::',
-															_0: A2(
-																_elm_lang$html$Html$div,
-																{
-																	ctor: '::',
-																	_0: _elm_lang$html$Html_Attributes$class('kbd_key'),
-																	_1: {
-																		ctor: '::',
-																		_0: _elm_lang$html$Html_Events$onClick(_minekoa$elm_text_editor$SoftwareKeyboard$MoveForward),
-																		_1: {
-																			ctor: '::',
-																			_0: _elm_lang$html$Html_Attributes$style(
-																				{
-																					ctor: '::',
-																					_0: {ctor: '_Tuple2', _0: 'width', _1: '1.5em'},
-																					_1: {ctor: '[]'}
-																				}),
-																			_1: {ctor: '[]'}
-																		}
-																	}
-																},
-																{
-																	ctor: '::',
-																	_0: _elm_lang$html$Html$text('→'),
-																	_1: {ctor: '[]'}
-																}),
-															_1: {ctor: '[]'}
-														}
-													}
-												}
-											}
-										}
-									}
-								}),
-							_1: {ctor: '[]'}
-						}
-					}
-				}
-			}
-		});
-};
-var _minekoa$elm_text_editor$SoftwareKeyboard$katakanaKeys = function (model) {
-	return A2(
-		_elm_lang$html$Html$div,
-		{
-			ctor: '::',
-			_0: _elm_lang$html$Html_Attributes$class('kbd_mainkey'),
-			_1: {ctor: '[]'}
-		},
-		{
-			ctor: '::',
-			_0: A2(
-				_elm_lang$html$Html$div,
-				{
-					ctor: '::',
-					_0: _elm_lang$html$Html_Attributes$class('kbd_mainkey_row'),
-					_1: {ctor: '[]'}
-				},
-				{
-					ctor: '::',
-					_0: _minekoa$elm_text_editor$SoftwareKeyboard$key('ア'),
-					_1: {
-						ctor: '::',
-						_0: _minekoa$elm_text_editor$SoftwareKeyboard$key('イ'),
-						_1: {
-							ctor: '::',
-							_0: _minekoa$elm_text_editor$SoftwareKeyboard$key('ウ'),
-							_1: {
-								ctor: '::',
-								_0: _minekoa$elm_text_editor$SoftwareKeyboard$key('エ'),
-								_1: {
-									ctor: '::',
-									_0: _minekoa$elm_text_editor$SoftwareKeyboard$key('オ'),
-									_1: {
-										ctor: '::',
-										_0: _minekoa$elm_text_editor$SoftwareKeyboard$pad(0.5),
-										_1: {
-											ctor: '::',
-											_0: _minekoa$elm_text_editor$SoftwareKeyboard$key('ナ'),
-											_1: {
-												ctor: '::',
-												_0: _minekoa$elm_text_editor$SoftwareKeyboard$key('ニ'),
-												_1: {
-													ctor: '::',
-													_0: _minekoa$elm_text_editor$SoftwareKeyboard$key('ヌ'),
-													_1: {
-														ctor: '::',
-														_0: _minekoa$elm_text_editor$SoftwareKeyboard$key('ネ'),
-														_1: {
-															ctor: '::',
-															_0: _minekoa$elm_text_editor$SoftwareKeyboard$key('ノ'),
-															_1: {
-																ctor: '::',
-																_0: _minekoa$elm_text_editor$SoftwareKeyboard$pad(0.5),
-																_1: {
-																	ctor: '::',
-																	_0: _minekoa$elm_text_editor$SoftwareKeyboard$key('ヤ'),
-																	_1: {
-																		ctor: '::',
-																		_0: _minekoa$elm_text_editor$SoftwareKeyboard$key('ユ'),
-																		_1: {
-																			ctor: '::',
-																			_0: _minekoa$elm_text_editor$SoftwareKeyboard$key('ヨ'),
-																			_1: {ctor: '[]'}
-																		}
-																	}
-																}
-															}
-														}
-													}
-												}
-											}
-										}
-									}
-								}
-							}
-						}
-					}
-				}),
-			_1: {
-				ctor: '::',
-				_0: A2(
-					_elm_lang$html$Html$div,
-					{
-						ctor: '::',
-						_0: _elm_lang$html$Html_Attributes$class('kbd_mainkey_row'),
-						_1: {ctor: '[]'}
-					},
-					{
-						ctor: '::',
-						_0: _minekoa$elm_text_editor$SoftwareKeyboard$key('カ'),
-						_1: {
-							ctor: '::',
-							_0: _minekoa$elm_text_editor$SoftwareKeyboard$key('キ'),
-							_1: {
-								ctor: '::',
-								_0: _minekoa$elm_text_editor$SoftwareKeyboard$key('ク'),
-								_1: {
-									ctor: '::',
-									_0: _minekoa$elm_text_editor$SoftwareKeyboard$key('ケ'),
-									_1: {
-										ctor: '::',
-										_0: _minekoa$elm_text_editor$SoftwareKeyboard$key('コ'),
-										_1: {
-											ctor: '::',
-											_0: _minekoa$elm_text_editor$SoftwareKeyboard$pad(0.5),
-											_1: {
-												ctor: '::',
-												_0: _minekoa$elm_text_editor$SoftwareKeyboard$key('ハ'),
-												_1: {
-													ctor: '::',
-													_0: _minekoa$elm_text_editor$SoftwareKeyboard$key('ヒ'),
-													_1: {
-														ctor: '::',
-														_0: _minekoa$elm_text_editor$SoftwareKeyboard$key('フ'),
-														_1: {
-															ctor: '::',
-															_0: _minekoa$elm_text_editor$SoftwareKeyboard$key('ヘ'),
-															_1: {
-																ctor: '::',
-																_0: _minekoa$elm_text_editor$SoftwareKeyboard$key('ホ'),
-																_1: {
-																	ctor: '::',
-																	_0: _minekoa$elm_text_editor$SoftwareKeyboard$pad(0.5),
-																	_1: {
-																		ctor: '::',
-																		_0: _minekoa$elm_text_editor$SoftwareKeyboard$key('ワ'),
-																		_1: {
-																			ctor: '::',
-																			_0: _minekoa$elm_text_editor$SoftwareKeyboard$key('ン'),
-																			_1: {
-																				ctor: '::',
-																				_0: _minekoa$elm_text_editor$SoftwareKeyboard$key('ー'),
-																				_1: {ctor: '[]'}
-																			}
-																		}
-																	}
-																}
-															}
-														}
-													}
-												}
-											}
-										}
-									}
-								}
-							}
-						}
-					}),
-				_1: {
-					ctor: '::',
-					_0: A2(
-						_elm_lang$html$Html$div,
-						{
-							ctor: '::',
-							_0: _elm_lang$html$Html_Attributes$class('kbd_mainkey_row'),
-							_1: {ctor: '[]'}
-						},
-						{
-							ctor: '::',
-							_0: _minekoa$elm_text_editor$SoftwareKeyboard$key('サ'),
-							_1: {
-								ctor: '::',
-								_0: _minekoa$elm_text_editor$SoftwareKeyboard$key('シ'),
-								_1: {
-									ctor: '::',
-									_0: _minekoa$elm_text_editor$SoftwareKeyboard$key('ス'),
-									_1: {
-										ctor: '::',
-										_0: _minekoa$elm_text_editor$SoftwareKeyboard$key('セ'),
-										_1: {
-											ctor: '::',
-											_0: _minekoa$elm_text_editor$SoftwareKeyboard$key('ソ'),
-											_1: {
-												ctor: '::',
-												_0: _minekoa$elm_text_editor$SoftwareKeyboard$pad(0.5),
-												_1: {
-													ctor: '::',
-													_0: _minekoa$elm_text_editor$SoftwareKeyboard$key('マ'),
-													_1: {
-														ctor: '::',
-														_0: _minekoa$elm_text_editor$SoftwareKeyboard$key('ミ'),
-														_1: {
-															ctor: '::',
-															_0: _minekoa$elm_text_editor$SoftwareKeyboard$key('ム'),
-															_1: {
-																ctor: '::',
-																_0: _minekoa$elm_text_editor$SoftwareKeyboard$key('メ'),
-																_1: {
-																	ctor: '::',
-																	_0: _minekoa$elm_text_editor$SoftwareKeyboard$key('モ'),
-																	_1: {
-																		ctor: '::',
-																		_0: _minekoa$elm_text_editor$SoftwareKeyboard$pad(0.5),
-																		_1: {
-																			ctor: '::',
-																			_0: _minekoa$elm_text_editor$SoftwareKeyboard$key('、'),
-																			_1: {
-																				ctor: '::',
-																				_0: _minekoa$elm_text_editor$SoftwareKeyboard$pad(0.5),
-																				_1: {
-																					ctor: '::',
-																					_0: _minekoa$elm_text_editor$SoftwareKeyboard$backspaceKey,
-																					_1: {ctor: '[]'}
-																				}
-																			}
-																		}
-																	}
-																}
-															}
-														}
-													}
-												}
-											}
-										}
-									}
-								}
-							}
-						}),
-					_1: {
-						ctor: '::',
-						_0: A2(
-							_elm_lang$html$Html$div,
-							{
-								ctor: '::',
-								_0: _elm_lang$html$Html_Attributes$class('kbd_mainkey_row'),
-								_1: {ctor: '[]'}
-							},
-							{
-								ctor: '::',
-								_0: _minekoa$elm_text_editor$SoftwareKeyboard$key('タ'),
-								_1: {
-									ctor: '::',
-									_0: _minekoa$elm_text_editor$SoftwareKeyboard$key('チ'),
-									_1: {
-										ctor: '::',
-										_0: _minekoa$elm_text_editor$SoftwareKeyboard$key('ツ'),
-										_1: {
-											ctor: '::',
-											_0: _minekoa$elm_text_editor$SoftwareKeyboard$key('テ'),
-											_1: {
-												ctor: '::',
-												_0: _minekoa$elm_text_editor$SoftwareKeyboard$key('ト'),
-												_1: {
-													ctor: '::',
-													_0: _minekoa$elm_text_editor$SoftwareKeyboard$pad(0.5),
-													_1: {
-														ctor: '::',
-														_0: _minekoa$elm_text_editor$SoftwareKeyboard$key('ラ'),
-														_1: {
-															ctor: '::',
-															_0: _minekoa$elm_text_editor$SoftwareKeyboard$key('リ'),
-															_1: {
-																ctor: '::',
-																_0: _minekoa$elm_text_editor$SoftwareKeyboard$key('ル'),
-																_1: {
-																	ctor: '::',
-																	_0: _minekoa$elm_text_editor$SoftwareKeyboard$key('レ'),
-																	_1: {
-																		ctor: '::',
-																		_0: _minekoa$elm_text_editor$SoftwareKeyboard$key('ロ'),
-																		_1: {
-																			ctor: '::',
-																			_0: _minekoa$elm_text_editor$SoftwareKeyboard$pad(0.5),
-																			_1: {
-																				ctor: '::',
-																				_0: _minekoa$elm_text_editor$SoftwareKeyboard$key('。'),
-																				_1: {
-																					ctor: '::',
-																					_0: _minekoa$elm_text_editor$SoftwareKeyboard$pad(0.5),
-																					_1: {
-																						ctor: '::',
-																						_0: _minekoa$elm_text_editor$SoftwareKeyboard$enterKey,
-																						_1: {ctor: '[]'}
-																					}
-																				}
-																			}
-																		}
-																	}
-																}
-															}
-														}
-													}
-												}
-											}
-										}
-									}
-								}
-							}),
-						_1: {
-							ctor: '::',
-							_0: A2(
-								_elm_lang$html$Html$div,
-								{
-									ctor: '::',
-									_0: _elm_lang$html$Html_Attributes$class('kbd_mainkey_row'),
-									_1: {ctor: '[]'}
-								},
-								{
-									ctor: '::',
-									_0: _minekoa$elm_text_editor$SoftwareKeyboard$pad(8),
-									_1: {
-										ctor: '::',
-										_0: _minekoa$elm_text_editor$SoftwareKeyboard$zenkakuSpaceKey,
-										_1: {
-											ctor: '::',
-											_0: _minekoa$elm_text_editor$SoftwareKeyboard$pad(2),
-											_1: {
-												ctor: '::',
-												_0: A2(
-													_elm_lang$html$Html$div,
-													{
-														ctor: '::',
-														_0: _elm_lang$html$Html_Attributes$class('kbd_key'),
-														_1: {
-															ctor: '::',
-															_0: _elm_lang$html$Html_Events$onClick(_minekoa$elm_text_editor$SoftwareKeyboard$MoveBackword),
-															_1: {
-																ctor: '::',
-																_0: _elm_lang$html$Html_Attributes$style(
-																	{
-																		ctor: '::',
-																		_0: {ctor: '_Tuple2', _0: 'width', _1: '1.5em'},
-																		_1: {ctor: '[]'}
-																	}),
-																_1: {ctor: '[]'}
-															}
-														}
-													},
-													{
-														ctor: '::',
-														_0: _elm_lang$html$Html$text('←'),
-														_1: {ctor: '[]'}
-													}),
-												_1: {
-													ctor: '::',
-													_0: A2(
-														_elm_lang$html$Html$div,
-														{
-															ctor: '::',
-															_0: _elm_lang$html$Html_Attributes$class('kbd_key'),
-															_1: {
-																ctor: '::',
-																_0: _elm_lang$html$Html_Events$onClick(_minekoa$elm_text_editor$SoftwareKeyboard$MovePrevios),
-																_1: {
-																	ctor: '::',
-																	_0: _elm_lang$html$Html_Attributes$style(
-																		{
-																			ctor: '::',
-																			_0: {ctor: '_Tuple2', _0: 'width', _1: '1.5em'},
-																			_1: {ctor: '[]'}
-																		}),
-																	_1: {ctor: '[]'}
-																}
-															}
-														},
-														{
-															ctor: '::',
-															_0: _elm_lang$html$Html$text('↑'),
-															_1: {ctor: '[]'}
-														}),
-													_1: {
-														ctor: '::',
-														_0: A2(
-															_elm_lang$html$Html$div,
-															{
-																ctor: '::',
-																_0: _elm_lang$html$Html_Attributes$class('kbd_key'),
-																_1: {
-																	ctor: '::',
-																	_0: _elm_lang$html$Html_Events$onClick(_minekoa$elm_text_editor$SoftwareKeyboard$MoveNext),
-																	_1: {
-																		ctor: '::',
-																		_0: _elm_lang$html$Html_Attributes$style(
-																			{
-																				ctor: '::',
-																				_0: {ctor: '_Tuple2', _0: 'width', _1: '1.5em'},
-																				_1: {ctor: '[]'}
-																			}),
-																		_1: {ctor: '[]'}
-																	}
-																}
-															},
-															{
-																ctor: '::',
-																_0: _elm_lang$html$Html$text('↓'),
-																_1: {ctor: '[]'}
-															}),
-														_1: {
-															ctor: '::',
-															_0: A2(
-																_elm_lang$html$Html$div,
-																{
-																	ctor: '::',
-																	_0: _elm_lang$html$Html_Attributes$class('kbd_key'),
-																	_1: {
-																		ctor: '::',
-																		_0: _elm_lang$html$Html_Events$onClick(_minekoa$elm_text_editor$SoftwareKeyboard$MoveForward),
-																		_1: {
-																			ctor: '::',
-																			_0: _elm_lang$html$Html_Attributes$style(
-																				{
-																					ctor: '::',
-																					_0: {ctor: '_Tuple2', _0: 'width', _1: '1.5em'},
-																					_1: {ctor: '[]'}
-																				}),
-																			_1: {ctor: '[]'}
-																		}
-																	}
-																},
-																{
-																	ctor: '::',
-																	_0: _elm_lang$html$Html$text('→'),
-																	_1: {ctor: '[]'}
-																}),
-															_1: {ctor: '[]'}
-														}
-													}
-												}
-											}
-										}
-									}
-								}),
-							_1: {ctor: '[]'}
-						}
-					}
-				}
-			}
-		});
-};
-var _minekoa$elm_text_editor$SoftwareKeyboard$mainkey = function (model) {
-	var _p1 = model.mode;
-	switch (_p1.ctor) {
-		case 'CapitalLetter':
-			return _minekoa$elm_text_editor$SoftwareKeyboard$capitalKeys(model);
-		case 'SmallLetter':
-			return _minekoa$elm_text_editor$SoftwareKeyboard$smallKeys(model);
-		case 'Hiragana':
-			return _minekoa$elm_text_editor$SoftwareKeyboard$hiraganaKeys(model);
-		default:
-			return _minekoa$elm_text_editor$SoftwareKeyboard$katakanaKeys(model);
-	}
-};
-var _minekoa$elm_text_editor$SoftwareKeyboard$ChangeMode = function (a) {
-	return {ctor: 'ChangeMode', _0: a};
-};
-var _minekoa$elm_text_editor$SoftwareKeyboard$keyboardSwitcher = function (model) {
-	return A2(
-		_elm_lang$html$Html$div,
-		{
-			ctor: '::',
-			_0: _elm_lang$html$Html_Attributes$class('kbd_switcher'),
-			_1: {
-				ctor: '::',
-				_0: _elm_lang$html$Html_Attributes$style(
-					{ctor: '[]'}),
 				_1: {ctor: '[]'}
 			}
+		});
+};
+var _minekoa$elm_text_editor$KeyBindMenu$editView = function (keybinds) {
+	return A2(
+		_elm_lang$html$Html$div,
+		{ctor: '[]'},
+		A2(_elm_lang$core$List$map, _minekoa$elm_text_editor$KeyBindMenu$keybindView, keybinds));
+};
+var _minekoa$elm_text_editor$KeyBindMenu$menuPalette = F2(
+	function (keybinds, model) {
+		var _p0 = model.selectedSubMenu;
+		if (_p0.ctor === 'EditKeybind') {
+			return A2(
+				_elm_lang$html$Html$div,
+				{
+					ctor: '::',
+					_0: _elm_lang$html$Html_Attributes$class('menu-palette'),
+					_1: {ctor: '[]'}
+				},
+				{
+					ctor: '::',
+					_0: _minekoa$elm_text_editor$KeyBindMenu$editView(keybinds),
+					_1: {ctor: '[]'}
+				});
+		} else {
+			return A2(
+				_elm_lang$html$Html$div,
+				{
+					ctor: '::',
+					_0: _elm_lang$html$Html_Attributes$class('menu-palette'),
+					_1: {ctor: '[]'}
+				},
+				{
+					ctor: '::',
+					_0: _minekoa$elm_text_editor$KeyBindMenu$initView(keybinds),
+					_1: {ctor: '[]'}
+				});
+		}
+	});
+var _minekoa$elm_text_editor$KeyBindMenu$update = F3(
+	function (msg, keybinds, model) {
+		var _p1 = msg;
+		return {
+			ctor: '_Tuple3',
+			_0: keybinds,
+			_1: _elm_lang$core$Native_Utils.update(
+				model,
+				{selectedSubMenu: _p1._0}),
+			_2: _elm_lang$core$Platform_Cmd$none
+		};
+	});
+var _minekoa$elm_text_editor$KeyBindMenu$Model = function (a) {
+	return {selectedSubMenu: a};
+};
+var _minekoa$elm_text_editor$KeyBindMenu$InitKeybind = {ctor: 'InitKeybind'};
+var _minekoa$elm_text_editor$KeyBindMenu$EditKeybind = {ctor: 'EditKeybind'};
+var _minekoa$elm_text_editor$KeyBindMenu$init = {selectedSubMenu: _minekoa$elm_text_editor$KeyBindMenu$EditKeybind};
+var _minekoa$elm_text_editor$KeyBindMenu$SelectSubMenu = function (a) {
+	return {ctor: 'SelectSubMenu', _0: a};
+};
+var _minekoa$elm_text_editor$KeyBindMenu$menuItemsView = function (model) {
+	return A2(
+		_elm_lang$html$Html$div,
+		{
+			ctor: '::',
+			_0: _elm_lang$html$Html_Attributes$class('menu-itemlist'),
+			_1: {ctor: '[]'}
 		},
 		{
 			ctor: '::',
@@ -17978,117 +15876,90 @@ var _minekoa$elm_text_editor$SoftwareKeyboard$keyboardSwitcher = function (model
 				_elm_lang$html$Html$div,
 				{
 					ctor: '::',
-					_0: _elm_lang$html$Html_Attributes$class(
-						_elm_lang$core$Native_Utils.eq(model.mode, _minekoa$elm_text_editor$SoftwareKeyboard$CapitalLetter) ? 'kbd_button_active' : 'kbd_button'),
+					_0: _elm_lang$html$Html_Events$onClick(
+						_minekoa$elm_text_editor$KeyBindMenu$SelectSubMenu(_minekoa$elm_text_editor$KeyBindMenu$EditKeybind)),
 					_1: {
-						ctor: '::',
-						_0: _elm_lang$html$Html_Events$onClick(
-							_minekoa$elm_text_editor$SoftwareKeyboard$ChangeMode(_minekoa$elm_text_editor$SoftwareKeyboard$CapitalLetter)),
-						_1: {ctor: '[]'}
-					}
-				},
-				{
-					ctor: '::',
-					_0: _elm_lang$html$Html$text('A'),
-					_1: {ctor: '[]'}
-				}),
-			_1: {
-				ctor: '::',
-				_0: A2(
-					_elm_lang$html$Html$div,
-					{
 						ctor: '::',
 						_0: _elm_lang$html$Html_Attributes$class(
-							_elm_lang$core$Native_Utils.eq(model.mode, _minekoa$elm_text_editor$SoftwareKeyboard$SmallLetter) ? 'kbd_button_active' : 'kbd_button'),
+							_elm_lang$core$Native_Utils.eq(model.selectedSubMenu, _minekoa$elm_text_editor$KeyBindMenu$EditKeybind) ? 'menu-item-active' : 'menu-item'),
+						_1: {ctor: '[]'}
+					}
+				},
+				{
+					ctor: '::',
+					_0: A2(
+						_elm_lang$html$Html$span,
+						{ctor: '[]'},
+						{
+							ctor: '::',
+							_0: _elm_lang$html$Html$text('Edit'),
+							_1: {ctor: '[]'}
+						}),
+					_1: {ctor: '[]'}
+				}),
+			_1: {
+				ctor: '::',
+				_0: A2(
+					_elm_lang$html$Html$div,
+					{
+						ctor: '::',
+						_0: _elm_lang$html$Html_Events$onClick(
+							_minekoa$elm_text_editor$KeyBindMenu$SelectSubMenu(_minekoa$elm_text_editor$KeyBindMenu$InitKeybind)),
 						_1: {
 							ctor: '::',
-							_0: _elm_lang$html$Html_Events$onClick(
-								_minekoa$elm_text_editor$SoftwareKeyboard$ChangeMode(_minekoa$elm_text_editor$SoftwareKeyboard$SmallLetter)),
+							_0: _elm_lang$html$Html_Attributes$class(
+								_elm_lang$core$Native_Utils.eq(model.selectedSubMenu, _minekoa$elm_text_editor$KeyBindMenu$InitKeybind) ? 'menu-item-active' : 'menu-item'),
 							_1: {ctor: '[]'}
 						}
 					},
 					{
 						ctor: '::',
-						_0: _elm_lang$html$Html$text('a'),
+						_0: A2(
+							_elm_lang$html$Html$span,
+							{ctor: '[]'},
+							{
+								ctor: '::',
+								_0: _elm_lang$html$Html$text('Initialize'),
+								_1: {ctor: '[]'}
+							}),
 						_1: {ctor: '[]'}
 					}),
+				_1: {ctor: '[]'}
+			}
+		});
+};
+var _minekoa$elm_text_editor$KeyBindMenu$view = F2(
+	function (keybinds, model) {
+		return A2(
+			_elm_lang$html$Html$div,
+			{
+				ctor: '::',
+				_0: _elm_lang$html$Html_Attributes$class('debugger-menu'),
 				_1: {
 					ctor: '::',
-					_0: A2(
-						_elm_lang$html$Html$div,
-						{
-							ctor: '::',
-							_0: _elm_lang$html$Html_Attributes$class(
-								_elm_lang$core$Native_Utils.eq(model.mode, _minekoa$elm_text_editor$SoftwareKeyboard$Hiragana) ? 'kbd_button_active' : 'kbd_button'),
-							_1: {
-								ctor: '::',
-								_0: _elm_lang$html$Html_Events$onClick(
-									_minekoa$elm_text_editor$SoftwareKeyboard$ChangeMode(_minekoa$elm_text_editor$SoftwareKeyboard$Hiragana)),
-								_1: {ctor: '[]'}
-							}
-						},
-						{
-							ctor: '::',
-							_0: _elm_lang$html$Html$text('あ'),
-							_1: {ctor: '[]'}
-						}),
+					_0: _elm_lang$html$Html_Attributes$class('menu-root'),
 					_1: {
 						ctor: '::',
-						_0: A2(
-							_elm_lang$html$Html$div,
+						_0: _elm_lang$html$Html_Attributes$style(
 							{
 								ctor: '::',
-								_0: _elm_lang$html$Html_Attributes$class(
-									_elm_lang$core$Native_Utils.eq(model.mode, _minekoa$elm_text_editor$SoftwareKeyboard$Katakana) ? 'kbd_button_active' : 'kbd_button'),
-								_1: {
-									ctor: '::',
-									_0: _elm_lang$html$Html_Events$onClick(
-										_minekoa$elm_text_editor$SoftwareKeyboard$ChangeMode(_minekoa$elm_text_editor$SoftwareKeyboard$Katakana)),
-									_1: {ctor: '[]'}
-								}
-							},
-							{
-								ctor: '::',
-								_0: _elm_lang$html$Html$text('ア'),
+								_0: {ctor: '_Tuple2', _0: 'min-height', _1: '17em'},
 								_1: {ctor: '[]'}
 							}),
 						_1: {ctor: '[]'}
 					}
 				}
-			}
-		});
-};
-var _minekoa$elm_text_editor$SoftwareKeyboard$view = function (model) {
-	return A2(
-		_elm_lang$html$Html$div,
-		{
-			ctor: '::',
-			_0: _elm_lang$html$Html_Attributes$class('software_keyboard'),
-			_1: {
+			},
+			{
 				ctor: '::',
-				_0: _elm_lang$html$Html_Attributes$style(
-					{
-						ctor: '::',
-						_0: {ctor: '_Tuple2', _0: 'min-height', _1: '17rem'},
-						_1: {ctor: '[]'}
-					}),
-				_1: {ctor: '[]'}
-			}
-		},
-		{
-			ctor: '::',
-			_0: _minekoa$elm_text_editor$SoftwareKeyboard$keyboardSwitcher(model),
-			_1: {
-				ctor: '::',
-				_0: _minekoa$elm_text_editor$SoftwareKeyboard$mainkey(model),
+				_0: _minekoa$elm_text_editor$KeyBindMenu$menuItemsView(model),
 				_1: {
 					ctor: '::',
-					_0: _minekoa$elm_text_editor$SoftwareKeyboard$editcmdkey(model),
+					_0: A2(_minekoa$elm_text_editor$KeyBindMenu$menuPalette, keybinds, model),
 					_1: {ctor: '[]'}
 				}
-			}
-		});
-};
+			});
+	});
 
 var _minekoa$elm_text_editor$Ports_WebStrage$localStrage_setItem = _elm_lang$core$Native_Platform.outgoingPort(
 	'localStrage_setItem',
@@ -19394,16 +17265,16 @@ var _minekoa$elm_text_editor$Main$makeBuffer = F2(
 	});
 var _minekoa$elm_text_editor$Main$Model = F9(
 	function (a, b, c, d, e, f, g, h, i) {
-		return {editor: a, buffers: b, currentBufferIndex: c, currentBufferName: d, pane: e, $debugger: f, swkeyboard: g, style: h, filer: i};
+		return {editor: a, buffers: b, currentBufferIndex: c, currentBufferName: d, pane: e, $debugger: f, style: g, filer: h, keybindMenu: i};
 	});
 var _minekoa$elm_text_editor$Main$Buffer = F2(
 	function (a, b) {
 		return {name: a, buffer: b};
 	});
 var _minekoa$elm_text_editor$Main$AboutPane = {ctor: 'AboutPane'};
+var _minekoa$elm_text_editor$Main$KeyBindMenuPane = {ctor: 'KeyBindMenuPane'};
 var _minekoa$elm_text_editor$Main$FileMenuPane = {ctor: 'FileMenuPane'};
 var _minekoa$elm_text_editor$Main$StyleMenuPane = {ctor: 'StyleMenuPane'};
-var _minekoa$elm_text_editor$Main$KeyboardPane = {ctor: 'KeyboardPane'};
 var _minekoa$elm_text_editor$Main$DebugMenuPane = {ctor: 'DebugMenuPane'};
 var _minekoa$elm_text_editor$Main$NoPane = {ctor: 'NoPane'};
 var _minekoa$elm_text_editor$Main$ClearSettings = {ctor: 'ClearSettings'};
@@ -19507,14 +17378,14 @@ var _minekoa$elm_text_editor$Main$aboutPane = function (model) {
 			}
 		});
 };
+var _minekoa$elm_text_editor$Main$KeyBindMenuMsg = function (a) {
+	return {ctor: 'KeyBindMenuMsg', _0: a};
+};
 var _minekoa$elm_text_editor$Main$FileMenuMsg = function (a) {
 	return {ctor: 'FileMenuMsg', _0: a};
 };
 var _minekoa$elm_text_editor$Main$StyleMenuMsg = function (a) {
 	return {ctor: 'StyleMenuMsg', _0: a};
-};
-var _minekoa$elm_text_editor$Main$SWKeyboardMsg = function (a) {
-	return {ctor: 'SWKeyboardMsg', _0: a};
 };
 var _minekoa$elm_text_editor$Main$DebugMenuMsg = function (a) {
 	return {ctor: 'DebugMenuMsg', _0: a};
@@ -19579,7 +17450,7 @@ var _minekoa$elm_text_editor$Main$menuBar = function (model) {
 					_0: A2(tab, _minekoa$elm_text_editor$Main$StyleMenuPane, 'Style'),
 					_1: {
 						ctor: '::',
-						_0: A2(tab, _minekoa$elm_text_editor$Main$KeyboardPane, 'Keyboard'),
+						_0: A2(tab, _minekoa$elm_text_editor$Main$KeyBindMenuPane, 'Keybinds'),
 						_1: {
 							ctor: '::',
 							_0: A2(tab, _minekoa$elm_text_editor$Main$DebugMenuPane, 'Debug'),
@@ -19617,11 +17488,6 @@ var _minekoa$elm_text_editor$Main$applicationMenu = function (model) {
 								_elm_lang$html$Html$map,
 								_minekoa$elm_text_editor$Main$DebugMenuMsg,
 								A2(_minekoa$elm_text_editor$DebugMenu$view, model.editor, model.$debugger));
-						case 'KeyboardPane':
-							return A2(
-								_elm_lang$html$Html$map,
-								_minekoa$elm_text_editor$Main$SWKeyboardMsg,
-								_minekoa$elm_text_editor$SoftwareKeyboard$view(model.swkeyboard));
 						case 'StyleMenuPane':
 							return A2(
 								_elm_lang$html$Html$map,
@@ -19632,6 +17498,11 @@ var _minekoa$elm_text_editor$Main$applicationMenu = function (model) {
 								_elm_lang$html$Html$map,
 								_minekoa$elm_text_editor$Main$FileMenuMsg,
 								_minekoa$elm_text_editor$FileMenu$view(model.filer));
+						case 'KeyBindMenuPane':
+							return A2(
+								_elm_lang$html$Html$map,
+								_minekoa$elm_text_editor$Main$KeyBindMenuMsg,
+								A2(_minekoa$elm_text_editor$KeyBindMenu$view, model.editor.keymap, model.keybindMenu));
 						default:
 							return _minekoa$elm_text_editor$Main$aboutPane(model);
 					}
@@ -19739,9 +17610,9 @@ var _minekoa$elm_text_editor$Main$init = function () {
 			buf.name,
 			_minekoa$elm_text_editor$Main$NoPane,
 			_minekoa$elm_text_editor$DebugMenu$init,
-			_minekoa$elm_text_editor$SoftwareKeyboard$init,
 			smm,
-			_minekoa$elm_text_editor$FileMenu$init),
+			_minekoa$elm_text_editor$FileMenu$init,
+			_minekoa$elm_text_editor$KeyBindMenu$init),
 		_1: _elm_lang$core$Platform_Cmd$batch(
 			{
 				ctor: '::',
@@ -19825,39 +17696,10 @@ var _minekoa$elm_text_editor$Main$update = F2(
 						{editor: em, $debugger: dm}),
 					_1: A2(_elm_lang$core$Platform_Cmd$map, _minekoa$elm_text_editor$Main$DebugMenuMsg, dc)
 				};
-			case 'SWKeyboardMsg':
-				var _p13 = A3(_minekoa$elm_text_editor$SoftwareKeyboard$update, _p9._0, model.swkeyboard, model.editor);
-				var kbd = _p13._0;
-				var edt = _p13._1;
-				return {
-					ctor: '_Tuple2',
-					_0: _elm_lang$core$Native_Utils.update(
-						model,
-						{
-							editor: _elm_lang$core$Tuple$first(edt),
-							swkeyboard: _elm_lang$core$Tuple$first(kbd)
-						}),
-					_1: _elm_lang$core$Platform_Cmd$batch(
-						{
-							ctor: '::',
-							_0: A2(
-								_elm_lang$core$Platform_Cmd$map,
-								_minekoa$elm_text_editor$Main$EditorMsg,
-								_elm_lang$core$Tuple$second(edt)),
-							_1: {
-								ctor: '::',
-								_0: A2(
-									_elm_lang$core$Platform_Cmd$map,
-									_minekoa$elm_text_editor$Main$SWKeyboardMsg,
-									_elm_lang$core$Tuple$second(kbd)),
-								_1: {ctor: '[]'}
-							}
-						})
-				};
 			case 'StyleMenuMsg':
-				var _p14 = A2(_minekoa$elm_text_editor$StyleMenu$update, _p9._0, model.style);
-				var m = _p14._0;
-				var c = _p14._1;
+				var _p13 = A2(_minekoa$elm_text_editor$StyleMenu$update, _p9._0, model.style);
+				var m = _p13._0;
+				var c = _p13._1;
 				return {
 					ctor: '_Tuple2',
 					_0: _elm_lang$core$Native_Utils.update(
@@ -19866,24 +17708,24 @@ var _minekoa$elm_text_editor$Main$update = F2(
 					_1: A2(_elm_lang$core$Platform_Cmd$map, _minekoa$elm_text_editor$Main$StyleMenuMsg, c)
 				};
 			case 'FileMenuMsg':
-				var _p19 = _p9._0;
+				var _p18 = _p9._0;
 				var bufname = A2(
 					_elm_lang$core$Maybe$withDefault,
 					'',
 					A2(_minekoa$elm_text_editor$Main$bufferName, model.currentBufferIndex, model));
-				var _p15 = A3(
+				var _p14 = A3(
 					_minekoa$elm_text_editor$FileMenu$update,
-					_p19,
+					_p18,
 					{
 						ctor: '_Tuple2',
 						_0: bufname,
 						_1: _minekoa$elm_text_editor$TextEditor$buffer(model.editor)
 					},
 					model.filer);
-				var m = _p15._0;
-				var c = _p15._1;
-				var _p16 = _p19;
-				switch (_p16.ctor) {
+				var m = _p14._0;
+				var c = _p14._1;
+				var _p15 = _p18;
+				switch (_p15.ctor) {
 					case 'CreateNewBuffer':
 						return {
 							ctor: '_Tuple2',
@@ -19893,7 +17735,7 @@ var _minekoa$elm_text_editor$Main$update = F2(
 								A3(
 									_minekoa$elm_text_editor$Main$insertBuffer,
 									model.currentBufferIndex + 1,
-									A2(_minekoa$elm_text_editor$Main$makeBuffer, _p16._0, ''),
+									A2(_minekoa$elm_text_editor$Main$makeBuffer, _p15._0, ''),
 									A3(
 										_minekoa$elm_text_editor$Main$updateBufferContent,
 										model.currentBufferIndex,
@@ -19904,10 +17746,10 @@ var _minekoa$elm_text_editor$Main$update = F2(
 							_1: A2(_elm_lang$core$Platform_Cmd$map, _minekoa$elm_text_editor$Main$FileMenuMsg, c)
 						};
 					case 'ReadFile':
-						var _p18 = _p16._0;
-						var _p17 = _p18.data;
-						if (_p17.ctor === 'Ok') {
-							var newbuf = A2(_minekoa$elm_text_editor$Main$makeBuffer, _p18.name, _p17._0);
+						var _p17 = _p15._0;
+						var _p16 = _p17.data;
+						if (_p16.ctor === 'Ok') {
+							var newbuf = A2(_minekoa$elm_text_editor$Main$makeBuffer, _p17.name, _p16._0);
 							return {
 								ctor: '_Tuple2',
 								_0: A2(
@@ -19941,7 +17783,7 @@ var _minekoa$elm_text_editor$Main$update = F2(
 							_0: A3(
 								_minekoa$elm_text_editor$Main$updateBufferName,
 								model.currentBufferIndex,
-								_p16._0,
+								_p15._0,
 								_elm_lang$core$Native_Utils.update(
 									model,
 									{filer: m})),
@@ -19956,6 +17798,24 @@ var _minekoa$elm_text_editor$Main$update = F2(
 							_1: A2(_elm_lang$core$Platform_Cmd$map, _minekoa$elm_text_editor$Main$FileMenuMsg, c)
 						};
 				}
+			case 'KeyBindMenuMsg':
+				var _p19 = A3(_minekoa$elm_text_editor$KeyBindMenu$update, _p9._0, model.editor.keymap, model.keybindMenu);
+				var kbinds = _p19._0;
+				var km = _p19._1;
+				var kc = _p19._2;
+				var em = model.editor;
+				return {
+					ctor: '_Tuple2',
+					_0: _elm_lang$core$Native_Utils.update(
+						model,
+						{
+							editor: _elm_lang$core$Native_Utils.update(
+								em,
+								{keymap: kbinds}),
+							keybindMenu: km
+						}),
+					_1: A2(_elm_lang$core$Platform_Cmd$map, _minekoa$elm_text_editor$Main$KeyBindMenuMsg, kc)
+				};
 			default:
 				return {
 					ctor: '_Tuple2',

@@ -40,6 +40,7 @@ type alias Model =
 --    , swkeyboard : SoftwareKeyboard.Model
     , style : StyleMenu.Model
     , filer : FileMenu.Model
+    , keybindMenu : KeyBindMenu.Model
     }
 
 type MenuPane
@@ -48,6 +49,7 @@ type MenuPane
 --    | KeyboardPane
     | StyleMenuPane
     | FileMenuPane
+    | KeyBindMenuPane
     | AboutPane
 
 type alias Buffer =
@@ -78,6 +80,7 @@ init =
 --              SoftwareKeyboard.init
               smm
               FileMenu.init
+              KeyBindMenu.init
         , Cmd.batch [ Cmd.map EditorMsg bc
                     , Cmd.map StyleMenuMsg smc
                     ]
@@ -98,6 +101,7 @@ type Msg
 --    | SWKeyboardMsg (SoftwareKeyboard.Msg)
     | StyleMenuMsg (StyleMenu.Msg)
     | FileMenuMsg (FileMenu.Msg)
+    | KeyBindMenuMsg (KeyBindMenu.Msg)
     | ClearSettings
 
 updateMap: Model -> (Editor.Model, Cmd Editor.Msg) -> (Model, Cmd Msg)
@@ -153,8 +157,8 @@ update msg model =
                   }
                 , Cmd.map DebugMenuMsg dc
                 )
-{-
-        SWKeyboardMsg swmsg ->
+
+{--        SWKeyboardMsg swmsg ->
             let
                 (kbd, edt) = SoftwareKeyboard.update swmsg model.swkeyboard model.editor
             in
@@ -166,7 +170,7 @@ update msg model =
                             , Cmd.map SWKeyboardMsg (Tuple.second kbd)
                             ]
                 )
--}
+--}
         StyleMenuMsg smsg ->
             let
                 (m, c) = StyleMenu.update smsg model.style
@@ -222,6 +226,17 @@ update msg model =
                         , Cmd.map FileMenuMsg c
                         )
 
+        KeyBindMenuMsg kbindmsg ->
+            let
+                em = model.editor
+                (kbinds, km, kc) = KeyBindMenu.update kbindmsg model.editor.keymap model.keybindMenu
+            in
+                ( { model
+                      | editor = { em | keymap = kbinds }
+                      , keybindMenu = km
+                  }
+                , Cmd.map KeyBindMenuMsg kc
+                )
 
         -- about menu
         ClearSettings ->
@@ -338,6 +353,8 @@ applicationMenu model =
                   Html.map StyleMenuMsg (StyleMenu.view model.style)
               FileMenuPane ->
                   Html.map FileMenuMsg (FileMenu.view model.filer)
+              KeyBindMenuPane ->
+                  Html.map KeyBindMenuMsg (KeyBindMenu.view model.editor.keymap model.keybindMenu)
               AboutPane ->
                   aboutPane model
         ]
@@ -359,6 +376,7 @@ menuBar model =
         , tab FileMenuPane "File"
         , tab StyleMenuPane "Style"
 --        , tab KeyboardPane "Keyboard"
+        , tab KeyBindMenuPane "Keybinds"
         , tab DebugMenuPane "Debug"
         , tab AboutPane "About"
         ]
