@@ -8,6 +8,7 @@ module TextEditor exposing ( Model
                            , buffer
                            , setBuffer
                            , EventInfo
+                           , execCommand
                            )
 
 import Html exposing (..)
@@ -22,6 +23,8 @@ import Date
 import TextEditor.Buffer as Buffer
 import TextEditor.Core as Core exposing (..)
 import TextEditor.Core.Commands as Commands
+
+import TextEditor.Commands
 import TextEditor.KeyBind as KeyBind
 
 
@@ -78,6 +81,10 @@ setBuffer newbuf model =
             | core = { cm | buffer= newbuf }
         }
 
+execCommand : TextEditor.Commands.Command -> Model -> (Model, Cmd Msg)
+execCommand cmd model =
+    updateMap model (cmd.f model.core)
+        |> logging "exec-comd" cmd.id
 
 ------------------------------------------------------------
 -- update
@@ -256,7 +263,7 @@ keyDown e model =
     case KeyBind.find (e.ctrlKey, e.altKey, e.shiftKey, e.keyCode) model.keymap of
         Just editorcmd ->
             updateMap model (editorcmd.f model.core)
-                |> logging "keydown" ((keyboarEvent_toString e) ++ "editorcmd=" ++ editorcmd.id)
+                |> logging "keydown" ((keyboarEvent_toString e) ++ ", editorcmd=" ++ editorcmd.id)
         Nothing ->
             ( model
             , Cmd.none

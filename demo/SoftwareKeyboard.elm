@@ -53,47 +53,47 @@ update msg model editor =
             )
         MoveForward ->
             ( ( model, Cmd.none)
-            , Commands.moveForward editor
+            , Editor.execCommand Commands.moveForward editor
             )
         MoveBackword ->
             ( ( model, Cmd.none)
-            , Commands.moveBackward editor
+            , Editor.execCommand Commands.moveBackward editor
             )
         MovePrevios ->
             ( ( model, Cmd.none)
-            , Commands.movePrevios editor
+            , Editor.execCommand Commands.movePrevios editor
             )
         MoveNext ->
             ( ( model, Cmd.none)
-            , Commands.moveNext editor
+            , Editor.execCommand Commands.moveNext editor
             )
         Insert s ->
             ( ( model, Cmd.none)
-            , Commands.insert s editor
+            , Editor.execCommand (Commands.insert s) editor
             )
         Backspace ->
             ( ( model, Cmd.none)
-            , Commands.backspace editor
+            , Editor.execCommand Commands.backspace editor
             )
         Delete ->
             ( ( model, Cmd.none)
-            , Commands.delete editor
+            , Editor.execCommand Commands.delete editor
             )
         Copy ->
             ( ( model, Cmd.none)
-            , Commands.copy editor
+            , Editor.execCommand Commands.copy editor
             )
         Cut ->
             ( ( model, Cmd.none)
-            , Commands.cut editor
+            , Editor.execCommand Commands.cut editor
             )
         Paste ->
             ( ( model, Cmd.none)
-            , Commands.paste editor
+            , Editor.execCommand Commands.paste editor
             )
         Undo ->
             ( ( model, Cmd.none)
-            , Commands.undo editor
+            , Editor.execCommand Commands.undo editor
             )
 
 view : Model -> Html Msg
