@@ -23,6 +23,7 @@ type alias Model =
     , currentIdx : Int
     , current : Maybe KeyBind.KeyBind
     , keyeditorFocus : Bool
+    , cmdselectorFocus : Bool
     }
 
 type SubMenu
@@ -40,7 +41,8 @@ type Msg
     | SetFocusToKeyEditor
     | KeyEditorFocus Bool
     | KeyDown KeyboardEvent
-
+    | ClickCmdArea
+    | SelectCommand EditorCmds.Command
 
 init : Model
 init =
@@ -48,6 +50,7 @@ init =
     , currentIdx = 0
     , current = Nothing
     , keyeditorFocus = False
+    , cmdselectorFocus = False
     }
 
 update : Msg -> List KeyBind.KeyBind -> Model -> (List KeyBind.KeyBind, Model, Cmd Msg)
@@ -98,7 +101,11 @@ update msg keybinds model =
             )
 
         EditAccept ->
-            ( keybinds
+            ( case model.current of
+                  Just newbind ->
+                      (List.take model.currentIdx keybinds) ++ (newbind :: (List.drop (model.currentIdx + 1) keybinds))
+                  Nothing ->
+                      keybinds
             , { model
                   | selectedSubMenu = KeybindList
                   , current = Nothing
@@ -108,16 +115,37 @@ update msg keybinds model =
 
         SetFocusToKeyEditor ->
             ( keybinds
-            , model
+            , { model | cmdselectorFocus = False }
             , doFocus
             )
 
         KeyEditorFocus b ->
             ( keybinds
-            , { model | keyeditorFocus = b }
+            , { model | keyeditorFocus = b , cmdselectorFocus = False}
             , Cmd.none
             )
 
+        ClickCmdArea ->
+            ( keybinds
+            , { model
+                  | cmdselectorFocus = True
+                  , keyeditorFocus = False -- ブラウザからfocusout通知がくるので、不要だが、一瞬状態遷移が見えてしまうので。
+              }
+            , Cmd.none
+            )
+
+        SelectCommand edtcmd ->
+            case model.current of
+                Just keybind ->
+                    ( keybinds
+                    , { model | current = Just { keybind
+                                                   | f = edtcmd
+                                               }
+                      }
+                    , Cmd.none
+                    )
+                Nothing ->
+                    ( keybinds, model, Cmd.none )
 
 view : List KeyBind.KeyBind -> Model -> Html Msg
 view keybinds model =
@@ -152,7 +180,7 @@ menuPalette keybinds model =
         KeybindList ->
             div [class "menu-palette"] [ listView keybinds model ]
         EditKeybind -> 
-            div [class "menu-palette"] [ editView model.keyeditorFocus model.currentIdx model.current ]
+            div [class "menu-palette"] [ editView model ]
         InitKeybind -> 
             div [class "menu-palette"] [ initView keybinds ]
 
@@ -196,8 +224,10 @@ keybindView selected_idx idx keybind =
         , div [] [ keybind.f.id |> text]
         ]
 
-editView : Bool -> Int -> Maybe KeyBind.KeyBind -> Html Msg
-editView focus idx maybe_keybind =
+
+
+editView : Model ->  Html Msg
+editView model =
     div [ class "keybind-hbox" ]
         [ div [ class "keybind-prev-button"
               , onClick <| EditCancel
@@ -212,36 +242,25 @@ editView focus idx maybe_keybind =
                           [text "cancel"]
                     ]
               ]
-        , case maybe_keybind of
+        , case model.current of
               Just keybind ->
-                  div []
-                      [ div [ style [ ("display", "flex")
-                                    , ("flex-direction", "row")
-                                    , ("flex-grow", "1")
-                                    , ("align-items", "center")
-                                    ]
-                            ]
-                            [ div [ class <| if focus then "keybindmenu-keyeditor-focus" else "keybindmenu-keyeditor-disfocus"
-                                  , style [ ("display", "flex")
-                                          , ("flex-direction", "row")
-                                          ]
-                                  , onClick SetFocusToKeyEditor
-                                  ]
-                                  [ div [class <| if keybind.ctrl  then "keybind-edit-mod-enable" else "keybind-edit-mod-disable"] [text "Ctrl"]
-                                  , div [style [("font-size","2em")]] [ text "+" ]
-                                  , div [class <| if keybind.alt   then "keybind-edit-mod-enable" else "keybind-edit-mod-disable"] [text "Alt"]
-                                  , div [style [("font-size","2em")]] [ text "+" ]
-                                  , div [class <| if keybind.shift then "keybind-edit-mod-enable" else "keybind-edit-mod-disable"] [text "Shift"]
-                                  , div [style [("font-size","2em")]] [ text "+" ]
-                                  , div [class "keybind-edit-keycode"] [keybind.code |> keyCodeToKeyName |> text ]
-                                  ]
-                            , div [style [("font-size","2em")]] [ text "⇒" ]
-                            , div [class "keybind-edit-command"] [ keybind.f.id |> text]
-                            ]
+                  div [ style [ ("display", "flex")
+                              , ("flex-direction", "column")
+                              , ("flex-grow", "1")
+                              , ("align-self" , "stretch")
+                              ]
+                      ]
+                      [ currentKeybindView keybind model
                       , textarea [ id "keybindmenu-keyevent-receiver"
-                                 , style [("opacity", "0")]
+                                 , style [("opacity", "0"), ("height", "1px")]
                                  , onKeyDown KeyDown
+                                 , onFocusIn KeyEditorFocus
+                                 , onFocusOut KeyEditorFocus
                                  ] []
+                      , if model.cmdselectorFocus then
+                            commandListView model
+                        else
+                            div [] []
                       ]
               Nothing ->
                   div [] []
@@ -259,6 +278,91 @@ editView focus idx maybe_keybind =
                     ]
               ]
         ]
+
+
+currentKeybindView : KeyBind.KeyBind -> Model -> Html Msg
+currentKeybindView keybind model =
+    div [ style [ ("display", "flex")
+                , ("flex-direction", "row")
+                , ("align-items", "center")
+                ]
+        ]
+        [ div [ class <| if model.keyeditorFocus then "keybindmenu-keyeditor-focus" else "keybindmenu-keyeditor-disfocus"
+              , style [ ("display", "flex")
+                      , ("flex-direction", "row")
+                      , ("align-items", "center")
+                      ]
+              , onClick SetFocusToKeyEditor
+              ]
+              [ div [class <| if keybind.ctrl  then "keybind-edit-mod-enable" else "keybind-edit-mod-disable"] [text "Ctrl"]
+              , div [style [("font-size","2em")]] [ text "+" ]
+              , div [class <| if keybind.alt   then "keybind-edit-mod-enable" else "keybind-edit-mod-disable"] [text "Alt"]
+              , div [style [("font-size","2em")]] [ text "+" ]
+              , div [class <| if keybind.shift then "keybind-edit-mod-enable" else "keybind-edit-mod-disable"] [text "Shift"]
+              , div [style [("font-size","2em")]] [ text "+" ]
+              , div [class "keybind-edit-keycode"] [keybind.code |> keyCodeToKeyName |> text ]
+              ]
+
+        , div [style [("font-size","2em")]] [ text "⇒" ]
+
+        , div [ class <| if model.cmdselectorFocus then "keybindmenu-cmdselector-focus" else "keybindmenu-cmdselector-disfocus"
+              , style [ ("display", "flex")
+                      , ("flex-direction", "row")
+                      , ("align-items", "center")
+                      ]
+              , onClick ClickCmdArea
+              ]
+              [ div [ class "keybind-edit-command" ]
+                    [ keybind.f.id |> text]
+              ]
+        ]
+
+
+commandListView : Model -> Html Msg
+commandListView model =
+    let
+        cmdlist = [ EditorCmds.moveForward
+                  , EditorCmds.moveBackward
+                  , EditorCmds.movePrevios
+                  , EditorCmds.moveNext
+                  , EditorCmds.moveBOL
+                  , EditorCmds.moveEOL
+--                  , EditorCmds.moveAt
+                  , EditorCmds.selectForward
+                  , EditorCmds.selectBackward
+                  , EditorCmds.selectPrevios
+                  , EditorCmds.selectNext
+--                  , EditorCmds.selectAt
+                  , EditorCmds.markSet
+                  , EditorCmds.markClear
+                  , EditorCmds.markFlip
+                  , EditorCmds.gotoMark
+--                  , EditorCmds.insert
+                  , EditorCmds.backspace
+                  , EditorCmds.delete
+                  , EditorCmds.undo
+                  , EditorCmds.copy
+                  , EditorCmds.cut
+                  , EditorCmds.paste
+                  ]
+    in
+        div [ class "keybindmenu-cmdlist" ]
+            [ text "Select edit command"
+            , div [ class "keybindmenu-cmdlist-inner" ]
+                (List.map (\cmd -> div [ class <|
+                                             if (model.current |> Maybe.andThen (\c -> c.f.id == cmd.id |> Just) |> Maybe.withDefault False)
+                                             then "keybindmenu-cmditem-selected"
+                                             else "keybindmenu-cmditem"
+                                       , onClick <| SelectCommand cmd
+                                       ]
+                                       [ cmd.id |> text ]
+                          ) cmdlist
+                )
+            ]
+
+
+
+
 
 initView : List KeyBind.KeyBind -> Html Msg
 initView editorModel =
@@ -411,7 +515,22 @@ onKeyDown : (KeyboardEvent -> msg) -> Attribute msg
 onKeyDown tagger =
     on "keydown" (Json.map tagger decodeKeyboardEvent)
 
+------------------------------------------------------------
+-- focus
+------------------------------------------------------------
 
 doFocus: Cmd Msg
 doFocus  =
     Task.attempt (\_ -> KeyEditorFocus True) (Dom.focus "keybindmenu-keyevent-receiver")
+
+onFocusIn : (Bool -> msg) -> Attribute msg
+onFocusIn tagger =
+    -- ほしいプロパティはないのでとりあえずダミーで bubbles を
+    on "focusin" (Json.map (\dmy -> tagger True) (Json.field "bubbles" Json.bool))
+
+onFocusOut : (Bool -> msg) -> Attribute msg
+onFocusOut tagger =
+    -- ほしいプロパティはないのでとりあえずダミーで bubbles を
+    on "focusout" (Json.map (\dmy -> tagger False) (Json.field "bubbles" Json.bool))
+
+
