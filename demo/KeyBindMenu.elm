@@ -26,10 +26,15 @@ type alias Model =
     , cmdselectorFocus : Bool
     }
 
+
+
 type SubMenu
-    = KeybindList
-    | EditKeybind
+    = KeybindMain KeybindMainsPage
     | InitKeybind
+
+type KeybindMainsPage
+    = KeybindList
+    | KeybindEdit
 
 
 type Msg
@@ -46,7 +51,7 @@ type Msg
 
 init : Model
 init =
-    { selectedSubMenu = KeybindList
+    { selectedSubMenu = KeybindMain KeybindList
     , currentIdx = 0
     , current = Nothing
     , keyeditorFocus = False
@@ -69,7 +74,7 @@ update msg keybinds model =
         EditStart n maybe_keybind ->
             ( keybinds
             , { model
-                  | selectedSubMenu = EditKeybind
+                  | selectedSubMenu = KeybindMain KeybindEdit
                   , currentIdx = n
                   , current = maybe_keybind
               }
@@ -94,7 +99,7 @@ update msg keybinds model =
         EditCancel ->
             ( keybinds
             , { model
-                  | selectedSubMenu = KeybindList
+                  | selectedSubMenu = KeybindMain KeybindList
                   , current = Nothing
               }
             , Cmd.none
@@ -107,7 +112,7 @@ update msg keybinds model =
                   Nothing ->
                       keybinds
             , { model
-                  | selectedSubMenu = KeybindList
+                  | selectedSubMenu = KeybindMain KeybindList
                   , current = Nothing
               }
             , Cmd.none
@@ -159,12 +164,15 @@ view keybinds model =
 menuItemsView : Model -> Html Msg
 menuItemsView model =                
     div [ class "menu-itemlist" ]
-    [ div [ onClick <| SelectSubMenu KeybindList
-          , class <| if model.selectedSubMenu == KeybindList || model.selectedSubMenu == EditKeybind then "menu-item-active" else "menu-item"
+    [ div [ onClick <| SelectSubMenu (KeybindMain KeybindList)
+          , class <| case model.selectedSubMenu of
+                         KeybindMain _ -> "menu-item-active"
+                         _             -> "menu-item"
           ]
-          [ span [] [ "Keybinds"
-                        |> (\s -> if model.selectedSubMenu == EditKeybind then s ++ " (Editing)" else s)
-                        |> text
+          [ span [] [ ( case model.selectedSubMenu of
+                            KeybindMain KeybindEdit ->  "Keybinds (Editing)"
+                            _                       ->  "Keybindsa"
+                      ) |> text
                     ]
           ]
     , div [ onClick <| SelectSubMenu InitKeybind
@@ -177,10 +185,12 @@ menuItemsView model =
 menuPalette : List KeyBind.KeyBind -> Model ->  Html Msg
 menuPalette keybinds model =
     case model.selectedSubMenu of
-        KeybindList ->
-            div [class "menu-palette"] [ listView keybinds model ]
-        EditKeybind -> 
-            div [class "menu-palette"] [ editView model ]
+        KeybindMain subsub ->
+            case subsub of
+                KeybindList ->
+                    div [class "menu-palette"] [ listView keybinds model ]
+                KeybindEdit -> 
+                    div [class "menu-palette"] [ editView model ]
         InitKeybind -> 
             div [class "menu-palette"] [ initView keybinds ]
 
