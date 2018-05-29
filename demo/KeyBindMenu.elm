@@ -16,6 +16,7 @@ import Task
 
 import TextEditor.KeyBind as KeyBind
 import TextEditor.Core as Core
+import TextEditor.Core.Commands as CoreCommands
 import TextEditor.Commands as EditorCmds
 
 type alias Model =
@@ -23,6 +24,7 @@ type alias Model =
     , mainsPage : KeybindMainsPage -- サブメニュー間移動しても残すため
     , currentIdx : Int
     , current : Maybe KeyBind.KeyBind
+    , currentInsertS : Maybe String
     , keyeditorFocus : Bool
     , cmdselectorFocus : Bool
     }
@@ -50,7 +52,7 @@ type Msg
     | KeyDown KeyboardEvent
     | ClickCmdArea
     | SelectCommand EditorCmds.Command
-
+    | SetFocusToCmdInsertValue
 
 init : Model
 init =
@@ -58,6 +60,7 @@ init =
     , mainsPage = ListPage
     , currentIdx = 0
     , current = Nothing
+    , currentInsertS = Nothing
     , keyeditorFocus = False
     , cmdselectorFocus = False
     }
@@ -84,6 +87,7 @@ update msg keybinds model =
                   , mainsPage = EditPage
                   , currentIdx = n
                   , current = maybe_keybind
+                  , currentInsertS = Nothing
               }
             , Cmd.none
             )
@@ -109,6 +113,7 @@ update msg keybinds model =
                   | selectedSubMenu = KeybindMain
                   , mainsPage = ListPage
                   , current = Nothing
+                  , currentInsertS = Nothing
               }
             , Cmd.none
             )
@@ -132,6 +137,7 @@ update msg keybinds model =
                   | selectedSubMenu = KeybindMain
                   , mainsPage = ListPage
                   , current = Nothing
+                  , currentInsertS = Nothing
               }
             , Cmd.none
             )
@@ -161,14 +167,25 @@ update msg keybinds model =
             case model.current of
                 Just keybind ->
                     ( keybinds
-                    , { model | current = Just { keybind
-                                                   | f = edtcmd
-                                               }
+                    , { model
+                          | current = Just { keybind
+                                           | f = edtcmd
+                                           }
+                          , currentInsertS = if (edtcmd.id |> String.left 6) == "insert" then (edtcmd.id |> String.dropLeft 7 |> Just) else Nothing
                       }
                     , Cmd.none
                     )
                 Nothing ->
                     ( keybinds, model, Cmd.none )
+
+        SetFocusToCmdInsertValue ->
+            ( keybinds
+            , model
+            , doFocus
+            )
+            
+
+
 
 view : List KeyBind.KeyBind -> Model -> Html Msg
 view keybinds model =
@@ -253,7 +270,7 @@ keybindView selected_idx idx keybind =
                 , ")"
                 ] |> String.concat |> text
               ]
-        , div [] [ keybind.f.id |> text]
+        , div [] [ keybind.f.id |> stringEscape |> text]
         ]
 
 
@@ -321,35 +338,57 @@ currentKeybindView keybind model =
                 , ("align-items", "center")
                 ]
         ]
-        [ div [ class <| if model.keyeditorFocus then "keybindmenu-keyeditor-focus" else "keybindmenu-keyeditor-disfocus"
-              , style [ ("display", "flex")
-                      , ("flex-direction", "row")
-                      , ("align-items", "center")
-                      ]
-              , onClick SetFocusToKeyEditor
-              ]
-              [ div [class <| if keybind.ctrl  then "keybind-edit-mod-enable" else "keybind-edit-mod-disable"] [text "Ctrl"]
-              , div [style [("font-size","2em")]] [ text "+" ]
-              , div [class <| if keybind.alt   then "keybind-edit-mod-enable" else "keybind-edit-mod-disable"] [text "Alt"]
-              , div [style [("font-size","2em")]] [ text "+" ]
-              , div [class <| if keybind.shift then "keybind-edit-mod-enable" else "keybind-edit-mod-disable"] [text "Shift"]
-              , div [style [("font-size","2em")]] [ text "+" ]
-              , div [class "keybind-edit-keycode"] [keybind.code |> keyCodeToKeyName |> text ]
-              ]
+        (  [ currentKeybindView_keys keybind model.keyeditorFocus
+           , div [style [("font-size","2em")]] [ text "⇒" ]
+           , currentKeybindView_cmd keybind model.currentInsertS  model.cmdselectorFocus
+           ]
+        )
 
-        , div [style [("font-size","2em")]] [ text "⇒" ]
 
-        , div [ class <| if model.cmdselectorFocus then "keybindmenu-cmdselector-focus" else "keybindmenu-cmdselector-disfocus"
-              , style [ ("display", "flex")
-                      , ("flex-direction", "row")
-                      , ("align-items", "center")
-                      ]
-              , onClick ClickCmdArea
-              ]
-              [ div [ class "keybind-edit-command" ]
-                    [ keybind.f.id |> text]
-              ]
+currentKeybindView_keys : KeyBind.KeyBind -> Bool -> Html Msg
+currentKeybindView_keys keybind focus =
+    div [ class <| if focus then "keybindmenu-keyeditor-focus" else "keybindmenu-keyeditor-disfocus"
+        , style [ ("display", "flex")
+                , ("flex-direction", "row")
+                , ("align-items", "center")
+                ]
+        , onClick SetFocusToKeyEditor
         ]
+        [ div [class <| if keybind.ctrl  then "keybind-edit-mod-enable" else "keybind-edit-mod-disable"] [text "Ctrl"]
+        , div [style [("font-size","2em")]] [ text "+" ]
+        , div [class <| if keybind.alt   then "keybind-edit-mod-enable" else "keybind-edit-mod-disable"] [text "Alt"]
+        , div [style [("font-size","2em")]] [ text "+" ]
+        , div [class <| if keybind.shift then "keybind-edit-mod-enable" else "keybind-edit-mod-disable"] [text "Shift"]
+        , div [style [("font-size","2em")]] [ text "+" ]
+        , div [class "keybind-edit-keycode"] [keybind.code |> keyCodeToKeyName |> text ]
+        ]
+
+currentKeybindView_cmd : KeyBind.KeyBind -> Maybe String -> Bool -> Html Msg
+currentKeybindView_cmd keybind maybe_insert_val focus =
+    let
+        fid = keybind.f.id |> String.split " " |> List.take 1 |> String.concat
+    in
+        div [] 
+            [ div [ class <| if focus then "keybindmenu-cmdselector-focus" else "keybindmenu-cmdselector-disfocus"
+                  , style [ ("display", "flex")
+                          , ("flex-direction", "row")
+                          , ("align-items", "center")
+                          ]
+                  , onClick ClickCmdArea
+                  ]
+                  [ div [class "keybind-edit-command" ] [fid |> text ] ]
+
+            , case maybe_insert_val of
+                  Just insert_val ->
+                      div [ class <| if focus then "keybindmenu-insertcmd-input-focus" else "keybindmenu-insertcmd-input-focus"
+                          , onClick SetFocusToCmdInsertValue
+                          ]
+                          [ insert_val |> stringEscape |> text ]
+
+                  Nothing ->
+                      text ""
+            ]
+
 
 
 commandListView : Model -> Html Msg
@@ -371,7 +410,7 @@ commandListView model =
                   , EditorCmds.markClear
                   , EditorCmds.markFlip
                   , EditorCmds.gotoMark
---                  , EditorCmds.insert
+                  , EditorCmds.insert ""
                   , EditorCmds.backspace
                   , EditorCmds.delete
                   , EditorCmds.undo
@@ -402,6 +441,7 @@ keypressMessage model =
 
 
 
+-- Accept(Confirm)Page
 
 acceptPageView : List KeyBind.KeyBind -> Model ->  Html Msg
 acceptPageView keybinds model =
@@ -481,6 +521,66 @@ initView : List KeyBind.KeyBind -> Html Msg
 initView editorModel =
     div [] []
 
+
+
+------------------------------------------------------------
+-- keyboard event (TextEditor コピペなのであとでどうにかしよう)
+------------------------------------------------------------
+type alias KeyboardEvent = 
+    { altKey : Bool
+    , ctrlKey : Bool
+    , keyCode : Int
+    , metaKey : Bool
+    , repeat : Bool
+    , shiftKey : Bool
+    }
+
+keyboarEvent_toString : KeyboardEvent -> String
+keyboarEvent_toString e =
+    String.concat
+        [ if e.ctrlKey then "C-" else ""
+        , if e.altKey then "A-" else ""
+        , if e.metaKey then "M-" else ""
+        , if e.shiftKey then "S-"else ""
+        , toString e.keyCode
+        ]
+
+decodeKeyboardEvent : Json.Decoder KeyboardEvent
+decodeKeyboardEvent =
+    Json.map6 KeyboardEvent
+        (Json.field "altKey" Json.bool)
+        (Json.field "ctrlKey" Json.bool)
+        (Json.field "keyCode" Json.int)
+        (Json.field "metaKey" Json.bool)
+        (Json.field "repeat" Json.bool)
+        (Json.field "shiftKey" Json.bool)    
+
+                
+onKeyDown : (KeyboardEvent -> msg) -> Attribute msg
+onKeyDown tagger =
+    on "keydown" (Json.map tagger decodeKeyboardEvent)
+
+------------------------------------------------------------
+-- focus
+------------------------------------------------------------
+
+doFocus: Cmd Msg
+doFocus  =
+    Task.attempt (\_ -> KeyEditorFocus True) (Dom.focus "keybindmenu-keyevent-receiver")
+
+onFocusIn : (Bool -> msg) -> Attribute msg
+onFocusIn tagger =
+    -- ほしいプロパティはないのでとりあえずダミーで bubbles を
+    on "focusin" (Json.map (\dmy -> tagger True) (Json.field "bubbles" Json.bool))
+
+onFocusOut : (Bool -> msg) -> Attribute msg
+onFocusOut tagger =
+    -- ほしいプロパティはないのでとりあえずダミーで bubbles を
+    on "focusout" (Json.map (\dmy -> tagger False) (Json.field "bubbles" Json.bool))
+
+------------------------------------------------------------
+-- string tools
+------------------------------------------------------------
 
 keyCodeToKeyName : Int -> String
 keyCodeToKeyName code =
@@ -590,60 +690,23 @@ keyCodeToKeyName code =
         otherwise   -> otherwise |> toString
 
 
+stringEscape: String -> String
+stringEscape str =
+    str |> String.toList
+        |> List.map (\ c ->
+                         case c of
+                             '\\' -> "\\\\"
+                             '\0' -> "\\0"
+                             '\a' -> "\\a"
+                             '\b' -> "\\b"
+                             '\f' -> "\\f"
+                             '\n' -> "\\n"
+                             '\r' -> "\\r"
+                             '\t' -> "\\t"
+                             '\v' -> "\\v"
+                             otherwise -> String.fromChar otherwise
+                    )
+        |> String.concat
+            
 
-------------------------------------------------------------
--- keyboard event (TextEditor コピペなのであとでどうにかしよう)
-------------------------------------------------------------
-type alias KeyboardEvent = 
-    { altKey : Bool
-    , ctrlKey : Bool
-    , keyCode : Int
-    , metaKey : Bool
-    , repeat : Bool
-    , shiftKey : Bool
-    }
-
-keyboarEvent_toString : KeyboardEvent -> String
-keyboarEvent_toString e =
-    String.concat
-        [ if e.ctrlKey then "C-" else ""
-        , if e.altKey then "A-" else ""
-        , if e.metaKey then "M-" else ""
-        , if e.shiftKey then "S-"else ""
-        , toString e.keyCode
-        ]
-
-decodeKeyboardEvent : Json.Decoder KeyboardEvent
-decodeKeyboardEvent =
-    Json.map6 KeyboardEvent
-        (Json.field "altKey" Json.bool)
-        (Json.field "ctrlKey" Json.bool)
-        (Json.field "keyCode" Json.int)
-        (Json.field "metaKey" Json.bool)
-        (Json.field "repeat" Json.bool)
-        (Json.field "shiftKey" Json.bool)    
-
-                
-onKeyDown : (KeyboardEvent -> msg) -> Attribute msg
-onKeyDown tagger =
-    on "keydown" (Json.map tagger decodeKeyboardEvent)
-
-------------------------------------------------------------
--- focus
-------------------------------------------------------------
-
-doFocus: Cmd Msg
-doFocus  =
-    Task.attempt (\_ -> KeyEditorFocus True) (Dom.focus "keybindmenu-keyevent-receiver")
-
-onFocusIn : (Bool -> msg) -> Attribute msg
-onFocusIn tagger =
-    -- ほしいプロパティはないのでとりあえずダミーで bubbles を
-    on "focusin" (Json.map (\dmy -> tagger True) (Json.field "bubbles" Json.bool))
-
-onFocusOut : (Bool -> msg) -> Attribute msg
-onFocusOut tagger =
-    -- ほしいプロパティはないのでとりあえずダミーで bubbles を
-    on "focusout" (Json.map (\dmy -> tagger False) (Json.field "bubbles" Json.bool))
-
-
+    

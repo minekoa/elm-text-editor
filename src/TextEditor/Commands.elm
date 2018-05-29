@@ -161,7 +161,7 @@ gotoMark =
 
 insert: String -> Command
 insert text =
-    { id = "insert"
+    { id = "insert " ++ text -- TODO: 良い解決方法が浮かばないので今のところidにエンコードしてしまう
     , f = (CoreCommands.insert text)
     }
 

@@ -1,6 +1,6 @@
 
 .keybind-menu {
-    --menu-item-list-width: 12em;
+    --menu-item-list-width: 10em;
 }
 
 
@@ -162,6 +162,29 @@
 
 .keybindmenu-cmdselector-disfocus {
 }
+
+.keybindmenu-insertcmd-input-focus {
+    position: relative;
+}
+
+.keybindmenu-insertcmd-input::before {
+    content: "";
+    position: absolute;
+    top: 0.2em;
+    left: 0.2em;
+    width: calc( 100% - 0.4em );
+    height: calc( 100% - 0.4em );
+    border: 1px solid lightgrey;
+    background-color: blue;
+    opacity: 0.2;
+    border-radius: 0.5em;
+}
+
+.keybindmenu-insertcmd-input-disfocus {
+}
+
+
+
 
 .keybindmenu-editsupport {
     padding: 1em 5px 0 3em;
