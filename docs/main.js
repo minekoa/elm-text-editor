@@ -15995,9 +15995,9 @@ var _minekoa$elm_text_editor$KeyBindMenu$initView = function (editorModel) {
 		{ctor: '[]'},
 		{ctor: '[]'});
 };
-var _minekoa$elm_text_editor$KeyBindMenu$Model = F5(
-	function (a, b, c, d, e) {
-		return {selectedSubMenu: a, currentIdx: b, current: c, keyeditorFocus: d, cmdselectorFocus: e};
+var _minekoa$elm_text_editor$KeyBindMenu$Model = F6(
+	function (a, b, c, d, e, f) {
+		return {selectedSubMenu: a, mainsPage: b, currentIdx: c, current: d, keyeditorFocus: e, cmdselectorFocus: f};
 	});
 var _minekoa$elm_text_editor$KeyBindMenu$KeyboardEvent = F6(
 	function (a, b, c, d, e, f) {
@@ -16019,18 +16019,10 @@ var _minekoa$elm_text_editor$KeyBindMenu$onKeyDown = function (tagger) {
 		A2(_elm_lang$core$Json_Decode$map, tagger, _minekoa$elm_text_editor$KeyBindMenu$decodeKeyboardEvent));
 };
 var _minekoa$elm_text_editor$KeyBindMenu$InitKeybind = {ctor: 'InitKeybind'};
-var _minekoa$elm_text_editor$KeyBindMenu$KeybindMain = function (a) {
-	return {ctor: 'KeybindMain', _0: a};
-};
-var _minekoa$elm_text_editor$KeyBindMenu$KeybindEdit = {ctor: 'KeybindEdit'};
-var _minekoa$elm_text_editor$KeyBindMenu$KeybindList = {ctor: 'KeybindList'};
-var _minekoa$elm_text_editor$KeyBindMenu$init = {
-	selectedSubMenu: _minekoa$elm_text_editor$KeyBindMenu$KeybindMain(_minekoa$elm_text_editor$KeyBindMenu$KeybindList),
-	currentIdx: 0,
-	current: _elm_lang$core$Maybe$Nothing,
-	keyeditorFocus: false,
-	cmdselectorFocus: false
-};
+var _minekoa$elm_text_editor$KeyBindMenu$KeybindMain = {ctor: 'KeybindMain'};
+var _minekoa$elm_text_editor$KeyBindMenu$EditPage = {ctor: 'EditPage'};
+var _minekoa$elm_text_editor$KeyBindMenu$ListPage = {ctor: 'ListPage'};
+var _minekoa$elm_text_editor$KeyBindMenu$init = {selectedSubMenu: _minekoa$elm_text_editor$KeyBindMenu$KeybindMain, mainsPage: _minekoa$elm_text_editor$KeyBindMenu$ListPage, currentIdx: 0, current: _elm_lang$core$Maybe$Nothing, keyeditorFocus: false, cmdselectorFocus: false};
 var _minekoa$elm_text_editor$KeyBindMenu$SelectCommand = function (a) {
 	return {ctor: 'SelectCommand', _0: a};
 };
@@ -16212,11 +16204,7 @@ var _minekoa$elm_text_editor$KeyBindMenu$update = F3(
 					_0: keybinds,
 					_1: _elm_lang$core$Native_Utils.update(
 						model,
-						{
-							selectedSubMenu: _minekoa$elm_text_editor$KeyBindMenu$KeybindMain(_minekoa$elm_text_editor$KeyBindMenu$KeybindEdit),
-							currentIdx: _p2._0,
-							current: _p2._1
-						}),
+						{selectedSubMenu: _minekoa$elm_text_editor$KeyBindMenu$KeybindMain, mainsPage: _minekoa$elm_text_editor$KeyBindMenu$EditPage, currentIdx: _p2._0, current: _p2._1}),
 					_2: _elm_lang$core$Platform_Cmd$none
 				};
 			case 'KeyDown':
@@ -16245,10 +16233,7 @@ var _minekoa$elm_text_editor$KeyBindMenu$update = F3(
 					_0: keybinds,
 					_1: _elm_lang$core$Native_Utils.update(
 						model,
-						{
-							selectedSubMenu: _minekoa$elm_text_editor$KeyBindMenu$KeybindMain(_minekoa$elm_text_editor$KeyBindMenu$KeybindList),
-							current: _elm_lang$core$Maybe$Nothing
-						}),
+						{selectedSubMenu: _minekoa$elm_text_editor$KeyBindMenu$KeybindMain, mainsPage: _minekoa$elm_text_editor$KeyBindMenu$ListPage, current: _elm_lang$core$Maybe$Nothing}),
 					_2: _elm_lang$core$Platform_Cmd$none
 				};
 			case 'EditAccept':
@@ -16271,10 +16256,7 @@ var _minekoa$elm_text_editor$KeyBindMenu$update = F3(
 					}(),
 					_1: _elm_lang$core$Native_Utils.update(
 						model,
-						{
-							selectedSubMenu: _minekoa$elm_text_editor$KeyBindMenu$KeybindMain(_minekoa$elm_text_editor$KeyBindMenu$KeybindList),
-							current: _elm_lang$core$Maybe$Nothing
-						}),
+						{selectedSubMenu: _minekoa$elm_text_editor$KeyBindMenu$KeybindMain, mainsPage: _minekoa$elm_text_editor$KeyBindMenu$ListPage, current: _elm_lang$core$Maybe$Nothing}),
 					_2: _elm_lang$core$Platform_Cmd$none
 				};
 			case 'SetFocusToKeyEditor':
@@ -16577,7 +16559,7 @@ var _minekoa$elm_text_editor$KeyBindMenu$currentKeybindView = F2(
 	});
 var _minekoa$elm_text_editor$KeyBindMenu$EditAccept = {ctor: 'EditAccept'};
 var _minekoa$elm_text_editor$KeyBindMenu$EditCancel = {ctor: 'EditCancel'};
-var _minekoa$elm_text_editor$KeyBindMenu$editView = function (model) {
+var _minekoa$elm_text_editor$KeyBindMenu$editPageView = function (model) {
 	return A2(
 		_elm_lang$html$Html$div,
 		{
@@ -16898,7 +16880,7 @@ var _minekoa$elm_text_editor$KeyBindMenu$keybindView = F3(
 				}
 			});
 	});
-var _minekoa$elm_text_editor$KeyBindMenu$listView = F2(
+var _minekoa$elm_text_editor$KeyBindMenu$listPageView = F2(
 	function (keybinds, model) {
 		return A2(
 			_elm_lang$html$Html$div,
@@ -17012,8 +16994,8 @@ var _minekoa$elm_text_editor$KeyBindMenu$menuPalette = F2(
 	function (keybinds, model) {
 		var _p8 = model.selectedSubMenu;
 		if (_p8.ctor === 'KeybindMain') {
-			var _p9 = _p8._0;
-			if (_p9.ctor === 'KeybindList') {
+			var _p9 = model.mainsPage;
+			if (_p9.ctor === 'ListPage') {
 				return A2(
 					_elm_lang$html$Html$div,
 					{
@@ -17023,7 +17005,7 @@ var _minekoa$elm_text_editor$KeyBindMenu$menuPalette = F2(
 					},
 					{
 						ctor: '::',
-						_0: A2(_minekoa$elm_text_editor$KeyBindMenu$listView, keybinds, model),
+						_0: A2(_minekoa$elm_text_editor$KeyBindMenu$listPageView, keybinds, model),
 						_1: {ctor: '[]'}
 					});
 			} else {
@@ -17036,7 +17018,7 @@ var _minekoa$elm_text_editor$KeyBindMenu$menuPalette = F2(
 					},
 					{
 						ctor: '::',
-						_0: _minekoa$elm_text_editor$KeyBindMenu$editView(model),
+						_0: _minekoa$elm_text_editor$KeyBindMenu$editPageView(model),
 						_1: {ctor: '[]'}
 					});
 			}
@@ -17073,8 +17055,7 @@ var _minekoa$elm_text_editor$KeyBindMenu$menuItemsView = function (model) {
 				{
 					ctor: '::',
 					_0: _elm_lang$html$Html_Events$onClick(
-						_minekoa$elm_text_editor$KeyBindMenu$SelectSubMenu(
-							_minekoa$elm_text_editor$KeyBindMenu$KeybindMain(_minekoa$elm_text_editor$KeyBindMenu$KeybindList))),
+						_minekoa$elm_text_editor$KeyBindMenu$SelectSubMenu(_minekoa$elm_text_editor$KeyBindMenu$KeybindMain)),
 					_1: {
 						ctor: '::',
 						_0: _elm_lang$html$Html_Attributes$class(
@@ -17098,11 +17079,11 @@ var _minekoa$elm_text_editor$KeyBindMenu$menuItemsView = function (model) {
 							ctor: '::',
 							_0: _elm_lang$html$Html$text(
 								function () {
-									var _p11 = model.selectedSubMenu;
-									if ((_p11.ctor === 'KeybindMain') && (_p11._0.ctor === 'KeybindEdit')) {
-										return 'Keybinds (Editing)';
+									var _p11 = model.mainsPage;
+									if (_p11.ctor === 'ListPage') {
+										return 'Keybinds';
 									} else {
-										return 'Keybindsa';
+										return 'Keybinds (Editing)';
 									}
 								}()),
 							_1: {ctor: '[]'}

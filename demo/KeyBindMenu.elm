@@ -20,6 +20,7 @@ import TextEditor.Commands as EditorCmds
 
 type alias Model =
     { selectedSubMenu : SubMenu
+    , mainsPage : KeybindMainsPage -- サブメニュー間移動しても残すため
     , currentIdx : Int
     , current : Maybe KeyBind.KeyBind
     , keyeditorFocus : Bool
@@ -29,12 +30,12 @@ type alias Model =
 
 
 type SubMenu
-    = KeybindMain KeybindMainsPage
+    = KeybindMain
     | InitKeybind
 
 type KeybindMainsPage
-    = KeybindList
-    | KeybindEdit
+    = ListPage
+    | EditPage
 
 
 type Msg
@@ -49,9 +50,11 @@ type Msg
     | ClickCmdArea
     | SelectCommand EditorCmds.Command
 
+
 init : Model
 init =
-    { selectedSubMenu = KeybindMain KeybindList
+    { selectedSubMenu = KeybindMain
+    , mainsPage = ListPage
     , currentIdx = 0
     , current = Nothing
     , keyeditorFocus = False
@@ -63,7 +66,9 @@ update msg keybinds model =
     case msg of
         SelectSubMenu submenu ->
             ( keybinds
-            , { model | selectedSubMenu = submenu }
+            , { model
+                  | selectedSubMenu = submenu
+              }
             , Cmd.none
             )
         SelectKeyBind n ->
@@ -74,7 +79,8 @@ update msg keybinds model =
         EditStart n maybe_keybind ->
             ( keybinds
             , { model
-                  | selectedSubMenu = KeybindMain KeybindEdit
+                  | selectedSubMenu = KeybindMain
+                  , mainsPage = EditPage
                   , currentIdx = n
                   , current = maybe_keybind
               }
@@ -99,7 +105,8 @@ update msg keybinds model =
         EditCancel ->
             ( keybinds
             , { model
-                  | selectedSubMenu = KeybindMain KeybindList
+                  | selectedSubMenu = KeybindMain
+                  , mainsPage = ListPage
                   , current = Nothing
               }
             , Cmd.none
@@ -112,7 +119,8 @@ update msg keybinds model =
                   Nothing ->
                       keybinds
             , { model
-                  | selectedSubMenu = KeybindMain KeybindList
+                  | selectedSubMenu = KeybindMain
+                  , mainsPage = ListPage
                   , current = Nothing
               }
             , Cmd.none
@@ -164,14 +172,14 @@ view keybinds model =
 menuItemsView : Model -> Html Msg
 menuItemsView model =                
     div [ class "menu-itemlist" ]
-    [ div [ onClick <| SelectSubMenu (KeybindMain KeybindList)
+    [ div [ onClick <| SelectSubMenu KeybindMain
           , class <| case model.selectedSubMenu of
-                         KeybindMain _ -> "menu-item-active"
-                         _             -> "menu-item"
+                         KeybindMain  -> "menu-item-active"
+                         _            -> "menu-item"
           ]
-          [ span [] [ ( case model.selectedSubMenu of
-                            KeybindMain KeybindEdit ->  "Keybinds (Editing)"
-                            _                       ->  "Keybindsa"
+          [ span [] [ ( case model.mainsPage of
+                            ListPage -> "Keybinds"
+                            EditPage -> "Keybinds (Editing)"
                       ) |> text
                     ]
           ]
@@ -185,17 +193,17 @@ menuItemsView model =
 menuPalette : List KeyBind.KeyBind -> Model ->  Html Msg
 menuPalette keybinds model =
     case model.selectedSubMenu of
-        KeybindMain subsub ->
-            case subsub of
-                KeybindList ->
-                    div [class "menu-palette"] [ listView keybinds model ]
-                KeybindEdit -> 
-                    div [class "menu-palette"] [ editView model ]
+        KeybindMain ->
+            case model.mainsPage of
+                ListPage ->
+                    div [class "menu-palette"] [ listPageView keybinds model ]
+                EditPage -> 
+                    div [class "menu-palette"] [ editPageView model ]
         InitKeybind -> 
             div [class "menu-palette"] [ initView keybinds ]
 
-listView : List KeyBind.KeyBind -> Model -> Html Msg
-listView keybinds model =
+listPageView : List KeyBind.KeyBind -> Model -> Html Msg
+listPageView keybinds model =
     div [ class "keybind-hbox" ]
         [ div [ class "keybind-item-list"] <|
               (List.indexedMap (keybindView model.currentIdx) keybinds) ++ [div [] [text "Add"]]
@@ -236,8 +244,8 @@ keybindView selected_idx idx keybind =
 
 
 
-editView : Model ->  Html Msg
-editView model =
+editPageView : Model ->  Html Msg
+editPageView model =
     div [ class "keybind-hbox" ]
         [ div [ class "keybind-prev-button"
               , onClick <| EditCancel
