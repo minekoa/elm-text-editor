@@ -101,17 +101,18 @@ type Msg
     = SelectSubMenu SubMenu
     | SelectKeyBind Int
     | EditStart Int
-    | EditCancel
+    | BackToEdit
+    | BackToList
     | ConfirmAccept
     | ConfirmDelete
-    | EditAccept
+    | EditComplete
     | SetFocusToKeyEditor
+    | SetFocusToCmdSelector
+    | SetFocusToCmdInsertValue
     | KeyEditorFocus Bool
     | KeyDown KeyboardEvent
     | InputText String
-    | ClickCmdArea
     | SelectCommand EditorCmds.Command
-    | SetFocusToCmdInsertValue
     | AddKeyBind
 
 init : Model
@@ -144,6 +145,120 @@ update msg keybinds model =
                   , mainsPage = EditPage
                   , currentIdx = n
                   , current    = keybinds |> List.drop n |> List.head |> Maybe.andThen (initEditUpdate >> Just)
+              }
+            , Cmd.none
+           )
+
+        BackToEdit ->
+            ( keybinds
+            , { model
+                  | selectedSubMenu = KeybindMain
+                  , mainsPage = EditPage
+                  , current   = model.current
+                                  |> Maybe.andThen (\ edtbuf ->
+                                                        { edtbuf | editmode = if edtbuf.editmode == EditModeDelete
+                                                                              then EditModeUpdate
+                                                                              else edtbuf.editmode
+                                                        }
+                                                        |> Just
+                                                   )
+              }
+            , Cmd.none
+            )
+
+        BackToList ->
+            ( keybinds
+            , { model
+                  | selectedSubMenu = KeybindMain
+                  , mainsPage = ListPage
+                  , current = Nothing
+              }
+            , Cmd.none
+            )
+
+        ConfirmDelete ->
+            ( keybinds
+            , { model
+                  | selectedSubMenu = KeybindMain
+                  , mainsPage = AcceptPage
+                  , current   = model.current
+                                  |> Maybe.andThen (\ edtbuf ->
+                                                        { edtbuf | editmode = EditModeDelete
+                                                        }
+                                                        |> Just
+                                                   )
+              }
+            , Cmd.none
+            )
+
+        ConfirmAccept ->
+            ( keybinds
+            , { model
+                  | selectedSubMenu = KeybindMain
+                  , mainsPage = AcceptPage
+              }
+            , Cmd.none
+            )
+
+        EditComplete ->
+            ( case model.current of
+                  Just editbuf ->
+                      case editbuf.editmode of
+                          EditModeNew ->
+                              (List.take model.currentIdx keybinds) ++ (editbuf.keybind :: (List.drop (model.currentIdx) keybinds))
+                          EditModeUpdate ->
+                              (List.take model.currentIdx keybinds) ++ (editbuf.keybind :: (List.drop (model.currentIdx + 1) keybinds))
+                          EditModeDelete ->
+                              (List.take model.currentIdx keybinds) ++ (List.drop (model.currentIdx + 1) keybinds)
+                  Nothing ->
+                      keybinds
+            , { model
+                  | selectedSubMenu = KeybindMain
+                  , mainsPage = ListPage
+                  , current = Nothing
+              }
+            , Cmd.none
+            )
+
+        SetFocusToKeyEditor ->
+            ( keybinds
+            , { model | current = model.current
+                                      |> Maybe.andThen (\ editbuf -> { editbuf | target = TargetKeys } |> Just )
+              }
+            , doFocus
+            )
+
+        SetFocusToCmdSelector ->
+            ( keybinds
+            , { model | current = model.current
+                                      |> Maybe.andThen (\ editbuf -> { editbuf | target = TargetCommand } |> Just )
+              }
+            , Cmd.none
+            )
+
+        SetFocusToCmdInsertValue ->
+            ( keybinds
+            , { model | current = model.current
+                                      |> Maybe.andThen (\ editbuf -> { editbuf | target = TargetInsertValue } |> Just )
+              }
+            , doFocus
+            )
+
+        KeyEditorFocus True ->
+            ( keybinds
+            , model
+            , Cmd.none
+            )
+
+        KeyEditorFocus False ->
+            ( keybinds
+            , { model | current = model.current
+                                      |> Maybe.andThen (\ editbuf ->
+                                                            { editbuf | target = case editbuf.target of
+                                                                                     TargetKeys        -> TargetNone
+                                                                                     TargetInsertValue -> TargetNone
+                                                                                     otherwise         -> otherwise
+                                                            } |> Just )
               }
             , Cmd.none
             )
@@ -198,90 +313,6 @@ update msg keybinds model =
                 Nothing ->
                     ( keybinds, model, Cmd.none )
 
-        EditCancel ->
-            ( keybinds
-            , { model
-                  | selectedSubMenu = KeybindMain
-                  , mainsPage = ListPage
-                  , current = Nothing
-              }
-            , Cmd.none
-            )
-
-        ConfirmAccept ->
-            ( keybinds
-            , { model
-                  | selectedSubMenu = KeybindMain
-                  , mainsPage = AcceptPage
-              }
-            , Cmd.none
-            )
-
-        ConfirmDelete ->
-            ( keybinds
-            , { model
-                  | selectedSubMenu = KeybindMain
-                  , mainsPage = AcceptPage
-                  , current    = keybinds |> List.drop model.currentIdx |> List.head |> Maybe.andThen (initEditDelete >> Just)
-              }
-            , Cmd.none
-            )
-
-        EditAccept ->
-            ( case model.current of
-                  Just editbuf ->
-                      case editbuf.editmode of
-                          EditModeNew ->
-                              (List.take model.currentIdx keybinds) ++ (editbuf.keybind :: (List.drop (model.currentIdx) keybinds))
-                          EditModeUpdate ->
-                              (List.take model.currentIdx keybinds) ++ (editbuf.keybind :: (List.drop (model.currentIdx + 1) keybinds))
-                          EditModeDelete ->
-                              (List.take model.currentIdx keybinds) ++ (List.drop (model.currentIdx + 1) keybinds)
-                  Nothing ->
-                      keybinds
-            , { model
-                  | selectedSubMenu = KeybindMain
-                  , mainsPage = ListPage
-                  , current = Nothing
-              }
-            , Cmd.none
-            )
-
-        SetFocusToKeyEditor ->
-            ( keybinds
-            , { model | current = model.current
-                                      |> Maybe.andThen (\ editbuf -> { editbuf | target = TargetKeys } |> Just )
-              }
-            , doFocus
-            )
-
-        KeyEditorFocus True ->
-            ( keybinds
-            , model
-            , Cmd.none
-            )
-
-        KeyEditorFocus False ->
-            ( keybinds
-            , { model | current = model.current
-                                      |> Maybe.andThen (\ editbuf ->
-                                                            { editbuf | target = case editbuf.target of
-                                                                                     TargetKeys        -> TargetNone
-                                                                                     TargetInsertValue -> TargetNone
-                                                                                     otherwise         -> otherwise
-                                                            } |> Just )
-              }
-            , Cmd.none
-            )
-
-        ClickCmdArea ->
-            ( keybinds
-            , { model | current = model.current
-                                      |> Maybe.andThen (\ editbuf -> { editbuf | target = TargetCommand } |> Just )
-              }
-            , Cmd.none
-            )
-
         SelectCommand edtcmd ->
             ( keybinds
             , { model | current = model.current
@@ -302,14 +333,6 @@ update msg keybinds model =
                                           )
               }
             , Cmd.none
-            )
-
-        SetFocusToCmdInsertValue ->
-            ( keybinds
-            , { model | current = model.current
-                                      |> Maybe.andThen (\ editbuf -> { editbuf | target = TargetInsertValue } |> Just )
-              }
-            , doFocus
             )
 
         AddKeyBind ->
@@ -434,60 +457,69 @@ keybindView selected_idx idx keybind =
 
 editPageView : EditBuffer -> Model ->  Html Msg
 editPageView edtbuf model =
-    div [ class "keybind-hbox" ]
-        [ div [ class "keybind-prev-button"
-              , onClick <| EditCancel
-              ]
-              [ div [style [("text-align","center")]]
-                    [ text "<"
-                    , br [][]
-                    , span [ style [ ("font-size", "0.8em")
-                                   , ("color", "lightgray")
-                                   ]
-                           ]
-                          [text "cancel"]
-                    ]
-              ]
+    let
+        isEditModeNew = (\ m -> case m.current of
+                                    Just buf -> buf.editmode == EditModeNew
+                                    Nothing -> False
+                        )
+    in
+        div [ class "keybind-hbox" ]
+            [ div [ class "keybind-prev-button"
+                  , onClick <| BackToList
+                  ]
+                  [ div [style [("text-align","center")]]
+                        [ text "<"
+                        , br [][]
+                        , span [ style [ ("font-size", "0.8em")
+                                       , ("color", "lightgray")
+                                       ]
+                               ]
+                              [text "cancel"]
+                        ]
+                  ]
 
-        , div [ style [ ("display", "flex")
-                      , ("flex-direction", "column")
-                      , ("flex-grow", "1")
-                      , ("align-self" , "stretch")
-                      ]
-              ]
-              [ editPage_currentKeybindView edtbuf model
-              , textarea [ id "keybindmenu-keyevent-receiver"
-                         , style [("opacity", "0"), ("height", "1px")]
-                         , onKeyDown KeyDown
-                         , onFocusIn KeyEditorFocus
-                         , onFocusOut KeyEditorFocus
-                         , onInput InputText
-                         ] []
-              , case edtbuf.target of
-                    TargetKeys ->
-                        editPage_keypressMessage model
-                    TargetCommand ->
-                        editPage_commandListView model
-                    TargetInsertValue ->
-                        editPage_insertValueMessage model
-                    _ ->
-                        editPage_deleteKeyBindPanel model
-              ]
+            , div [ style [ ("display", "flex")
+                          , ("flex-direction", "column")
+                          , ("flex-grow", "1")
+                          , ("align-self" , "stretch")
+                          ]
+                  ]
+                  [ editPage_currentKeybindView edtbuf model
+                  , textarea [ id "keybindmenu-keyevent-receiver"
+                             , style [("opacity", "0"), ("height", "1px")]
+                             , onKeyDown KeyDown
+                             , onFocusIn KeyEditorFocus
+                             , onFocusOut KeyEditorFocus
+                             , onInput InputText
+                             ] []
+                  , case edtbuf.target of
+                        TargetKeys ->
+                            editPage_keypressMessage model
+                        TargetCommand ->
+                            editPage_commandListView model
+                        TargetInsertValue ->
+                            editPage_insertValueMessage model
+                        _ ->
+                            if isEditModeNew model then
+                                div [] []
+                            else 
+                                editPage_deleteKeyBindPanel model
+                  ]
 
-        ,  div [ class "keybind-next-button"
-              , onClick <| ConfirmAccept
-              ]
-              [ div [style [("text-align","center")]]
-                    [ text ">"
-                    , br [][]
-                    , span [ style [ ("font-size", "0.8em")
-                                   , ("color", "lightgray")
-                                   ]
-                           ]
-                          [text "accept"]
-                    ]
-              ]
-        ]
+            ,  div [ class "keybind-next-button"
+                  , onClick <| ConfirmAccept
+                  ]
+                  [ div [style [("text-align","center")]]
+                        [ text ">"
+                        , br [][]
+                        , span [ style [ ("font-size", "0.8em")
+                                       , ("color", "lightgray")
+                                       ]
+                               ]
+                              [text "accept"]
+                        ]
+                  ]
+            ]
 
 
 editPage_currentKeybindView : EditBuffer -> Model -> Html Msg
@@ -536,7 +568,7 @@ currentKeybindView_cmd edtbuf =
                           , ("flex-direction", "row")
                           , ("align-items", "center")
                           ]
-                  , onClick ClickCmdArea
+                  , onClick SetFocusToCmdSelector
                   ]
                   [ div [class "keybind-edit-command" ] [ fid |> text ] ]
 
@@ -608,10 +640,20 @@ editPage_insertValueMessage model =
 editPage_deleteKeyBindPanel : Model -> Html Msg
 editPage_deleteKeyBindPanel model =
     div [ class "keybindmenu-editsupport" ]
-        [ div [ class "file_input_label"
-              , onClick ConfirmDelete
+        [ div [ style [ ("display", "flex")
+                      , ("flex-direction", "row")
+                      , ("justify-content", "flex-end")
+                      ]
               ]
-              [text "delete"]
+              [ div [ style [ ("border", "1px solid gray")
+                            , ("margin", "1ex")
+                            , ("text-align", "center")
+                            , ("width", "5em")
+                            ]
+                    , onClick ConfirmDelete
+                    ]
+                    [text "Delete"]
+              ]
         ]
 
 
@@ -620,71 +662,60 @@ editPage_deleteKeyBindPanel model =
 
 acceptPageView : List KeyBind.KeyBind -> Model ->  Html Msg
 acceptPageView keybinds model =
-    let
-        kbind2str = (\kb ->
-                         [ if kb.ctrl  then "Ctrl +" else ""
-                         , if kb.alt   then "Alt +"  else ""
-                         , if kb.shift then "Shift +" else ""
-                         , kb.code |> keyCodeToKeyName
-                         , " ⇒ "
-                         , kb.f.id
-                         ] |> String.concat
-                    )
-    in
-        div [ class "keybind-hbox" ]
-            [ div [ class "keybind-prev-button"
-                  , onClick <| EditStart model.currentIdx
-                  ]
-                  [ div [style [("text-align","center")]]
-                        [ text "<"
-                        , br [][]
-                        , span [ style [ ("font-size", "0.8em")
-                                       , ("color", "lightgray")
-                                       ]
-                               ]
-                              [text "return to the edit"]
-                        ]
-                  ]
-            , div [ style [ ("display", "flex")
-                          , ("flex-direction", "column")
-                          , ("flex-grow", "1")
-                          , ("align-self" , "stretch")
-                          , ("align-items", "center")
-                          ]
-                  ]
-                  ( case model.current of
-                        Just edtbuf ->
-                            case edtbuf.editmode of
-                                EditModeNew ->
-                                    (acceptPage_updateFromToView
-                                         Nothing
-                                         (model.current |> Maybe.andThen ((.keybind) >> Just))
-                                    ) ++
-                                    (acceptPage_confirmMessage "Are you sure you want to create this keybind?"
-                                    ) ++
-                                    (acceptPage_acceptButton "Create!")
+    div [ class "keybind-hbox" ]
+        [ div [ class "keybind-prev-button"
+              , onClick <| BackToEdit
+              ]
+              [ div [style [("text-align","center")]]
+                    [ text "<"
+                    , br [][]
+                    , span [ style [ ("font-size", "0.8em")
+                                   , ("color", "lightgray")
+                                   ]
+                           ]
+                          [text "return to the edit"]
+                    ]
+              ]
+        , div [ style [ ("display", "flex")
+                      , ("flex-direction", "column")
+                      , ("flex-grow", "1")
+                      , ("align-self" , "stretch")
+                      , ("align-items", "center")
+                      ]
+              ]
+              ( case model.current of
+                    Just edtbuf ->
+                        case edtbuf.editmode of
+                            EditModeNew ->
+                                (acceptPage_updateFromToView
+                                     Nothing
+                                     (model.current |> Maybe.andThen ((.keybind) >> Just))
+                                ) ++
+                                (acceptPage_confirmMessage "Are you sure you want to create this keybind?"
+                                ) ++
+                                (acceptPage_acceptButton "Create!")
 
-                                EditModeUpdate ->
-                                    (acceptPage_updateFromToView
-                                         (keybinds |> List.drop model.currentIdx |> List.head)
-                                         (model.current |> Maybe.andThen ((.keybind) >> Just))
-                                    ) ++
-                                    (acceptPage_confirmMessage "Are you sure you want to update this keybind?"
-                                    ) ++
-                                    (acceptPage_acceptButton "Update!")
+                            EditModeUpdate ->
+                                (acceptPage_updateFromToView
+                                     (keybinds |> List.drop model.currentIdx |> List.head)
+                                     (model.current |> Maybe.andThen ((.keybind) >> Just))
+                                ) ++
+                                (acceptPage_confirmMessage "Are you sure you want to update this keybind?"
+                                ) ++
+                                (acceptPage_acceptButton "Update!")
 
-                                EditModeDelete ->
-                                    (acceptPage_updateFromToView
-                                         (keybinds |> List.drop model.currentIdx |> List.head)
-                                         Nothing
-                                    ) ++
-                                    (acceptPage_confirmMessage "Are you sure you want to delete this keybind?"
-                                    ) ++
-                                    (acceptPage_acceptButton "Delete!")
-                        Nothing ->
-                            []
-                  )
-            ]
+                            EditModeDelete ->
+                                (acceptPage_updateFromToView
+                                     (keybinds |> List.drop model.currentIdx |> List.head)
+                                     Nothing
+                                ) ++
+                                (acceptPage_confirmMessage "Are you sure you want to delete this keybind?"
+                                ) ++
+                                (acceptPage_acceptButton "Delete!")
+                    Nothing ->
+                        []
+              )
+        ]
 
 
 acceptPage_updateFromToView : Maybe KeyBind.KeyBind -> Maybe KeyBind.KeyBind -> List (Html Msg)
@@ -696,7 +727,7 @@ acceptPage_updateFromToView from to =
                          , if kb.shift then "Shift +" else ""
                          , kb.code |> keyCodeToKeyName
                          , " ⇒ "
-                         , kb.f.id
+                         , kb.f.id |> stringEscape
                          ] |> String.concat |> Just
                     ) >> Maybe.withDefault "(Nothing)"
     in
@@ -706,7 +737,7 @@ acceptPage_updateFromToView from to =
                       ]
               ]
               [ text "Old: "
-              , span [ style [("color", "lightgray")] ]
+              , span [ style [("color", "tomato")] ]
                      [ from |> kbind2str |> text ]
               ]
 
@@ -735,7 +766,7 @@ acceptPage_confirmMessage msg =
 acceptPage_acceptButton : String -> List (Html Msg)
 acceptPage_acceptButton label =
     [ div [ class "file_input_label"
-          , onClick EditAccept
+          , onClick EditComplete
           ]
           [text label]
     ]
