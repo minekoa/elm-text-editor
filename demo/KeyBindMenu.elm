@@ -36,13 +36,14 @@ type SubMenu
 type KeybindMainsPage
     = ListPage
     | EditPage
-
+    | AcceptPage
 
 type Msg
     = SelectSubMenu SubMenu
     | SelectKeyBind Int
     | EditStart Int (Maybe KeyBind.KeyBind)
     | EditCancel
+    | ConfirmAccept
     | EditAccept
     | SetFocusToKeyEditor
     | KeyEditorFocus Bool
@@ -108,6 +109,15 @@ update msg keybinds model =
                   | selectedSubMenu = KeybindMain
                   , mainsPage = ListPage
                   , current = Nothing
+              }
+            , Cmd.none
+            )
+
+        ConfirmAccept ->
+            ( keybinds
+            , { model
+                  | selectedSubMenu = KeybindMain
+                  , mainsPage = AcceptPage
               }
             , Cmd.none
             )
@@ -178,8 +188,9 @@ menuItemsView model =
                          _            -> "menu-item"
           ]
           [ span [] [ ( case model.mainsPage of
-                            ListPage -> "Keybinds"
-                            EditPage -> "Keybinds (Editing)"
+                            ListPage   -> "Keybinds"
+                            EditPage   -> "Keybinds (Editing)"
+                            AcceptPage -> "Keybinds (Accept?)"
                       ) |> text
                     ]
           ]
@@ -199,6 +210,9 @@ menuPalette keybinds model =
                     div [class "menu-palette"] [ listPageView keybinds model ]
                 EditPage -> 
                     div [class "menu-palette"] [ editPageView model ]
+                AcceptPage ->
+                    div [class "menu-palette"] [ acceptPageView keybinds model ]
+
         InitKeybind -> 
             div [class "menu-palette"] [ initView keybinds ]
 
@@ -277,13 +291,15 @@ editPageView model =
                                  ] []
                       , if model.cmdselectorFocus then
                             commandListView model
+                        else if model.keyeditorFocus then
+                            keypressMessage model
                         else
                             div [] []
                       ]
               Nothing ->
                   div [] []
         ,  div [ class "keybind-next-button"
-              , onClick <| EditAccept
+              , onClick <| ConfirmAccept
               ]
               [ div [style [("text-align","center")]]
                     [ text ">"
@@ -364,9 +380,9 @@ commandListView model =
                   , EditorCmds.paste
                   ]
     in
-        div [ class "keybindmenu-cmdlist" ]
+        div [ class "keybindmenu-editsupport" ]
             [ text "Select edit command"
-            , div [ class "keybindmenu-cmdlist-inner" ]
+            , div [ class "keybindmenu-cmdlist" ]
                 (List.map (\cmd -> div [ class <|
                                              if (model.current |> Maybe.andThen (\c -> c.f.id == cmd.id |> Just) |> Maybe.withDefault False)
                                              then "keybindmenu-cmditem-selected"
@@ -378,6 +394,85 @@ commandListView model =
                 )
             ]
 
+
+keypressMessage : Model -> Html Msg
+keypressMessage model =
+    div [ class "keybindmenu-editsupport" ]
+        [ text "Please press the key(s) you want to set" ]
+
+
+
+
+acceptPageView : List KeyBind.KeyBind -> Model ->  Html Msg
+acceptPageView keybinds model =
+    let
+        kbind2str = (\kb ->
+                         [ if kb.ctrl  then "Ctrl +" else ""
+                         , if kb.alt   then "Alt +"  else ""
+                         , if kb.shift then "Shift +" else ""
+                         , kb.code |> keyCodeToKeyName
+                         , " ⇒ "
+                         , kb.f.id
+                         ] |> String.concat
+                    )
+    in
+        div [ class "keybind-hbox" ]
+            [ div [ class "keybind-prev-button"
+                  , onClick <| EditStart model.currentIdx model.current
+                  ]
+                  [ div [style [("text-align","center")]]
+                        [ text "<"
+                        , br [][]
+                        , span [ style [ ("font-size", "0.8em")
+                                       , ("color", "lightgray")
+                                       ]
+                               ]
+                              [text "return to the edit"]
+                        ]
+                  ]
+            , div [ style [ ("display", "flex")
+                          , ("flex-direction", "column")
+                          , ("flex-grow", "1")
+                          , ("align-self" , "stretch")
+                          , ("align-items", "center")
+                          ]
+                  ]
+                  [ div [ style [ ("font-size", "1.2em")
+                                , ("color", "silver")
+                                , ("padding-top", "1em")
+                                ]
+                        ]
+                        [ text "Old: "
+                        , span [ style [("color", "lightgray")] ]
+                               [ case keybinds |> List.drop model.currentIdx |> List.head of
+                                     Just kb -> kbind2str kb |> text
+                                     Nothing -> "" |> text
+                               ]
+                        ]
+                  , div [ style [ ("font-size", "2em") ] ]
+                        [ text "↓" ]
+                  , div [ style [ ("font-size", "1.2em")
+                                , ("color", "silver")
+                                ]
+                        ]
+                        [ text "New: "
+                        , span [ style [("color", "royalblue")] ]
+                               [ case model.current of
+                                     Just kb -> kbind2str kb |> text
+                                     Nothing -> "" |> text
+                               ]
+                        ]
+                  , div [ style [ ("font-size", "1.2em")
+                                , ("padding", "1.5em 0 1em 0")
+                                ]
+                        ]
+                        [ text "Are you sure you want to update this keybind?" ]
+                  , div [ class "file_input_label"
+                        , onClick EditAccept
+                        ]
+                        [text "OK"]
+                  ]
+            ]
 
 
 

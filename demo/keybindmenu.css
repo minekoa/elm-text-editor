@@ -163,7 +163,7 @@
 .keybindmenu-cmdselector-disfocus {
 }
 
-.keybindmenu-cmdlist {
+.keybindmenu-editsupport {
     padding: 1em 5px 0 3em;
 
     flex-grow: 1;
@@ -171,7 +171,7 @@
     width: calc( 100% - 5px - 3em );
 }
 
-.keybindmenu-cmdlist-inner {
+.keybindmenu-cmdlist {
     max-height: 7em;
     overflow: auto;
 
