@@ -13,6 +13,13 @@
     flex-direction: row;
 }
 
+.keybind-vbox {
+    height: 100%;
+
+    display: flex;
+    flex-direction: column;
+}
+
 .keybind-item-active {
     background-color: royalBlue;/*lightskyblue;*/
     color: snow;

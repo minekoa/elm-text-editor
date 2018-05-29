@@ -405,32 +405,41 @@ listPageView keybinds model =
     div [ class "keybind-hbox" ]
         [ div [ class "debugger-submenu-title" ]
               [ div [] [text "keybinds:"]
-              , div [ onClick AddKeyBind
-                    , style [ ("border", "1px solid gray")
---                            , ("opacity", if (editorModel.event_log == Nothing) then "0.5" else "1.0" )
-                            , ("margin", "1ex")
-                            , ("text-align", "center")
-                            ]
-                    ]
-                    [text <| "Add" ]
               ]
 
         , div [ class "keybind-item-list"] <|
               (List.indexedMap (keybindView model.currentIdx) keybinds)
 
-        , div [ class "keybind-next-button"
-              , onClick <| EditStart model.currentIdx
-              ]
-            [ div [style [("text-align","center")]]
-                  [ text ">"
-                  , br [][]
-                  , span [ style [ ("font-size", "0.8em")
-                                 , ("color", "lightgray")
+        , div [ class "keybind-vbox" ]
+              [ div [ class "keybind-next-button"
+                    , style [ ("flex-grow", "4") ]
+                    , onClick <| EditStart model.currentIdx
+                    ]
+                    [ div [style [("text-align","center")]]
+                          [ text ">"
+                          , br [][]
+                          , span [ style [ ("font-size", "0.8em")
+                                         , ("color", "lightgray")
+                                         ]
                                  ]
-                         ]
-                         [text "edit"]
-                  ]
-            ]
+                                [text "edit"]
+                          ]
+                    ]
+              , div [ class "keybind-next-button"
+                    , style [ ("flex-grow", "1") ]
+                    , onClick AddKeyBind
+                    ]
+                    [ div [style [("text-align","center")]]
+                          [ text ">"
+                          , br [][]
+                          , span [ style [ ("font-size", "0.8em")
+                                         , ("color", "lightgray")
+                                         ]
+                                 ]
+                                [text "add"]
+                          ]
+                    ]
+              ]
         ]
 
 
@@ -500,27 +509,45 @@ editPageView edtbuf model =
                         TargetInsertValue ->
                             editPage_insertValueMessage model
                         _ ->
-                            if isEditModeNew model then
-                                div [] []
-                            else 
-                                editPage_deleteKeyBindPanel model
+                            div [] []
                   ]
 
-            ,  div [ class "keybind-next-button"
-                  , onClick <| ConfirmAccept
-                  ]
-                  [ div [style [("text-align","center")]]
-                        [ text ">"
-                        , br [][]
-                        , span [ style [ ("font-size", "0.8em")
-                                       , ("color", "lightgray")
-                                       ]
-                               ]
-                              [text "accept"]
+            , div [ class "keybind-vbox" ] <|
+                  [ div [ class "keybind-next-button"
+                        , style [ ("flex-grow", "4") ]
+                        , onClick <| ConfirmAccept
                         ]
-                  ]
+                        [ div [style [("text-align","center")]]
+                              [ text ">"
+                              , br [][]
+                              , span [ style [ ("font-size", "0.8em")
+                                             , ("color", "lightgray")
+                                             ]
+                                     ]
+                                    [text "accept"]
+                              ]
+                        ]
+                  ] ++
+                  ( if isEditModeNew model then
+                        []
+                    else
+                        [ div [ class "keybind-next-button"
+                              , style [ ("flex-grow", "1") ]
+                              , onClick <| ConfirmDelete
+                              ]
+                              [ div [style [("text-align","center")]]
+                                    [ text ">"
+                                    , br [][]
+                                    , span [ style [ ("font-size", "0.8em")
+                                                   , ("color", "lightgray")
+                                                   ]
+                                           ]
+                                          [text "delete"]
+                                    ]
+                              ]
+                        ]
+                  )
             ]
-
 
 editPage_currentKeybindView : EditBuffer -> Model -> Html Msg
 editPage_currentKeybindView edtbuf model =
