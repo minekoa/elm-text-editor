@@ -23,13 +23,32 @@ type alias Model =
     { selectedSubMenu : SubMenu
     , mainsPage : KeybindMainsPage -- サブメニュー間移動しても残すため
     , currentIdx : Int
-    , current : Maybe KeyBind.KeyBind
-    , currentInsertS : Maybe String
-    , keyeditorFocus : Bool
-    , cmdselectorFocus : Bool
+    , current : Maybe EditBuffer
     }
 
+type alias EditBuffer =
+    { keybind : KeyBind.KeyBind
+    , target : EditTarget
+    , insertS : Maybe String
+    }
 
+type EditTarget
+    = TargetKeys
+    | TargetCommand
+    | TargetInsertValue
+    | TargetNone
+
+initEditBuffer : KeyBind.KeyBind -> EditBuffer
+initEditBuffer kbind =
+    let
+        s = if (kbind.f.id |> String.left (String.length "insert")) == "insert"
+            then (kbind.f.id |> String.dropLeft (String.length "insert" |> flip (+) 1) |> Just)
+            else Nothing
+    in
+        { keybind =  kbind
+        , target  = TargetNone
+        , insertS = s
+        }
 
 type SubMenu
     = KeybindMain
@@ -43,13 +62,14 @@ type KeybindMainsPage
 type Msg
     = SelectSubMenu SubMenu
     | SelectKeyBind Int
-    | EditStart Int (Maybe KeyBind.KeyBind)
+    | EditStart Int
     | EditCancel
     | ConfirmAccept
     | EditAccept
     | SetFocusToKeyEditor
     | KeyEditorFocus Bool
     | KeyDown KeyboardEvent
+    | InputText String
     | ClickCmdArea
     | SelectCommand EditorCmds.Command
     | SetFocusToCmdInsertValue
@@ -60,9 +80,6 @@ init =
     , mainsPage = ListPage
     , currentIdx = 0
     , current = Nothing
-    , currentInsertS = Nothing
-    , keyeditorFocus = False
-    , cmdselectorFocus = False
     }
 
 update : Msg -> List KeyBind.KeyBind -> Model -> (List KeyBind.KeyBind, Model, Cmd Msg)
@@ -80,40 +97,73 @@ update msg keybinds model =
             , { model | currentIdx = n }
             , Cmd.none
             )
-        EditStart n maybe_keybind ->
+        EditStart n ->
             ( keybinds
             , { model
                   | selectedSubMenu = KeybindMain
                   , mainsPage = EditPage
                   , currentIdx = n
-                  , current = maybe_keybind
-                  , currentInsertS = Nothing
+                  , current    = keybinds |> List.drop n |> List.head |> Maybe.andThen (initEditBuffer >> Just)
               }
             , Cmd.none
             )
+
         KeyDown e ->
             case model.current of
-                Just keybind ->
-                    ( keybinds
-                    , { model | current = Just { keybind
-                                                   | ctrl = e.ctrlKey
-                                                   , alt = e.altKey
-                                                   , shift = e.shiftKey
-                                                   , code = e.keyCode
-                                               }
-                      }
-                    , Cmd.none
-                    )
+                Just editbuffer ->
+                    case editbuffer.target of
+                        TargetKeys ->
+                            let
+                                kbind = editbuffer.keybind
+                                new_kbind = { kbind
+                                                | ctrl = e.ctrlKey
+                                                , alt = e.altKey
+                                                , shift = e.shiftKey
+                                                , code = e.keyCode
+                                            }
+                            in
+                                ( keybinds
+                                , { model
+                                      | current = Just { editbuffer | keybind = new_kbind }
+                                  }
+                                , Cmd.none
+                                )
+                        _ ->
+                            ( keybinds, model, Cmd.none )
                 Nothing ->
                     ( keybinds, model, Cmd.none )
                 
+        InputText s ->
+            case model.current of
+                Just editbuffer ->
+                    case editbuffer.target of
+                        TargetInsertValue ->
+                            let
+                                kbind = editbuffer.keybind
+                                new_kbind = { kbind
+                                                | f = EditorCmds.insert s
+                                            }
+                            in
+                                ( keybinds
+                                , { model
+                                      | current = Just { editbuffer
+                                                           | keybind = new_kbind
+                                                           , insertS = Just s
+                                                       }
+                                  }
+                                , Cmd.none
+                                )
+                        _ ->
+                            ( keybinds, model, Cmd.none )
+                Nothing ->
+                    ( keybinds, model, Cmd.none )
+
         EditCancel ->
             ( keybinds
             , { model
                   | selectedSubMenu = KeybindMain
                   , mainsPage = ListPage
                   , current = Nothing
-                  , currentInsertS = Nothing
               }
             , Cmd.none
             )
@@ -129,63 +179,87 @@ update msg keybinds model =
 
         EditAccept ->
             ( case model.current of
-                  Just newbind ->
-                      (List.take model.currentIdx keybinds) ++ (newbind :: (List.drop (model.currentIdx + 1) keybinds))
+                  Just editbuf ->
+                      (List.take model.currentIdx keybinds) ++ (editbuf.keybind :: (List.drop (model.currentIdx + 1) keybinds))
                   Nothing ->
                       keybinds
             , { model
                   | selectedSubMenu = KeybindMain
                   , mainsPage = ListPage
                   , current = Nothing
-                  , currentInsertS = Nothing
               }
             , Cmd.none
             )
 
         SetFocusToKeyEditor ->
             ( keybinds
-            , { model | cmdselectorFocus = False }
+            , { model | current = model.current
+                                      |> Maybe.andThen (\ editbuf -> { editbuf | target = TargetKeys } |> Just )
+              }
             , doFocus
             )
 
-        KeyEditorFocus b ->
+        KeyEditorFocus True ->
             ( keybinds
-            , { model | keyeditorFocus = b , cmdselectorFocus = False}
+            , model
+            , Cmd.none
+            )
+
+        KeyEditorFocus False ->
+            ( keybinds
+            , { model | current = model.current
+                                      |> Maybe.andThen (\ editbuf ->
+                                                            { editbuf | target = case editbuf.target of
+                                                                                     TargetKeys        -> TargetNone
+                                                                                     TargetInsertValue -> TargetNone
+                                                                                     otherwise         -> otherwise
+                                                            } |> Just )
+              }
             , Cmd.none
             )
 
         ClickCmdArea ->
             ( keybinds
-            , { model
-                  | cmdselectorFocus = True
-                  , keyeditorFocus = False -- ブラウザからfocusout通知がくるので、不要だが、一瞬状態遷移が見えてしまうので。
+            , { model | current = model.current
+                                      |> Maybe.andThen (\ editbuf -> { editbuf | target = TargetCommand } |> Just )
               }
             , Cmd.none
             )
 
         SelectCommand edtcmd ->
-            case model.current of
-                Just keybind ->
-                    ( keybinds
-                    , { model
-                          | current = Just { keybind
-                                           | f = edtcmd
-                                           }
-                          , currentInsertS = if (edtcmd.id |> String.left 6) == "insert" then (edtcmd.id |> String.dropLeft 7 |> Just) else Nothing
-                      }
-                    , Cmd.none
-                    )
-                Nothing ->
-                    ( keybinds, model, Cmd.none )
+            ( keybinds
+            , { model | current = model.current
+                                      |> Maybe.andThen
+                                          (\ editbuf ->
+                                               let
+                                                   kbind   = editbuf.keybind
+                                                   newbind = { kbind | f = edtcmd }
+                                                   sval    = if (edtcmd.id |> String.left (String.length "insert")) == "insert"
+                                                             then edtcmd.id |> String.dropLeft (String.length "insert" |> flip (+) 1) |> Just
+                                                             else Nothing
+                                               in
+                                                   { editbuf
+                                                       | keybind = newbind
+                                                       , insertS = sval
+                                                   }
+                                                       |> Just
+                                          )
+              }
+            , Cmd.none
+            )
 
         SetFocusToCmdInsertValue ->
             ( keybinds
-            , model
+            , { model | current = model.current
+                                      |> Maybe.andThen (\ editbuf -> { editbuf | target = TargetInsertValue } |> Just )
+              }
             , doFocus
             )
-            
 
 
+------------------------------------------------------------
+-- view
+------------------------------------------------------------
 
 view : List KeyBind.KeyBind -> Model -> Html Msg
 view keybinds model =
@@ -226,7 +300,11 @@ menuPalette keybinds model =
                 ListPage ->
                     div [class "menu-palette"] [ listPageView keybinds model ]
                 EditPage -> 
-                    div [class "menu-palette"] [ editPageView model ]
+                    case model.current of
+                        Just editbuf ->
+                            div [class "menu-palette"] [ editPageView editbuf model ]
+                        Nothing ->
+                            div [] []
                 AcceptPage ->
                     div [class "menu-palette"] [ acceptPageView keybinds model ]
 
@@ -239,7 +317,7 @@ listPageView keybinds model =
         [ div [ class "keybind-item-list"] <|
               (List.indexedMap (keybindView model.currentIdx) keybinds) ++ [div [] [text "Add"]]
         , div [ class "keybind-next-button"
-              , onClick <| EditStart model.currentIdx (keybinds |> List.drop model.currentIdx |> List.head )
+              , onClick <| EditStart model.currentIdx
               ]
             [ div [style [("text-align","center")]]
                   [ text ">"
@@ -275,8 +353,8 @@ keybindView selected_idx idx keybind =
 
 
 
-editPageView : Model ->  Html Msg
-editPageView model =
+editPageView : EditBuffer -> Model ->  Html Msg
+editPageView edtbuf model =
     div [ class "keybind-hbox" ]
         [ div [ class "keybind-prev-button"
               , onClick <| EditCancel
@@ -291,30 +369,32 @@ editPageView model =
                           [text "cancel"]
                     ]
               ]
-        , case model.current of
-              Just keybind ->
-                  div [ style [ ("display", "flex")
-                              , ("flex-direction", "column")
-                              , ("flex-grow", "1")
-                              , ("align-self" , "stretch")
-                              ]
+
+        , div [ style [ ("display", "flex")
+                      , ("flex-direction", "column")
+                      , ("flex-grow", "1")
+                      , ("align-self" , "stretch")
                       ]
-                      [ currentKeybindView keybind model
-                      , textarea [ id "keybindmenu-keyevent-receiver"
-                                 , style [("opacity", "0"), ("height", "1px")]
-                                 , onKeyDown KeyDown
-                                 , onFocusIn KeyEditorFocus
-                                 , onFocusOut KeyEditorFocus
-                                 ] []
-                      , if model.cmdselectorFocus then
-                            commandListView model
-                        else if model.keyeditorFocus then
-                            keypressMessage model
-                        else
-                            div [] []
-                      ]
-              Nothing ->
-                  div [] []
+              ]
+              [ currentKeybindView edtbuf model
+              , textarea [ id "keybindmenu-keyevent-receiver"
+                         , style [("opacity", "0"), ("height", "1px")]
+                         , onKeyDown KeyDown
+                         , onFocusIn KeyEditorFocus
+                         , onFocusOut KeyEditorFocus
+                         , onInput InputText
+                         ] []
+              , case edtbuf.target of
+                    TargetKeys ->
+                        keypressMessage model
+                    TargetCommand ->
+                        commandListView model
+                    TargetInsertValue ->
+                        insertValueMessage model
+                    _ ->
+                        div [] []
+              ]
+
         ,  div [ class "keybind-next-button"
               , onClick <| ConfirmAccept
               ]
@@ -331,64 +411,66 @@ editPageView model =
         ]
 
 
-currentKeybindView : KeyBind.KeyBind -> Model -> Html Msg
-currentKeybindView keybind model =
+currentKeybindView : EditBuffer -> Model -> Html Msg
+currentKeybindView edtbuf model =
     div [ style [ ("display", "flex")
                 , ("flex-direction", "row")
                 , ("align-items", "center")
                 ]
         ]
-        (  [ currentKeybindView_keys keybind model.keyeditorFocus
+        (  [ currentKeybindView_keys edtbuf
            , div [style [("font-size","2em")]] [ text "⇒" ]
-           , currentKeybindView_cmd keybind model.currentInsertS  model.cmdselectorFocus
+           , currentKeybindView_cmd edtbuf
            ]
         )
 
 
-currentKeybindView_keys : KeyBind.KeyBind -> Bool -> Html Msg
-currentKeybindView_keys keybind focus =
-    div [ class <| if focus then "keybindmenu-keyeditor-focus" else "keybindmenu-keyeditor-disfocus"
+currentKeybindView_keys : EditBuffer -> Html Msg
+currentKeybindView_keys edtbuf =
+    div [ class <| if edtbuf.target == TargetKeys then "keybindmenu-keyeditor-focus" else "keybindmenu-keyeditor-disfocus"
         , style [ ("display", "flex")
                 , ("flex-direction", "row")
                 , ("align-items", "center")
                 ]
         , onClick SetFocusToKeyEditor
         ]
-        [ div [class <| if keybind.ctrl  then "keybind-edit-mod-enable" else "keybind-edit-mod-disable"] [text "Ctrl"]
+        [ div [class <| if edtbuf.keybind.ctrl  then "keybind-edit-mod-enable" else "keybind-edit-mod-disable"] [text "Ctrl"]
         , div [style [("font-size","2em")]] [ text "+" ]
-        , div [class <| if keybind.alt   then "keybind-edit-mod-enable" else "keybind-edit-mod-disable"] [text "Alt"]
+        , div [class <| if edtbuf.keybind.alt   then "keybind-edit-mod-enable" else "keybind-edit-mod-disable"] [text "Alt"]
         , div [style [("font-size","2em")]] [ text "+" ]
-        , div [class <| if keybind.shift then "keybind-edit-mod-enable" else "keybind-edit-mod-disable"] [text "Shift"]
+        , div [class <| if edtbuf.keybind.shift then "keybind-edit-mod-enable" else "keybind-edit-mod-disable"] [text "Shift"]
         , div [style [("font-size","2em")]] [ text "+" ]
-        , div [class "keybind-edit-keycode"] [keybind.code |> keyCodeToKeyName |> text ]
+        , div [class "keybind-edit-keycode"] [edtbuf.keybind.code |> keyCodeToKeyName |> text ]
         ]
 
-currentKeybindView_cmd : KeyBind.KeyBind -> Maybe String -> Bool -> Html Msg
-currentKeybindView_cmd keybind maybe_insert_val focus =
+currentKeybindView_cmd : EditBuffer -> Html Msg
+currentKeybindView_cmd edtbuf =
     let
-        fid = keybind.f.id |> String.split " " |> List.take 1 |> String.concat
+        fid = edtbuf.keybind.f.id |> String.split " " |> List.take 1 |> String.concat
     in
-        div [] 
-            [ div [ class <| if focus then "keybindmenu-cmdselector-focus" else "keybindmenu-cmdselector-disfocus"
+        div [ style [ ("display", "flex")
+                    , ("flex-direction", "row")
+                    ]
+            ] 
+            [ div [ class <| if edtbuf.target == TargetCommand then "keybindmenu-cmdselector-focus" else "keybindmenu-cmdselector-disfocus"
                   , style [ ("display", "flex")
                           , ("flex-direction", "row")
                           , ("align-items", "center")
                           ]
                   , onClick ClickCmdArea
                   ]
-                  [ div [class "keybind-edit-command" ] [fid |> text ] ]
+                  [ div [class "keybind-edit-command" ] [ fid |> text ] ]
 
-            , case maybe_insert_val of
+            , case edtbuf.insertS of
                   Just insert_val ->
-                      div [ class <| if focus then "keybindmenu-insertcmd-input-focus" else "keybindmenu-insertcmd-input-focus"
+                      div [ class <| if edtbuf.target == TargetInsertValue then "keybindmenu-insertcmd-input-focus" else "keybindmenu-insertcmd-input-disfocus"
                           , onClick SetFocusToCmdInsertValue
                           ]
-                          [ insert_val |> stringEscape |> text ]
+                          [ div [class "keybind-edit-insert-value"] [ insert_val |> stringEscape |> text ] ]
 
                   Nothing ->
                       text ""
             ]
-
 
 
 commandListView : Model -> Html Msg
@@ -423,7 +505,7 @@ commandListView model =
             [ text "Select edit command"
             , div [ class "keybindmenu-cmdlist" ]
                 (List.map (\cmd -> div [ class <|
-                                             if (model.current |> Maybe.andThen (\c -> c.f.id == cmd.id |> Just) |> Maybe.withDefault False)
+                                             if (model.current |> Maybe.andThen (\c -> c.keybind.f.id == cmd.id |> Just) |> Maybe.withDefault False)
                                              then "keybindmenu-cmditem-selected"
                                              else "keybindmenu-cmditem"
                                        , onClick <| SelectCommand cmd
@@ -439,6 +521,10 @@ keypressMessage model =
     div [ class "keybindmenu-editsupport" ]
         [ text "Please press the key(s) you want to set" ]
 
+insertValueMessage : Model -> Html Msg
+insertValueMessage model =
+    div [ class "keybindmenu-editsupport" ]
+        [ text "Please input the string you want to set" ]
 
 
 -- Accept(Confirm)Page
@@ -458,7 +544,7 @@ acceptPageView keybinds model =
     in
         div [ class "keybind-hbox" ]
             [ div [ class "keybind-prev-button"
-                  , onClick <| EditStart model.currentIdx model.current
+                  , onClick <| EditStart model.currentIdx
                   ]
                   [ div [style [("text-align","center")]]
                         [ text "<"
@@ -498,7 +584,7 @@ acceptPageView keybinds model =
                         [ text "New: "
                         , span [ style [("color", "royalblue")] ]
                                [ case model.current of
-                                     Just kb -> kbind2str kb |> text
+                                     Just edtbuf -> kbind2str edtbuf.keybind |> text
                                      Nothing -> "" |> text
                                ]
                         ]
