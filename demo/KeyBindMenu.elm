@@ -3,14 +3,15 @@ module KeyBindMenu exposing
     , Msg
     , init
     , update
+    , subscriptions
     , view
     )
 
 import Html exposing (..)
 import Html.Attributes exposing (..)
 import Html.Events exposing (..)
-import Char
-import Json.Decode as Json
+import Json.Encode
+import Json.Decode
 import Dom
 import Task
 
@@ -18,6 +19,9 @@ import TextEditor.KeyBind as KeyBind
 import TextEditor.Core as Core
 import TextEditor.Core.Commands as CoreCommands
 import TextEditor.Commands as EditorCmds
+
+import Ports.WebStrage as WebStrage
+
 
 type alias Model =
     { selectedSubMenu : SubMenu
@@ -98,7 +102,8 @@ type KeybindMainsPage
     | AcceptPage
 
 type Msg
-    = SelectSubMenu SubMenu
+    = LoadSetting (String, Maybe String)
+    | SelectSubMenu SubMenu
     | SelectKeyBind Int
     | EditStart Int
     | BackToEdit
@@ -115,17 +120,39 @@ type Msg
     | SelectCommand EditorCmds.Command
     | AddKeyBind
 
-init : Model
+
+init: (Model , Cmd Msg)
 init =
-    { selectedSubMenu = KeybindMain
-    , mainsPage = ListPage
-    , currentIdx = 0
-    , current = Nothing
-    }
+    ( { selectedSubMenu = KeybindMain
+      , mainsPage = ListPage
+      , currentIdx = 0
+      , current = Nothing
+      }
+    , WebStrage.localStrage_getItem "keybinds"
+    )
+
+
+------------------------------------------------------------
+-- update
+------------------------------------------------------------
 
 update : Msg -> List KeyBind.KeyBind -> Model -> (List KeyBind.KeyBind, Model, Cmd Msg)
 update msg keybinds model =
     case msg of
+        LoadSetting ("keybinds", maybe_value) ->
+            ( maybe_value
+                  |> Result.fromMaybe "value is nothing"
+                  |> Result.andThen (Json.Decode.decodeString decodeKeyBinds)
+                  |> Result.withDefault keybinds
+            , model
+            , Cmd.none
+            )
+        LoadSetting _ ->
+            ( keybinds
+            , model
+            , Cmd.none
+            )
+
         SelectSubMenu submenu ->
             ( keybinds
             , { model
@@ -201,24 +228,29 @@ update msg keybinds model =
             )
 
         EditComplete ->
-            ( case model.current of
-                  Just editbuf ->
-                      case editbuf.editmode of
-                          EditModeNew ->
-                              (List.take model.currentIdx keybinds) ++ (editbuf.keybind :: (List.drop (model.currentIdx) keybinds))
-                          EditModeUpdate ->
-                              (List.take model.currentIdx keybinds) ++ (editbuf.keybind :: (List.drop (model.currentIdx + 1) keybinds))
-                          EditModeDelete ->
-                              (List.take model.currentIdx keybinds) ++ (List.drop (model.currentIdx + 1) keybinds)
-                  Nothing ->
-                      keybinds
-            , { model
-                  | selectedSubMenu = KeybindMain
-                  , mainsPage = ListPage
-                  , current = Nothing
-              }
-            , Cmd.none
+            let
+                nkeybind = case model.current of
+                               Just editbuf ->
+                                   case editbuf.editmode of
+                                       EditModeNew ->
+                                           (List.take model.currentIdx keybinds) ++ (editbuf.keybind :: (List.drop (model.currentIdx) keybinds))
+                                       EditModeUpdate ->
+                                           (List.take model.currentIdx keybinds) ++ (editbuf.keybind :: (List.drop (model.currentIdx + 1) keybinds))
+                                       EditModeDelete ->
+                                           (List.take model.currentIdx keybinds) ++ (List.drop (model.currentIdx + 1) keybinds)
+                               Nothing ->
+                                   keybinds
+            in
+                ( nkeybind
+                , { model
+                      | selectedSubMenu = KeybindMain
+                      , mainsPage = ListPage
+                      , current = Nothing
+                  }
+                , WebStrage.localStrage_setItem ("keybinds", encodeKeyBinds nkeybind)
             )
+
+
 
         SetFocusToKeyEditor ->
             ( keybinds
@@ -345,6 +377,14 @@ update msg keybinds model =
             , Cmd.none
             )
 
+------------------------------------------------------------
+-- Subscriptions
+------------------------------------------------------------
+
+subscriptions : Model -> Sub Msg
+subscriptions model =
+    Sub.batch [ WebStrage.localStrage_getItemEnded LoadSetting
+              ]
 
 ------------------------------------------------------------
 -- view
@@ -829,20 +869,20 @@ keyboarEvent_toString e =
         , toString e.keyCode
         ]
 
-decodeKeyboardEvent : Json.Decoder KeyboardEvent
+decodeKeyboardEvent : Json.Decode.Decoder KeyboardEvent
 decodeKeyboardEvent =
-    Json.map6 KeyboardEvent
-        (Json.field "altKey" Json.bool)
-        (Json.field "ctrlKey" Json.bool)
-        (Json.field "keyCode" Json.int)
-        (Json.field "metaKey" Json.bool)
-        (Json.field "repeat" Json.bool)
-        (Json.field "shiftKey" Json.bool)    
+    Json.Decode.map6 KeyboardEvent
+        (Json.Decode.field "altKey" Json.Decode.bool)
+        (Json.Decode.field "ctrlKey" Json.Decode.bool)
+        (Json.Decode.field "keyCode" Json.Decode.int)
+        (Json.Decode.field "metaKey" Json.Decode.bool)
+        (Json.Decode.field "repeat" Json.Decode.bool)
+        (Json.Decode.field "shiftKey" Json.Decode.bool)    
 
                 
 onKeyDown : (KeyboardEvent -> msg) -> Attribute msg
 onKeyDown tagger =
-    on "keydown" (Json.map tagger decodeKeyboardEvent)
+    on "keydown" (Json.Decode.map tagger decodeKeyboardEvent)
 
 ------------------------------------------------------------
 -- focus
@@ -855,12 +895,12 @@ doFocus  =
 onFocusIn : (Bool -> msg) -> Attribute msg
 onFocusIn tagger =
     -- ほしいプロパティはないのでとりあえずダミーで bubbles を
-    on "focusin" (Json.map (\dmy -> tagger True) (Json.field "bubbles" Json.bool))
+    on "focusin" (Json.Decode.map (\dmy -> tagger True) (Json.Decode.field "bubbles" Json.Decode.bool))
 
 onFocusOut : (Bool -> msg) -> Attribute msg
 onFocusOut tagger =
     -- ほしいプロパティはないのでとりあえずダミーで bubbles を
-    on "focusout" (Json.map (\dmy -> tagger False) (Json.field "bubbles" Json.bool))
+    on "focusout" (Json.Decode.map (\dmy -> tagger False) (Json.Decode.field "bubbles" Json.Decode.bool))
 
 ------------------------------------------------------------
 -- string tools
@@ -993,4 +1033,79 @@ stringEscape str =
         |> String.concat
             
 
-    
+
+fidToEditCmd : String -> Maybe EditorCmds.Command
+fidToEditCmd str =
+    let 
+        cmdlist = [ EditorCmds.moveForward
+                  , EditorCmds.moveBackward
+                  , EditorCmds.movePrevios
+                  , EditorCmds.moveNext
+                  , EditorCmds.moveBOL
+                  , EditorCmds.moveEOL
+                  , EditorCmds.selectForward
+                  , EditorCmds.selectBackward
+                  , EditorCmds.selectPrevios
+                  , EditorCmds.selectNext
+                  , EditorCmds.markSet
+                  , EditorCmds.markClear
+                  , EditorCmds.markFlip
+                  , EditorCmds.gotoMark
+                  , EditorCmds.backspace
+                  , EditorCmds.delete
+                  , EditorCmds.undo
+                  , EditorCmds.copy
+                  , EditorCmds.cut
+                  , EditorCmds.paste
+                  ]
+    in
+        if (String.left 6 str) == "insert" then
+            Just (EditorCmds.insert (String.dropLeft 7 str))
+        else
+            cmdlist 
+                |> List.filter (\c -> c.id == str)
+                |> List.head
+
+
+decodeEditCmd : Json.Decode.Decoder EditorCmds.Command
+decodeEditCmd =
+    Json.Decode.string
+        |> Json.Decode.andThen (fidToEditCmd >> (\v -> case v of
+                                                           Just v  -> Json.Decode.succeed v
+                                                           Nothing -> Json.Decode.fail "invalid f.id"
+                                                )
+                               )
+
+decodeKeyBinds : Json.Decode.Decoder (List KeyBind.KeyBind)
+decodeKeyBinds =
+    Json.Decode.list decodeKeyBind
+
+decodeKeyBind : Json.Decode.Decoder KeyBind.KeyBind
+decodeKeyBind =
+    Json.Decode.map5
+        KeyBind.KeyBind
+            (Json.Decode.field "ctrl"  Json.Decode.bool)
+            (Json.Decode.field "alt"   Json.Decode.bool)
+            (Json.Decode.field "shift" Json.Decode.bool)
+            (Json.Decode.field "code"  Json.Decode.int)
+            (Json.Decode.field "f"     decodeEditCmd )
+
+
+encodeKeyBinds : List KeyBind.KeyBind-> String
+encodeKeyBinds keybinds =
+    keybinds
+        |> List.map encodeKeyBind
+        |> Json.Encode.list 
+        |> Json.Encode.encode 0
+
+encodeKeyBind : KeyBind.KeyBind -> Json.Encode.Value
+encodeKeyBind keybind =
+    Json.Encode.object 
+        [ ("ctrl" , keybind.ctrl |> Json.Encode.bool)
+        , ("alt"  , keybind.alt  |> Json.Encode.bool)
+        , ("shift", keybind.shift |> Json.Encode.bool)
+        , ("code" , keybind.code |> Json.Encode.int)
+        , ("f"    , keybind.f.id |> Json.Encode.string)
+        ]
+
+
