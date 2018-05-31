@@ -16263,12 +16263,6 @@ var _minekoa$elm_text_editor$KeyBindMenu$keyboarEvent_toString = function (e) {
 			}
 		});
 };
-var _minekoa$elm_text_editor$KeyBindMenu$initView = function (editorModel) {
-	return A2(
-		_elm_lang$html$Html$div,
-		{ctor: '[]'},
-		{ctor: '[]'});
-};
 var _minekoa$elm_text_editor$KeyBindMenu$acceptPage_confirmMessage = function (msg) {
 	return {
 		ctor: '::',
@@ -16479,13 +16473,18 @@ var _minekoa$elm_text_editor$KeyBindMenu$editPage_keypressMessage = function (mo
 			_1: {ctor: '[]'}
 		});
 };
-var _minekoa$elm_text_editor$KeyBindMenu$Model = F4(
-	function (a, b, c, d) {
-		return {selectedSubMenu: a, mainsPage: b, currentIdx: c, current: d};
+var _minekoa$elm_text_editor$KeyBindMenu$initKeybindInitOption = {basic: true, gates: false, emacs: false};
+var _minekoa$elm_text_editor$KeyBindMenu$Model = F5(
+	function (a, b, c, d, e) {
+		return {selectedSubMenu: a, mainsPage: b, currentIdx: c, current: d, initOption: e};
 	});
 var _minekoa$elm_text_editor$KeyBindMenu$EditBuffer = F4(
 	function (a, b, c, d) {
 		return {keybind: a, target: b, insertS: c, editmode: d};
+	});
+var _minekoa$elm_text_editor$KeyBindMenu$KeyBindsInitOption = F3(
+	function (a, b, c) {
+		return {basic: a, gates: b, emacs: c};
 	});
 var _minekoa$elm_text_editor$KeyBindMenu$KeyboardEvent = F6(
 	function (a, b, c, d, e, f) {
@@ -16564,8 +16563,229 @@ var _minekoa$elm_text_editor$KeyBindMenu$EditPage = {ctor: 'EditPage'};
 var _minekoa$elm_text_editor$KeyBindMenu$ListPage = {ctor: 'ListPage'};
 var _minekoa$elm_text_editor$KeyBindMenu$init = {
 	ctor: '_Tuple2',
-	_0: {selectedSubMenu: _minekoa$elm_text_editor$KeyBindMenu$KeybindMain, mainsPage: _minekoa$elm_text_editor$KeyBindMenu$ListPage, currentIdx: 0, current: _elm_lang$core$Maybe$Nothing},
+	_0: {selectedSubMenu: _minekoa$elm_text_editor$KeyBindMenu$KeybindMain, mainsPage: _minekoa$elm_text_editor$KeyBindMenu$ListPage, currentIdx: 0, current: _elm_lang$core$Maybe$Nothing, initOption: _minekoa$elm_text_editor$KeyBindMenu$initKeybindInitOption},
 	_1: _minekoa$elm_text_editor$Ports_WebStrage$localStrage_getItem('keybinds')
+};
+var _minekoa$elm_text_editor$KeyBindMenu$InitializeKeyBinds = {ctor: 'InitializeKeyBinds'};
+var _minekoa$elm_text_editor$KeyBindMenu$SelectInitializeOption = F2(
+	function (a, b) {
+		return {ctor: 'SelectInitializeOption', _0: a, _1: b};
+	});
+var _minekoa$elm_text_editor$KeyBindMenu$initView = function (model) {
+	return A2(
+		_elm_lang$html$Html$div,
+		{
+			ctor: '::',
+			_0: _elm_lang$html$Html_Attributes$class('keybind-vbox'),
+			_1: {ctor: '[]'}
+		},
+		{
+			ctor: '::',
+			_0: A2(
+				_elm_lang$html$Html$div,
+				{
+					ctor: '::',
+					_0: _elm_lang$html$Html_Attributes$style(
+						{
+							ctor: '::',
+							_0: {ctor: '_Tuple2', _0: 'font-size', _1: '1.5em'},
+							_1: {
+								ctor: '::',
+								_0: {ctor: '_Tuple2', _0: 'padding', _1: '1em'},
+								_1: {
+									ctor: '::',
+									_0: {ctor: '_Tuple2', _0: 'justify-content', _1: 'center'},
+									_1: {ctor: '[]'}
+								}
+							}
+						}),
+					_1: {ctor: '[]'}
+				},
+				{
+					ctor: '::',
+					_0: A2(
+						_elm_lang$html$Html$p,
+						{ctor: '[]'},
+						{
+							ctor: '::',
+							_0: _elm_lang$html$Html$text('Are you sure initialize keybinds?'),
+							_1: {ctor: '[]'}
+						}),
+					_1: {ctor: '[]'}
+				}),
+			_1: {
+				ctor: '::',
+				_0: A2(
+					_elm_lang$html$Html$div,
+					{
+						ctor: '::',
+						_0: _elm_lang$html$Html_Attributes$class('keybind-hbox'),
+						_1: {
+							ctor: '::',
+							_0: _elm_lang$html$Html_Attributes$style(
+								{
+									ctor: '::',
+									_0: {ctor: '_Tuple2', _0: 'justify-content', _1: 'center'},
+									_1: {
+										ctor: '::',
+										_0: {ctor: '_Tuple2', _0: 'align-items', _1: 'center'},
+										_1: {ctor: '[]'}
+									}
+								}),
+							_1: {ctor: '[]'}
+						}
+					},
+					{
+						ctor: '::',
+						_0: A2(
+							_elm_lang$html$Html$div,
+							{
+								ctor: '::',
+								_0: _elm_lang$html$Html_Attributes$class(
+									model.initOption.basic ? 'menu_option_enabled' : 'menu_option_disabled'),
+								_1: {
+									ctor: '::',
+									_0: _elm_lang$html$Html_Events$onClick(
+										A2(_minekoa$elm_text_editor$KeyBindMenu$SelectInitializeOption, 'basic', !model.initOption.basic)),
+									_1: {ctor: '[]'}
+								}
+							},
+							{
+								ctor: '::',
+								_0: _elm_lang$html$Html$text('basic'),
+								_1: {ctor: '[]'}
+							}),
+						_1: {
+							ctor: '::',
+							_0: A2(
+								_elm_lang$html$Html$div,
+								{
+									ctor: '::',
+									_0: _elm_lang$html$Html_Attributes$style(
+										{
+											ctor: '::',
+											_0: {ctor: '_Tuple2', _0: 'font-size', _1: '2em'},
+											_1: {ctor: '[]'}
+										}),
+									_1: {ctor: '[]'}
+								},
+								{
+									ctor: '::',
+									_0: _elm_lang$html$Html$text('+'),
+									_1: {ctor: '[]'}
+								}),
+							_1: {
+								ctor: '::',
+								_0: A2(
+									_elm_lang$html$Html$div,
+									{
+										ctor: '::',
+										_0: _elm_lang$html$Html_Attributes$class(
+											model.initOption.gates ? 'menu_option_enabled' : 'menu_option_disabled'),
+										_1: {
+											ctor: '::',
+											_0: _elm_lang$html$Html_Events$onClick(
+												A2(_minekoa$elm_text_editor$KeyBindMenu$SelectInitializeOption, 'gates', !model.initOption.gates)),
+											_1: {ctor: '[]'}
+										}
+									},
+									{
+										ctor: '::',
+										_0: _elm_lang$html$Html$text('windows like'),
+										_1: {ctor: '[]'}
+									}),
+								_1: {
+									ctor: '::',
+									_0: A2(
+										_elm_lang$html$Html$div,
+										{
+											ctor: '::',
+											_0: _elm_lang$html$Html_Attributes$style(
+												{
+													ctor: '::',
+													_0: {ctor: '_Tuple2', _0: 'font-size', _1: '2em'},
+													_1: {ctor: '[]'}
+												}),
+											_1: {ctor: '[]'}
+										},
+										{
+											ctor: '::',
+											_0: _elm_lang$html$Html$text('+'),
+											_1: {ctor: '[]'}
+										}),
+									_1: {
+										ctor: '::',
+										_0: A2(
+											_elm_lang$html$Html$div,
+											{
+												ctor: '::',
+												_0: _elm_lang$html$Html_Attributes$class(
+													model.initOption.emacs ? 'menu_option_enabled' : 'menu_option_disabled'),
+												_1: {
+													ctor: '::',
+													_0: _elm_lang$html$Html_Events$onClick(
+														A2(_minekoa$elm_text_editor$KeyBindMenu$SelectInitializeOption, 'emacs', !model.initOption.emacs)),
+													_1: {ctor: '[]'}
+												}
+											},
+											{
+												ctor: '::',
+												_0: _elm_lang$html$Html$text('emacs like'),
+												_1: {ctor: '[]'}
+											}),
+										_1: {ctor: '[]'}
+									}
+								}
+							}
+						}
+					}),
+				_1: {
+					ctor: '::',
+					_0: A2(
+						_elm_lang$html$Html$div,
+						{
+							ctor: '::',
+							_0: _elm_lang$html$Html_Attributes$class('keybind-hbox'),
+							_1: {
+								ctor: '::',
+								_0: _elm_lang$html$Html_Attributes$style(
+									{
+										ctor: '::',
+										_0: {ctor: '_Tuple2', _0: 'justify-content', _1: 'center'},
+										_1: {
+											ctor: '::',
+											_0: {ctor: '_Tuple2', _0: 'align-items', _1: 'center'},
+											_1: {ctor: '[]'}
+										}
+									}),
+								_1: {ctor: '[]'}
+							}
+						},
+						{
+							ctor: '::',
+							_0: A2(
+								_elm_lang$html$Html$div,
+								{
+									ctor: '::',
+									_0: _elm_lang$html$Html_Attributes$class(
+										(model.initOption.basic || (model.initOption.gates || model.initOption.emacs)) ? 'file_input_label' : 'filer_button_disabled'),
+									_1: {
+										ctor: '::',
+										_0: _elm_lang$html$Html_Events$onClick(_minekoa$elm_text_editor$KeyBindMenu$InitializeKeyBinds),
+										_1: {ctor: '[]'}
+									}
+								},
+								{
+									ctor: '::',
+									_0: _elm_lang$html$Html$text('Initialize!'),
+									_1: {ctor: '[]'}
+								}),
+							_1: {ctor: '[]'}
+						}),
+					_1: {ctor: '[]'}
+				}
+			}
+		});
 };
 var _minekoa$elm_text_editor$KeyBindMenu$AddKeyBind = {ctor: 'AddKeyBind'};
 var _minekoa$elm_text_editor$KeyBindMenu$SelectCommand = function (a) {
@@ -17096,7 +17316,7 @@ var _minekoa$elm_text_editor$KeyBindMenu$update = F3(
 						}),
 					_2: _elm_lang$core$Platform_Cmd$none
 				};
-			default:
+			case 'AddKeyBind':
 				return {
 					ctor: '_Tuple3',
 					_0: keybinds,
@@ -17108,6 +17328,65 @@ var _minekoa$elm_text_editor$KeyBindMenu$update = F3(
 							mainsPage: _minekoa$elm_text_editor$KeyBindMenu$EditPage
 						}),
 					_2: _elm_lang$core$Platform_Cmd$none
+				};
+			case 'SelectInitializeOption':
+				var _p23 = _p6._1;
+				var initopt = model.initOption;
+				return {
+					ctor: '_Tuple3',
+					_0: keybinds,
+					_1: _elm_lang$core$Native_Utils.update(
+						model,
+						{
+							initOption: function () {
+								var _p22 = _p6._0;
+								switch (_p22) {
+									case 'basic':
+										return _elm_lang$core$Native_Utils.update(
+											initopt,
+											{basic: _p23});
+									case 'gates':
+										return _elm_lang$core$Native_Utils.update(
+											initopt,
+											{gates: _p23});
+									case 'emacs':
+										return _elm_lang$core$Native_Utils.update(
+											initopt,
+											{emacs: _p23});
+									default:
+										return initopt;
+								}
+							}()
+						}),
+					_2: _elm_lang$core$Platform_Cmd$none
+				};
+			default:
+				var nkeybinds = _elm_lang$core$List$concat(
+					{
+						ctor: '::',
+						_0: model.initOption.basic ? _minekoa$elm_text_editor$TextEditor_KeyBind$basic : {ctor: '[]'},
+						_1: {
+							ctor: '::',
+							_0: model.initOption.gates ? _minekoa$elm_text_editor$TextEditor_KeyBind$gates : {ctor: '[]'},
+							_1: {
+								ctor: '::',
+								_0: model.initOption.emacs ? _minekoa$elm_text_editor$TextEditor_KeyBind$emacsLike : {ctor: '[]'},
+								_1: {ctor: '[]'}
+							}
+						}
+					});
+				return {
+					ctor: '_Tuple3',
+					_0: nkeybinds,
+					_1: _elm_lang$core$Native_Utils.update(
+						model,
+						{initOption: _minekoa$elm_text_editor$KeyBindMenu$initKeybindInitOption}),
+					_2: _minekoa$elm_text_editor$Ports_WebStrage$localStrage_setItem(
+						{
+							ctor: '_Tuple2',
+							_0: 'keybinds',
+							_1: _minekoa$elm_text_editor$KeyBindMenu$encodeKeyBinds(nkeybinds)
+						})
 				};
 		}
 	});
@@ -17185,8 +17464,8 @@ var _minekoa$elm_text_editor$KeyBindMenu$currentKeybindView_cmd = function (edtb
 			_1: {
 				ctor: '::',
 				_0: function () {
-					var _p22 = edtbuf.insertS;
-					if (_p22.ctor === 'Just') {
+					var _p24 = edtbuf.insertS;
+					if (_p24.ctor === 'Just') {
 						return A2(
 							_elm_lang$html$Html$div,
 							{
@@ -17211,7 +17490,7 @@ var _minekoa$elm_text_editor$KeyBindMenu$currentKeybindView_cmd = function (edtb
 									{
 										ctor: '::',
 										_0: _elm_lang$html$Html$text(
-											_minekoa$elm_text_editor$KeyBindMenu$stringEscape(_p22._0)),
+											_minekoa$elm_text_editor$KeyBindMenu$stringEscape(_p24._0)),
 										_1: {ctor: '[]'}
 									}),
 								_1: {ctor: '[]'}
@@ -17532,9 +17811,9 @@ var _minekoa$elm_text_editor$KeyBindMenu$BackToList = {ctor: 'BackToList'};
 var _minekoa$elm_text_editor$KeyBindMenu$editPageView = F2(
 	function (edtbuf, model) {
 		var isEditModeNew = function (m) {
-			var _p23 = m.current;
-			if (_p23.ctor === 'Just') {
-				return _elm_lang$core$Native_Utils.eq(_p23._0.editmode, _minekoa$elm_text_editor$KeyBindMenu$EditModeNew);
+			var _p25 = m.current;
+			if (_p25.ctor === 'Just') {
+				return _elm_lang$core$Native_Utils.eq(_p25._0.editmode, _minekoa$elm_text_editor$KeyBindMenu$EditModeNew);
 			} else {
 				return false;
 			}
@@ -17682,8 +17961,8 @@ var _minekoa$elm_text_editor$KeyBindMenu$editPageView = F2(
 								_1: {
 									ctor: '::',
 									_0: function () {
-										var _p24 = edtbuf.target;
-										switch (_p24.ctor) {
+										var _p26 = edtbuf.target;
+										switch (_p26.ctor) {
 											case 'TargetKeys':
 												return _minekoa$elm_text_editor$KeyBindMenu$editPage_keypressMessage(model);
 											case 'TargetCommand':
@@ -17975,10 +18254,10 @@ var _minekoa$elm_text_editor$KeyBindMenu$acceptPageView = F2(
 							_1: {ctor: '[]'}
 						},
 						function () {
-							var _p25 = model.current;
-							if (_p25.ctor === 'Just') {
-								var _p26 = _p25._0.editmode;
-								switch (_p26.ctor) {
+							var _p27 = model.current;
+							if (_p27.ctor === 'Just') {
+								var _p28 = _p27._0.editmode;
+								switch (_p28.ctor) {
 									case 'EditModeNew':
 										return A2(
 											_elm_lang$core$Basics_ops['++'],
@@ -17987,11 +18266,11 @@ var _minekoa$elm_text_editor$KeyBindMenu$acceptPageView = F2(
 												_elm_lang$core$Maybe$Nothing,
 												A2(
 													_elm_lang$core$Maybe$andThen,
-													function (_p27) {
+													function (_p29) {
 														return _elm_lang$core$Maybe$Just(
 															function (_) {
 																return _.keybind;
-															}(_p27));
+															}(_p29));
 													},
 													model.current)),
 											A2(
@@ -18007,11 +18286,11 @@ var _minekoa$elm_text_editor$KeyBindMenu$acceptPageView = F2(
 													A2(_elm_lang$core$List$drop, model.currentIdx, keybinds)),
 												A2(
 													_elm_lang$core$Maybe$andThen,
-													function (_p28) {
+													function (_p30) {
 														return _elm_lang$core$Maybe$Just(
 															function (_) {
 																return _.keybind;
-															}(_p28));
+															}(_p30));
 													},
 													model.current)),
 											A2(
@@ -18344,10 +18623,10 @@ var _minekoa$elm_text_editor$KeyBindMenu$listPageView = F2(
 	});
 var _minekoa$elm_text_editor$KeyBindMenu$menuPalette = F2(
 	function (keybinds, model) {
-		var _p29 = model.selectedSubMenu;
-		if (_p29.ctor === 'KeybindMain') {
-			var _p30 = model.mainsPage;
-			switch (_p30.ctor) {
+		var _p31 = model.selectedSubMenu;
+		if (_p31.ctor === 'KeybindMain') {
+			var _p32 = model.mainsPage;
+			switch (_p32.ctor) {
 				case 'ListPage':
 					return A2(
 						_elm_lang$html$Html$div,
@@ -18362,8 +18641,8 @@ var _minekoa$elm_text_editor$KeyBindMenu$menuPalette = F2(
 							_1: {ctor: '[]'}
 						});
 				case 'EditPage':
-					var _p31 = model.current;
-					if (_p31.ctor === 'Just') {
+					var _p33 = model.current;
+					if (_p33.ctor === 'Just') {
 						return A2(
 							_elm_lang$html$Html$div,
 							{
@@ -18373,7 +18652,7 @@ var _minekoa$elm_text_editor$KeyBindMenu$menuPalette = F2(
 							},
 							{
 								ctor: '::',
-								_0: A2(_minekoa$elm_text_editor$KeyBindMenu$editPageView, _p31._0, model),
+								_0: A2(_minekoa$elm_text_editor$KeyBindMenu$editPageView, _p33._0, model),
 								_1: {ctor: '[]'}
 							});
 					} else {
@@ -18406,7 +18685,7 @@ var _minekoa$elm_text_editor$KeyBindMenu$menuPalette = F2(
 				},
 				{
 					ctor: '::',
-					_0: _minekoa$elm_text_editor$KeyBindMenu$initView(keybinds),
+					_0: _minekoa$elm_text_editor$KeyBindMenu$initView(model),
 					_1: {ctor: '[]'}
 				});
 		}
@@ -18434,8 +18713,8 @@ var _minekoa$elm_text_editor$KeyBindMenu$menuItemsView = function (model) {
 						ctor: '::',
 						_0: _elm_lang$html$Html_Attributes$class(
 							function () {
-								var _p32 = model.selectedSubMenu;
-								if (_p32.ctor === 'KeybindMain') {
+								var _p34 = model.selectedSubMenu;
+								if (_p34.ctor === 'KeybindMain') {
 									return 'menu-item-active';
 								} else {
 									return 'menu-item';
@@ -18453,8 +18732,8 @@ var _minekoa$elm_text_editor$KeyBindMenu$menuItemsView = function (model) {
 							ctor: '::',
 							_0: _elm_lang$html$Html$text(
 								function () {
-									var _p33 = model.mainsPage;
-									switch (_p33.ctor) {
+									var _p35 = model.mainsPage;
+									switch (_p35.ctor) {
 										case 'ListPage':
 											return 'Keybinds';
 										case 'EditPage':

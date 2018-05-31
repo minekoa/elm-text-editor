@@ -28,6 +28,7 @@ type alias Model =
     , mainsPage : KeybindMainsPage -- サブメニュー間移動しても残すため
     , currentIdx : Int
     , current : Maybe EditBuffer
+    , initOption : KeyBindsInitOption
     }
 
 type alias EditBuffer =
@@ -101,6 +102,18 @@ type KeybindMainsPage
     | EditPage
     | AcceptPage
 
+
+type alias KeyBindsInitOption =
+    { basic : Bool
+    , gates : Bool
+    , emacs : Bool
+    }
+
+
+initKeybindInitOption : KeyBindsInitOption
+initKeybindInitOption =
+    { basic = True, gates = False, emacs = False }
+
 type Msg
     = LoadSetting (String, Maybe String)
     | SelectSubMenu SubMenu
@@ -119,7 +132,8 @@ type Msg
     | InputText String
     | SelectCommand EditorCmds.Command
     | AddKeyBind
-
+    | SelectInitializeOption String Bool
+    | InitializeKeyBinds
 
 init: (Model , Cmd Msg)
 init =
@@ -127,6 +141,7 @@ init =
       , mainsPage = ListPage
       , currentIdx = 0
       , current = Nothing
+      , initOption = initKeybindInitOption
       }
     , WebStrage.localStrage_getItem "keybinds"
     )
@@ -377,6 +392,33 @@ update msg keybinds model =
             , Cmd.none
             )
 
+        SelectInitializeOption key value->
+            let
+                initopt = model.initOption
+            in
+                (keybinds
+                , { model | initOption  =  case key of
+                                               "basic" -> { initopt | basic = value }
+                                               "gates" -> { initopt | gates = value }
+                                               "emacs" -> { initopt | emacs = value }
+                                               _ -> initopt
+                  }
+                , Cmd.none
+                )
+
+        InitializeKeyBinds ->
+            let
+                nkeybinds = [ if model.initOption.basic then KeyBind.basic else []
+                            , if model.initOption.gates then KeyBind.gates else []
+                            , if model.initOption.emacs then KeyBind.emacsLike else []
+                            ] |> List.concat
+            in
+                ( nkeybinds
+                , { model | initOption = initKeybindInitOption }
+                , WebStrage.localStrage_setItem ("keybinds", encodeKeyBinds nkeybinds)
+                )
+
+
 ------------------------------------------------------------
 -- Subscriptions
 ------------------------------------------------------------
@@ -438,7 +480,7 @@ menuPalette keybinds model =
                     div [class "menu-palette"] [ acceptPageView keybinds model ]
 
         InitKeybind -> 
-            div [class "menu-palette"] [ initView keybinds ]
+            div [class "menu-palette"] [ initView model ]
 
 listPageView : List KeyBind.KeyBind -> Model -> Html Msg
 listPageView keybinds model =
@@ -841,9 +883,48 @@ acceptPage_acceptButton label =
 
 
 
-initView : List KeyBind.KeyBind -> Html Msg
-initView editorModel =
-    div [] []
+initView : Model-> Html Msg
+initView model =
+    div [ class "keybind-vbox"]
+        [ div [ style [ ("font-size", "1.5em")
+                      , ("padding", "1em")
+                      , ("justify-content", "center")
+                      ]
+              ]
+              [ p [] [text "Are you sure initialize keybinds?" ] ]
+
+        , div [ class "keybind-hbox"
+              , style [ ("justify-content", "center")
+                      , ("align-items", "center")
+                      ]
+              ]
+              [ div [ class <| if model.initOption.basic then "menu_option_enabled" else "menu_option_disabled"
+                    , onClick <| SelectInitializeOption "basic" (not model.initOption.basic)
+                    ] [ text "basic" ]
+              , div [ style [("font-size", "2em")]] [ text "+"]
+              , div [ class <| if model.initOption.gates then "menu_option_enabled" else "menu_option_disabled"
+                    , onClick <| SelectInitializeOption "gates" (not model.initOption.gates)
+                    ] [ text "windows like" ]
+              , div [ style [("font-size", "2em")]] [ text "+"]
+              , div [ class <| if model.initOption.emacs then "menu_option_enabled" else "menu_option_disabled"
+                    , onClick <| SelectInitializeOption "emacs" (not model.initOption.emacs)
+                    ] [ text "emacs like" ]
+              ]
+
+        , div [ class "keybind-hbox"
+              , style [ ("justify-content", "center")
+                      , ("align-items", "center")
+                      ]
+              ]
+              [ div [ class <| if model.initOption.basic || model.initOption.gates || model.initOption.emacs
+                               then "file_input_label"
+                               else "filer_button_disabled"
+                    , onClick InitializeKeyBinds
+                    ]
+                    [text "Initialize!"]
+              ]
+        ]
+            
 
 
 

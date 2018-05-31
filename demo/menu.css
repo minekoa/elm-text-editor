@@ -75,3 +75,29 @@
     border-color: black;/*gainsboro;*/
 }
 
+
+
+
+
+
+.menu_option_enabled
+{
+    color : royalblue;
+    background-color: snow;
+    border: 3px dotted royalblue;
+    border-radius: 0.5em;
+
+    margin: 0.5em;
+    padding: 0.5em;
+}
+
+.menu_option_disabled
+{
+    color : lightgray;
+    background-color: snow; 
+    border: 3px dotted lightgray;
+    border-radius: 0.5em;
+
+    margin: 0.5em;
+    padding: 0.5em;
+}
