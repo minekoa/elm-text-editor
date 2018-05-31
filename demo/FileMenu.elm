@@ -168,8 +168,8 @@ fileNewView model =
                             ]
                     ]
                     [ div ( if model.newFileName == ""
-                            then [ class "filer_button_disabled" ]
-                            else [ class "file_input_label"
+                            then [ class "menu_button_disabled" ]
+                            else [ class "menu_button"
                                  , onClick <| CreateNewBuffer model.newFileName
                                  ]
                           )
@@ -210,7 +210,7 @@ fileLoadView model =
 fileSaveView : Model -> Html Msg
 fileSaveView model =
     div [ class "filer-save"]
-        [ div [ class "file_input_label"
+        [ div [ class "menu_button"
               , onClick SaveFile
               ]
               [ text "Save current buffer" ]
@@ -234,8 +234,8 @@ fileSaveAsView model =
                             ]
                     ]
                     [ div ( if model.newFileName == ""
-                            then [ class "filer_button_disabled" ]
-                            else [ class "file_input_label"
+                            then [ class "menu_button_disabled" ]
+                            else [ class "menu_button"
                                  , onClick <| SaveFileAs model.newFileName
                                  ]
                           )

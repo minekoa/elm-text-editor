@@ -80,6 +80,57 @@
 
 
 
+.menu_button {
+    display: block;
+
+    border: 1px solid darkgray;
+    border-radius: 2px;
+    background-color: royalblue;
+    margin: 0.5em;
+    padding: 5px;
+    color: snow;
+
+    /* ripple effect */
+    position: relative;
+    overflow: hidden;
+}
+
+/* for ripple effect */
+.menu_button:after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 10em; /* この値は目合わせ */
+    height: 10em;
+    border-radius: 50%;
+    opacity: 0;
+    background-color: rgba(180, 210, 250,0.7); 
+    transition: opacity 1s, width 1s, height 1s;
+}
+
+.menu_button:active:after {
+    content: "";
+    width: 0;
+    height: 0;
+    opacity: 1;
+    transition: opacity 0s, width 0s, height 0s;
+}
+
+.menu_button_disabled {
+   display: block;
+
+    border: 1px solid darkgray;
+    border-radius: 2px;
+    color: gray;
+    background-color: lightgray;
+    margin: 0.5em;
+    padding: 5px;
+    color: snow;
+}
+
+
 .menu_option_enabled
 {
     color : royalblue;

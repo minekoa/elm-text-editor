@@ -65,17 +65,7 @@
     display: none;
 }
 
-.filer_button_disabled {
-   display: block;
 
-    border: 1px solid darkgray;
-    border-radius: 2px;
-    color: gray;
-    background-color: lightgray;
-    margin: 0.5em;
-    padding: 5px;
-    color: snow;
-}
 
 .filer-new {
     height: 100%;

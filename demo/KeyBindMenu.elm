@@ -874,7 +874,7 @@ acceptPage_confirmMessage msg =
 
 acceptPage_acceptButton : String -> List (Html Msg)
 acceptPage_acceptButton label =
-    [ div [ class "file_input_label"
+    [ div [ class "menu_button"
           , onClick EditComplete
           ]
           [text label]
@@ -917,8 +917,8 @@ resetView model =
                       ]
               ]
               [ div [ class <| if model.resetOptions.basic || model.resetOptions.gates || model.resetOptions.emacs
-                               then "file_input_label"
-                               else "filer_button_disabled"
+                               then "menu_button"
+                               else "menu_button_disabled"
                     , onClick ResetKeyBinds
                     ]
                     [text "Reset!"]

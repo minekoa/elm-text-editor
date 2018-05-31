@@ -400,7 +400,7 @@ aboutPane model =
                       , ("padding", "1.5rem")
                       ]
               ]
-              [ div [ class "file_input_label"
+              [ div [ class "menu_button"
                     , onClick ClearSettings
                     ]
                     [ text "Clear Settings" ]

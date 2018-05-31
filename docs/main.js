@@ -15103,7 +15103,7 @@ var _minekoa$elm_text_editor$FileMenu$fileSaveView = function (model) {
 				_elm_lang$html$Html$div,
 				{
 					ctor: '::',
-					_0: _elm_lang$html$Html_Attributes$class('file_input_label'),
+					_0: _elm_lang$html$Html_Attributes$class('menu_button'),
 					_1: {
 						ctor: '::',
 						_0: _elm_lang$html$Html_Events$onClick(_minekoa$elm_text_editor$FileMenu$SaveFile),
@@ -15385,11 +15385,11 @@ var _minekoa$elm_text_editor$FileMenu$fileNewView = function (model) {
 									_elm_lang$html$Html$div,
 									_elm_lang$core$Native_Utils.eq(model.newFileName, '') ? {
 										ctor: '::',
-										_0: _elm_lang$html$Html_Attributes$class('filer_button_disabled'),
+										_0: _elm_lang$html$Html_Attributes$class('menu_button_disabled'),
 										_1: {ctor: '[]'}
 									} : {
 										ctor: '::',
-										_0: _elm_lang$html$Html_Attributes$class('file_input_label'),
+										_0: _elm_lang$html$Html_Attributes$class('menu_button'),
 										_1: {
 											ctor: '::',
 											_0: _elm_lang$html$Html_Events$onClick(
@@ -15489,11 +15489,11 @@ var _minekoa$elm_text_editor$FileMenu$fileSaveAsView = function (model) {
 									_elm_lang$html$Html$div,
 									_elm_lang$core$Native_Utils.eq(model.newFileName, '') ? {
 										ctor: '::',
-										_0: _elm_lang$html$Html_Attributes$class('filer_button_disabled'),
+										_0: _elm_lang$html$Html_Attributes$class('menu_button_disabled'),
 										_1: {ctor: '[]'}
 									} : {
 										ctor: '::',
-										_0: _elm_lang$html$Html_Attributes$class('file_input_label'),
+										_0: _elm_lang$html$Html_Attributes$class('menu_button'),
 										_1: {
 											ctor: '::',
 											_0: _elm_lang$html$Html_Events$onClick(
@@ -16768,7 +16768,7 @@ var _minekoa$elm_text_editor$KeyBindMenu$resetView = function (model) {
 								{
 									ctor: '::',
 									_0: _elm_lang$html$Html_Attributes$class(
-										(model.resetOptions.basic || (model.resetOptions.gates || model.resetOptions.emacs)) ? 'file_input_label' : 'filer_button_disabled'),
+										(model.resetOptions.basic || (model.resetOptions.gates || model.resetOptions.emacs)) ? 'menu_button' : 'menu_button_disabled'),
 									_1: {
 										ctor: '::',
 										_0: _elm_lang$html$Html_Events$onClick(_minekoa$elm_text_editor$KeyBindMenu$ResetKeyBinds),
@@ -17720,7 +17720,7 @@ var _minekoa$elm_text_editor$KeyBindMenu$acceptPage_acceptButton = function (lab
 			_elm_lang$html$Html$div,
 			{
 				ctor: '::',
-				_0: _elm_lang$html$Html_Attributes$class('file_input_label'),
+				_0: _elm_lang$html$Html_Attributes$class('menu_button'),
 				_1: {
 					ctor: '::',
 					_0: _elm_lang$html$Html_Events$onClick(_minekoa$elm_text_editor$KeyBindMenu$EditComplete),
@@ -22394,7 +22394,7 @@ var _minekoa$elm_text_editor$Main$aboutPane = function (model) {
 								_elm_lang$html$Html$div,
 								{
 									ctor: '::',
-									_0: _elm_lang$html$Html_Attributes$class('file_input_label'),
+									_0: _elm_lang$html$Html_Attributes$class('menu_button'),
 									_1: {
 										ctor: '::',
 										_0: _elm_lang$html$Html_Events$onClick(_minekoa$elm_text_editor$Main$ClearSettings),
