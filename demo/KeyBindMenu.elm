@@ -28,7 +28,7 @@ type alias Model =
     , mainsPage : KeybindMainsPage -- サブメニュー間移動しても残すため
     , currentIdx : Int
     , current : Maybe EditBuffer
-    , initOption : KeyBindsInitOption
+    , resetOptions : KeyBindsResetOptions
     }
 
 type alias EditBuffer =
@@ -95,7 +95,7 @@ initEditDelete kbind =
 
 type SubMenu
     = KeybindMain
-    | InitKeybind
+    | ResetKeybind
 
 type KeybindMainsPage
     = ListPage
@@ -103,15 +103,15 @@ type KeybindMainsPage
     | AcceptPage
 
 
-type alias KeyBindsInitOption =
+type alias KeyBindsResetOptions =
     { basic : Bool
     , gates : Bool
     , emacs : Bool
     }
 
 
-initKeybindInitOption : KeyBindsInitOption
-initKeybindInitOption =
+initKeybindResetOptions : KeyBindsResetOptions
+initKeybindResetOptions =
     { basic = True, gates = False, emacs = False }
 
 type Msg
@@ -132,8 +132,8 @@ type Msg
     | InputText String
     | SelectCommand EditorCmds.Command
     | AddKeyBind
-    | SelectInitializeOption String Bool
-    | InitializeKeyBinds
+    | SetResetOption String Bool
+    | ResetKeyBinds
 
 init: (Model , Cmd Msg)
 init =
@@ -141,7 +141,7 @@ init =
       , mainsPage = ListPage
       , currentIdx = 0
       , current = Nothing
-      , initOption = initKeybindInitOption
+      , resetOptions = initKeybindResetOptions
       }
     , WebStrage.localStrage_getItem "keybinds"
     )
@@ -392,29 +392,29 @@ update msg keybinds model =
             , Cmd.none
             )
 
-        SelectInitializeOption key value->
+        SetResetOption key value->
             let
-                initopt = model.initOption
+                opts = model.resetOptions
             in
                 (keybinds
-                , { model | initOption  =  case key of
-                                               "basic" -> { initopt | basic = value }
-                                               "gates" -> { initopt | gates = value }
-                                               "emacs" -> { initopt | emacs = value }
-                                               _ -> initopt
+                , { model | resetOptions = case key of
+                                               "basic" -> { opts | basic = value }
+                                               "gates" -> { opts | gates = value }
+                                               "emacs" -> { opts | emacs = value }
+                                               _ -> opts
                   }
                 , Cmd.none
                 )
 
-        InitializeKeyBinds ->
+        ResetKeyBinds ->
             let
-                nkeybinds = [ if model.initOption.basic then KeyBind.basic else []
-                            , if model.initOption.gates then KeyBind.gates else []
-                            , if model.initOption.emacs then KeyBind.emacsLike else []
+                nkeybinds = [ if model.resetOptions.basic then KeyBind.basic else []
+                            , if model.resetOptions.gates then KeyBind.gates else []
+                            , if model.resetOptions.emacs then KeyBind.emacsLike else []
                             ] |> List.concat
             in
                 ( nkeybinds
-                , { model | initOption = initKeybindInitOption }
+                , { model | resetOptions = initKeybindResetOptions }
                 , WebStrage.localStrage_setItem ("keybinds", encodeKeyBinds nkeybinds)
                 )
 
@@ -456,10 +456,10 @@ menuItemsView model =
                       ) |> text
                     ]
           ]
-    , div [ onClick <| SelectSubMenu InitKeybind
-          , class <| if model.selectedSubMenu == InitKeybind then "menu-item-active" else "menu-item"
+    , div [ onClick <| SelectSubMenu ResetKeybind
+          , class <| if model.selectedSubMenu == ResetKeybind then "menu-item-active" else "menu-item"
           ]
-          [ span [] [text "Initialize"]
+          [ span [] [text "Reset"]
           ]
     ]
 
@@ -479,8 +479,8 @@ menuPalette keybinds model =
                 AcceptPage ->
                     div [class "menu-palette"] [ acceptPageView keybinds model ]
 
-        InitKeybind -> 
-            div [class "menu-palette"] [ initView model ]
+        ResetKeybind -> 
+            div [class "menu-palette"] [ resetView model ]
 
 listPageView : List KeyBind.KeyBind -> Model -> Html Msg
 listPageView keybinds model =
@@ -883,31 +883,31 @@ acceptPage_acceptButton label =
 
 
 
-initView : Model-> Html Msg
-initView model =
+resetView : Model-> Html Msg
+resetView model =
     div [ class "keybind-vbox"]
         [ div [ style [ ("font-size", "1.5em")
                       , ("padding", "1em")
                       , ("justify-content", "center")
                       ]
               ]
-              [ p [] [text "Are you sure initialize keybinds?" ] ]
+              [ p [] [text "Are you sure you want to reset keybinds?" ] ]
 
         , div [ class "keybind-hbox"
               , style [ ("justify-content", "center")
                       , ("align-items", "center")
                       ]
               ]
-              [ div [ class <| if model.initOption.basic then "menu_option_enabled" else "menu_option_disabled"
-                    , onClick <| SelectInitializeOption "basic" (not model.initOption.basic)
+              [ div [ class <| if model.resetOptions.basic then "menu_option_enabled" else "menu_option_disabled"
+                    , onClick <| SetResetOption "basic" (not model.resetOptions.basic)
                     ] [ text "basic" ]
               , div [ style [("font-size", "2em")]] [ text "+"]
-              , div [ class <| if model.initOption.gates then "menu_option_enabled" else "menu_option_disabled"
-                    , onClick <| SelectInitializeOption "gates" (not model.initOption.gates)
+              , div [ class <| if model.resetOptions.gates then "menu_option_enabled" else "menu_option_disabled"
+                    , onClick <| SetResetOption "gates" (not model.resetOptions.gates)
                     ] [ text "windows like" ]
               , div [ style [("font-size", "2em")]] [ text "+"]
-              , div [ class <| if model.initOption.emacs then "menu_option_enabled" else "menu_option_disabled"
-                    , onClick <| SelectInitializeOption "emacs" (not model.initOption.emacs)
+              , div [ class <| if model.resetOptions.emacs then "menu_option_enabled" else "menu_option_disabled"
+                    , onClick <| SetResetOption "emacs" (not model.resetOptions.emacs)
                     ] [ text "emacs like" ]
               ]
 
@@ -916,12 +916,12 @@ initView model =
                       , ("align-items", "center")
                       ]
               ]
-              [ div [ class <| if model.initOption.basic || model.initOption.gates || model.initOption.emacs
+              [ div [ class <| if model.resetOptions.basic || model.resetOptions.gates || model.resetOptions.emacs
                                then "file_input_label"
                                else "filer_button_disabled"
-                    , onClick InitializeKeyBinds
+                    , onClick ResetKeyBinds
                     ]
-                    [text "Initialize!"]
+                    [text "Reset!"]
               ]
         ]
             

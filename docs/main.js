@@ -16473,16 +16473,16 @@ var _minekoa$elm_text_editor$KeyBindMenu$editPage_keypressMessage = function (mo
 			_1: {ctor: '[]'}
 		});
 };
-var _minekoa$elm_text_editor$KeyBindMenu$initKeybindInitOption = {basic: true, gates: false, emacs: false};
+var _minekoa$elm_text_editor$KeyBindMenu$initKeybindResetOptions = {basic: true, gates: false, emacs: false};
 var _minekoa$elm_text_editor$KeyBindMenu$Model = F5(
 	function (a, b, c, d, e) {
-		return {selectedSubMenu: a, mainsPage: b, currentIdx: c, current: d, initOption: e};
+		return {selectedSubMenu: a, mainsPage: b, currentIdx: c, current: d, resetOptions: e};
 	});
 var _minekoa$elm_text_editor$KeyBindMenu$EditBuffer = F4(
 	function (a, b, c, d) {
 		return {keybind: a, target: b, insertS: c, editmode: d};
 	});
-var _minekoa$elm_text_editor$KeyBindMenu$KeyBindsInitOption = F3(
+var _minekoa$elm_text_editor$KeyBindMenu$KeyBindsResetOptions = F3(
 	function (a, b, c) {
 		return {basic: a, gates: b, emacs: c};
 	});
@@ -16556,22 +16556,22 @@ var _minekoa$elm_text_editor$KeyBindMenu$initEditNew = function () {
 	var newkeybind = {ctrl: false, alt: false, shift: false, code: 0, f: _minekoa$elm_text_editor$TextEditor_Commands$moveForward};
 	return {keybind: newkeybind, target: _minekoa$elm_text_editor$KeyBindMenu$TargetNone, insertS: _elm_lang$core$Maybe$Nothing, editmode: _minekoa$elm_text_editor$KeyBindMenu$EditModeNew};
 }();
-var _minekoa$elm_text_editor$KeyBindMenu$InitKeybind = {ctor: 'InitKeybind'};
+var _minekoa$elm_text_editor$KeyBindMenu$ResetKeybind = {ctor: 'ResetKeybind'};
 var _minekoa$elm_text_editor$KeyBindMenu$KeybindMain = {ctor: 'KeybindMain'};
 var _minekoa$elm_text_editor$KeyBindMenu$AcceptPage = {ctor: 'AcceptPage'};
 var _minekoa$elm_text_editor$KeyBindMenu$EditPage = {ctor: 'EditPage'};
 var _minekoa$elm_text_editor$KeyBindMenu$ListPage = {ctor: 'ListPage'};
 var _minekoa$elm_text_editor$KeyBindMenu$init = {
 	ctor: '_Tuple2',
-	_0: {selectedSubMenu: _minekoa$elm_text_editor$KeyBindMenu$KeybindMain, mainsPage: _minekoa$elm_text_editor$KeyBindMenu$ListPage, currentIdx: 0, current: _elm_lang$core$Maybe$Nothing, initOption: _minekoa$elm_text_editor$KeyBindMenu$initKeybindInitOption},
+	_0: {selectedSubMenu: _minekoa$elm_text_editor$KeyBindMenu$KeybindMain, mainsPage: _minekoa$elm_text_editor$KeyBindMenu$ListPage, currentIdx: 0, current: _elm_lang$core$Maybe$Nothing, resetOptions: _minekoa$elm_text_editor$KeyBindMenu$initKeybindResetOptions},
 	_1: _minekoa$elm_text_editor$Ports_WebStrage$localStrage_getItem('keybinds')
 };
-var _minekoa$elm_text_editor$KeyBindMenu$InitializeKeyBinds = {ctor: 'InitializeKeyBinds'};
-var _minekoa$elm_text_editor$KeyBindMenu$SelectInitializeOption = F2(
+var _minekoa$elm_text_editor$KeyBindMenu$ResetKeyBinds = {ctor: 'ResetKeyBinds'};
+var _minekoa$elm_text_editor$KeyBindMenu$SetResetOption = F2(
 	function (a, b) {
-		return {ctor: 'SelectInitializeOption', _0: a, _1: b};
+		return {ctor: 'SetResetOption', _0: a, _1: b};
 	});
-var _minekoa$elm_text_editor$KeyBindMenu$initView = function (model) {
+var _minekoa$elm_text_editor$KeyBindMenu$resetView = function (model) {
 	return A2(
 		_elm_lang$html$Html$div,
 		{
@@ -16608,7 +16608,7 @@ var _minekoa$elm_text_editor$KeyBindMenu$initView = function (model) {
 						{ctor: '[]'},
 						{
 							ctor: '::',
-							_0: _elm_lang$html$Html$text('Are you sure initialize keybinds?'),
+							_0: _elm_lang$html$Html$text('Are you sure you want to reset keybinds?'),
 							_1: {ctor: '[]'}
 						}),
 					_1: {ctor: '[]'}
@@ -16642,11 +16642,11 @@ var _minekoa$elm_text_editor$KeyBindMenu$initView = function (model) {
 							{
 								ctor: '::',
 								_0: _elm_lang$html$Html_Attributes$class(
-									model.initOption.basic ? 'menu_option_enabled' : 'menu_option_disabled'),
+									model.resetOptions.basic ? 'menu_option_enabled' : 'menu_option_disabled'),
 								_1: {
 									ctor: '::',
 									_0: _elm_lang$html$Html_Events$onClick(
-										A2(_minekoa$elm_text_editor$KeyBindMenu$SelectInitializeOption, 'basic', !model.initOption.basic)),
+										A2(_minekoa$elm_text_editor$KeyBindMenu$SetResetOption, 'basic', !model.resetOptions.basic)),
 									_1: {ctor: '[]'}
 								}
 							},
@@ -16681,11 +16681,11 @@ var _minekoa$elm_text_editor$KeyBindMenu$initView = function (model) {
 									{
 										ctor: '::',
 										_0: _elm_lang$html$Html_Attributes$class(
-											model.initOption.gates ? 'menu_option_enabled' : 'menu_option_disabled'),
+											model.resetOptions.gates ? 'menu_option_enabled' : 'menu_option_disabled'),
 										_1: {
 											ctor: '::',
 											_0: _elm_lang$html$Html_Events$onClick(
-												A2(_minekoa$elm_text_editor$KeyBindMenu$SelectInitializeOption, 'gates', !model.initOption.gates)),
+												A2(_minekoa$elm_text_editor$KeyBindMenu$SetResetOption, 'gates', !model.resetOptions.gates)),
 											_1: {ctor: '[]'}
 										}
 									},
@@ -16720,11 +16720,11 @@ var _minekoa$elm_text_editor$KeyBindMenu$initView = function (model) {
 											{
 												ctor: '::',
 												_0: _elm_lang$html$Html_Attributes$class(
-													model.initOption.emacs ? 'menu_option_enabled' : 'menu_option_disabled'),
+													model.resetOptions.emacs ? 'menu_option_enabled' : 'menu_option_disabled'),
 												_1: {
 													ctor: '::',
 													_0: _elm_lang$html$Html_Events$onClick(
-														A2(_minekoa$elm_text_editor$KeyBindMenu$SelectInitializeOption, 'emacs', !model.initOption.emacs)),
+														A2(_minekoa$elm_text_editor$KeyBindMenu$SetResetOption, 'emacs', !model.resetOptions.emacs)),
 													_1: {ctor: '[]'}
 												}
 											},
@@ -16768,16 +16768,16 @@ var _minekoa$elm_text_editor$KeyBindMenu$initView = function (model) {
 								{
 									ctor: '::',
 									_0: _elm_lang$html$Html_Attributes$class(
-										(model.initOption.basic || (model.initOption.gates || model.initOption.emacs)) ? 'file_input_label' : 'filer_button_disabled'),
+										(model.resetOptions.basic || (model.resetOptions.gates || model.resetOptions.emacs)) ? 'file_input_label' : 'filer_button_disabled'),
 									_1: {
 										ctor: '::',
-										_0: _elm_lang$html$Html_Events$onClick(_minekoa$elm_text_editor$KeyBindMenu$InitializeKeyBinds),
+										_0: _elm_lang$html$Html_Events$onClick(_minekoa$elm_text_editor$KeyBindMenu$ResetKeyBinds),
 										_1: {ctor: '[]'}
 									}
 								},
 								{
 									ctor: '::',
-									_0: _elm_lang$html$Html$text('Initialize!'),
+									_0: _elm_lang$html$Html$text('Reset!'),
 									_1: {ctor: '[]'}
 								}),
 							_1: {ctor: '[]'}
@@ -17329,32 +17329,32 @@ var _minekoa$elm_text_editor$KeyBindMenu$update = F3(
 						}),
 					_2: _elm_lang$core$Platform_Cmd$none
 				};
-			case 'SelectInitializeOption':
+			case 'SetResetOption':
 				var _p23 = _p6._1;
-				var initopt = model.initOption;
+				var opts = model.resetOptions;
 				return {
 					ctor: '_Tuple3',
 					_0: keybinds,
 					_1: _elm_lang$core$Native_Utils.update(
 						model,
 						{
-							initOption: function () {
+							resetOptions: function () {
 								var _p22 = _p6._0;
 								switch (_p22) {
 									case 'basic':
 										return _elm_lang$core$Native_Utils.update(
-											initopt,
+											opts,
 											{basic: _p23});
 									case 'gates':
 										return _elm_lang$core$Native_Utils.update(
-											initopt,
+											opts,
 											{gates: _p23});
 									case 'emacs':
 										return _elm_lang$core$Native_Utils.update(
-											initopt,
+											opts,
 											{emacs: _p23});
 									default:
-										return initopt;
+										return opts;
 								}
 							}()
 						}),
@@ -17364,13 +17364,13 @@ var _minekoa$elm_text_editor$KeyBindMenu$update = F3(
 				var nkeybinds = _elm_lang$core$List$concat(
 					{
 						ctor: '::',
-						_0: model.initOption.basic ? _minekoa$elm_text_editor$TextEditor_KeyBind$basic : {ctor: '[]'},
+						_0: model.resetOptions.basic ? _minekoa$elm_text_editor$TextEditor_KeyBind$basic : {ctor: '[]'},
 						_1: {
 							ctor: '::',
-							_0: model.initOption.gates ? _minekoa$elm_text_editor$TextEditor_KeyBind$gates : {ctor: '[]'},
+							_0: model.resetOptions.gates ? _minekoa$elm_text_editor$TextEditor_KeyBind$gates : {ctor: '[]'},
 							_1: {
 								ctor: '::',
-								_0: model.initOption.emacs ? _minekoa$elm_text_editor$TextEditor_KeyBind$emacsLike : {ctor: '[]'},
+								_0: model.resetOptions.emacs ? _minekoa$elm_text_editor$TextEditor_KeyBind$emacsLike : {ctor: '[]'},
 								_1: {ctor: '[]'}
 							}
 						}
@@ -17380,7 +17380,7 @@ var _minekoa$elm_text_editor$KeyBindMenu$update = F3(
 					_0: nkeybinds,
 					_1: _elm_lang$core$Native_Utils.update(
 						model,
-						{initOption: _minekoa$elm_text_editor$KeyBindMenu$initKeybindInitOption}),
+						{resetOptions: _minekoa$elm_text_editor$KeyBindMenu$initKeybindResetOptions}),
 					_2: _minekoa$elm_text_editor$Ports_WebStrage$localStrage_setItem(
 						{
 							ctor: '_Tuple2',
@@ -18685,7 +18685,7 @@ var _minekoa$elm_text_editor$KeyBindMenu$menuPalette = F2(
 				},
 				{
 					ctor: '::',
-					_0: _minekoa$elm_text_editor$KeyBindMenu$initView(model),
+					_0: _minekoa$elm_text_editor$KeyBindMenu$resetView(model),
 					_1: {ctor: '[]'}
 				});
 		}
@@ -18753,11 +18753,11 @@ var _minekoa$elm_text_editor$KeyBindMenu$menuItemsView = function (model) {
 					{
 						ctor: '::',
 						_0: _elm_lang$html$Html_Events$onClick(
-							_minekoa$elm_text_editor$KeyBindMenu$SelectSubMenu(_minekoa$elm_text_editor$KeyBindMenu$InitKeybind)),
+							_minekoa$elm_text_editor$KeyBindMenu$SelectSubMenu(_minekoa$elm_text_editor$KeyBindMenu$ResetKeybind)),
 						_1: {
 							ctor: '::',
 							_0: _elm_lang$html$Html_Attributes$class(
-								_elm_lang$core$Native_Utils.eq(model.selectedSubMenu, _minekoa$elm_text_editor$KeyBindMenu$InitKeybind) ? 'menu-item-active' : 'menu-item'),
+								_elm_lang$core$Native_Utils.eq(model.selectedSubMenu, _minekoa$elm_text_editor$KeyBindMenu$ResetKeybind) ? 'menu-item-active' : 'menu-item'),
 							_1: {ctor: '[]'}
 						}
 					},
@@ -18768,7 +18768,7 @@ var _minekoa$elm_text_editor$KeyBindMenu$menuItemsView = function (model) {
 							{ctor: '[]'},
 							{
 								ctor: '::',
-								_0: _elm_lang$html$Html$text('Initialize'),
+								_0: _elm_lang$html$Html$text('Reset'),
 								_1: {ctor: '[]'}
 							}),
 						_1: {ctor: '[]'}
