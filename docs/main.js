@@ -10945,7 +10945,17 @@ var _minekoa$elm_text_editor$TextEditor_KeyBind$basic = {
 							_1: {
 								ctor: '::',
 								_0: {ctrl: false, alt: false, shift: false, code: 46, f: _minekoa$elm_text_editor$TextEditor_Commands$delete},
-								_1: {ctor: '[]'}
+								_1: {
+									ctor: '::',
+									_0: {
+										ctrl: false,
+										alt: false,
+										shift: false,
+										code: 9,
+										f: _minekoa$elm_text_editor$TextEditor_Commands$insert('\t')
+									},
+									_1: {ctor: '[]'}
+								}
 							}
 						}
 					}
@@ -11089,18 +11099,20 @@ var _minekoa$elm_text_editor$Native_Mice = function() {
                 return true;
             }
 
-
-            if (e.ctrlKey && (e.keyCode == 86 || e.keyCode == 67 || e.keyCode == 88)) { /* C-v : pasteイベントは生かしておきたい */
+            /* C-v -x -c: clipboard系のデフォルトキーバンドは生かしておく */
+            if (e.ctrlKey && (e.keyCode == 86 || e.keyCode == 67 || e.keyCode == 88)) {
                 ;
             }
-            else if (e.altKey || e.ctrlKey) {
+            else if (e.altKey || e.ctrlKey) {　/* それ以外の Shift以外モディファイヤは Elm側で処理させるので殺す */
                 e.preventDefault();
             }
+
             switch (e.keyCode) {
             case 37: /* '←' .. スクロールが発生してしまうことがある */
-            case 38: /* '↑' */
-            case 39: /* '→' */
-            case 40: /* '↓' */ 
+            case 38: /* '↑' .. 〃   */
+            case 39: /* '→' .. 〃   */
+            case 40: /* '↓' .. 〃   */ 
+            case  9: /* tab  .. 次のオブジェクトへフォーカス移動してしまう */
                 e.preventDefault();
                 break;
             }

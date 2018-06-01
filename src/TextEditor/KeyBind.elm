@@ -38,6 +38,7 @@ basic =
     , {ctrl=False, alt=False, shift=False, code= 35, f=EditorCmds.moveEOL }      -- End
     , {ctrl=False, alt=False, shift=False, code=  8, f=EditorCmds.backspace }    -- BS
     , {ctrl=False, alt=False, shift=False, code= 46, f=EditorCmds.delete }       -- DEL
+    , {ctrl=False, alt=False, shift=False, code=  9, f=EditorCmds.insert "\t" }  -- tab
     ]
 
 gates: List KeyBind
