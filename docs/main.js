@@ -16511,6 +16511,30 @@ var _minekoa$elm_text_editor$KeyBindMenu$decodeKeyboardEvent = A7(
 	A2(_elm_lang$core$Json_Decode$field, 'metaKey', _elm_lang$core$Json_Decode$bool),
 	A2(_elm_lang$core$Json_Decode$field, 'repeat', _elm_lang$core$Json_Decode$bool),
 	A2(_elm_lang$core$Json_Decode$field, 'shiftKey', _elm_lang$core$Json_Decode$bool));
+var _minekoa$elm_text_editor$KeyBindMenu$considerKeyboardEvent = function (func) {
+	return A2(
+		_elm_lang$core$Json_Decode$andThen,
+		function (event) {
+			var _p5 = func(event);
+			if (_p5.ctor === 'Just') {
+				return _elm_lang$core$Json_Decode$succeed(_p5._0);
+			} else {
+				return _elm_lang$core$Json_Decode$fail('Ignoring keyboard event');
+			}
+		},
+		_minekoa$elm_text_editor$KeyBindMenu$decodeKeyboardEvent);
+};
+var _minekoa$elm_text_editor$KeyBindMenu$onTabKeyDown = function (tagger) {
+	return A3(
+		_elm_lang$html$Html_Events$onWithOptions,
+		'keydown',
+		{stopPropagation: true, preventDefault: true},
+		_minekoa$elm_text_editor$KeyBindMenu$considerKeyboardEvent(
+			function (kbd_ev) {
+				return _elm_lang$core$Native_Utils.eq(kbd_ev.keyCode, 9) ? _elm_lang$core$Maybe$Just(
+					tagger(kbd_ev)) : _elm_lang$core$Maybe$Nothing;
+			}));
+};
 var _minekoa$elm_text_editor$KeyBindMenu$onKeyDown = function (tagger) {
 	return A2(
 		_elm_lang$html$Html_Events$on,
@@ -16947,6 +16971,9 @@ var _minekoa$elm_text_editor$KeyBindMenu$editPage_commandListView = function (mo
 var _minekoa$elm_text_editor$KeyBindMenu$InputText = function (a) {
 	return {ctor: 'InputText', _0: a};
 };
+var _minekoa$elm_text_editor$KeyBindMenu$TabKeyDown = function (a) {
+	return {ctor: 'TabKeyDown', _0: a};
+};
 var _minekoa$elm_text_editor$KeyBindMenu$KeyDown = function (a) {
 	return {ctor: 'KeyDown', _0: a};
 };
@@ -16955,242 +16982,184 @@ var _minekoa$elm_text_editor$KeyBindMenu$KeyEditorFocus = function (a) {
 };
 var _minekoa$elm_text_editor$KeyBindMenu$doFocus = A2(
 	_elm_lang$core$Task$attempt,
-	function (_p5) {
+	function (_p6) {
 		return _minekoa$elm_text_editor$KeyBindMenu$KeyEditorFocus(true);
 	},
 	_elm_lang$dom$Dom$focus('keybindmenu-keyevent-receiver'));
 var _minekoa$elm_text_editor$KeyBindMenu$update = F3(
 	function (msg, keybinds, model) {
-		var _p6 = msg;
-		switch (_p6.ctor) {
-			case 'LoadSetting':
-				if ((_p6._0.ctor === '_Tuple2') && (_p6._0._0 === 'keybinds')) {
+		update:
+		while (true) {
+			var _p7 = msg;
+			switch (_p7.ctor) {
+				case 'LoadSetting':
+					if ((_p7._0.ctor === '_Tuple2') && (_p7._0._0 === 'keybinds')) {
+						return {
+							ctor: '_Tuple3',
+							_0: A2(
+								_elm_lang$core$Result$withDefault,
+								keybinds,
+								A2(
+									_elm_lang$core$Result$andThen,
+									_elm_lang$core$Json_Decode$decodeString(_minekoa$elm_text_editor$KeyBindMenu$decodeKeyBinds),
+									A2(_elm_lang$core$Result$fromMaybe, 'value is nothing', _p7._0._1))),
+							_1: model,
+							_2: _elm_lang$core$Platform_Cmd$none
+						};
+					} else {
+						return {ctor: '_Tuple3', _0: keybinds, _1: model, _2: _elm_lang$core$Platform_Cmd$none};
+					}
+				case 'SelectSubMenu':
 					return {
 						ctor: '_Tuple3',
-						_0: A2(
-							_elm_lang$core$Result$withDefault,
-							keybinds,
-							A2(
-								_elm_lang$core$Result$andThen,
-								_elm_lang$core$Json_Decode$decodeString(_minekoa$elm_text_editor$KeyBindMenu$decodeKeyBinds),
-								A2(_elm_lang$core$Result$fromMaybe, 'value is nothing', _p6._0._1))),
-						_1: model,
+						_0: keybinds,
+						_1: _elm_lang$core$Native_Utils.update(
+							model,
+							{selectedSubMenu: _p7._0}),
 						_2: _elm_lang$core$Platform_Cmd$none
 					};
-				} else {
-					return {ctor: '_Tuple3', _0: keybinds, _1: model, _2: _elm_lang$core$Platform_Cmd$none};
-				}
-			case 'SelectSubMenu':
-				return {
-					ctor: '_Tuple3',
-					_0: keybinds,
-					_1: _elm_lang$core$Native_Utils.update(
-						model,
-						{selectedSubMenu: _p6._0}),
-					_2: _elm_lang$core$Platform_Cmd$none
-				};
-			case 'SelectKeyBind':
-				return {
-					ctor: '_Tuple3',
-					_0: keybinds,
-					_1: _elm_lang$core$Native_Utils.update(
-						model,
-						{currentIdx: _p6._0}),
-					_2: _elm_lang$core$Platform_Cmd$none
-				};
-			case 'EditStart':
-				var _p8 = _p6._0;
-				return {
-					ctor: '_Tuple3',
-					_0: keybinds,
-					_1: _elm_lang$core$Native_Utils.update(
-						model,
-						{
-							selectedSubMenu: _minekoa$elm_text_editor$KeyBindMenu$KeybindMain,
-							mainsPage: _minekoa$elm_text_editor$KeyBindMenu$EditPage,
-							currentIdx: _p8,
-							current: A2(
-								_elm_lang$core$Maybe$andThen,
-								function (_p7) {
-									return _elm_lang$core$Maybe$Just(
-										_minekoa$elm_text_editor$KeyBindMenu$initEditUpdate(_p7));
-								},
-								_elm_lang$core$List$head(
-									A2(_elm_lang$core$List$drop, _p8, keybinds)))
-						}),
-					_2: _elm_lang$core$Platform_Cmd$none
-				};
-			case 'BackToEdit':
-				return {
-					ctor: '_Tuple3',
-					_0: keybinds,
-					_1: _elm_lang$core$Native_Utils.update(
-						model,
-						{
-							selectedSubMenu: _minekoa$elm_text_editor$KeyBindMenu$KeybindMain,
-							mainsPage: _minekoa$elm_text_editor$KeyBindMenu$EditPage,
-							current: A2(
-								_elm_lang$core$Maybe$andThen,
-								function (edtbuf) {
-									return _elm_lang$core$Maybe$Just(
-										_elm_lang$core$Native_Utils.update(
-											edtbuf,
-											{
-												editmode: _elm_lang$core$Native_Utils.eq(edtbuf.editmode, _minekoa$elm_text_editor$KeyBindMenu$EditModeDelete) ? _minekoa$elm_text_editor$KeyBindMenu$EditModeUpdate : edtbuf.editmode
-											}));
-								},
-								model.current)
-						}),
-					_2: _elm_lang$core$Platform_Cmd$none
-				};
-			case 'BackToList':
-				return {
-					ctor: '_Tuple3',
-					_0: keybinds,
-					_1: _elm_lang$core$Native_Utils.update(
-						model,
-						{selectedSubMenu: _minekoa$elm_text_editor$KeyBindMenu$KeybindMain, mainsPage: _minekoa$elm_text_editor$KeyBindMenu$ListPage, current: _elm_lang$core$Maybe$Nothing}),
-					_2: _elm_lang$core$Platform_Cmd$none
-				};
-			case 'ConfirmDelete':
-				return {
-					ctor: '_Tuple3',
-					_0: keybinds,
-					_1: _elm_lang$core$Native_Utils.update(
-						model,
-						{
-							selectedSubMenu: _minekoa$elm_text_editor$KeyBindMenu$KeybindMain,
-							mainsPage: _minekoa$elm_text_editor$KeyBindMenu$AcceptPage,
-							current: A2(
-								_elm_lang$core$Maybe$andThen,
-								function (edtbuf) {
-									return _elm_lang$core$Maybe$Just(
-										_elm_lang$core$Native_Utils.update(
-											edtbuf,
-											{editmode: _minekoa$elm_text_editor$KeyBindMenu$EditModeDelete}));
-								},
-								model.current)
-						}),
-					_2: _elm_lang$core$Platform_Cmd$none
-				};
-			case 'ConfirmAccept':
-				return {
-					ctor: '_Tuple3',
-					_0: keybinds,
-					_1: _elm_lang$core$Native_Utils.update(
-						model,
-						{selectedSubMenu: _minekoa$elm_text_editor$KeyBindMenu$KeybindMain, mainsPage: _minekoa$elm_text_editor$KeyBindMenu$AcceptPage}),
-					_2: _elm_lang$core$Platform_Cmd$none
-				};
-			case 'EditComplete':
-				var nkeybind = function () {
-					var _p9 = model.current;
-					if (_p9.ctor === 'Just') {
-						var _p11 = _p9._0;
-						var _p10 = _p11.editmode;
-						switch (_p10.ctor) {
-							case 'EditModeNew':
-								return A2(
-									_elm_lang$core$Basics_ops['++'],
-									A2(_elm_lang$core$List$take, model.currentIdx, keybinds),
-									{
-										ctor: '::',
-										_0: _p11.keybind,
-										_1: A2(_elm_lang$core$List$drop, model.currentIdx, keybinds)
-									});
-							case 'EditModeUpdate':
-								return A2(
-									_elm_lang$core$Basics_ops['++'],
-									A2(_elm_lang$core$List$take, model.currentIdx, keybinds),
-									{
-										ctor: '::',
-										_0: _p11.keybind,
-										_1: A2(_elm_lang$core$List$drop, model.currentIdx + 1, keybinds)
-									});
-							default:
-								return A2(
-									_elm_lang$core$Basics_ops['++'],
-									A2(_elm_lang$core$List$take, model.currentIdx, keybinds),
-									A2(_elm_lang$core$List$drop, model.currentIdx + 1, keybinds));
+				case 'SelectKeyBind':
+					return {
+						ctor: '_Tuple3',
+						_0: keybinds,
+						_1: _elm_lang$core$Native_Utils.update(
+							model,
+							{currentIdx: _p7._0}),
+						_2: _elm_lang$core$Platform_Cmd$none
+					};
+				case 'EditStart':
+					var _p9 = _p7._0;
+					return {
+						ctor: '_Tuple3',
+						_0: keybinds,
+						_1: _elm_lang$core$Native_Utils.update(
+							model,
+							{
+								selectedSubMenu: _minekoa$elm_text_editor$KeyBindMenu$KeybindMain,
+								mainsPage: _minekoa$elm_text_editor$KeyBindMenu$EditPage,
+								currentIdx: _p9,
+								current: A2(
+									_elm_lang$core$Maybe$andThen,
+									function (_p8) {
+										return _elm_lang$core$Maybe$Just(
+											_minekoa$elm_text_editor$KeyBindMenu$initEditUpdate(_p8));
+									},
+									_elm_lang$core$List$head(
+										A2(_elm_lang$core$List$drop, _p9, keybinds)))
+							}),
+						_2: _elm_lang$core$Platform_Cmd$none
+					};
+				case 'BackToEdit':
+					return {
+						ctor: '_Tuple3',
+						_0: keybinds,
+						_1: _elm_lang$core$Native_Utils.update(
+							model,
+							{
+								selectedSubMenu: _minekoa$elm_text_editor$KeyBindMenu$KeybindMain,
+								mainsPage: _minekoa$elm_text_editor$KeyBindMenu$EditPage,
+								current: A2(
+									_elm_lang$core$Maybe$andThen,
+									function (edtbuf) {
+										return _elm_lang$core$Maybe$Just(
+											_elm_lang$core$Native_Utils.update(
+												edtbuf,
+												{
+													editmode: _elm_lang$core$Native_Utils.eq(edtbuf.editmode, _minekoa$elm_text_editor$KeyBindMenu$EditModeDelete) ? _minekoa$elm_text_editor$KeyBindMenu$EditModeUpdate : edtbuf.editmode
+												}));
+									},
+									model.current)
+							}),
+						_2: _elm_lang$core$Platform_Cmd$none
+					};
+				case 'BackToList':
+					return {
+						ctor: '_Tuple3',
+						_0: keybinds,
+						_1: _elm_lang$core$Native_Utils.update(
+							model,
+							{selectedSubMenu: _minekoa$elm_text_editor$KeyBindMenu$KeybindMain, mainsPage: _minekoa$elm_text_editor$KeyBindMenu$ListPage, current: _elm_lang$core$Maybe$Nothing}),
+						_2: _elm_lang$core$Platform_Cmd$none
+					};
+				case 'ConfirmDelete':
+					return {
+						ctor: '_Tuple3',
+						_0: keybinds,
+						_1: _elm_lang$core$Native_Utils.update(
+							model,
+							{
+								selectedSubMenu: _minekoa$elm_text_editor$KeyBindMenu$KeybindMain,
+								mainsPage: _minekoa$elm_text_editor$KeyBindMenu$AcceptPage,
+								current: A2(
+									_elm_lang$core$Maybe$andThen,
+									function (edtbuf) {
+										return _elm_lang$core$Maybe$Just(
+											_elm_lang$core$Native_Utils.update(
+												edtbuf,
+												{editmode: _minekoa$elm_text_editor$KeyBindMenu$EditModeDelete}));
+									},
+									model.current)
+							}),
+						_2: _elm_lang$core$Platform_Cmd$none
+					};
+				case 'ConfirmAccept':
+					return {
+						ctor: '_Tuple3',
+						_0: keybinds,
+						_1: _elm_lang$core$Native_Utils.update(
+							model,
+							{selectedSubMenu: _minekoa$elm_text_editor$KeyBindMenu$KeybindMain, mainsPage: _minekoa$elm_text_editor$KeyBindMenu$AcceptPage}),
+						_2: _elm_lang$core$Platform_Cmd$none
+					};
+				case 'EditComplete':
+					var nkeybind = function () {
+						var _p10 = model.current;
+						if (_p10.ctor === 'Just') {
+							var _p12 = _p10._0;
+							var _p11 = _p12.editmode;
+							switch (_p11.ctor) {
+								case 'EditModeNew':
+									return A2(
+										_elm_lang$core$Basics_ops['++'],
+										A2(_elm_lang$core$List$take, model.currentIdx, keybinds),
+										{
+											ctor: '::',
+											_0: _p12.keybind,
+											_1: A2(_elm_lang$core$List$drop, model.currentIdx, keybinds)
+										});
+								case 'EditModeUpdate':
+									return A2(
+										_elm_lang$core$Basics_ops['++'],
+										A2(_elm_lang$core$List$take, model.currentIdx, keybinds),
+										{
+											ctor: '::',
+											_0: _p12.keybind,
+											_1: A2(_elm_lang$core$List$drop, model.currentIdx + 1, keybinds)
+										});
+								default:
+									return A2(
+										_elm_lang$core$Basics_ops['++'],
+										A2(_elm_lang$core$List$take, model.currentIdx, keybinds),
+										A2(_elm_lang$core$List$drop, model.currentIdx + 1, keybinds));
+							}
+						} else {
+							return keybinds;
 						}
-					} else {
-						return keybinds;
-					}
-				}();
-				return {
-					ctor: '_Tuple3',
-					_0: nkeybind,
-					_1: _elm_lang$core$Native_Utils.update(
-						model,
-						{selectedSubMenu: _minekoa$elm_text_editor$KeyBindMenu$KeybindMain, mainsPage: _minekoa$elm_text_editor$KeyBindMenu$ListPage, current: _elm_lang$core$Maybe$Nothing}),
-					_2: _minekoa$elm_text_editor$Ports_WebStrage$localStrage_setItem(
-						{
-							ctor: '_Tuple2',
-							_0: 'keybinds',
-							_1: _minekoa$elm_text_editor$KeyBindMenu$encodeKeyBinds(nkeybind)
-						})
-				};
-			case 'SetFocusToKeyEditor':
-				return {
-					ctor: '_Tuple3',
-					_0: keybinds,
-					_1: _elm_lang$core$Native_Utils.update(
-						model,
-						{
-							current: A2(
-								_elm_lang$core$Maybe$andThen,
-								function (editbuf) {
-									return _elm_lang$core$Maybe$Just(
-										_elm_lang$core$Native_Utils.update(
-											editbuf,
-											{target: _minekoa$elm_text_editor$KeyBindMenu$TargetKeys}));
-								},
-								model.current)
-						}),
-					_2: _minekoa$elm_text_editor$KeyBindMenu$doFocus
-				};
-			case 'SetFocusToCmdSelector':
-				return {
-					ctor: '_Tuple3',
-					_0: keybinds,
-					_1: _elm_lang$core$Native_Utils.update(
-						model,
-						{
-							current: A2(
-								_elm_lang$core$Maybe$andThen,
-								function (editbuf) {
-									return _elm_lang$core$Maybe$Just(
-										_elm_lang$core$Native_Utils.update(
-											editbuf,
-											{target: _minekoa$elm_text_editor$KeyBindMenu$TargetCommand}));
-								},
-								model.current)
-						}),
-					_2: _elm_lang$core$Platform_Cmd$none
-				};
-			case 'SetFocusToCmdInsertValue':
-				return {
-					ctor: '_Tuple3',
-					_0: keybinds,
-					_1: _elm_lang$core$Native_Utils.update(
-						model,
-						{
-							current: A2(
-								_elm_lang$core$Maybe$andThen,
-								function (editbuf) {
-									return _elm_lang$core$Maybe$Just(
-										_elm_lang$core$Native_Utils.update(
-											editbuf,
-											{target: _minekoa$elm_text_editor$KeyBindMenu$TargetInsertValue}));
-								},
-								model.current)
-						}),
-					_2: _minekoa$elm_text_editor$KeyBindMenu$doFocus
-				};
-			case 'KeyEditorFocus':
-				if (_p6._0 === true) {
-					return {ctor: '_Tuple3', _0: keybinds, _1: model, _2: _elm_lang$core$Platform_Cmd$none};
-				} else {
+					}();
+					return {
+						ctor: '_Tuple3',
+						_0: nkeybind,
+						_1: _elm_lang$core$Native_Utils.update(
+							model,
+							{selectedSubMenu: _minekoa$elm_text_editor$KeyBindMenu$KeybindMain, mainsPage: _minekoa$elm_text_editor$KeyBindMenu$ListPage, current: _elm_lang$core$Maybe$Nothing}),
+						_2: _minekoa$elm_text_editor$Ports_WebStrage$localStrage_setItem(
+							{
+								ctor: '_Tuple2',
+								_0: 'keybinds',
+								_1: _minekoa$elm_text_editor$KeyBindMenu$encodeKeyBinds(nkeybind)
+							})
+					};
+				case 'SetFocusToKeyEditor':
 					return {
 						ctor: '_Tuple3',
 						_0: keybinds,
@@ -17203,203 +17172,282 @@ var _minekoa$elm_text_editor$KeyBindMenu$update = F3(
 										return _elm_lang$core$Maybe$Just(
 											_elm_lang$core$Native_Utils.update(
 												editbuf,
-												{
-													target: function () {
-														var _p12 = editbuf.target;
-														switch (_p12.ctor) {
-															case 'TargetKeys':
-																return _minekoa$elm_text_editor$KeyBindMenu$TargetNone;
-															case 'TargetInsertValue':
-																return _minekoa$elm_text_editor$KeyBindMenu$TargetNone;
-															default:
-																return _p12;
-														}
-													}()
-												}));
+												{target: _minekoa$elm_text_editor$KeyBindMenu$TargetKeys}));
+									},
+									model.current)
+							}),
+						_2: _minekoa$elm_text_editor$KeyBindMenu$doFocus
+					};
+				case 'SetFocusToCmdSelector':
+					return {
+						ctor: '_Tuple3',
+						_0: keybinds,
+						_1: _elm_lang$core$Native_Utils.update(
+							model,
+							{
+								current: A2(
+									_elm_lang$core$Maybe$andThen,
+									function (editbuf) {
+										return _elm_lang$core$Maybe$Just(
+											_elm_lang$core$Native_Utils.update(
+												editbuf,
+												{target: _minekoa$elm_text_editor$KeyBindMenu$TargetCommand}));
 									},
 									model.current)
 							}),
 						_2: _elm_lang$core$Platform_Cmd$none
 					};
-				}
-			case 'KeyDown':
-				var _p16 = _p6._0;
-				var _p13 = model.current;
-				if (_p13.ctor === 'Just') {
-					var _p15 = _p13._0;
-					var _p14 = _p15.target;
-					if (_p14.ctor === 'TargetKeys') {
-						var kbind = _p15.keybind;
-						var new_kbind = _elm_lang$core$Native_Utils.update(
-							kbind,
-							{ctrl: _p16.ctrlKey, alt: _p16.altKey, shift: _p16.shiftKey, code: _p16.keyCode});
-						return {
-							ctor: '_Tuple3',
-							_0: keybinds,
-							_1: _elm_lang$core$Native_Utils.update(
-								model,
-								{
-									current: _elm_lang$core$Maybe$Just(
-										_elm_lang$core$Native_Utils.update(
-											_p15,
-											{keybind: new_kbind}))
-								}),
-							_2: _elm_lang$core$Platform_Cmd$none
-						};
-					} else {
-						return {ctor: '_Tuple3', _0: keybinds, _1: model, _2: _elm_lang$core$Platform_Cmd$none};
-					}
-				} else {
-					return {ctor: '_Tuple3', _0: keybinds, _1: model, _2: _elm_lang$core$Platform_Cmd$none};
-				}
-			case 'InputText':
-				var _p20 = _p6._0;
-				var _p17 = model.current;
-				if (_p17.ctor === 'Just') {
-					var _p19 = _p17._0;
-					var _p18 = _p19.target;
-					if (_p18.ctor === 'TargetInsertValue') {
-						var kbind = _p19.keybind;
-						var new_kbind = _elm_lang$core$Native_Utils.update(
-							kbind,
+				case 'SetFocusToCmdInsertValue':
+					return {
+						ctor: '_Tuple3',
+						_0: keybinds,
+						_1: _elm_lang$core$Native_Utils.update(
+							model,
 							{
-								f: _minekoa$elm_text_editor$TextEditor_Commands$insert(_p20)
-							});
+								current: A2(
+									_elm_lang$core$Maybe$andThen,
+									function (editbuf) {
+										return _elm_lang$core$Maybe$Just(
+											_elm_lang$core$Native_Utils.update(
+												editbuf,
+												{target: _minekoa$elm_text_editor$KeyBindMenu$TargetInsertValue}));
+									},
+									model.current)
+							}),
+						_2: _minekoa$elm_text_editor$KeyBindMenu$doFocus
+					};
+				case 'KeyEditorFocus':
+					if (_p7._0 === true) {
+						return {ctor: '_Tuple3', _0: keybinds, _1: model, _2: _elm_lang$core$Platform_Cmd$none};
+					} else {
 						return {
 							ctor: '_Tuple3',
 							_0: keybinds,
 							_1: _elm_lang$core$Native_Utils.update(
 								model,
 								{
-									current: _elm_lang$core$Maybe$Just(
-										_elm_lang$core$Native_Utils.update(
-											_p19,
-											{
-												keybind: new_kbind,
-												insertS: _elm_lang$core$Maybe$Just(_p20)
-											}))
+									current: A2(
+										_elm_lang$core$Maybe$andThen,
+										function (editbuf) {
+											return _elm_lang$core$Maybe$Just(
+												_elm_lang$core$Native_Utils.update(
+													editbuf,
+													{
+														target: function () {
+															var _p13 = editbuf.target;
+															switch (_p13.ctor) {
+																case 'TargetKeys':
+																	return _minekoa$elm_text_editor$KeyBindMenu$TargetNone;
+																case 'TargetInsertValue':
+																	return _minekoa$elm_text_editor$KeyBindMenu$TargetNone;
+																default:
+																	return _p13;
+															}
+														}()
+													}));
+										},
+										model.current)
 								}),
 							_2: _elm_lang$core$Platform_Cmd$none
 						};
+					}
+				case 'KeyDown':
+					var _p17 = _p7._0;
+					var _p14 = model.current;
+					if (_p14.ctor === 'Just') {
+						var _p16 = _p14._0;
+						var _p15 = _p16.target;
+						if (_p15.ctor === 'TargetKeys') {
+							var kbind = _p16.keybind;
+							var new_kbind = _elm_lang$core$Native_Utils.update(
+								kbind,
+								{ctrl: _p17.ctrlKey, alt: _p17.altKey, shift: _p17.shiftKey, code: _p17.keyCode});
+							return {
+								ctor: '_Tuple3',
+								_0: keybinds,
+								_1: _elm_lang$core$Native_Utils.update(
+									model,
+									{
+										current: _elm_lang$core$Maybe$Just(
+											_elm_lang$core$Native_Utils.update(
+												_p16,
+												{keybind: new_kbind}))
+									}),
+								_2: _elm_lang$core$Platform_Cmd$none
+							};
+						} else {
+							return {ctor: '_Tuple3', _0: keybinds, _1: model, _2: _elm_lang$core$Platform_Cmd$none};
+						}
 					} else {
 						return {ctor: '_Tuple3', _0: keybinds, _1: model, _2: _elm_lang$core$Platform_Cmd$none};
 					}
-				} else {
-					return {ctor: '_Tuple3', _0: keybinds, _1: model, _2: _elm_lang$core$Platform_Cmd$none};
-				}
-			case 'SelectCommand':
-				var _p21 = _p6._0;
-				return {
-					ctor: '_Tuple3',
-					_0: keybinds,
-					_1: _elm_lang$core$Native_Utils.update(
-						model,
+				case 'TabKeyDown':
+					var now_insertS = A2(
+						_elm_lang$core$Maybe$withDefault,
+						'',
+						A2(
+							_elm_lang$core$Maybe$andThen,
+							function (edtbuf) {
+								return edtbuf.insertS;
+							},
+							model.current));
+					var _v10 = _minekoa$elm_text_editor$KeyBindMenu$InputText(
+						A2(_elm_lang$core$Basics_ops['++'], now_insertS, '\t')),
+						_v11 = keybinds,
+						_v12 = model;
+					msg = _v10;
+					keybinds = _v11;
+					model = _v12;
+					continue update;
+				case 'InputText':
+					var _p21 = _p7._0;
+					var _p18 = model.current;
+					if (_p18.ctor === 'Just') {
+						var _p20 = _p18._0;
+						var _p19 = _p20.target;
+						if (_p19.ctor === 'TargetInsertValue') {
+							var kbind = _p20.keybind;
+							var new_kbind = _elm_lang$core$Native_Utils.update(
+								kbind,
+								{
+									f: _minekoa$elm_text_editor$TextEditor_Commands$insert(_p21)
+								});
+							return {
+								ctor: '_Tuple3',
+								_0: keybinds,
+								_1: _elm_lang$core$Native_Utils.update(
+									model,
+									{
+										current: _elm_lang$core$Maybe$Just(
+											_elm_lang$core$Native_Utils.update(
+												_p20,
+												{
+													keybind: new_kbind,
+													insertS: _elm_lang$core$Maybe$Just(_p21)
+												}))
+									}),
+								_2: _elm_lang$core$Platform_Cmd$none
+							};
+						} else {
+							return {ctor: '_Tuple3', _0: keybinds, _1: model, _2: _elm_lang$core$Platform_Cmd$none};
+						}
+					} else {
+						return {ctor: '_Tuple3', _0: keybinds, _1: model, _2: _elm_lang$core$Platform_Cmd$none};
+					}
+				case 'SelectCommand':
+					var _p22 = _p7._0;
+					return {
+						ctor: '_Tuple3',
+						_0: keybinds,
+						_1: _elm_lang$core$Native_Utils.update(
+							model,
+							{
+								current: A2(
+									_elm_lang$core$Maybe$andThen,
+									function (editbuf) {
+										var sval = _elm_lang$core$Native_Utils.eq(
+											A2(
+												_elm_lang$core$String$left,
+												_elm_lang$core$String$length('insert'),
+												_p22.id),
+											'insert') ? _elm_lang$core$Maybe$Just(
+											A2(
+												_elm_lang$core$String$dropLeft,
+												A3(
+													_elm_lang$core$Basics$flip,
+													F2(
+														function (x, y) {
+															return x + y;
+														}),
+													1,
+													_elm_lang$core$String$length('insert')),
+												_p22.id)) : _elm_lang$core$Maybe$Nothing;
+										var kbind = editbuf.keybind;
+										var newbind = _elm_lang$core$Native_Utils.update(
+											kbind,
+											{f: _p22});
+										return _elm_lang$core$Maybe$Just(
+											_elm_lang$core$Native_Utils.update(
+												editbuf,
+												{keybind: newbind, insertS: sval}));
+									},
+									model.current)
+							}),
+						_2: _elm_lang$core$Platform_Cmd$none
+					};
+				case 'AddKeyBind':
+					return {
+						ctor: '_Tuple3',
+						_0: keybinds,
+						_1: _elm_lang$core$Native_Utils.update(
+							model,
+							{
+								current: _elm_lang$core$Maybe$Just(_minekoa$elm_text_editor$KeyBindMenu$initEditNew),
+								selectedSubMenu: _minekoa$elm_text_editor$KeyBindMenu$KeybindMain,
+								mainsPage: _minekoa$elm_text_editor$KeyBindMenu$EditPage
+							}),
+						_2: _elm_lang$core$Platform_Cmd$none
+					};
+				case 'SetResetOption':
+					var _p24 = _p7._1;
+					var opts = model.resetOptions;
+					return {
+						ctor: '_Tuple3',
+						_0: keybinds,
+						_1: _elm_lang$core$Native_Utils.update(
+							model,
+							{
+								resetOptions: function () {
+									var _p23 = _p7._0;
+									switch (_p23) {
+										case 'basic':
+											return _elm_lang$core$Native_Utils.update(
+												opts,
+												{basic: _p24});
+										case 'gates':
+											return _elm_lang$core$Native_Utils.update(
+												opts,
+												{gates: _p24});
+										case 'emacs':
+											return _elm_lang$core$Native_Utils.update(
+												opts,
+												{emacs: _p24});
+										default:
+											return opts;
+									}
+								}()
+							}),
+						_2: _elm_lang$core$Platform_Cmd$none
+					};
+				default:
+					var nkeybinds = _elm_lang$core$List$concat(
 						{
-							current: A2(
-								_elm_lang$core$Maybe$andThen,
-								function (editbuf) {
-									var sval = _elm_lang$core$Native_Utils.eq(
-										A2(
-											_elm_lang$core$String$left,
-											_elm_lang$core$String$length('insert'),
-											_p21.id),
-										'insert') ? _elm_lang$core$Maybe$Just(
-										A2(
-											_elm_lang$core$String$dropLeft,
-											A3(
-												_elm_lang$core$Basics$flip,
-												F2(
-													function (x, y) {
-														return x + y;
-													}),
-												1,
-												_elm_lang$core$String$length('insert')),
-											_p21.id)) : _elm_lang$core$Maybe$Nothing;
-									var kbind = editbuf.keybind;
-									var newbind = _elm_lang$core$Native_Utils.update(
-										kbind,
-										{f: _p21});
-									return _elm_lang$core$Maybe$Just(
-										_elm_lang$core$Native_Utils.update(
-											editbuf,
-											{keybind: newbind, insertS: sval}));
-								},
-								model.current)
-						}),
-					_2: _elm_lang$core$Platform_Cmd$none
-				};
-			case 'AddKeyBind':
-				return {
-					ctor: '_Tuple3',
-					_0: keybinds,
-					_1: _elm_lang$core$Native_Utils.update(
-						model,
-						{
-							current: _elm_lang$core$Maybe$Just(_minekoa$elm_text_editor$KeyBindMenu$initEditNew),
-							selectedSubMenu: _minekoa$elm_text_editor$KeyBindMenu$KeybindMain,
-							mainsPage: _minekoa$elm_text_editor$KeyBindMenu$EditPage
-						}),
-					_2: _elm_lang$core$Platform_Cmd$none
-				};
-			case 'SetResetOption':
-				var _p23 = _p6._1;
-				var opts = model.resetOptions;
-				return {
-					ctor: '_Tuple3',
-					_0: keybinds,
-					_1: _elm_lang$core$Native_Utils.update(
-						model,
-						{
-							resetOptions: function () {
-								var _p22 = _p6._0;
-								switch (_p22) {
-									case 'basic':
-										return _elm_lang$core$Native_Utils.update(
-											opts,
-											{basic: _p23});
-									case 'gates':
-										return _elm_lang$core$Native_Utils.update(
-											opts,
-											{gates: _p23});
-									case 'emacs':
-										return _elm_lang$core$Native_Utils.update(
-											opts,
-											{emacs: _p23});
-									default:
-										return opts;
-								}
-							}()
-						}),
-					_2: _elm_lang$core$Platform_Cmd$none
-				};
-			default:
-				var nkeybinds = _elm_lang$core$List$concat(
-					{
-						ctor: '::',
-						_0: model.resetOptions.basic ? _minekoa$elm_text_editor$TextEditor_KeyBind$basic : {ctor: '[]'},
-						_1: {
 							ctor: '::',
-							_0: model.resetOptions.gates ? _minekoa$elm_text_editor$TextEditor_KeyBind$gates : {ctor: '[]'},
+							_0: model.resetOptions.basic ? _minekoa$elm_text_editor$TextEditor_KeyBind$basic : {ctor: '[]'},
 							_1: {
 								ctor: '::',
-								_0: model.resetOptions.emacs ? _minekoa$elm_text_editor$TextEditor_KeyBind$emacsLike : {ctor: '[]'},
-								_1: {ctor: '[]'}
+								_0: model.resetOptions.gates ? _minekoa$elm_text_editor$TextEditor_KeyBind$gates : {ctor: '[]'},
+								_1: {
+									ctor: '::',
+									_0: model.resetOptions.emacs ? _minekoa$elm_text_editor$TextEditor_KeyBind$emacsLike : {ctor: '[]'},
+									_1: {ctor: '[]'}
+								}
 							}
-						}
-					});
-				return {
-					ctor: '_Tuple3',
-					_0: nkeybinds,
-					_1: _elm_lang$core$Native_Utils.update(
-						model,
-						{resetOptions: _minekoa$elm_text_editor$KeyBindMenu$initKeybindResetOptions}),
-					_2: _minekoa$elm_text_editor$Ports_WebStrage$localStrage_setItem(
-						{
-							ctor: '_Tuple2',
-							_0: 'keybinds',
-							_1: _minekoa$elm_text_editor$KeyBindMenu$encodeKeyBinds(nkeybinds)
-						})
-				};
+						});
+					return {
+						ctor: '_Tuple3',
+						_0: nkeybinds,
+						_1: _elm_lang$core$Native_Utils.update(
+							model,
+							{resetOptions: _minekoa$elm_text_editor$KeyBindMenu$initKeybindResetOptions}),
+						_2: _minekoa$elm_text_editor$Ports_WebStrage$localStrage_setItem(
+							{
+								ctor: '_Tuple2',
+								_0: 'keybinds',
+								_1: _minekoa$elm_text_editor$KeyBindMenu$encodeKeyBinds(nkeybinds)
+							})
+					};
+			}
 		}
 	});
 var _minekoa$elm_text_editor$KeyBindMenu$SetFocusToCmdInsertValue = {ctor: 'SetFocusToCmdInsertValue'};
@@ -17476,8 +17524,8 @@ var _minekoa$elm_text_editor$KeyBindMenu$currentKeybindView_cmd = function (edtb
 			_1: {
 				ctor: '::',
 				_0: function () {
-					var _p24 = edtbuf.insertS;
-					if (_p24.ctor === 'Just') {
+					var _p25 = edtbuf.insertS;
+					if (_p25.ctor === 'Just') {
 						return A2(
 							_elm_lang$html$Html$div,
 							{
@@ -17502,7 +17550,7 @@ var _minekoa$elm_text_editor$KeyBindMenu$currentKeybindView_cmd = function (edtb
 									{
 										ctor: '::',
 										_0: _elm_lang$html$Html$text(
-											_minekoa$elm_text_editor$KeyBindMenu$stringEscape(_p24._0)),
+											_minekoa$elm_text_editor$KeyBindMenu$stringEscape(_p25._0)),
 										_1: {ctor: '[]'}
 									}),
 								_1: {ctor: '[]'}
@@ -17823,9 +17871,9 @@ var _minekoa$elm_text_editor$KeyBindMenu$BackToList = {ctor: 'BackToList'};
 var _minekoa$elm_text_editor$KeyBindMenu$editPageView = F2(
 	function (edtbuf, model) {
 		var isEditModeNew = function (m) {
-			var _p25 = m.current;
-			if (_p25.ctor === 'Just') {
-				return _elm_lang$core$Native_Utils.eq(_p25._0.editmode, _minekoa$elm_text_editor$KeyBindMenu$EditModeNew);
+			var _p26 = m.current;
+			if (_p26.ctor === 'Just') {
+				return _elm_lang$core$Native_Utils.eq(_p26._0.editmode, _minekoa$elm_text_editor$KeyBindMenu$EditModeNew);
 			} else {
 				return false;
 			}
@@ -17952,7 +18000,7 @@ var _minekoa$elm_text_editor$KeyBindMenu$editPageView = F2(
 												}),
 											_1: {
 												ctor: '::',
-												_0: _minekoa$elm_text_editor$KeyBindMenu$onKeyDown(_minekoa$elm_text_editor$KeyBindMenu$KeyDown),
+												_0: _elm_lang$core$Native_Utils.eq(edtbuf.target, _minekoa$elm_text_editor$KeyBindMenu$TargetInsertValue) ? _minekoa$elm_text_editor$KeyBindMenu$onTabKeyDown(_minekoa$elm_text_editor$KeyBindMenu$TabKeyDown) : _minekoa$elm_text_editor$KeyBindMenu$onKeyDown(_minekoa$elm_text_editor$KeyBindMenu$KeyDown),
 												_1: {
 													ctor: '::',
 													_0: _minekoa$elm_text_editor$KeyBindMenu$onFocusIn(_minekoa$elm_text_editor$KeyBindMenu$KeyEditorFocus),
@@ -17962,7 +18010,12 @@ var _minekoa$elm_text_editor$KeyBindMenu$editPageView = F2(
 														_1: {
 															ctor: '::',
 															_0: _elm_lang$html$Html_Events$onInput(_minekoa$elm_text_editor$KeyBindMenu$InputText),
-															_1: {ctor: '[]'}
+															_1: {
+																ctor: '::',
+																_0: _elm_lang$html$Html_Attributes$value(
+																	A2(_elm_lang$core$Maybe$withDefault, '', edtbuf.insertS)),
+																_1: {ctor: '[]'}
+															}
 														}
 													}
 												}
@@ -17973,8 +18026,8 @@ var _minekoa$elm_text_editor$KeyBindMenu$editPageView = F2(
 								_1: {
 									ctor: '::',
 									_0: function () {
-										var _p26 = edtbuf.target;
-										switch (_p26.ctor) {
+										var _p27 = edtbuf.target;
+										switch (_p27.ctor) {
 											case 'TargetKeys':
 												return _minekoa$elm_text_editor$KeyBindMenu$editPage_keypressMessage(model);
 											case 'TargetCommand':
@@ -18266,10 +18319,10 @@ var _minekoa$elm_text_editor$KeyBindMenu$acceptPageView = F2(
 							_1: {ctor: '[]'}
 						},
 						function () {
-							var _p27 = model.current;
-							if (_p27.ctor === 'Just') {
-								var _p28 = _p27._0.editmode;
-								switch (_p28.ctor) {
+							var _p28 = model.current;
+							if (_p28.ctor === 'Just') {
+								var _p29 = _p28._0.editmode;
+								switch (_p29.ctor) {
 									case 'EditModeNew':
 										return A2(
 											_elm_lang$core$Basics_ops['++'],
@@ -18278,11 +18331,11 @@ var _minekoa$elm_text_editor$KeyBindMenu$acceptPageView = F2(
 												_elm_lang$core$Maybe$Nothing,
 												A2(
 													_elm_lang$core$Maybe$andThen,
-													function (_p29) {
+													function (_p30) {
 														return _elm_lang$core$Maybe$Just(
 															function (_) {
 																return _.keybind;
-															}(_p29));
+															}(_p30));
 													},
 													model.current)),
 											A2(
@@ -18298,11 +18351,11 @@ var _minekoa$elm_text_editor$KeyBindMenu$acceptPageView = F2(
 													A2(_elm_lang$core$List$drop, model.currentIdx, keybinds)),
 												A2(
 													_elm_lang$core$Maybe$andThen,
-													function (_p30) {
+													function (_p31) {
 														return _elm_lang$core$Maybe$Just(
 															function (_) {
 																return _.keybind;
-															}(_p30));
+															}(_p31));
 													},
 													model.current)),
 											A2(
@@ -18635,10 +18688,10 @@ var _minekoa$elm_text_editor$KeyBindMenu$listPageView = F2(
 	});
 var _minekoa$elm_text_editor$KeyBindMenu$menuPalette = F2(
 	function (keybinds, model) {
-		var _p31 = model.selectedSubMenu;
-		if (_p31.ctor === 'KeybindMain') {
-			var _p32 = model.mainsPage;
-			switch (_p32.ctor) {
+		var _p32 = model.selectedSubMenu;
+		if (_p32.ctor === 'KeybindMain') {
+			var _p33 = model.mainsPage;
+			switch (_p33.ctor) {
 				case 'ListPage':
 					return A2(
 						_elm_lang$html$Html$div,
@@ -18653,8 +18706,8 @@ var _minekoa$elm_text_editor$KeyBindMenu$menuPalette = F2(
 							_1: {ctor: '[]'}
 						});
 				case 'EditPage':
-					var _p33 = model.current;
-					if (_p33.ctor === 'Just') {
+					var _p34 = model.current;
+					if (_p34.ctor === 'Just') {
 						return A2(
 							_elm_lang$html$Html$div,
 							{
@@ -18664,7 +18717,7 @@ var _minekoa$elm_text_editor$KeyBindMenu$menuPalette = F2(
 							},
 							{
 								ctor: '::',
-								_0: A2(_minekoa$elm_text_editor$KeyBindMenu$editPageView, _p33._0, model),
+								_0: A2(_minekoa$elm_text_editor$KeyBindMenu$editPageView, _p34._0, model),
 								_1: {ctor: '[]'}
 							});
 					} else {
@@ -18725,8 +18778,8 @@ var _minekoa$elm_text_editor$KeyBindMenu$menuItemsView = function (model) {
 						ctor: '::',
 						_0: _elm_lang$html$Html_Attributes$class(
 							function () {
-								var _p34 = model.selectedSubMenu;
-								if (_p34.ctor === 'KeybindMain') {
+								var _p35 = model.selectedSubMenu;
+								if (_p35.ctor === 'KeybindMain') {
 									return 'menu-item-active';
 								} else {
 									return 'menu-item';
@@ -18744,8 +18797,8 @@ var _minekoa$elm_text_editor$KeyBindMenu$menuItemsView = function (model) {
 							ctor: '::',
 							_0: _elm_lang$html$Html$text(
 								function () {
-									var _p35 = model.mainsPage;
-									switch (_p35.ctor) {
+									var _p36 = model.mainsPage;
+									switch (_p36.ctor) {
 										case 'ListPage':
 											return 'Keybinds';
 										case 'EditPage':

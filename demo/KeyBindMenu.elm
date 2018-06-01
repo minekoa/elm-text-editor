@@ -129,6 +129,7 @@ type Msg
     | SetFocusToCmdInsertValue
     | KeyEditorFocus Bool
     | KeyDown KeyboardEvent
+    | TabKeyDown KeyboardEvent
     | InputText String
     | SelectCommand EditorCmds.Command
     | AddKeyBind
@@ -334,6 +335,12 @@ update msg keybinds model =
                             ( keybinds, model, Cmd.none )
                 Nothing ->
                     ( keybinds, model, Cmd.none )
+
+        TabKeyDown e ->
+            let
+                now_insertS = model.current |> Maybe.andThen (\ edtbuf -> edtbuf.insertS) |> Maybe.withDefault ""
+            in
+                update (InputText <| now_insertS ++ "\t" ) keybinds model
                 
         InputText s ->
             case model.current of
@@ -578,10 +585,13 @@ editPageView edtbuf model =
                   [ editPage_currentKeybindView edtbuf model
                   , textarea [ id "keybindmenu-keyevent-receiver"
                              , style [("opacity", "0"), ("height", "1px")]
-                             , onKeyDown KeyDown
+                             , if edtbuf.target == TargetInsertValue
+                               then onTabKeyDown TabKeyDown
+                               else onKeyDown KeyDown
                              , onFocusIn KeyEditorFocus
                              , onFocusOut KeyEditorFocus
                              , onInput InputText
+                             , value <| (edtbuf.insertS |> Maybe.withDefault "")
                              ] []
                   , case edtbuf.target of
                         TargetKeys ->
@@ -960,10 +970,36 @@ decodeKeyboardEvent =
         (Json.Decode.field "repeat" Json.Decode.bool)
         (Json.Decode.field "shiftKey" Json.Decode.bool)    
 
-                
+
+considerKeyboardEvent : (KeyboardEvent -> Maybe msg) -> Json.Decode.Decoder msg
+considerKeyboardEvent func =
+    Json.Decode.andThen
+        (\event ->
+            case func event of
+                Just msg ->
+                    Json.Decode.succeed msg
+
+                Nothing ->
+                    Json.Decode.fail "Ignoring keyboard event"
+        )
+        decodeKeyboardEvent
+
+
+
 onKeyDown : (KeyboardEvent -> msg) -> Attribute msg
 onKeyDown tagger =
     on "keydown" (Json.Decode.map tagger decodeKeyboardEvent)
+
+onTabKeyDown : (KeyboardEvent -> msg) -> Attribute msg
+onTabKeyDown tagger = 
+    onWithOptions "keydown" { stopPropagation = True, preventDefault = True } <|
+        considerKeyboardEvent (\ kbd_ev ->
+                                   if kbd_ev.keyCode == 9 then
+                                       Just (tagger kbd_ev)
+                                   else
+                                       Nothing
+                              )
+
 
 ------------------------------------------------------------
 -- focus
