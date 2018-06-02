@@ -1150,11 +1150,12 @@ editorCommandList =
     , EditorCmds.gotoMark
     , EditorCmds.backspace
     , EditorCmds.delete
-    , EditorCmds.undo
+    , EditorCmds.indent
     , EditorCmds.copy
     , EditorCmds.cut
     , EditorCmds.paste
     , EditorCmds.killLine
+    , EditorCmds.undo
     ]
 
 fidToEditCmd : String -> Maybe EditorCmds.Command
