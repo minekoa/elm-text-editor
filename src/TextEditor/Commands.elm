@@ -22,6 +22,7 @@ module TextEditor.Commands exposing
     , copy
     , cut
     , paste
+    , killLine
     , Command
 
 --    , batch
@@ -199,5 +200,11 @@ paste : Command
 paste =
     { id = "paste"
     , f = (\m -> CoreCommands.paste m.copyStore m)
+    }
+
+killLine : Command
+killLine =
+    { id = "killLine"
+    , f = CoreCommands.killLine
     }
 

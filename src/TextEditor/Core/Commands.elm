@@ -22,6 +22,7 @@ module TextEditor.Core.Commands exposing
     , copy
     , cut
     , paste
+    , killLine
 
     , batch
     )
@@ -199,5 +200,18 @@ paste text model =
         |> Core.withEnsureVisibleCmd
 
 
-
-
+killLine : Model -> (Model, Cmd Msg)
+killLine model = 
+    -- note: ブラウザのセキュリティ制約により、sytem の clipboard  にはコピーされません
+    let
+        row = model.buffer |> Buffer.nowCursorPos |> Tuple.first
+        line = model.buffer.contents |> Buffer.line row |> Maybe.withDefault ""
+    in
+        { model
+            | copyStore = line
+            , buffer = model.buffer
+                           |> Buffer.deleteRange (Buffer.Range (row, 0) (row, String.length line))
+                           |> Buffer.selectionClear
+          }
+        |> Core.blinkBlock
+        |> Core.withEnsureVisibleCmd
