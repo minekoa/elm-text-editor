@@ -71,5 +71,6 @@ emacsLike =
     , {ctrl=True , alt=False, shift=False, code= 89, f=EditorCmds.paste }        -- 'C-y'
     , {ctrl=True , alt=False, shift=False, code= 32, f=EditorCmds.markFlip }     -- 'C-SPE'
     , {ctrl=True , alt=False, shift=False, code=191, f=EditorCmds.undo }         -- 'C-/'
+    , {ctrl=True , alt=False, shift=False, code= 73, f=EditorCmds.indent }       -- 'C-i'
     ]
 

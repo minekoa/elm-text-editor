@@ -24,6 +24,8 @@ module TextEditor.Core.Commands exposing
     , paste
     , killLine
 
+    , indent
+
     , batch
     )
 
@@ -215,3 +217,42 @@ killLine model =
           }
         |> Core.blinkBlock
         |> Core.withEnsureVisibleCmd
+
+
+
+indent : Model -> (Model, Cmd Msg)
+indent model =
+    let
+        (row, col) = Buffer.nowCursorPos model.buffer
+
+        line     = model.buffer.contents |> Buffer.line row |> Maybe.withDefault ""
+        prevline = model.buffer.contents |> Buffer.line (row - 1 |> max 0) |> Maybe.withDefault ""
+
+        getIndentString = (\l indent_str->
+                               case l of
+                                   [] ->
+                                       indent_str |> List.reverse
+                                   x :: xs ->
+                                       if (x == ' ') || (x == '\t') then
+                                           getIndentString xs (x :: indent_str)
+                                       else
+                                           indent_str |> List.reverse
+                          )
+
+        prev_indent = getIndentString (prevline |> String.toList) []  |> String.fromList
+        cur_indent  = getIndentString (line |> String.toList) []  |> String.fromList
+    in
+        { model
+            | buffer = if prev_indent == cur_indent then
+                           model.buffer
+                       else
+                           model.buffer 
+                               |> Buffer.deleteRange (Buffer.Range (row, 0) (row, (String.length line) - (String.trimLeft line |> String.length) ) )
+                               |> Buffer.moveAt (row, 0)
+                               |> Buffer.insert prev_indent
+                               |> Buffer.moveAt ( row
+                                                , col + ((String.length prev_indent ) - (String.length cur_indent))
+                                                )
+        }
+            |> Core.blinkBlock
+            |> Core.withEnsureVisibleCmd

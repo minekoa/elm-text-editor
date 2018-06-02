@@ -23,6 +23,9 @@ module TextEditor.Commands exposing
     , cut
     , paste
     , killLine
+    , indent
+
+
     , Command
 
 --    , batch
@@ -207,4 +210,11 @@ killLine =
     { id = "killLine"
     , f = CoreCommands.killLine
     }
+
+indent : Command
+indent =
+    { id = "indent"
+    , f = CoreCommands.indent
+    }
+
 
