@@ -10696,31 +10696,55 @@ var _minekoa$elm_text_editor$TextEditor_Core_Commands$indent = function (model) 
 			_elm_lang$core$Native_Utils.update(
 				model,
 				{
-					buffer: _elm_lang$core$Native_Utils.eq(prev_indent, cur_indent) ? model.buffer : A2(
-						_minekoa$elm_text_editor$TextEditor_Buffer$moveAt,
-						{
-							ctor: '_Tuple2',
-							_0: row,
-							_1: col + (_elm_lang$core$String$length(prev_indent) - _elm_lang$core$String$length(cur_indent))
-						},
-						A2(
-							_minekoa$elm_text_editor$TextEditor_Buffer$insert,
-							prev_indent,
-							A2(
+					buffer: function () {
+						if (_elm_lang$core$Native_Utils.eq(prev_indent, cur_indent)) {
+							var plus_indent = _elm_lang$core$Native_Utils.eq(prev_indent, '') ? '    ' : prev_indent;
+							return A2(
 								_minekoa$elm_text_editor$TextEditor_Buffer$moveAt,
-								{ctor: '_Tuple2', _0: row, _1: 0},
+								{
+									ctor: '_Tuple2',
+									_0: row,
+									_1: col + _elm_lang$core$String$length(plus_indent)
+								},
 								A2(
-									_minekoa$elm_text_editor$TextEditor_Buffer$deleteRange,
+									_minekoa$elm_text_editor$TextEditor_Buffer$insert,
+									plus_indent,
 									A2(
-										_minekoa$elm_text_editor$TextEditor_Buffer$Range,
-										{ctor: '_Tuple2', _0: row, _1: 0},
+										_minekoa$elm_text_editor$TextEditor_Buffer$moveAt,
 										{
 											ctor: '_Tuple2',
 											_0: row,
-											_1: _elm_lang$core$String$length(line) - _elm_lang$core$String$length(
-												_elm_lang$core$String$trimLeft(line))
-										}),
-									model.buffer))))
+											_1: _elm_lang$core$String$length(cur_indent)
+										},
+										model.buffer)));
+						} else {
+							return A2(
+								_minekoa$elm_text_editor$TextEditor_Buffer$moveAt,
+								{
+									ctor: '_Tuple2',
+									_0: row,
+									_1: col + (_elm_lang$core$String$length(prev_indent) - _elm_lang$core$String$length(cur_indent))
+								},
+								A2(
+									_minekoa$elm_text_editor$TextEditor_Buffer$insert,
+									prev_indent,
+									A2(
+										_minekoa$elm_text_editor$TextEditor_Buffer$moveAt,
+										{ctor: '_Tuple2', _0: row, _1: 0},
+										A2(
+											_minekoa$elm_text_editor$TextEditor_Buffer$deleteRange,
+											A2(
+												_minekoa$elm_text_editor$TextEditor_Buffer$Range,
+												{ctor: '_Tuple2', _0: row, _1: 0},
+												{
+													ctor: '_Tuple2',
+													_0: row,
+													_1: _elm_lang$core$String$length(line) - _elm_lang$core$String$length(
+														_elm_lang$core$String$trimLeft(line))
+												}),
+											model.buffer))));
+						}
+					}()
 				})));
 };
 var _minekoa$elm_text_editor$TextEditor_Core_Commands$killLine = function (model) {

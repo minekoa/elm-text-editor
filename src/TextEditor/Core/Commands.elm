@@ -244,7 +244,15 @@ indent model =
     in
         { model
             | buffer = if prev_indent == cur_indent then
-                           model.buffer
+                           let
+                               plus_indent = if prev_indent == "" then "    " else prev_indent
+                           in
+                               model.buffer
+                                   |> Buffer.moveAt (row, (String.length cur_indent))
+                                   |> Buffer.insert plus_indent
+                                   |> Buffer.moveAt ( row
+                                                    , col + (String.length plus_indent)
+                                                    )
                        else
                            model.buffer 
                                |> Buffer.deleteRange (Buffer.Range (row, 0) (row, (String.length line) - (String.trimLeft line |> String.length) ) )
