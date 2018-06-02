@@ -706,30 +706,7 @@ currentKeybindView_cmd edtbuf =
 editPage_commandListView : Model -> Html Msg
 editPage_commandListView model =
     let
-        cmdlist = [ EditorCmds.moveForward
-                  , EditorCmds.moveBackward
-                  , EditorCmds.movePrevios
-                  , EditorCmds.moveNext
-                  , EditorCmds.moveBOL
-                  , EditorCmds.moveEOL
---                  , EditorCmds.moveAt
-                  , EditorCmds.selectForward
-                  , EditorCmds.selectBackward
-                  , EditorCmds.selectPrevios
-                  , EditorCmds.selectNext
---                  , EditorCmds.selectAt
-                  , EditorCmds.markSet
-                  , EditorCmds.markClear
-                  , EditorCmds.markFlip
-                  , EditorCmds.gotoMark
-                  , EditorCmds.insert ""
-                  , EditorCmds.backspace
-                  , EditorCmds.delete
-                  , EditorCmds.undo
-                  , EditorCmds.copy
-                  , EditorCmds.cut
-                  , EditorCmds.paste
-                  ]
+        cmdlist = editorCommandList
     in
         div [ class "keybindmenu-editsupport" ]
             [ text "Select edit command"
@@ -1150,31 +1127,40 @@ stringEscape str =
         |> String.concat
             
 
+------------------------------------------------------------
+-- CommandTools
+------------------------------------------------------------
+
+editorCommandList : List EditorCmds.Command
+editorCommandList =
+    -- moveAt, selectAt は、引数を取り扱えないため、対象外とした
+    [ EditorCmds.moveForward
+    , EditorCmds.moveBackward
+    , EditorCmds.movePrevios
+    , EditorCmds.moveNext
+    , EditorCmds.moveBOL
+    , EditorCmds.moveEOL
+    , EditorCmds.selectForward
+    , EditorCmds.selectBackward
+    , EditorCmds.selectPrevios
+    , EditorCmds.selectNext
+    , EditorCmds.markSet
+    , EditorCmds.markClear
+    , EditorCmds.markFlip
+    , EditorCmds.gotoMark
+    , EditorCmds.backspace
+    , EditorCmds.delete
+    , EditorCmds.undo
+    , EditorCmds.copy
+    , EditorCmds.cut
+    , EditorCmds.paste
+    , EditorCmds.killLine
+    ]
 
 fidToEditCmd : String -> Maybe EditorCmds.Command
 fidToEditCmd str =
     let 
-        cmdlist = [ EditorCmds.moveForward
-                  , EditorCmds.moveBackward
-                  , EditorCmds.movePrevios
-                  , EditorCmds.moveNext
-                  , EditorCmds.moveBOL
-                  , EditorCmds.moveEOL
-                  , EditorCmds.selectForward
-                  , EditorCmds.selectBackward
-                  , EditorCmds.selectPrevios
-                  , EditorCmds.selectNext
-                  , EditorCmds.markSet
-                  , EditorCmds.markClear
-                  , EditorCmds.markFlip
-                  , EditorCmds.gotoMark
-                  , EditorCmds.backspace
-                  , EditorCmds.delete
-                  , EditorCmds.undo
-                  , EditorCmds.copy
-                  , EditorCmds.cut
-                  , EditorCmds.paste
-                  ]
+        cmdlist = editorCommandList
     in
         if (String.left 6 str) == "insert" then
             Just (EditorCmds.insert (String.dropLeft 7 str))

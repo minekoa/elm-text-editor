@@ -10641,6 +10641,33 @@ var _minekoa$elm_text_editor$TextEditor_Core$update = F2(
 		}
 	});
 
+var _minekoa$elm_text_editor$TextEditor_Core_Commands$killLine = function (model) {
+	var row = _elm_lang$core$Tuple$first(
+		_minekoa$elm_text_editor$TextEditor_Buffer$nowCursorPos(model.buffer));
+	var line = A2(
+		_elm_lang$core$Maybe$withDefault,
+		'',
+		A2(_minekoa$elm_text_editor$TextEditor_Buffer$line, row, model.buffer.contents));
+	return _minekoa$elm_text_editor$TextEditor_Core$withEnsureVisibleCmd(
+		_minekoa$elm_text_editor$TextEditor_Core$blinkBlock(
+			_elm_lang$core$Native_Utils.update(
+				model,
+				{
+					copyStore: line,
+					buffer: _minekoa$elm_text_editor$TextEditor_Buffer$selectionClear(
+						A2(
+							_minekoa$elm_text_editor$TextEditor_Buffer$deleteRange,
+							A2(
+								_minekoa$elm_text_editor$TextEditor_Buffer$Range,
+								{ctor: '_Tuple2', _0: row, _1: 0},
+								{
+									ctor: '_Tuple2',
+									_0: row,
+									_1: _elm_lang$core$String$length(line)
+								}),
+							model.buffer))
+				})));
+};
 var _minekoa$elm_text_editor$TextEditor_Core_Commands$paste = F2(
 	function (text, model) {
 		return _minekoa$elm_text_editor$TextEditor_Core$withEnsureVisibleCmd(
@@ -10793,6 +10820,7 @@ var _minekoa$elm_text_editor$TextEditor_Core_Commands$batch = function (commands
 		commands);
 };
 
+var _minekoa$elm_text_editor$TextEditor_Commands$killLine = {id: 'killLine', f: _minekoa$elm_text_editor$TextEditor_Core_Commands$killLine};
 var _minekoa$elm_text_editor$TextEditor_Commands$paste = {
 	id: 'paste',
 	f: function (m) {
@@ -10873,20 +10901,28 @@ var _minekoa$elm_text_editor$TextEditor_KeyBind$emacsLike = {
 										_0: {ctrl: true, alt: false, shift: false, code: 87, f: _minekoa$elm_text_editor$TextEditor_Commands$cut},
 										_1: {
 											ctor: '::',
-											_0: {
-												ctrl: true,
-												alt: false,
-												shift: false,
-												code: 77,
-												f: _minekoa$elm_text_editor$TextEditor_Commands$insert('\n')
-											},
+											_0: {ctrl: true, alt: false, shift: false, code: 75, f: _minekoa$elm_text_editor$TextEditor_Commands$killLine},
 											_1: {
 												ctor: '::',
-												_0: {ctrl: true, alt: false, shift: false, code: 89, f: _minekoa$elm_text_editor$TextEditor_Commands$paste},
+												_0: {
+													ctrl: true,
+													alt: false,
+													shift: false,
+													code: 77,
+													f: _minekoa$elm_text_editor$TextEditor_Commands$insert('\n')
+												},
 												_1: {
 													ctor: '::',
-													_0: {ctrl: true, alt: false, shift: false, code: 32, f: _minekoa$elm_text_editor$TextEditor_Commands$markFlip},
-													_1: {ctor: '[]'}
+													_0: {ctrl: true, alt: false, shift: false, code: 89, f: _minekoa$elm_text_editor$TextEditor_Commands$paste},
+													_1: {
+														ctor: '::',
+														_0: {ctrl: true, alt: false, shift: false, code: 32, f: _minekoa$elm_text_editor$TextEditor_Commands$markFlip},
+														_1: {
+															ctor: '::',
+															_0: {ctrl: true, alt: false, shift: false, code: 191, f: _minekoa$elm_text_editor$TextEditor_Commands$undo},
+															_1: {ctor: '[]'}
+														}
+													}
 												}
 											}
 										}
@@ -15870,67 +15906,69 @@ var _minekoa$elm_text_editor$KeyBindMenu$encodeKeyBinds = function (keybinds) {
 		_elm_lang$core$Json_Encode$list(
 			A2(_elm_lang$core$List$map, _minekoa$elm_text_editor$KeyBindMenu$encodeKeyBind, keybinds)));
 };
-var _minekoa$elm_text_editor$KeyBindMenu$fidToEditCmd = function (str) {
-	var cmdlist = {
+var _minekoa$elm_text_editor$KeyBindMenu$editorCommandList = {
+	ctor: '::',
+	_0: _minekoa$elm_text_editor$TextEditor_Commands$moveForward,
+	_1: {
 		ctor: '::',
-		_0: _minekoa$elm_text_editor$TextEditor_Commands$moveForward,
+		_0: _minekoa$elm_text_editor$TextEditor_Commands$moveBackward,
 		_1: {
 			ctor: '::',
-			_0: _minekoa$elm_text_editor$TextEditor_Commands$moveBackward,
+			_0: _minekoa$elm_text_editor$TextEditor_Commands$movePrevios,
 			_1: {
 				ctor: '::',
-				_0: _minekoa$elm_text_editor$TextEditor_Commands$movePrevios,
+				_0: _minekoa$elm_text_editor$TextEditor_Commands$moveNext,
 				_1: {
 					ctor: '::',
-					_0: _minekoa$elm_text_editor$TextEditor_Commands$moveNext,
+					_0: _minekoa$elm_text_editor$TextEditor_Commands$moveBOL,
 					_1: {
 						ctor: '::',
-						_0: _minekoa$elm_text_editor$TextEditor_Commands$moveBOL,
+						_0: _minekoa$elm_text_editor$TextEditor_Commands$moveEOL,
 						_1: {
 							ctor: '::',
-							_0: _minekoa$elm_text_editor$TextEditor_Commands$moveEOL,
+							_0: _minekoa$elm_text_editor$TextEditor_Commands$selectForward,
 							_1: {
 								ctor: '::',
-								_0: _minekoa$elm_text_editor$TextEditor_Commands$selectForward,
+								_0: _minekoa$elm_text_editor$TextEditor_Commands$selectBackward,
 								_1: {
 									ctor: '::',
-									_0: _minekoa$elm_text_editor$TextEditor_Commands$selectBackward,
+									_0: _minekoa$elm_text_editor$TextEditor_Commands$selectPrevios,
 									_1: {
 										ctor: '::',
-										_0: _minekoa$elm_text_editor$TextEditor_Commands$selectPrevios,
+										_0: _minekoa$elm_text_editor$TextEditor_Commands$selectNext,
 										_1: {
 											ctor: '::',
-											_0: _minekoa$elm_text_editor$TextEditor_Commands$selectNext,
+											_0: _minekoa$elm_text_editor$TextEditor_Commands$markSet,
 											_1: {
 												ctor: '::',
-												_0: _minekoa$elm_text_editor$TextEditor_Commands$markSet,
+												_0: _minekoa$elm_text_editor$TextEditor_Commands$markClear,
 												_1: {
 													ctor: '::',
-													_0: _minekoa$elm_text_editor$TextEditor_Commands$markClear,
+													_0: _minekoa$elm_text_editor$TextEditor_Commands$markFlip,
 													_1: {
 														ctor: '::',
-														_0: _minekoa$elm_text_editor$TextEditor_Commands$markFlip,
+														_0: _minekoa$elm_text_editor$TextEditor_Commands$gotoMark,
 														_1: {
 															ctor: '::',
-															_0: _minekoa$elm_text_editor$TextEditor_Commands$gotoMark,
+															_0: _minekoa$elm_text_editor$TextEditor_Commands$backspace,
 															_1: {
 																ctor: '::',
-																_0: _minekoa$elm_text_editor$TextEditor_Commands$backspace,
+																_0: _minekoa$elm_text_editor$TextEditor_Commands$delete,
 																_1: {
 																	ctor: '::',
-																	_0: _minekoa$elm_text_editor$TextEditor_Commands$delete,
+																	_0: _minekoa$elm_text_editor$TextEditor_Commands$undo,
 																	_1: {
 																		ctor: '::',
-																		_0: _minekoa$elm_text_editor$TextEditor_Commands$undo,
+																		_0: _minekoa$elm_text_editor$TextEditor_Commands$copy,
 																		_1: {
 																			ctor: '::',
-																			_0: _minekoa$elm_text_editor$TextEditor_Commands$copy,
+																			_0: _minekoa$elm_text_editor$TextEditor_Commands$cut,
 																			_1: {
 																				ctor: '::',
-																				_0: _minekoa$elm_text_editor$TextEditor_Commands$cut,
+																				_0: _minekoa$elm_text_editor$TextEditor_Commands$paste,
 																				_1: {
 																					ctor: '::',
-																					_0: _minekoa$elm_text_editor$TextEditor_Commands$paste,
+																					_0: _minekoa$elm_text_editor$TextEditor_Commands$killLine,
 																					_1: {ctor: '[]'}
 																				}
 																			}
@@ -15951,7 +15989,10 @@ var _minekoa$elm_text_editor$KeyBindMenu$fidToEditCmd = function (str) {
 				}
 			}
 		}
-	};
+	}
+};
+var _minekoa$elm_text_editor$KeyBindMenu$fidToEditCmd = function (str) {
+	var cmdlist = _minekoa$elm_text_editor$KeyBindMenu$editorCommandList;
 	return _elm_lang$core$Native_Utils.eq(
 		A2(_elm_lang$core$String$left, 6, str),
 		'insert') ? _elm_lang$core$Maybe$Just(
@@ -16828,91 +16869,7 @@ var _minekoa$elm_text_editor$KeyBindMenu$SelectCommand = function (a) {
 	return {ctor: 'SelectCommand', _0: a};
 };
 var _minekoa$elm_text_editor$KeyBindMenu$editPage_commandListView = function (model) {
-	var cmdlist = {
-		ctor: '::',
-		_0: _minekoa$elm_text_editor$TextEditor_Commands$moveForward,
-		_1: {
-			ctor: '::',
-			_0: _minekoa$elm_text_editor$TextEditor_Commands$moveBackward,
-			_1: {
-				ctor: '::',
-				_0: _minekoa$elm_text_editor$TextEditor_Commands$movePrevios,
-				_1: {
-					ctor: '::',
-					_0: _minekoa$elm_text_editor$TextEditor_Commands$moveNext,
-					_1: {
-						ctor: '::',
-						_0: _minekoa$elm_text_editor$TextEditor_Commands$moveBOL,
-						_1: {
-							ctor: '::',
-							_0: _minekoa$elm_text_editor$TextEditor_Commands$moveEOL,
-							_1: {
-								ctor: '::',
-								_0: _minekoa$elm_text_editor$TextEditor_Commands$selectForward,
-								_1: {
-									ctor: '::',
-									_0: _minekoa$elm_text_editor$TextEditor_Commands$selectBackward,
-									_1: {
-										ctor: '::',
-										_0: _minekoa$elm_text_editor$TextEditor_Commands$selectPrevios,
-										_1: {
-											ctor: '::',
-											_0: _minekoa$elm_text_editor$TextEditor_Commands$selectNext,
-											_1: {
-												ctor: '::',
-												_0: _minekoa$elm_text_editor$TextEditor_Commands$markSet,
-												_1: {
-													ctor: '::',
-													_0: _minekoa$elm_text_editor$TextEditor_Commands$markClear,
-													_1: {
-														ctor: '::',
-														_0: _minekoa$elm_text_editor$TextEditor_Commands$markFlip,
-														_1: {
-															ctor: '::',
-															_0: _minekoa$elm_text_editor$TextEditor_Commands$gotoMark,
-															_1: {
-																ctor: '::',
-																_0: _minekoa$elm_text_editor$TextEditor_Commands$insert(''),
-																_1: {
-																	ctor: '::',
-																	_0: _minekoa$elm_text_editor$TextEditor_Commands$backspace,
-																	_1: {
-																		ctor: '::',
-																		_0: _minekoa$elm_text_editor$TextEditor_Commands$delete,
-																		_1: {
-																			ctor: '::',
-																			_0: _minekoa$elm_text_editor$TextEditor_Commands$undo,
-																			_1: {
-																				ctor: '::',
-																				_0: _minekoa$elm_text_editor$TextEditor_Commands$copy,
-																				_1: {
-																					ctor: '::',
-																					_0: _minekoa$elm_text_editor$TextEditor_Commands$cut,
-																					_1: {
-																						ctor: '::',
-																						_0: _minekoa$elm_text_editor$TextEditor_Commands$paste,
-																						_1: {ctor: '[]'}
-																					}
-																				}
-																			}
-																		}
-																	}
-																}
-															}
-														}
-													}
-												}
-											}
-										}
-									}
-								}
-							}
-						}
-					}
-				}
-			}
-		}
-	};
+	var cmdlist = _minekoa$elm_text_editor$KeyBindMenu$editorCommandList;
 	return A2(
 		_elm_lang$html$Html$div,
 		{
