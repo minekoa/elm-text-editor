@@ -207,12 +207,18 @@ killLine model =
     -- note: ブラウザのセキュリティ制約により、sytem の clipboard  にはコピーされません
     let
         row = model.buffer |> Buffer.nowCursorPos |> Tuple.first
-        line = model.buffer.contents |> Buffer.line row |> Maybe.withDefault ""
+        line = model.buffer.contents
+                 |> Buffer.line row
+                 |> Maybe.withDefault ""
+                 |> \l -> if l == "" then "\n" else l
+
+        delete_range =  if line == "\n" then Buffer.Range (row, 0) (row + 1, 0)
+                                        else Buffer.Range (row, 0) (row, String.length line)
     in
         { model
-            | copyStore = line
+            | copyStore = model.copyStore ++ line
             , buffer = model.buffer
-                           |> Buffer.deleteRange (Buffer.Range (row, 0) (row, String.length line))
+                           |> Buffer.deleteRange delete_range
                            |> Buffer.selectionClear
           }
         |> Core.blinkBlock
@@ -226,7 +232,7 @@ indent model =
         (row, col) = Buffer.nowCursorPos model.buffer
 
         line     = model.buffer.contents |> Buffer.line row |> Maybe.withDefault ""
-        prevline = model.buffer.contents |> Buffer.line (row - 1 |> max 0) |> Maybe.withDefault ""
+        prevline = model.buffer.contents |> Buffer.line (row - 1) |> Maybe.withDefault ""
 
         getIndentString = (\l indent_str->
                                case l of

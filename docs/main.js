@@ -10682,10 +10682,7 @@ var _minekoa$elm_text_editor$TextEditor_Core_Commands$indent = function (model) 
 	var prevline = A2(
 		_elm_lang$core$Maybe$withDefault,
 		'',
-		A2(
-			_minekoa$elm_text_editor$TextEditor_Buffer$line,
-			A2(_elm_lang$core$Basics$max, 0, row - 1),
-			model.buffer.contents));
+		A2(_minekoa$elm_text_editor$TextEditor_Buffer$line, row - 1, model.buffer.contents));
 	var prev_indent = _elm_lang$core$String$fromList(
 		A2(
 			getIndentString,
@@ -10750,28 +10747,32 @@ var _minekoa$elm_text_editor$TextEditor_Core_Commands$indent = function (model) 
 var _minekoa$elm_text_editor$TextEditor_Core_Commands$killLine = function (model) {
 	var row = _elm_lang$core$Tuple$first(
 		_minekoa$elm_text_editor$TextEditor_Buffer$nowCursorPos(model.buffer));
-	var line = A2(
-		_elm_lang$core$Maybe$withDefault,
-		'',
-		A2(_minekoa$elm_text_editor$TextEditor_Buffer$line, row, model.buffer.contents));
+	var line = function (l) {
+		return _elm_lang$core$Native_Utils.eq(l, '') ? '\n' : l;
+	}(
+		A2(
+			_elm_lang$core$Maybe$withDefault,
+			'',
+			A2(_minekoa$elm_text_editor$TextEditor_Buffer$line, row, model.buffer.contents)));
+	var delete_range = _elm_lang$core$Native_Utils.eq(line, '\n') ? A2(
+		_minekoa$elm_text_editor$TextEditor_Buffer$Range,
+		{ctor: '_Tuple2', _0: row, _1: 0},
+		{ctor: '_Tuple2', _0: row + 1, _1: 0}) : A2(
+		_minekoa$elm_text_editor$TextEditor_Buffer$Range,
+		{ctor: '_Tuple2', _0: row, _1: 0},
+		{
+			ctor: '_Tuple2',
+			_0: row,
+			_1: _elm_lang$core$String$length(line)
+		});
 	return _minekoa$elm_text_editor$TextEditor_Core$withEnsureVisibleCmd(
 		_minekoa$elm_text_editor$TextEditor_Core$blinkBlock(
 			_elm_lang$core$Native_Utils.update(
 				model,
 				{
-					copyStore: line,
+					copyStore: A2(_elm_lang$core$Basics_ops['++'], model.copyStore, line),
 					buffer: _minekoa$elm_text_editor$TextEditor_Buffer$selectionClear(
-						A2(
-							_minekoa$elm_text_editor$TextEditor_Buffer$deleteRange,
-							A2(
-								_minekoa$elm_text_editor$TextEditor_Buffer$Range,
-								{ctor: '_Tuple2', _0: row, _1: 0},
-								{
-									ctor: '_Tuple2',
-									_0: row,
-									_1: _elm_lang$core$String$length(line)
-								}),
-							model.buffer))
+						A2(_minekoa$elm_text_editor$TextEditor_Buffer$deleteRange, delete_range, model.buffer))
 				})));
 };
 var _minekoa$elm_text_editor$TextEditor_Core_Commands$paste = F2(
