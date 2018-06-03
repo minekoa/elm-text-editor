@@ -206,17 +206,20 @@ killLine : Model -> (Model, Cmd Msg)
 killLine model = 
     -- note: ブラウザのセキュリティ制約により、sytem の clipboard  にはコピーされません
     let
-        row = model.buffer |> Buffer.nowCursorPos |> Tuple.first
+        (row, col) = model.buffer |> Buffer.nowCursorPos
         line = model.buffer.contents
                  |> Buffer.line row
                  |> Maybe.withDefault ""
+
+        delete_str = line
+                 |> String.dropLeft col
                  |> \l -> if l == "" then "\n" else l
 
-        delete_range =  if line == "\n" then Buffer.Range (row, 0) (row + 1, 0)
-                                        else Buffer.Range (row, 0) (row, String.length line)
+        delete_range =  if delete_str == "\n" then Buffer.Range (row, col) (row + 1, 0)
+                                              else Buffer.Range (row, col) (row, String.length line)
     in
         { model
-            | copyStore = if model.lastCommand == Just "killLine" then model.copyStore ++ line else line
+            | copyStore = if model.lastCommand == Just "killLine" then model.copyStore ++ delete_str else delete_str
             , buffer = model.buffer
                            |> Buffer.deleteRange delete_range
                            |> Buffer.selectionClear
