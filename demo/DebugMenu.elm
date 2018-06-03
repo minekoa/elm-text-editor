@@ -15,6 +15,9 @@ import TextEditor as Editor
 import TextEditor.Buffer as Buffer
 import TextEditor.Core as Core
 
+import StringTools exposing (..)
+
+
 type alias Model =
     { selectedSubMenu : SubMenu
     }
@@ -210,6 +213,7 @@ inspectorView editorModel =
 
 --                  , tr [] [ th [] [ text "texteditor.core.id"                  ], td [] [ editorModel.core.id |> text ] ]
                   , tr [] [ th [] [ text "texteditor.core.copyStore"           ], td [] [ editorModel.core.copyStore |> string_cut_n 80 |> text ]]
+                  , tr [] [ th [] [ text "texteditor.core.lastCommand"         ], td [] [ editorModel.core.lastCommand |> Maybe.withDefault "Nothing" |> stringEscape |> text ] ]
                   , tr [] [ th [] [ text "texteditor.core.compositionPreview"  ], td [] [ editorModel.core.compositionPreview |> Maybe.withDefault "Nothing" |> text ] ]
                   , tr [] [ th [] [ text "texteditor.core.focus"               ], td [] [ editorModel.core.focus |> toString |> text ] ]
                   , tr [] [ th [] [ text "texteditor.core.blink"               ], td [] [ editorModel.core.blink |> Core.blinkStateToString |> text ] ]
