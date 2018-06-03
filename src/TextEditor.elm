@@ -97,6 +97,17 @@ exec_command_proc cmd model =
         , Cmd.map CoreMsg cc
         )
 
+setLastCommand : String -> (Model, Cmd Msg) -> (Model, Cmd Msg)
+setLastCommand id (model, cmdmsg) =
+    let
+        cm = model.core
+    in
+        ( { model
+              | core = { cm | lastCommand = Just id }
+          }
+        , cmdmsg
+        )
+
 ------------------------------------------------------------
 -- update
 ------------------------------------------------------------
@@ -133,18 +144,21 @@ update msg model =
         Pasted s ->
             updateMap model (Commands.paste s model.core)
                 |> Tuple.mapFirst (\m -> {m|drag=False})
+                |> setLastCommand "clipboard_pasete"
                 |> logging "pasted" s
                 |> Tuple.mapSecond (\c -> Cmd.batch [c, Cmd.map CoreMsg (Core.doFocus model.core)] )
 
         Copied s ->
             updateMap model (Commands.copy model.core)
                 |> Tuple.mapFirst (\m -> {m|drag=False})
+                |> setLastCommand "clipboard_copy"
                 |> logging "copied" s
                 |> Tuple.mapSecond (\c -> Cmd.batch [c, Cmd.map CoreMsg (Core.doFocus model.core)] )
 
         Cutted s ->
             updateMap model (Commands.cut model.core)
                 |> Tuple.mapFirst (\m -> {m|drag=False})
+                |> setLastCommand "clipboard_cut"
                 |> logging "cutted" s
                 |> Tuple.mapSecond (\c -> Cmd.batch [c, Cmd.map CoreMsg (Core.doFocus model.core)] )
 
@@ -218,6 +232,7 @@ update msg model =
                                 |> blinkBlock
                             , Cmd.batch [ Cmd.map CoreMsg cc ]
                             )
+                                |> setLastCommand ( ["moveTo (", row |> toString, ", ", col |> toString, ")"] |> String.concat )
                                 |> logging "moveto" (printDragInfo xy (row, col) )
                                                     
                         else
@@ -236,6 +251,7 @@ update msg model =
                 , Cmd.batch [ Cmd.map CoreMsg cc
                             ]
                 )
+                    |> setLastCommand ( ["selectAt (", row |> toString, ", ", col |> toString, ")"] |> String.concat )
                     |> logging "dragat" (printDragInfo xy (row, col) )
 
         DragEnd xy ->
@@ -266,6 +282,7 @@ input s model =
                 |> logging "input (ignored)" s
         False ->
             updateMap model (Commands.insert (String.right 1 s) model.core)
+                |> setLastCommand ( ["insert ", s] |> String.concat )
                 |> logging "input" (String.right 1 s)
 
 
@@ -329,6 +346,7 @@ compositionEnd data model =
           }
         , Cmd.map CoreMsg c
         )
+          |> setLastCommand ( ["insert ", data] |> String.concat )
           |> logging "compositionend" data
 
 
