@@ -83,8 +83,19 @@ setBuffer newbuf model =
 
 execCommand : TextEditor.Commands.Command -> Model -> (Model, Cmd Msg)
 execCommand cmd model =
-    updateMap model (cmd.f model.core)
+    exec_command_proc cmd model
         |> logging "exec-comd" cmd.id
+
+exec_command_proc : TextEditor.Commands.Command -> Model -> (Model, Cmd Msg)
+exec_command_proc cmd model =
+    let
+        (cm, cc) = cmd.f model.core
+    in
+        ( { model
+              | core = { cm | lastCommand = Just cmd.id }
+          }
+        , Cmd.map CoreMsg cc
+        )
 
 ------------------------------------------------------------
 -- update
@@ -262,7 +273,7 @@ keyDown : KeyboardEvent -> Model -> (Model, Cmd Msg)
 keyDown e model =
     case KeyBind.find (e.ctrlKey, e.altKey, e.shiftKey, e.keyCode) model.keymap of
         Just editorcmd ->
-            updateMap model (editorcmd.f model.core)
+            exec_command_proc editorcmd model
                 |> logging "keydown" ((keyboarEvent_toString e) ++ ", editorcmd=" ++ editorcmd.id)
         Nothing ->
             ( model

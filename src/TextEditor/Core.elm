@@ -44,6 +44,7 @@ type alias Model =
     , buffer : Buffer.Model
 
     , copyStore : String
+    , lastCommand : Maybe String
 
     -- frame
     , compositionPreview : Maybe String --IMEで返還中の未確定文字
@@ -59,6 +60,7 @@ init id text =
           id                     -- id
           (Buffer.init text)
           ""                     -- copyStore
+          Nothing                -- last_command
 
           -- frame states
           Nothing                -- COMPOSER STATE

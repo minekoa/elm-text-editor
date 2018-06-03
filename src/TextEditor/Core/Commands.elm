@@ -216,7 +216,7 @@ killLine model =
                                         else Buffer.Range (row, 0) (row, String.length line)
     in
         { model
-            | copyStore = model.copyStore ++ line
+            | copyStore = if model.lastCommand == Just "killLine" then model.copyStore ++ line else line
             , buffer = model.buffer
                            |> Buffer.deleteRange delete_range
                            |> Buffer.selectionClear
