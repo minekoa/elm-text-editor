@@ -10746,6 +10746,11 @@ var _minekoa$elm_text_editor$TextEditor_Core_Commands$indent = function (model) 
 				})));
 };
 var _minekoa$elm_text_editor$TextEditor_Core_Commands$killLine = function (model) {
+	var isEOFLine = function (r) {
+		return _elm_lang$core$Native_Utils.cmp(
+			r + 1,
+			_elm_lang$core$List$length(model.buffer.contents)) > -1;
+	};
 	var _p3 = _minekoa$elm_text_editor$TextEditor_Buffer$nowCursorPos(model.buffer);
 	var row = _p3._0;
 	var col = _p3._1;
@@ -10754,7 +10759,7 @@ var _minekoa$elm_text_editor$TextEditor_Core_Commands$killLine = function (model
 		'',
 		A2(_minekoa$elm_text_editor$TextEditor_Buffer$line, row, model.buffer.contents));
 	var delete_str = function (l) {
-		return _elm_lang$core$Native_Utils.eq(l, '') ? '\n' : l;
+		return (_elm_lang$core$Native_Utils.eq(l, '') && (!isEOFLine(row))) ? '\n' : l;
 	}(
 		A2(_elm_lang$core$String$dropLeft, col, line));
 	var delete_range = _elm_lang$core$Native_Utils.eq(delete_str, '\n') ? A2(

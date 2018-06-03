@@ -211,9 +211,11 @@ killLine model =
                  |> Buffer.line row
                  |> Maybe.withDefault ""
 
+        isEOFLine = \r -> (r + 1) >= List.length model.buffer.contents
+
         delete_str = line
                  |> String.dropLeft col
-                 |> \l -> if l == "" then "\n" else l
+                 |> \l -> if (l == "") && (not (isEOFLine row)) then "\n" else l
 
         delete_range =  if delete_str == "\n" then Buffer.Range (row, col) (row + 1, 0)
                                               else Buffer.Range (row, col) (row, String.length line)
