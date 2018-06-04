@@ -9128,11 +9128,11 @@ var _minekoa$elm_text_editor$TextEditor_StringExtra$isKanji = function (c) {
 };
 var _minekoa$elm_text_editor$TextEditor_StringExtra$isKatakana = function (c) {
 	var cd = _elm_lang$core$Char$toCode(c);
-	return (_elm_lang$core$Native_Utils.cmp(12448, cd) < 1) && (_elm_lang$core$Native_Utils.cmp(cd, 12543) > -1);
+	return (_elm_lang$core$Native_Utils.cmp(12448, cd) < 1) && (_elm_lang$core$Native_Utils.cmp(cd, 12543) < 1);
 };
 var _minekoa$elm_text_editor$TextEditor_StringExtra$isHiragana = function (c) {
 	var cd = _elm_lang$core$Char$toCode(c);
-	return (_elm_lang$core$Native_Utils.cmp(12352, cd) < 1) && (_elm_lang$core$Native_Utils.cmp(cd, 12447) > -1);
+	return (_elm_lang$core$Native_Utils.cmp(12352, cd) < 1) && (_elm_lang$core$Native_Utils.cmp(cd, 12447) < 1);
 };
 var _minekoa$elm_text_editor$TextEditor_StringExtra$isSpace = function (c) {
 	var _p0 = _elm_lang$core$Char$toCode(c);

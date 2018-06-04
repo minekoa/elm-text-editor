@@ -87,14 +87,14 @@ isHiragana c =
     let
         cd = Char.toCode c
     in
-        (0x3040 <= cd) && (cd >= 0x309F)
+        (0x3040 <= cd) && (cd <= 0x309F)
 
 isKatakana : Char -> Bool
 isKatakana c =    
     let
         cd = Char.toCode c
     in
-        (0x30A0 <= cd) && (cd >= 0x30FF)
+        (0x30A0 <= cd) && (cd <= 0x30FF)
 
 isKanji : Char -> Bool
 isKanji c =
