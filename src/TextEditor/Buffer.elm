@@ -47,6 +47,9 @@ module TextEditor.Buffer exposing ( Model
                                   , undo
                                   )
 
+import TextEditor.StringExtra as StringExtra
+
+
 type alias Model =
     { cursor : Cursor
     , selection : Maybe Range
@@ -404,35 +407,26 @@ moveWordForward model =
         True  -> selectWithMove moveWordForwardProc model
         False -> model |>  moveWordForwardProc |> selectionClear
 
-
 moveWordForwardProc : Model -> Model
 moveWordForwardProc model =
     let
         cur = model.cursor
-
-        wordsizes = line cur.row model.contents
-                  |> Maybe.withDefault ""
-                  |> String.words
-                  |> Debug.log "wors=" 
-                  |> List.map (\w -> String.length w)
-
-        cur_in_word = \ col w n sum ->
-            case w of
-                x :: xs ->
-                    if col < (sum + x)  then
-                        Just { nword= n + 1, nchar= sum + x + 1}
-                    else
-                        cur_in_word col xs (n + 1) (sum + x + 1)
-                [] ->
-                    Nothing
-
-        pos = cur_in_word cur.column wordsizes 0 0 
+        last_row = (List.length model.contents) - 1
+        col = StringExtra.nextWordPos (line cur.row model.contents |> Maybe.withDefault "") cur.column
     in
-        case pos of
-            Just {nword, nchar} ->
+        case col of
+            Just nchar ->
                 moveAtProc (cur.row, nchar) model
             Nothing ->
-                moveAtProc (cur.row + 1, 0) model
+                if cur.row + 1 >= last_row then
+                    moveAtProc (last_row, (line last_row model.contents
+                                              |> Maybe.withDefault ""
+                                              |> String.length
+                                              |> flip (-) 1
+                                          )
+                               ) model
+                else
+                    moveAtProc (cur.row + 1, 0) model
 
 
 ------------------------------------------------------------
