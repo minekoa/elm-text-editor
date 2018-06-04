@@ -60,6 +60,7 @@ emacsLike =
     , {ctrl=True , alt=False, shift=False, code= 66, f=EditorCmds.moveBackward } -- 'C-b'
     , {ctrl=True , alt=False, shift=False, code= 78, f=EditorCmds.moveNext }     -- 'C-n'
     , {ctrl=True , alt=False, shift=False, code= 80, f=EditorCmds.movePrevios }  -- 'C-p'
+    , {ctrl=False, alt=True , shift=False, code= 70, f=EditorCmds.moveWordForward }  -- 'M-f'
     , {ctrl=True , alt=False, shift=False, code= 65, f=EditorCmds.moveBOL }      -- 'C-a'
     , {ctrl=True , alt=False, shift=False, code= 69, f=EditorCmds.moveEOL }      -- 'C-e'
     , {ctrl=True , alt=False, shift=False, code= 72, f=EditorCmds.backspace }    -- 'C-h'
