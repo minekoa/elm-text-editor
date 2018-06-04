@@ -212,7 +212,7 @@ inspectorView editorModel =
                   , tr [] [ th [] [ text "buffer.history"  ], td [] [ editorModel.core.buffer.history |> List.take 10 |> List.map histToString |> String.join ", " |> flip (++) (if List.length editorModel.core.buffer.history <= 10 then "" else "…") |> text ] ]
 
 --                  , tr [] [ th [] [ text "texteditor.core.id"                  ], td [] [ editorModel.core.id |> text ] ]
-                  , tr [] [ th [] [ text "texteditor.core.copyStore"           ], td [] [ editorModel.core.copyStore |> string_cut_n 80 |> text ]]
+                  , tr [] [ th [] [ text "texteditor.core.copyStore"           ], td [] [ editorModel.core.copyStore |> string_cut_n 80 |> stringEscape |> text ]]
                   , tr [] [ th [] [ text "texteditor.core.lastCommand"         ], td [] [ editorModel.core.lastCommand |> Maybe.withDefault "Nothing" |> stringEscape |> text ] ]
                   , tr [] [ th [] [ text "texteditor.core.compositionPreview"  ], td [] [ editorModel.core.compositionPreview |> Maybe.withDefault "Nothing" |> text ] ]
                   , tr [] [ th [] [ text "texteditor.core.focus"               ], td [] [ editorModel.core.focus |> toString |> text ] ]
