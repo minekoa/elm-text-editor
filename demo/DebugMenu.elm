@@ -177,7 +177,7 @@ eventlogView editorModel =
                       , ("-moz-user-select", "text")
                       ]
               ]
-              ( List.map (λ ev -> div [ style [("margin-right","0.2em")]] [text <| (dateToString ev.date) ++ " | " ++ (String.pad 16 ' ' ev.name) ++ ":" ++ ev.data]) (Maybe.withDefault [] editorModel.event_log) )
+              ( List.map (λ ev -> div [ style [("margin-right","0.2em")]] [text <| (dateToString ev.date) ++ " | " ++ (String.pad 16 ' ' ev.name) ++ ":" ++ (ev.data |> stringEscape) ]) (Maybe.withDefault [] editorModel.event_log) )
         ]
 
 
@@ -221,7 +221,15 @@ inspectorView editorModel =
                   , tr [] [ th [] [ text "texteditor.enableComposer"], td [] [ editorModel.enableComposer |> toString |> text ] ]
                   , tr [] [ th [] [ text "texteditor.drag"          ], td [] [ editorModel.drag |> toString |> text ] ]
                   , tr [] [ th [] [ text "texteditor.keymap"        ], td [] [ editorModel.keymap |> List.length |> toString |> flip (++) " binds" |> text ] ]
-                  , tr [] [ th [] [ text "texteditor.event_log"     ], td [] [ editorModel.event_log |> Maybe.andThen (\ evs -> Just "(Enabled)") |> Maybe.withDefault "(Disabled)" |> text ] ]
+                  , tr [] [ th [] [ text "texteditor.event_log"     ], td [] [ editorModel.event_log |> Maybe.andThen
+                                                                                   (\ evs ->
+                                                                                        evs |> List.take 24
+                                                                                            |> List.map (\ev -> ev.name ++ "(" ++ (ev.data |> stringEscape) ++ ")")
+                                                                                            |> String.join "; "
+                                                                                            |> flip (++) (if List.length evs < 10 then "" else "…")
+                                                                                            |> Just
+                                                                                   )
+                                                                             |> Maybe.withDefault "(Disabled)" |> text ] ]
                   ]
             ]
 

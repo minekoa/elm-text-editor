@@ -14675,7 +14675,34 @@ var _minekoa$elm_text_editor$DebugMenu$inspectorView = function (editorModel) {
 																									A2(
 																										_elm_lang$core$Maybe$andThen,
 																										function (evs) {
-																											return _elm_lang$core$Maybe$Just('(Enabled)');
+																											return _elm_lang$core$Maybe$Just(
+																												A3(
+																													_elm_lang$core$Basics$flip,
+																													F2(
+																														function (x, y) {
+																															return A2(_elm_lang$core$Basics_ops['++'], x, y);
+																														}),
+																													(_elm_lang$core$Native_Utils.cmp(
+																														_elm_lang$core$List$length(evs),
+																														10) < 0) ? '' : '…',
+																													A2(
+																														_elm_lang$core$String$join,
+																														'; ',
+																														A2(
+																															_elm_lang$core$List$map,
+																															function (ev) {
+																																return A2(
+																																	_elm_lang$core$Basics_ops['++'],
+																																	ev.name,
+																																	A2(
+																																		_elm_lang$core$Basics_ops['++'],
+																																		'(',
+																																		A2(
+																																			_elm_lang$core$Basics_ops['++'],
+																																			_minekoa$elm_text_editor$StringTools$stringEscape(ev.data),
+																																			')')));
+																															},
+																															A2(_elm_lang$core$List$take, 24, evs)))));
 																										},
 																										editorModel.event_log))),
 																							_1: {ctor: '[]'}
@@ -15182,7 +15209,10 @@ var _minekoa$elm_text_editor$DebugMenu$eventlogView = function (editorModel) {
 														16,
 														_elm_lang$core$Native_Utils.chr(' '),
 														ev.name),
-													A2(_elm_lang$core$Basics_ops['++'], ':', ev.data))))),
+													A2(
+														_elm_lang$core$Basics_ops['++'],
+														':',
+														_minekoa$elm_text_editor$StringTools$stringEscape(ev.data)))))),
 									_1: {ctor: '[]'}
 								});
 						},
