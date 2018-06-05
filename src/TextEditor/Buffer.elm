@@ -18,7 +18,7 @@ module TextEditor.Buffer exposing ( Model
                                   , movePrevios
                                   , moveNext
                                   , moveAt
-                                  , moveWordForward
+                                  , moveNextWord
 
                                   -- selection
                                   , selectBackward
@@ -401,14 +401,14 @@ moveAtProc (row, col) model =
     { model | cursor = Cursor row col }
 
 
-moveWordForward : Model -> Model
-moveWordForward model =
+moveNextWord : Model -> Model
+moveNextWord model =
     case isMarkActive model of
-        True  -> selectWithMove moveWordForwardProc model
-        False -> model |>  moveWordForwardProc |> selectionClear
+        True  -> selectWithMove moveNextWordProc model
+        False -> model |>  moveNextWordProc |> selectionClear
 
-moveWordForwardProc : Model -> Model
-moveWordForwardProc model =
+moveNextWordProc : Model -> Model
+moveNextWordProc model =
     let
         cur = model.cursor
         last_row = (List.length model.contents) - 1

@@ -6,7 +6,7 @@ module TextEditor.Commands exposing
     , moveBOL
     , moveEOL
     , moveAt
-    , moveWordForward
+    , moveNextWord
     , selectForward
     , selectBackward
     , selectPrevios
@@ -110,10 +110,10 @@ moveAt pos =
     , f = CoreCommands.moveAt pos
     }
 
-moveWordForward : Command
-moveWordForward =
-    { id = "moveWordForward"
-    , f  = CoreCommands.moveWordForward
+moveNextWord : Command
+moveNextWord =
+    { id = "moveNextWord"
+    , f  = CoreCommands.moveNextWord
     }
 
 selectBackward : Command
