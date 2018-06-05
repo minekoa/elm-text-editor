@@ -12,21 +12,27 @@ nextWordPos line column =
         backword_chars = line |> String.toList |> List.drop column
     in
         nextWordPosProc
-            (List.head backword_chars |> Maybe.withDefault '\0')
+            (List.head backword_chars |> Maybe.withDefault '\0' |> chartype)
             backword_chars
             column
 
-nextWordPosProc : Char -> List Char -> Int -> Maybe Int
-nextWordPosProc fst_char str n =
+nextWordPosProc : CharType -> List Char -> Int -> Maybe Int
+nextWordPosProc prev_char_t str n =
     case str of
         c :: cs ->
-            if chartype c == chartype fst_char then
-                nextWordPosProc fst_char cs (n + 1)
-            else
-                Just n
+            let
+                char_t = chartype c
+            in
+                if char_t == prev_char_t then
+                    nextWordPosProc char_t cs (n + 1)
+                else
+                    case (prev_char_t, char_t) of
+                        (SpaceChar , _)       -> nextWordPosProc char_t cs (n + 1)
+                        (Kanji, Hiragana)     -> nextWordPosProc char_t cs (n + 1)
+                        (Katakana, Hiragana)  -> nextWordPosProc char_t cs (n + 1)
+                        _                     -> Just n
             
         [] -> Nothing
-
 
 type CharType
     = AlphaNumericChar
@@ -58,6 +64,14 @@ isAlpabete c =
 
 isSpace : Char -> Bool
 isSpace c =
+    isJustSpace c
+        || case c of
+               '\t' -> True
+               '\v' -> True
+               _    -> False
+
+isJustSpace : Char -> Bool
+isJustSpace c =
     case (c |> Char.toCode) of
         0x0020 -> True -- SPACE
         0x00A0 -> True -- NO-BREAK SPACE

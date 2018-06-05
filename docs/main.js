@@ -9134,7 +9134,7 @@ var _minekoa$elm_text_editor$TextEditor_StringExtra$isHiragana = function (c) {
 	var cd = _elm_lang$core$Char$toCode(c);
 	return (_elm_lang$core$Native_Utils.cmp(12352, cd) < 1) && (_elm_lang$core$Native_Utils.cmp(cd, 12447) < 1);
 };
-var _minekoa$elm_text_editor$TextEditor_StringExtra$isSpace = function (c) {
+var _minekoa$elm_text_editor$TextEditor_StringExtra$isJustSpace = function (c) {
 	var _p0 = _elm_lang$core$Char$toCode(c);
 	switch (_p0) {
 		case 32:
@@ -9181,6 +9181,19 @@ var _minekoa$elm_text_editor$TextEditor_StringExtra$isSpace = function (c) {
 			return false;
 	}
 };
+var _minekoa$elm_text_editor$TextEditor_StringExtra$isSpace = function (c) {
+	return _minekoa$elm_text_editor$TextEditor_StringExtra$isJustSpace(c) || function () {
+		var _p1 = c;
+		switch (_p1.valueOf()) {
+			case '\t':
+				return true;
+			case '\v':
+				return true;
+			default:
+				return false;
+		}
+	}();
+};
 var _minekoa$elm_text_editor$TextEditor_StringExtra$isAlpabete = function (c) {
 	return _elm_lang$core$Char$isUpper(c) || _elm_lang$core$Char$isLower(c);
 };
@@ -9198,22 +9211,66 @@ var _minekoa$elm_text_editor$TextEditor_StringExtra$chartype = function (c) {
 	return _minekoa$elm_text_editor$TextEditor_StringExtra$isAlpanumeric(c) ? _minekoa$elm_text_editor$TextEditor_StringExtra$AlphaNumericChar : (_minekoa$elm_text_editor$TextEditor_StringExtra$isSpace(c) ? _minekoa$elm_text_editor$TextEditor_StringExtra$SpaceChar : (_minekoa$elm_text_editor$TextEditor_StringExtra$isHiragana(c) ? _minekoa$elm_text_editor$TextEditor_StringExtra$Hiragana : (_minekoa$elm_text_editor$TextEditor_StringExtra$isKatakana(c) ? _minekoa$elm_text_editor$TextEditor_StringExtra$Katakana : (_minekoa$elm_text_editor$TextEditor_StringExtra$isKanji(c) ? _minekoa$elm_text_editor$TextEditor_StringExtra$Kanji : (_minekoa$elm_text_editor$TextEditor_StringExtra$isMultiByteChar(c) ? _minekoa$elm_text_editor$TextEditor_StringExtra$MultibyteChar : _minekoa$elm_text_editor$TextEditor_StringExtra$SignChar)))));
 };
 var _minekoa$elm_text_editor$TextEditor_StringExtra$nextWordPosProc = F3(
-	function (fst_char, str, n) {
+	function (prev_char_t, str, n) {
 		nextWordPosProc:
 		while (true) {
-			var _p1 = str;
-			if (_p1.ctor === '::') {
-				if (_elm_lang$core$Native_Utils.eq(
-					_minekoa$elm_text_editor$TextEditor_StringExtra$chartype(_p1._0),
-					_minekoa$elm_text_editor$TextEditor_StringExtra$chartype(fst_char))) {
-					var _v2 = fst_char,
-						_v3 = _p1._1,
-						_v4 = n + 1;
-					fst_char = _v2;
-					str = _v3;
-					n = _v4;
+			var _p2 = str;
+			if (_p2.ctor === '::') {
+				var _p4 = _p2._1;
+				var char_t = _minekoa$elm_text_editor$TextEditor_StringExtra$chartype(_p2._0);
+				if (_elm_lang$core$Native_Utils.eq(char_t, prev_char_t)) {
+					var _v3 = char_t,
+						_v4 = _p4,
+						_v5 = n + 1;
+					prev_char_t = _v3;
+					str = _v4;
+					n = _v5;
 					continue nextWordPosProc;
 				} else {
+					var _p3 = {ctor: '_Tuple2', _0: prev_char_t, _1: char_t};
+					_v6_3:
+					do {
+						if (_p3.ctor === '_Tuple2') {
+							switch (_p3._0.ctor) {
+								case 'SpaceChar':
+									var _v7 = char_t,
+										_v8 = _p4,
+										_v9 = n + 1;
+									prev_char_t = _v7;
+									str = _v8;
+									n = _v9;
+									continue nextWordPosProc;
+								case 'Kanji':
+									if (_p3._1.ctor === 'Hiragana') {
+										var _v10 = char_t,
+											_v11 = _p4,
+											_v12 = n + 1;
+										prev_char_t = _v10;
+										str = _v11;
+										n = _v12;
+										continue nextWordPosProc;
+									} else {
+										break _v6_3;
+									}
+								case 'Katakana':
+									if (_p3._1.ctor === 'Hiragana') {
+										var _v13 = char_t,
+											_v14 = _p4,
+											_v15 = n + 1;
+										prev_char_t = _v13;
+										str = _v14;
+										n = _v15;
+										continue nextWordPosProc;
+									} else {
+										break _v6_3;
+									}
+								default:
+									break _v6_3;
+							}
+						} else {
+							break _v6_3;
+						}
+					} while(false);
 					return _elm_lang$core$Maybe$Just(n);
 				}
 			} else {
@@ -9229,10 +9286,11 @@ var _minekoa$elm_text_editor$TextEditor_StringExtra$nextWordPos = F2(
 			_elm_lang$core$String$toList(line));
 		return A3(
 			_minekoa$elm_text_editor$TextEditor_StringExtra$nextWordPosProc,
-			A2(
-				_elm_lang$core$Maybe$withDefault,
-				_elm_lang$core$Native_Utils.chr(' '),
-				_elm_lang$core$List$head(backword_chars)),
+			_minekoa$elm_text_editor$TextEditor_StringExtra$chartype(
+				A2(
+					_elm_lang$core$Maybe$withDefault,
+					_elm_lang$core$Native_Utils.chr(' '),
+					_elm_lang$core$List$head(backword_chars))),
 			backword_chars,
 			column);
 	});
@@ -16642,56 +16700,60 @@ var _minekoa$elm_text_editor$KeyBindMenu$editorCommandList = {
 						_0: _minekoa$elm_text_editor$TextEditor_Commands$moveEOL,
 						_1: {
 							ctor: '::',
-							_0: _minekoa$elm_text_editor$TextEditor_Commands$selectForward,
+							_0: _minekoa$elm_text_editor$TextEditor_Commands$moveWordForward,
 							_1: {
 								ctor: '::',
-								_0: _minekoa$elm_text_editor$TextEditor_Commands$selectBackward,
+								_0: _minekoa$elm_text_editor$TextEditor_Commands$selectForward,
 								_1: {
 									ctor: '::',
-									_0: _minekoa$elm_text_editor$TextEditor_Commands$selectPrevios,
+									_0: _minekoa$elm_text_editor$TextEditor_Commands$selectBackward,
 									_1: {
 										ctor: '::',
-										_0: _minekoa$elm_text_editor$TextEditor_Commands$selectNext,
+										_0: _minekoa$elm_text_editor$TextEditor_Commands$selectPrevios,
 										_1: {
 											ctor: '::',
-											_0: _minekoa$elm_text_editor$TextEditor_Commands$markSet,
+											_0: _minekoa$elm_text_editor$TextEditor_Commands$selectNext,
 											_1: {
 												ctor: '::',
-												_0: _minekoa$elm_text_editor$TextEditor_Commands$markClear,
+												_0: _minekoa$elm_text_editor$TextEditor_Commands$markSet,
 												_1: {
 													ctor: '::',
-													_0: _minekoa$elm_text_editor$TextEditor_Commands$markFlip,
+													_0: _minekoa$elm_text_editor$TextEditor_Commands$markClear,
 													_1: {
 														ctor: '::',
-														_0: _minekoa$elm_text_editor$TextEditor_Commands$gotoMark,
+														_0: _minekoa$elm_text_editor$TextEditor_Commands$markFlip,
 														_1: {
 															ctor: '::',
-															_0: _minekoa$elm_text_editor$TextEditor_Commands$backspace,
+															_0: _minekoa$elm_text_editor$TextEditor_Commands$gotoMark,
 															_1: {
 																ctor: '::',
-																_0: _minekoa$elm_text_editor$TextEditor_Commands$delete,
+																_0: _minekoa$elm_text_editor$TextEditor_Commands$backspace,
 																_1: {
 																	ctor: '::',
-																	_0: _minekoa$elm_text_editor$TextEditor_Commands$insert(''),
+																	_0: _minekoa$elm_text_editor$TextEditor_Commands$delete,
 																	_1: {
 																		ctor: '::',
-																		_0: _minekoa$elm_text_editor$TextEditor_Commands$indent,
+																		_0: _minekoa$elm_text_editor$TextEditor_Commands$insert(''),
 																		_1: {
 																			ctor: '::',
-																			_0: _minekoa$elm_text_editor$TextEditor_Commands$copy,
+																			_0: _minekoa$elm_text_editor$TextEditor_Commands$indent,
 																			_1: {
 																				ctor: '::',
-																				_0: _minekoa$elm_text_editor$TextEditor_Commands$cut,
+																				_0: _minekoa$elm_text_editor$TextEditor_Commands$copy,
 																				_1: {
 																					ctor: '::',
-																					_0: _minekoa$elm_text_editor$TextEditor_Commands$paste,
+																					_0: _minekoa$elm_text_editor$TextEditor_Commands$cut,
 																					_1: {
 																						ctor: '::',
-																						_0: _minekoa$elm_text_editor$TextEditor_Commands$killLine,
+																						_0: _minekoa$elm_text_editor$TextEditor_Commands$paste,
 																						_1: {
 																							ctor: '::',
-																							_0: _minekoa$elm_text_editor$TextEditor_Commands$undo,
-																							_1: {ctor: '[]'}
+																							_0: _minekoa$elm_text_editor$TextEditor_Commands$killLine,
+																							_1: {
+																								ctor: '::',
+																								_0: _minekoa$elm_text_editor$TextEditor_Commands$undo,
+																								_1: {ctor: '[]'}
+																							}
 																						}
 																					}
 																				}
