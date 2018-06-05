@@ -132,4 +132,34 @@ suite =
                       |> ntimesdo 5 Buffer.movePrevios
                       |> Buffer.nowCursorPos
                       |> Expect.equal (0,0)
+        , test "move-next-word" <|
+              \_ ->
+                  Buffer.init "ABC DE\nHIJ\n"
+                      |> Buffer.moveNextWord
+                      |> Buffer.nowCursorPos
+                      |> Expect.equal (0,3)
+        , test "move-next-word (nextline)" <|
+              \_ ->
+                  Buffer.init "ABC DE\nHIJ\n"
+                      |> Buffer.moveNextWord
+                      |> Buffer.moveNextWord
+                      |> Buffer.nowCursorPos
+                      |> Expect.equal (1,0)
+        , test "move-next-word (last-line)" <|
+              \_ ->
+                  Buffer.init "ABC DE\nHIJ\n"
+                      |> Buffer.moveNextWord
+                      |> Buffer.moveNextWord
+                      |> Buffer.moveNextWord
+                      |> Buffer.nowCursorPos
+                      |> Expect.equal (2,0)
+        , test "move-next-word (EOF stop)" <|
+              \_ ->
+                  Buffer.init "ABC DE\nHIJ\n"
+                      |> Buffer.moveNextWord
+                      |> Buffer.moveNextWord
+                      |> Buffer.moveNextWord
+                      |> Buffer.moveNextWord
+                      |> Buffer.nowCursorPos
+                      |> Expect.equal (2,0)
         ]
