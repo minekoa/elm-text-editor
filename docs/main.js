@@ -9740,7 +9740,7 @@ var _minekoa$elm_text_editor$TextEditor_Buffer$moveAtProc = F2(
 				cursor: A2(_minekoa$elm_text_editor$TextEditor_Buffer$Cursor, _p24._0, _p24._1)
 			});
 	});
-var _minekoa$elm_text_editor$TextEditor_Buffer$moveWordForwardProc = function (model) {
+var _minekoa$elm_text_editor$TextEditor_Buffer$moveNextWordProc = function (model) {
 	var last_row = _elm_lang$core$List$length(model.contents) - 1;
 	var cur = model.cursor;
 	var col = A2(
@@ -10257,13 +10257,13 @@ var _minekoa$elm_text_editor$TextEditor_Buffer$gotoMark = function (model) {
 		return model;
 	}
 };
-var _minekoa$elm_text_editor$TextEditor_Buffer$moveWordForward = function (model) {
+var _minekoa$elm_text_editor$TextEditor_Buffer$moveNextWord = function (model) {
 	var _p64 = _minekoa$elm_text_editor$TextEditor_Buffer$isMarkActive(model);
 	if (_p64 === true) {
-		return A2(_minekoa$elm_text_editor$TextEditor_Buffer$selectWithMove, _minekoa$elm_text_editor$TextEditor_Buffer$moveWordForwardProc, model);
+		return A2(_minekoa$elm_text_editor$TextEditor_Buffer$selectWithMove, _minekoa$elm_text_editor$TextEditor_Buffer$moveNextWordProc, model);
 	} else {
 		return _minekoa$elm_text_editor$TextEditor_Buffer$selectionClear(
-			_minekoa$elm_text_editor$TextEditor_Buffer$moveWordForwardProc(model));
+			_minekoa$elm_text_editor$TextEditor_Buffer$moveNextWordProc(model));
 	}
 };
 var _minekoa$elm_text_editor$TextEditor_Buffer$selectBackward = function (_p65) {
@@ -11099,7 +11099,7 @@ var _minekoa$elm_text_editor$TextEditor_Core_Commands$selectNext = _minekoa$elm_
 var _minekoa$elm_text_editor$TextEditor_Core_Commands$selectPrevios = _minekoa$elm_text_editor$TextEditor_Core_Commands$editF(_minekoa$elm_text_editor$TextEditor_Buffer$selectPrevios);
 var _minekoa$elm_text_editor$TextEditor_Core_Commands$selectForward = _minekoa$elm_text_editor$TextEditor_Core_Commands$editF(_minekoa$elm_text_editor$TextEditor_Buffer$selectForward);
 var _minekoa$elm_text_editor$TextEditor_Core_Commands$selectBackward = _minekoa$elm_text_editor$TextEditor_Core_Commands$editF(_minekoa$elm_text_editor$TextEditor_Buffer$selectBackward);
-var _minekoa$elm_text_editor$TextEditor_Core_Commands$moveWordForward = _minekoa$elm_text_editor$TextEditor_Core_Commands$editF(_minekoa$elm_text_editor$TextEditor_Buffer$moveWordForward);
+var _minekoa$elm_text_editor$TextEditor_Core_Commands$moveNextWord = _minekoa$elm_text_editor$TextEditor_Core_Commands$editF(_minekoa$elm_text_editor$TextEditor_Buffer$moveNextWord);
 var _minekoa$elm_text_editor$TextEditor_Core_Commands$moveAt = function (pos) {
 	return _minekoa$elm_text_editor$TextEditor_Core_Commands$editF(
 		_minekoa$elm_text_editor$TextEditor_Buffer$moveAt(pos));
@@ -11192,7 +11192,7 @@ var _minekoa$elm_text_editor$TextEditor_Commands$selectNext = {id: 'selectNext',
 var _minekoa$elm_text_editor$TextEditor_Commands$selectPrevios = {id: 'selectPrevios', f: _minekoa$elm_text_editor$TextEditor_Core_Commands$selectPrevios};
 var _minekoa$elm_text_editor$TextEditor_Commands$selectForward = {id: 'selectForward', f: _minekoa$elm_text_editor$TextEditor_Core_Commands$selectForward};
 var _minekoa$elm_text_editor$TextEditor_Commands$selectBackward = {id: 'selectBackword', f: _minekoa$elm_text_editor$TextEditor_Core_Commands$selectBackward};
-var _minekoa$elm_text_editor$TextEditor_Commands$moveWordForward = {id: 'moveWordForward', f: _minekoa$elm_text_editor$TextEditor_Core_Commands$moveWordForward};
+var _minekoa$elm_text_editor$TextEditor_Commands$moveNextWord = {id: 'moveNextWord', f: _minekoa$elm_text_editor$TextEditor_Core_Commands$moveNextWord};
 var _minekoa$elm_text_editor$TextEditor_Commands$moveAt = function (pos) {
 	return {
 		id: 'moveAt',
@@ -11224,7 +11224,7 @@ var _minekoa$elm_text_editor$TextEditor_KeyBind$emacsLike = {
 				_0: {ctrl: true, alt: false, shift: false, code: 80, f: _minekoa$elm_text_editor$TextEditor_Commands$movePrevios},
 				_1: {
 					ctor: '::',
-					_0: {ctrl: false, alt: true, shift: false, code: 70, f: _minekoa$elm_text_editor$TextEditor_Commands$moveWordForward},
+					_0: {ctrl: false, alt: true, shift: false, code: 70, f: _minekoa$elm_text_editor$TextEditor_Commands$moveNextWord},
 					_1: {
 						ctor: '::',
 						_0: {ctrl: true, alt: false, shift: false, code: 65, f: _minekoa$elm_text_editor$TextEditor_Commands$moveBOL},
@@ -16693,7 +16693,7 @@ var _minekoa$elm_text_editor$KeyBindMenu$editorCommandList = {
 						_0: _minekoa$elm_text_editor$TextEditor_Commands$moveEOL,
 						_1: {
 							ctor: '::',
-							_0: _minekoa$elm_text_editor$TextEditor_Commands$moveWordForward,
+							_0: _minekoa$elm_text_editor$TextEditor_Commands$moveNextWord,
 							_1: {
 								ctor: '::',
 								_0: _minekoa$elm_text_editor$TextEditor_Commands$selectForward,
