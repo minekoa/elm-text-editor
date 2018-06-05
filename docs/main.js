@@ -9762,18 +9762,11 @@ var _minekoa$elm_text_editor$TextEditor_Buffer$moveWordForwardProc = function (m
 			{
 				ctor: '_Tuple2',
 				_0: last_row,
-				_1: A3(
-					_elm_lang$core$Basics$flip,
-					F2(
-						function (x, y) {
-							return x - y;
-						}),
-					1,
-					_elm_lang$core$String$length(
-						A2(
-							_elm_lang$core$Maybe$withDefault,
-							'',
-							A2(_minekoa$elm_text_editor$TextEditor_Buffer$line, last_row, model.contents))))
+				_1: _elm_lang$core$String$length(
+					A2(
+						_elm_lang$core$Maybe$withDefault,
+						'',
+						A2(_minekoa$elm_text_editor$TextEditor_Buffer$line, last_row, model.contents)))
 			},
 			model) : A2(
 			_minekoa$elm_text_editor$TextEditor_Buffer$moveAtProc,

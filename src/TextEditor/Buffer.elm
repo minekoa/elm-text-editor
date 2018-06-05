@@ -422,7 +422,6 @@ moveWordForwardProc model =
                     moveAtProc (last_row, (line last_row model.contents
                                               |> Maybe.withDefault ""
                                               |> String.length
-                                              |> flip (-) 1
                                           )
                                ) model
                 else
