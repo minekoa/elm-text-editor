@@ -1012,6 +1012,7 @@ editorCommandList =
     , EditorCmds.moveBOL
     , EditorCmds.moveEOL
     , EditorCmds.moveNextWord
+    , EditorCmds.movePreviosWord
     , EditorCmds.selectForward
     , EditorCmds.selectBackward
     , EditorCmds.selectPrevios
