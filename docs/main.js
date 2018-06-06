@@ -11089,7 +11089,10 @@ var _minekoa$elm_text_editor$TextEditor_Core_Commands$indent = function (model) 
 								{
 									ctor: '_Tuple2',
 									_0: row,
-									_1: col + (_elm_lang$core$String$length(prev_indent) - _elm_lang$core$String$length(cur_indent))
+									_1: A2(
+										_elm_lang$core$Basics$max,
+										0,
+										col + (_elm_lang$core$String$length(prev_indent) - _elm_lang$core$String$length(cur_indent)))
 								},
 								A2(
 									_minekoa$elm_text_editor$TextEditor_Buffer$insert,

@@ -279,7 +279,7 @@ indent model =
                                |> Buffer.moveAt (row, 0)
                                |> Buffer.insert prev_indent
                                |> Buffer.moveAt ( row
-                                                , col + ((String.length prev_indent ) - (String.length cur_indent))
+                                                , col + ((String.length prev_indent ) - (String.length cur_indent)) |> max 0
                                                 )
         }
             |> Core.blinkBlock
