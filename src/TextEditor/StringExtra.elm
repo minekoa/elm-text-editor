@@ -11,8 +11,9 @@ nextWordPos line column =
     let
         backword_chars = line |> String.toList |> List.drop column
     in
+        -- note: line が空のとき、\n を補うのは、業種右端は改行だから
         nextWordPosProc
-            (List.head backword_chars |> Maybe.withDefault '\0' |> chartype)
+            (List.head backword_chars |> Maybe.withDefault '\n' |> chartype)
             backword_chars
             column
 
@@ -32,7 +33,12 @@ nextWordPosProc prev_char_t str n =
                         (Katakana, Hiragana)  -> nextWordPosProc char_t cs (n + 1)
                         _                     -> Just n
             
-        [] -> Nothing
+        [] ->
+            if prev_char_t == SpaceChar then
+                Nothing
+            else
+                Just n
+
 
 type CharType
     = AlphaNumericChar
@@ -68,6 +74,7 @@ isSpace c =
         || case c of
                '\t' -> True
                '\v' -> True
+               '\n' -> True
                _    -> False
 
 isJustSpace : Char -> Bool

@@ -141,16 +141,26 @@ suite =
         , test "move-next-word (nextline)" <|
               \_ ->
                   Buffer.init "ABC DE\nHIJ\n"
-                      |> Buffer.moveNextWord
-                      |> Buffer.moveNextWord
+                      |> Buffer.moveNextWord -- "ABC "
+                      |> Buffer.moveNextWord -- "DE\n"
+                      |> Buffer.moveNextWord -- ""
                       |> Buffer.nowCursorPos
-                      |> Expect.equal (1,0)
+                      |> Expect.equal (1,3)
+        , test "move-next-word (nextline (space))" <|
+              \_ ->
+                  Buffer.init "ABC DE\n HIJ\n"
+                      |> Buffer.moveNextWord -- "ABC "
+                      |> Buffer.moveNextWord -- "DE\n"
+                      |> Buffer.moveNextWord -- " "
+                      |> Buffer.nowCursorPos
+                      |> Expect.equal (1,4)
         , test "move-next-word (last-line)" <|
               \_ ->
                   Buffer.init "ABC DE\nHIJ\n"
-                      |> Buffer.moveNextWord
-                      |> Buffer.moveNextWord
-                      |> Buffer.moveNextWord
+                      |> Buffer.moveNextWord -- "ABC "
+                      |> Buffer.moveNextWord -- "DE\n"
+                      |> Buffer.moveNextWord -- "HIJ\n"
+                      |> Buffer.moveNextWord -- ""
                       |> Buffer.nowCursorPos
                       |> Expect.equal (2,0)
         , test "move-next-word (EOF stop)" <|
@@ -162,4 +172,14 @@ suite =
                       |> Buffer.moveNextWord
                       |> Buffer.nowCursorPos
                       |> Expect.equal (2,0)
+
+        , test "move-next-word (next line is the last line)" <|
+              \_ ->
+                  Buffer.init "宇宙よりも遠い場所\n  abc def, g"
+                      |> Buffer.moveNextWord -- "宇宙よりも"
+                      |> Buffer.moveNextWord -- "遠い"
+                      |> Buffer.moveNextWord -- "場所"
+                      |> Buffer.moveNextWord -- "  abc"
+                      |> Buffer.nowCursorPos
+                      |> Expect.equal (1,5)
         ]

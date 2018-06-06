@@ -404,28 +404,28 @@ moveAtProc (row, col) model =
 moveNextWord : Model -> Model
 moveNextWord model =
     case isMarkActive model of
-        True  -> selectWithMove moveNextWordProc model
-        False -> model |>  moveNextWordProc |> selectionClear
+        True  -> selectWithMove (moveNextWordProc model.cursor) model
+        False -> model |> moveNextWordProc model.cursor |> selectionClear
 
-moveNextWordProc : Model -> Model
-moveNextWordProc model =
+moveNextWordProc : Cursor -> Model -> Model
+moveNextWordProc cur model =
     let
-        cur = model.cursor
         last_row = (List.length model.contents) - 1
+
         col = StringExtra.nextWordPos (line cur.row model.contents |> Maybe.withDefault "") cur.column
     in
         case col of
             Just nchar ->
                 moveAtProc (cur.row, nchar) model
             Nothing ->
-                if cur.row + 1 >= last_row then
+                if cur.row + 1 > last_row then
                     moveAtProc (last_row, (line last_row model.contents
                                               |> Maybe.withDefault ""
                                               |> String.length
                                           )
                                ) model
                 else
-                    moveAtProc (cur.row + 1, 0) model
+                    moveNextWordProc (Cursor (cur.row + 1) 0) model
 
 
 ------------------------------------------------------------

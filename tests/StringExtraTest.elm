@@ -42,11 +42,21 @@ suite =
               \_ ->
                   "This is a pen."
                       |> \s -> StringExtra.nextWordPos s 13
+                      |> Expect.equal (Just 14)
+        , test "nextwordpos, \"This| is| a| pen.\", 14" <|
+              \_ ->
+                  "This is a pen."
+                      |> \s -> StringExtra.nextWordPos s 14
                       |> Expect.equal Nothing
         , test "nextwordpos, \"This| is| a| pen\", 10" <|
               \_ ->
                   "This is a pen"
                       |> \s -> StringExtra.nextWordPos s 10
+                      |> Expect.equal (Just 13)
+        , test "nextwordpos, \"This| is| a| pen\", 13" <|
+              \_ ->
+                  "This is a pen"
+                      |> \s -> StringExtra.nextWordPos s 13
                       |> Expect.equal Nothing
         , test "nextwordpos, \"apple|\\tpen\", 10" <|
               \_ ->
@@ -62,6 +72,11 @@ suite =
               \_ ->
                   "あいうえお　かきくけこ"
                       |> \s -> StringExtra.nextWordPos s 5
+                      |> Expect.equal (Just 11)
+        , test "nextwordpos, \"あいうえお|　かきくけこ\", 11" <|
+              \_ ->
+                  "あいうえお　かきくけこ"
+                      |> \s -> StringExtra.nextWordPos s 11
                       |> Expect.equal Nothing
         , test "nextwordpos, \"AT|フィールド\", 0" <|
               \_ ->
