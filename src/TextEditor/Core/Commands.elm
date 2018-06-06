@@ -7,6 +7,7 @@ module TextEditor.Core.Commands exposing
     , moveEOL
     , moveAt
     , moveNextWord
+    , movePreviosWord
     , selectForward
     , selectBackward
     , selectPrevios
@@ -84,6 +85,10 @@ moveAt pos =  editF (Buffer.moveAt pos)
 
 moveNextWord : Model -> (Model, Cmd Msg)
 moveNextWord = editF Buffer.moveNextWord
+
+movePreviosWord : Model -> (Model, Cmd Msg)
+movePreviosWord = editF Buffer.movePreviosWord
+
 
 ------------------------------------------------------------
 -- selection

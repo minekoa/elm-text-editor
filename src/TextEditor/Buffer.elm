@@ -19,6 +19,7 @@ module TextEditor.Buffer exposing ( Model
                                   , moveNext
                                   , moveAt
                                   , moveNextWord
+                                  , movePreviosWord
 
                                   -- selection
                                   , selectBackward
@@ -426,6 +427,31 @@ moveNextWordProc cur model =
                                ) model
                 else
                     moveNextWordProc (Cursor (cur.row + 1) 0) model
+
+
+movePreviosWord : Model -> Model
+movePreviosWord model =
+    case isMarkActive model of
+        True  -> selectWithMove (movePreviosWordProc model.cursor) model
+        False -> model |> movePreviosWordProc model.cursor |> selectionClear
+
+movePreviosWordProc : Cursor -> Model -> Model
+movePreviosWordProc cur model =
+    let
+        col = StringExtra.previosWordPos (line cur.row model.contents |> Maybe.withDefault "") cur.column
+    in
+        case col of
+            Just nchar ->
+                moveAtProc (cur.row, nchar) model
+            Nothing ->
+                if cur.row - 1  < 0 then
+                    moveAtProc (0, 0) model
+                else
+                    movePreviosWordProc (Cursor
+                                             (cur.row - 1)
+                                             (line (cur.row - 1) model.contents |> Maybe.withDefault "" |> String.length)
+                                        ) model
+
 
 
 ------------------------------------------------------------

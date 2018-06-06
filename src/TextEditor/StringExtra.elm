@@ -1,5 +1,6 @@
 module TextEditor.StringExtra exposing
     ( nextWordPos
+    , previosWordPos
     )
 
 
@@ -38,6 +39,39 @@ nextWordPosProc prev_char_t str n =
                 Nothing
             else
                 Just n
+
+previosWordPos : String -> Int -> Maybe Int
+previosWordPos line column =
+    let
+        forward_chars = line |> String.toList |> List.take column
+    in
+        previosWordPosProc
+            (List.reverse forward_chars |> List.head |> Maybe.withDefault '\n' |> chartype)
+            (List.reverse forward_chars)
+            column
+
+previosWordPosProc : CharType -> List Char -> Int -> Maybe Int
+previosWordPosProc fwd_char_t reversed_str n =
+    case reversed_str of
+        c :: cs ->
+            let
+                char_t = chartype c
+            in
+                if char_t == fwd_char_t then
+                    previosWordPosProc char_t cs (n - 1)
+                else
+                    case (fwd_char_t, char_t) of
+                        (SpaceChar , _)       -> previosWordPosProc char_t cs (n - 1)
+                        (Hiragana, Kanji)     -> previosWordPosProc char_t cs (n - 1)
+                        (Hiragana, Katakana)  -> previosWordPosProc char_t cs (n - 1)
+                        _                     -> Just n
+            
+        [] ->
+            if fwd_char_t == SpaceChar then
+                Nothing
+            else
+                Just n
+
 
 
 type CharType
