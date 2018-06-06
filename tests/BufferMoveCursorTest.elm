@@ -132,6 +132,7 @@ suite =
                       |> ntimesdo 5 Buffer.movePrevios
                       |> Buffer.nowCursorPos
                       |> Expect.equal (0,0)
+
         , test "move-next-word" <|
               \_ ->
                   Buffer.init "ABC DE\nHIJ\n"
@@ -172,7 +173,6 @@ suite =
                       |> Buffer.moveNextWord
                       |> Buffer.nowCursorPos
                       |> Expect.equal (2,0)
-
         , test "move-next-word (next line is the last line)" <|
               \_ ->
                   Buffer.init "宇宙よりも遠い場所\n  abc def, g"
@@ -182,4 +182,29 @@ suite =
                       |> Buffer.moveNextWord -- "  abc"
                       |> Buffer.nowCursorPos
                       |> Expect.equal (1,5)
+
+        , test "move-previos-word" <|
+              \_ ->
+                  Buffer.init "ABC DE\nHIJ\n"
+                      |> Buffer.moveNext
+                      |> Buffer.moveNext
+                      |> Buffer.movePreviosWord
+                      |> Buffer.nowCursorPos
+                      |> Expect.equal (1,0)
+        , test "move-previos-word (BOF)" <|
+              \_ ->
+                  Buffer.init "ABC DE\nHIJ\n"
+                      |> Buffer.movePreviosWord
+                      |> Buffer.nowCursorPos
+                      |> Expect.equal (0,0)
+        , test "move-previos-word (prev-line, space)" <|
+              \_ ->
+                  Buffer.init "ABC DE\n  HIJ  \n"
+                      |> Buffer.moveNext
+                      |> Buffer.moveNext
+                      |> Buffer.movePreviosWord
+                      |> Buffer.nowCursorPos
+                      |> Expect.equal (1,2)
+
+
         ]
