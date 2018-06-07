@@ -20,6 +20,9 @@ import TextEditor.Core as Core
 import TextEditor.Core.Commands as CoreCommands
 import TextEditor.Commands as EditorCmds
 
+import TextEditor.KeyboardEvent exposing (..)
+
+
 import Ports.WebStrage as WebStrage
 import StringTools exposing (..)
 
@@ -918,14 +921,6 @@ resetView model =
 ------------------------------------------------------------
 -- keyboard event (TextEditor コピペなのであとでどうにかしよう)
 ------------------------------------------------------------
-type alias KeyboardEvent = 
-    { altKey : Bool
-    , ctrlKey : Bool
-    , keyCode : Int
-    , metaKey : Bool
-    , repeat : Bool
-    , shiftKey : Bool
-    }
 
 keyboarEvent_toString : KeyboardEvent -> String
 keyboarEvent_toString e =
@@ -936,31 +931,6 @@ keyboarEvent_toString e =
         , if e.shiftKey then "S-"else ""
         , toString e.keyCode
         ]
-
-decodeKeyboardEvent : Json.Decode.Decoder KeyboardEvent
-decodeKeyboardEvent =
-    Json.Decode.map6 KeyboardEvent
-        (Json.Decode.field "altKey" Json.Decode.bool)
-        (Json.Decode.field "ctrlKey" Json.Decode.bool)
-        (Json.Decode.field "keyCode" Json.Decode.int)
-        (Json.Decode.field "metaKey" Json.Decode.bool)
-        (Json.Decode.field "repeat" Json.Decode.bool)
-        (Json.Decode.field "shiftKey" Json.Decode.bool)    
-
-
-considerKeyboardEvent : (KeyboardEvent -> Maybe msg) -> Json.Decode.Decoder msg
-considerKeyboardEvent func =
-    Json.Decode.andThen
-        (\event ->
-            case func event of
-                Just msg ->
-                    Json.Decode.succeed msg
-
-                Nothing ->
-                    Json.Decode.fail "Ignoring keyboard event"
-        )
-        decodeKeyboardEvent
-
 
 
 onKeyDown : (KeyboardEvent -> msg) -> Attribute msg
