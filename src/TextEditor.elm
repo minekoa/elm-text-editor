@@ -463,12 +463,12 @@ view model =
               , class "editor-scene"
               , style [ ("position", "relative") ]
               ]
-              [ presentation model.core
+              [ presentation model
               ]
         ]
 
 
-presentation : Core.Model -> Html Msg
+presentation : Model -> Html Msg
 presentation model =
     div [ style [ ("display", "flex"), ("flex-direction", "row"), ("flex-wrap", "nowrap")
                 , ("margin", "0"), ("padding", "0"), ("width", "100%"), ("height", "100%")
@@ -477,8 +477,8 @@ presentation model =
         , onFocusIn FocusIn
         , onFocusOut FocusOut
         ]
-        [ lineNumArea model
-        , codeArea model
+        [ lineNumArea model.core
+        , codeArea model.keymap model.core
         ]
 
 lineNumArea : Core.Model -> Html Msg
@@ -499,8 +499,8 @@ lineNumArea model =
                              ] [ text (toString n) ])
                 (List.range 1 (List.length contents))
 
-codeArea : Core.Model -> Html Msg
-codeArea model =
+codeArea : List KeyBind.KeyBind -> Core.Model -> Html Msg
+codeArea keymap model =
     div [ id <| codeAreaID model
         , class "code-area"
         , style [ ("margin", "0"), ("padding", "0"), ("border", "none")
@@ -509,7 +509,7 @@ codeArea model =
                 ]
         ]
         [ ruler model
-        , cursorLayer model
+        , cursorLayer keymap model
         , tapControlLayer model
         , markerLayer model
         , codeLayer model
@@ -555,8 +555,8 @@ codeLayer model =
                               [text ln]
                 ) contents
 
-cursorLayer : Core.Model -> Html Msg
-cursorLayer model =
+cursorLayer : List KeyBind.KeyBind -> Core.Model -> Html Msg
+cursorLayer keymap model =
     div [ class "cursor-layer"
         , style [ ("position", "absolute")
                 , ("pointer-events", "none") -- マウスイベントの対象外にする
@@ -579,7 +579,7 @@ cursorLayer model =
                      [ style [("position", "relative"), ("display" , "inline-flex")] ]
                      [ textarea [ id <| inputAreaID model
                                 , onInput Input
-                                , onKeyDown KeyDown
+                                , onKeyDown keymap KeyDown
                                 , onKeyPress KeyPress
                                 , onCompositionStart CompositionStart
                                 , onCompositionUpdate CompositionUpdate
@@ -842,9 +842,18 @@ keyboarEvent_toString e =
         , toString e.keyCode
         ]
                 
-onKeyDown : (KeyboardEvent -> msg) -> Attribute msg
-onKeyDown tagger =
-    on "keydown" (Json.map tagger decodeKeyboardEvent)
+onKeyDown : List KeyBind.KeyBind -> (KeyboardEvent -> msg) -> Attribute msg
+onKeyDown keymap tagger =
+    onWithOptions "keydown" { stopPropagation=True, preventDefault=True } <|
+        -- note: considerKeyboardEvent は、Nothing の時 
+        --       JsonDecodeを失敗させることで、
+        --       stopPropagetion, preventDefault を有効にしたり無効にしたりする Durty Hack
+        --       (なので、keymapにあるかどうか照合をここでやっている)
+        considerKeyboardEvent (\e ->
+                                   case KeyBind.find (e.ctrlKey, e.altKey, e.shiftKey, e.keyCode) keymap of
+                                       Just _  -> Just (tagger e)
+                                       Nothing -> Nothing
+                              )
 
 onKeyPress : (Int -> msg) -> Attribute msg
 onKeyPress tagger =

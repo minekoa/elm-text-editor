@@ -97,30 +97,6 @@ var _minekoa$elm_text_editor$Native_Mice = function() {
         console.log("regist inpt-ctrl event handlers");
 
 
-        input_area.addEventListener( "keydown", e => {
-            if (e.target.id != id_input_area) {
-                return true;
-            }
-
-            /* C-v -x -c: clipboard系のデフォルトキーバンドは生かしておく */
-            if (e.ctrlKey && (e.keyCode == 86 || e.keyCode == 67 || e.keyCode == 88)) {
-                ;
-            }
-            else if (e.altKey || e.ctrlKey) {　/* それ以外の Shift以外モディファイヤは Elm側で処理させるので殺す */
-                e.preventDefault();
-            }
-
-            switch (e.keyCode) {
-            case 37: /* '←' .. スクロールが発生してしまうことがある */
-            case 38: /* '↑' .. 〃   */
-            case 39: /* '→' .. 〃   */
-            case 40: /* '↓' .. 〃   */ 
-            case  9: /* tab  .. 次のオブジェクトへフォーカス移動してしまう */
-                e.preventDefault();
-                break;
-            }
-        });
-
         /* IMEを考慮した input_area のクリア制御
          *      - input
          *      - compositionstart
