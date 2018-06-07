@@ -24,6 +24,8 @@ import TextEditor.Buffer as Buffer
 import TextEditor.Core as Core exposing (..)
 import TextEditor.Core.Commands as Commands
 
+import TextEditor.KeyboardEvent exposing (..)
+
 import TextEditor.Commands
 import TextEditor.KeyBind as KeyBind
 
@@ -830,15 +832,6 @@ subscriptions model =
 
 -- Keyboard Event
 
-type alias KeyboardEvent = 
-    { altKey : Bool
-    , ctrlKey : Bool
-    , keyCode : Int
-    , metaKey : Bool
-    , repeat : Bool
-    , shiftKey : Bool
-    }
-
 keyboarEvent_toString : KeyboardEvent -> String
 keyboarEvent_toString e =
     String.concat
@@ -848,17 +841,6 @@ keyboarEvent_toString e =
         , if e.shiftKey then "S-"else ""
         , toString e.keyCode
         ]
-
-decodeKeyboardEvent : Json.Decoder KeyboardEvent
-decodeKeyboardEvent =
-    Json.map6 KeyboardEvent
-        (Json.field "altKey" Json.bool)
-        (Json.field "ctrlKey" Json.bool)
-        (Json.field "keyCode" Json.int)
-        (Json.field "metaKey" Json.bool)
-        (Json.field "repeat" Json.bool)
-        (Json.field "shiftKey" Json.bool)    
-
                 
 onKeyDown : (KeyboardEvent -> msg) -> Attribute msg
 onKeyDown tagger =
