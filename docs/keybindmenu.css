@@ -237,3 +237,19 @@
 
     border-bottom: 1px dotted gray;
 }
+
+.keybind-document h2 {
+    font-size: 1.1rem;
+    color: lightslategray;
+    text-decoration: underline;
+}
+
+.keybind-document dt {
+    color: lightslategray;
+}
+.keybind-document code {
+    color: steelblue;
+}
+
+
+

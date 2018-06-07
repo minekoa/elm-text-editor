@@ -98,6 +98,7 @@ initEditDelete kbind =
 
 type SubMenu
     = KeybindMain
+    | KeybindNotes
     | ResetKeybind
 
 type KeybindMainsPage
@@ -466,6 +467,13 @@ menuItemsView model =
                       ) |> text
                     ]
           ]
+
+    , div [ onClick <| SelectSubMenu KeybindNotes
+          , class <| if model.selectedSubMenu == KeybindNotes then "menu-item-active" else "menu-item"
+          ]
+          [ span [] [text "Notes"]
+          ]
+
     , div [ onClick <| SelectSubMenu ResetKeybind
           , class <| if model.selectedSubMenu == ResetKeybind then "menu-item-active" else "menu-item"
           ]
@@ -488,6 +496,9 @@ menuPalette keybinds model =
                             div [] []
                 AcceptPage ->
                     div [class "menu-palette"] [ acceptPageView keybinds model ]
+
+        KeybindNotes ->
+            div [class "menu-palette"] [ notesView model ]
 
         ResetKeybind -> 
             div [class "menu-palette"] [ resetView model ]
@@ -871,7 +882,41 @@ acceptPage_acceptButton label =
     ]
 
 
-
+notesView : Model -> Html Msg
+notesView model =
+    div [ class "keybind-document" ]
+        [ h2 [] [ text "Notes" ]
+        , dl [] [ dt [] [ text "Ctrl-C, Ctrl-V, Ctrl-X key (Clipboard operations)" ]
+                , dd [] [ p [] [ text "Although not in the key binding list, these shortcuts will "
+                               , code [] [text "copy"]
+                               , text ", "
+                               , code [] [text "paste"]
+                               , text ", and "
+                               , code [] [text "cut"]
+                               , text" to the clipboard, which is the browser's specified behavior."
+                               ]
+                        , p [] [ text "The "
+                               , code [] [text "copy"]
+                               , text ", "
+                               , code [] [text "paste"]
+                               , text ", "
+                               , code [] [text "cut"]
+                               , text " editor commands can be bound to arbitrary keys, but they are closed in the editor and not to the clipboard. "
+                               , text "This is because the browser forbids changing the trigger to access the clipboard for security reasons."
+                               ]
+                        ]
+                , dt [] [ text "Tab & Shift-Tab key" ]
+                , dd [] [ p [] [ text "If you stop binding the command to the "
+                               , code [] [ text "Tab"]
+                               , text " and "
+                               , code [] [ text "Shift-Tab" ]
+                               , text " key, focus movement which is the specified behavior of the browser will occur."
+                               ]
+                        ]
+                , dt [] [ text "Arrow keys (→↓←↑)" ]
+                , dd [] [ text "If you stop binding the command to the arrow keys, scrolling, which is the default behavior of the browser, will occur." ]
+                ]
+        ]
 
 resetView : Model-> Html Msg
 resetView model =
@@ -914,8 +959,6 @@ resetView model =
                     [text "Reset!"]
               ]
         ]
-            
-
 
 
 ------------------------------------------------------------

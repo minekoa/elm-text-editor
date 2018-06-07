@@ -17036,6 +17036,249 @@ var _minekoa$elm_text_editor$KeyBindMenu$keyboarEvent_toString = function (e) {
 			}
 		});
 };
+var _minekoa$elm_text_editor$KeyBindMenu$notesView = function (model) {
+	return A2(
+		_elm_lang$html$Html$div,
+		{
+			ctor: '::',
+			_0: _elm_lang$html$Html_Attributes$class('keybind-document'),
+			_1: {ctor: '[]'}
+		},
+		{
+			ctor: '::',
+			_0: A2(
+				_elm_lang$html$Html$h2,
+				{ctor: '[]'},
+				{
+					ctor: '::',
+					_0: _elm_lang$html$Html$text('Notes'),
+					_1: {ctor: '[]'}
+				}),
+			_1: {
+				ctor: '::',
+				_0: A2(
+					_elm_lang$html$Html$dl,
+					{ctor: '[]'},
+					{
+						ctor: '::',
+						_0: A2(
+							_elm_lang$html$Html$dt,
+							{ctor: '[]'},
+							{
+								ctor: '::',
+								_0: _elm_lang$html$Html$text('Ctrl-C, Ctrl-V, Ctrl-X key (Clipboard operations)'),
+								_1: {ctor: '[]'}
+							}),
+						_1: {
+							ctor: '::',
+							_0: A2(
+								_elm_lang$html$Html$dd,
+								{ctor: '[]'},
+								{
+									ctor: '::',
+									_0: A2(
+										_elm_lang$html$Html$p,
+										{ctor: '[]'},
+										{
+											ctor: '::',
+											_0: _elm_lang$html$Html$text('Although not in the key binding list, these shortcuts will '),
+											_1: {
+												ctor: '::',
+												_0: A2(
+													_elm_lang$html$Html$code,
+													{ctor: '[]'},
+													{
+														ctor: '::',
+														_0: _elm_lang$html$Html$text('copy'),
+														_1: {ctor: '[]'}
+													}),
+												_1: {
+													ctor: '::',
+													_0: _elm_lang$html$Html$text(', '),
+													_1: {
+														ctor: '::',
+														_0: A2(
+															_elm_lang$html$Html$code,
+															{ctor: '[]'},
+															{
+																ctor: '::',
+																_0: _elm_lang$html$Html$text('paste'),
+																_1: {ctor: '[]'}
+															}),
+														_1: {
+															ctor: '::',
+															_0: _elm_lang$html$Html$text(', and '),
+															_1: {
+																ctor: '::',
+																_0: A2(
+																	_elm_lang$html$Html$code,
+																	{ctor: '[]'},
+																	{
+																		ctor: '::',
+																		_0: _elm_lang$html$Html$text('cut'),
+																		_1: {ctor: '[]'}
+																	}),
+																_1: {
+																	ctor: '::',
+																	_0: _elm_lang$html$Html$text(' to the clipboard, which is the browser\'s specified behavior.'),
+																	_1: {ctor: '[]'}
+																}
+															}
+														}
+													}
+												}
+											}
+										}),
+									_1: {
+										ctor: '::',
+										_0: A2(
+											_elm_lang$html$Html$p,
+											{ctor: '[]'},
+											{
+												ctor: '::',
+												_0: _elm_lang$html$Html$text('The '),
+												_1: {
+													ctor: '::',
+													_0: A2(
+														_elm_lang$html$Html$code,
+														{ctor: '[]'},
+														{
+															ctor: '::',
+															_0: _elm_lang$html$Html$text('copy'),
+															_1: {ctor: '[]'}
+														}),
+													_1: {
+														ctor: '::',
+														_0: _elm_lang$html$Html$text(', '),
+														_1: {
+															ctor: '::',
+															_0: A2(
+																_elm_lang$html$Html$code,
+																{ctor: '[]'},
+																{
+																	ctor: '::',
+																	_0: _elm_lang$html$Html$text('paste'),
+																	_1: {ctor: '[]'}
+																}),
+															_1: {
+																ctor: '::',
+																_0: _elm_lang$html$Html$text(', '),
+																_1: {
+																	ctor: '::',
+																	_0: A2(
+																		_elm_lang$html$Html$code,
+																		{ctor: '[]'},
+																		{
+																			ctor: '::',
+																			_0: _elm_lang$html$Html$text('cut'),
+																			_1: {ctor: '[]'}
+																		}),
+																	_1: {
+																		ctor: '::',
+																		_0: _elm_lang$html$Html$text(' editor commands can be bound to arbitrary keys, but they are closed in the editor and not to the clipboard. '),
+																		_1: {
+																			ctor: '::',
+																			_0: _elm_lang$html$Html$text('This is because the browser forbids changing the trigger to access the clipboard for security reasons.'),
+																			_1: {ctor: '[]'}
+																		}
+																	}
+																}
+															}
+														}
+													}
+												}
+											}),
+										_1: {ctor: '[]'}
+									}
+								}),
+							_1: {
+								ctor: '::',
+								_0: A2(
+									_elm_lang$html$Html$dt,
+									{ctor: '[]'},
+									{
+										ctor: '::',
+										_0: _elm_lang$html$Html$text('Tab & Shift-Tab key'),
+										_1: {ctor: '[]'}
+									}),
+								_1: {
+									ctor: '::',
+									_0: A2(
+										_elm_lang$html$Html$dd,
+										{ctor: '[]'},
+										{
+											ctor: '::',
+											_0: A2(
+												_elm_lang$html$Html$p,
+												{ctor: '[]'},
+												{
+													ctor: '::',
+													_0: _elm_lang$html$Html$text('If you stop binding the command to the '),
+													_1: {
+														ctor: '::',
+														_0: A2(
+															_elm_lang$html$Html$code,
+															{ctor: '[]'},
+															{
+																ctor: '::',
+																_0: _elm_lang$html$Html$text('Tab'),
+																_1: {ctor: '[]'}
+															}),
+														_1: {
+															ctor: '::',
+															_0: _elm_lang$html$Html$text(' and '),
+															_1: {
+																ctor: '::',
+																_0: A2(
+																	_elm_lang$html$Html$code,
+																	{ctor: '[]'},
+																	{
+																		ctor: '::',
+																		_0: _elm_lang$html$Html$text('Shift-Tab'),
+																		_1: {ctor: '[]'}
+																	}),
+																_1: {
+																	ctor: '::',
+																	_0: _elm_lang$html$Html$text(' key, focus movement which is the specified behavior of the browser will occur.'),
+																	_1: {ctor: '[]'}
+																}
+															}
+														}
+													}
+												}),
+											_1: {ctor: '[]'}
+										}),
+									_1: {
+										ctor: '::',
+										_0: A2(
+											_elm_lang$html$Html$dt,
+											{ctor: '[]'},
+											{
+												ctor: '::',
+												_0: _elm_lang$html$Html$text('Arrow keys (→↓←↑)'),
+												_1: {ctor: '[]'}
+											}),
+										_1: {
+											ctor: '::',
+											_0: A2(
+												_elm_lang$html$Html$dd,
+												{ctor: '[]'},
+												{
+													ctor: '::',
+													_0: _elm_lang$html$Html$text('If you stop binding the command to the arrow keys, scrolling, which is the default behavior of the browser, will occur.'),
+													_1: {ctor: '[]'}
+												}),
+											_1: {ctor: '[]'}
+										}
+									}
+								}
+							}
+						}
+					}),
+				_1: {ctor: '[]'}
+			}
+		});
+};
 var _minekoa$elm_text_editor$KeyBindMenu$acceptPage_confirmMessage = function (msg) {
 	return {
 		ctor: '::',
@@ -17311,6 +17554,7 @@ var _minekoa$elm_text_editor$KeyBindMenu$initEditNew = function () {
 	return {keybind: newkeybind, target: _minekoa$elm_text_editor$KeyBindMenu$TargetNone, insertS: _elm_lang$core$Maybe$Nothing, editmode: _minekoa$elm_text_editor$KeyBindMenu$EditModeNew};
 }();
 var _minekoa$elm_text_editor$KeyBindMenu$ResetKeybind = {ctor: 'ResetKeybind'};
+var _minekoa$elm_text_editor$KeyBindMenu$KeybindNotes = {ctor: 'KeybindNotes'};
 var _minekoa$elm_text_editor$KeyBindMenu$KeybindMain = {ctor: 'KeybindMain'};
 var _minekoa$elm_text_editor$KeyBindMenu$AcceptPage = {ctor: 'AcceptPage'};
 var _minekoa$elm_text_editor$KeyBindMenu$EditPage = {ctor: 'EditPage'};
@@ -19323,25 +19567,11 @@ var _minekoa$elm_text_editor$KeyBindMenu$listPageView = F2(
 var _minekoa$elm_text_editor$KeyBindMenu$menuPalette = F2(
 	function (keybinds, model) {
 		var _p29 = model.selectedSubMenu;
-		if (_p29.ctor === 'KeybindMain') {
-			var _p30 = model.mainsPage;
-			switch (_p30.ctor) {
-				case 'ListPage':
-					return A2(
-						_elm_lang$html$Html$div,
-						{
-							ctor: '::',
-							_0: _elm_lang$html$Html_Attributes$class('menu-palette'),
-							_1: {ctor: '[]'}
-						},
-						{
-							ctor: '::',
-							_0: A2(_minekoa$elm_text_editor$KeyBindMenu$listPageView, keybinds, model),
-							_1: {ctor: '[]'}
-						});
-				case 'EditPage':
-					var _p31 = model.current;
-					if (_p31.ctor === 'Just') {
+		switch (_p29.ctor) {
+			case 'KeybindMain':
+				var _p30 = model.mainsPage;
+				switch (_p30.ctor) {
+					case 'ListPage':
 						return A2(
 							_elm_lang$html$Html$div,
 							{
@@ -19351,42 +19581,70 @@ var _minekoa$elm_text_editor$KeyBindMenu$menuPalette = F2(
 							},
 							{
 								ctor: '::',
-								_0: A2(_minekoa$elm_text_editor$KeyBindMenu$editPageView, _p31._0, model),
+								_0: A2(_minekoa$elm_text_editor$KeyBindMenu$listPageView, keybinds, model),
 								_1: {ctor: '[]'}
 							});
-					} else {
+					case 'EditPage':
+						var _p31 = model.current;
+						if (_p31.ctor === 'Just') {
+							return A2(
+								_elm_lang$html$Html$div,
+								{
+									ctor: '::',
+									_0: _elm_lang$html$Html_Attributes$class('menu-palette'),
+									_1: {ctor: '[]'}
+								},
+								{
+									ctor: '::',
+									_0: A2(_minekoa$elm_text_editor$KeyBindMenu$editPageView, _p31._0, model),
+									_1: {ctor: '[]'}
+								});
+						} else {
+							return A2(
+								_elm_lang$html$Html$div,
+								{ctor: '[]'},
+								{ctor: '[]'});
+						}
+					default:
 						return A2(
 							_elm_lang$html$Html$div,
-							{ctor: '[]'},
-							{ctor: '[]'});
-					}
-				default:
-					return A2(
-						_elm_lang$html$Html$div,
-						{
-							ctor: '::',
-							_0: _elm_lang$html$Html_Attributes$class('menu-palette'),
-							_1: {ctor: '[]'}
-						},
-						{
-							ctor: '::',
-							_0: A2(_minekoa$elm_text_editor$KeyBindMenu$acceptPageView, keybinds, model),
-							_1: {ctor: '[]'}
-						});
-			}
-		} else {
-			return A2(
-				_elm_lang$html$Html$div,
-				{
-					ctor: '::',
-					_0: _elm_lang$html$Html_Attributes$class('menu-palette'),
-					_1: {ctor: '[]'}
-				},
-				{
-					ctor: '::',
-					_0: _minekoa$elm_text_editor$KeyBindMenu$resetView(model),
-					_1: {ctor: '[]'}
-				});
+							{
+								ctor: '::',
+								_0: _elm_lang$html$Html_Attributes$class('menu-palette'),
+								_1: {ctor: '[]'}
+							},
+							{
+								ctor: '::',
+								_0: A2(_minekoa$elm_text_editor$KeyBindMenu$acceptPageView, keybinds, model),
+								_1: {ctor: '[]'}
+							});
+				}
+			case 'KeybindNotes':
+				return A2(
+					_elm_lang$html$Html$div,
+					{
+						ctor: '::',
+						_0: _elm_lang$html$Html_Attributes$class('menu-palette'),
+						_1: {ctor: '[]'}
+					},
+					{
+						ctor: '::',
+						_0: _minekoa$elm_text_editor$KeyBindMenu$notesView(model),
+						_1: {ctor: '[]'}
+					});
+			default:
+				return A2(
+					_elm_lang$html$Html$div,
+					{
+						ctor: '::',
+						_0: _elm_lang$html$Html_Attributes$class('menu-palette'),
+						_1: {ctor: '[]'}
+					},
+					{
+						ctor: '::',
+						_0: _minekoa$elm_text_editor$KeyBindMenu$resetView(model),
+						_1: {ctor: '[]'}
+					});
 		}
 	});
 var _minekoa$elm_text_editor$KeyBindMenu$SelectSubMenu = function (a) {
@@ -19452,11 +19710,11 @@ var _minekoa$elm_text_editor$KeyBindMenu$menuItemsView = function (model) {
 					{
 						ctor: '::',
 						_0: _elm_lang$html$Html_Events$onClick(
-							_minekoa$elm_text_editor$KeyBindMenu$SelectSubMenu(_minekoa$elm_text_editor$KeyBindMenu$ResetKeybind)),
+							_minekoa$elm_text_editor$KeyBindMenu$SelectSubMenu(_minekoa$elm_text_editor$KeyBindMenu$KeybindNotes)),
 						_1: {
 							ctor: '::',
 							_0: _elm_lang$html$Html_Attributes$class(
-								_elm_lang$core$Native_Utils.eq(model.selectedSubMenu, _minekoa$elm_text_editor$KeyBindMenu$ResetKeybind) ? 'menu-item-active' : 'menu-item'),
+								_elm_lang$core$Native_Utils.eq(model.selectedSubMenu, _minekoa$elm_text_editor$KeyBindMenu$KeybindNotes) ? 'menu-item-active' : 'menu-item'),
 							_1: {ctor: '[]'}
 						}
 					},
@@ -19467,12 +19725,40 @@ var _minekoa$elm_text_editor$KeyBindMenu$menuItemsView = function (model) {
 							{ctor: '[]'},
 							{
 								ctor: '::',
-								_0: _elm_lang$html$Html$text('Reset'),
+								_0: _elm_lang$html$Html$text('Notes'),
 								_1: {ctor: '[]'}
 							}),
 						_1: {ctor: '[]'}
 					}),
-				_1: {ctor: '[]'}
+				_1: {
+					ctor: '::',
+					_0: A2(
+						_elm_lang$html$Html$div,
+						{
+							ctor: '::',
+							_0: _elm_lang$html$Html_Events$onClick(
+								_minekoa$elm_text_editor$KeyBindMenu$SelectSubMenu(_minekoa$elm_text_editor$KeyBindMenu$ResetKeybind)),
+							_1: {
+								ctor: '::',
+								_0: _elm_lang$html$Html_Attributes$class(
+									_elm_lang$core$Native_Utils.eq(model.selectedSubMenu, _minekoa$elm_text_editor$KeyBindMenu$ResetKeybind) ? 'menu-item-active' : 'menu-item'),
+								_1: {ctor: '[]'}
+							}
+						},
+						{
+							ctor: '::',
+							_0: A2(
+								_elm_lang$html$Html$span,
+								{ctor: '[]'},
+								{
+									ctor: '::',
+									_0: _elm_lang$html$Html$text('Reset'),
+									_1: {ctor: '[]'}
+								}),
+							_1: {ctor: '[]'}
+						}),
+					_1: {ctor: '[]'}
+				}
 			}
 		});
 };
