@@ -1038,6 +1038,7 @@ editorCommandList =
     , EditorCmds.delete
     , EditorCmds.insert ""
     , EditorCmds.indent
+    , EditorCmds.unindent
     , EditorCmds.copy
     , EditorCmds.cut
     , EditorCmds.paste

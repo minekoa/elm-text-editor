@@ -11082,33 +11082,127 @@ var _minekoa$elm_text_editor$TextEditor_Core$update = F2(
 		}
 	});
 
+var _minekoa$elm_text_editor$TextEditor_Core_Commands$unindent = function (model) {
+	var indent_str = function (n) {
+		return model.option.indentTabsMode ? A3(
+			_elm_lang$core$String$pad,
+			(n / model.option.tabOrder) | 0,
+			_elm_lang$core$Native_Utils.chr('\t'),
+			A3(
+				_elm_lang$core$String$pad,
+				A2(_elm_lang$core$Basics_ops['%'], n, model.option.tabOrder),
+				_elm_lang$core$Native_Utils.chr(' '),
+				'')) : A3(
+			_elm_lang$core$String$pad,
+			n,
+			_elm_lang$core$Native_Utils.chr(' '),
+			'');
+	};
+	var _p0 = _minekoa$elm_text_editor$TextEditor_Buffer$nowCursorPos(model.buffer);
+	var row = _p0._0;
+	var col = _p0._1;
+	var curline = A2(
+		_elm_lang$core$Maybe$withDefault,
+		'',
+		A2(_minekoa$elm_text_editor$TextEditor_Buffer$line, row, model.buffer.contents));
+	var cur_indent = _minekoa$elm_text_editor$TextEditor_StringExtra$indentString(curline);
+	var cur_level = A2(_minekoa$elm_text_editor$TextEditor_StringExtra$indentLevel, model.option.tabOrder, cur_indent);
+	var prevline = A2(
+		_elm_lang$core$Maybe$withDefault,
+		'',
+		A2(_minekoa$elm_text_editor$TextEditor_Buffer$line, row - 1, model.buffer.contents));
+	var prev_indent = _minekoa$elm_text_editor$TextEditor_StringExtra$indentString(prevline);
+	var prev_level = A2(_minekoa$elm_text_editor$TextEditor_StringExtra$indentLevel, model.option.tabOrder, prev_indent);
+	return _minekoa$elm_text_editor$TextEditor_Core$withEnsureVisibleCmd(
+		_minekoa$elm_text_editor$TextEditor_Core$blinkBlock(
+			_elm_lang$core$Native_Utils.update(
+				model,
+				{
+					buffer: function () {
+						if (_elm_lang$core$Native_Utils.eq(prev_level, cur_level)) {
+							var new_indent = indent_str(prev_level - model.option.tabOrder);
+							return A2(
+								_minekoa$elm_text_editor$TextEditor_Buffer$moveAt,
+								{
+									ctor: '_Tuple2',
+									_0: row,
+									_1: A2(
+										_elm_lang$core$Basics$max,
+										0,
+										col + (_elm_lang$core$String$length(new_indent) - _elm_lang$core$String$length(cur_indent)))
+								},
+								A3(
+									_minekoa$elm_text_editor$TextEditor_Buffer$insertAt,
+									{ctor: '_Tuple2', _0: row, _1: 0},
+									new_indent,
+									A2(
+										_minekoa$elm_text_editor$TextEditor_Buffer$deleteRange,
+										A2(
+											_minekoa$elm_text_editor$TextEditor_Buffer$Range,
+											{ctor: '_Tuple2', _0: row, _1: 0},
+											{
+												ctor: '_Tuple2',
+												_0: row,
+												_1: _elm_lang$core$String$length(cur_indent)
+											}),
+										model.buffer)));
+						} else {
+							return A2(
+								_minekoa$elm_text_editor$TextEditor_Buffer$moveAt,
+								{
+									ctor: '_Tuple2',
+									_0: row,
+									_1: A2(
+										_elm_lang$core$Basics$max,
+										0,
+										col + (_elm_lang$core$String$length(prev_indent) - _elm_lang$core$String$length(cur_indent)))
+								},
+								A3(
+									_minekoa$elm_text_editor$TextEditor_Buffer$insertAt,
+									{ctor: '_Tuple2', _0: row, _1: 0},
+									prev_indent,
+									A2(
+										_minekoa$elm_text_editor$TextEditor_Buffer$deleteRange,
+										A2(
+											_minekoa$elm_text_editor$TextEditor_Buffer$Range,
+											{ctor: '_Tuple2', _0: row, _1: 0},
+											{
+												ctor: '_Tuple2',
+												_0: row,
+												_1: _elm_lang$core$String$length(cur_indent)
+											}),
+										model.buffer)));
+						}
+					}()
+				})));
+};
 var _minekoa$elm_text_editor$TextEditor_Core_Commands$indent = function (model) {
 	var indent_str = model.option.indentTabsMode ? '\t' : A3(
 		_elm_lang$core$String$pad,
 		model.option.tabOrder,
 		_elm_lang$core$Native_Utils.chr(' '),
 		'');
-	var _p0 = _minekoa$elm_text_editor$TextEditor_Buffer$nowCursorPos(model.buffer);
-	var row = _p0._0;
-	var col = _p0._1;
-	var line = A2(
+	var _p1 = _minekoa$elm_text_editor$TextEditor_Buffer$nowCursorPos(model.buffer);
+	var row = _p1._0;
+	var col = _p1._1;
+	var curline = A2(
 		_elm_lang$core$Maybe$withDefault,
 		'',
 		A2(_minekoa$elm_text_editor$TextEditor_Buffer$line, row, model.buffer.contents));
-	var cur_indent = _minekoa$elm_text_editor$TextEditor_StringExtra$indentString(line);
+	var cur_indent = _minekoa$elm_text_editor$TextEditor_StringExtra$indentString(curline);
+	var cur_level = A2(_minekoa$elm_text_editor$TextEditor_StringExtra$indentLevel, model.option.tabOrder, cur_indent);
 	var prevline = A2(
 		_elm_lang$core$Maybe$withDefault,
 		'',
 		A2(_minekoa$elm_text_editor$TextEditor_Buffer$line, row - 1, model.buffer.contents));
 	var prev_indent = _minekoa$elm_text_editor$TextEditor_StringExtra$indentString(prevline);
+	var prev_level = A2(_minekoa$elm_text_editor$TextEditor_StringExtra$indentLevel, model.option.tabOrder, prev_indent);
 	return _minekoa$elm_text_editor$TextEditor_Core$withEnsureVisibleCmd(
 		_minekoa$elm_text_editor$TextEditor_Core$blinkBlock(
 			_elm_lang$core$Native_Utils.update(
 				model,
 				{
-					buffer: _elm_lang$core$Native_Utils.eq(
-						A2(_minekoa$elm_text_editor$TextEditor_StringExtra$indentLevel, model.option.tabOrder, prev_indent),
-						A2(_minekoa$elm_text_editor$TextEditor_StringExtra$indentLevel, model.option.tabOrder, cur_indent)) ? A2(
+					buffer: _elm_lang$core$Native_Utils.eq(prev_level, cur_level) ? A2(
 						_minekoa$elm_text_editor$TextEditor_Buffer$moveAt,
 						{
 							ctor: '_Tuple2',
@@ -11145,8 +11239,7 @@ var _minekoa$elm_text_editor$TextEditor_Core_Commands$indent = function (model) 
 									{
 										ctor: '_Tuple2',
 										_0: row,
-										_1: _elm_lang$core$String$length(line) - _elm_lang$core$String$length(
-											_elm_lang$core$String$trimLeft(line))
+										_1: _elm_lang$core$String$length(cur_indent)
 									}),
 								model.buffer)))
 				})));
@@ -11157,9 +11250,9 @@ var _minekoa$elm_text_editor$TextEditor_Core_Commands$killLine = function (model
 			r + 1,
 			_elm_lang$core$List$length(model.buffer.contents)) > -1;
 	};
-	var _p1 = _minekoa$elm_text_editor$TextEditor_Buffer$nowCursorPos(model.buffer);
-	var row = _p1._0;
-	var col = _p1._1;
+	var _p2 = _minekoa$elm_text_editor$TextEditor_Buffer$nowCursorPos(model.buffer);
+	var row = _p2._0;
+	var col = _p2._1;
 	var line = A2(
 		_elm_lang$core$Maybe$withDefault,
 		'',
@@ -11207,17 +11300,17 @@ var _minekoa$elm_text_editor$TextEditor_Core_Commands$cut = function (model) {
 	return _minekoa$elm_text_editor$TextEditor_Core$withEnsureVisibleCmd(
 		_minekoa$elm_text_editor$TextEditor_Core$blinkBlock(
 			function () {
-				var _p2 = model.buffer.selection;
-				if (_p2.ctor === 'Nothing') {
+				var _p3 = model.buffer.selection;
+				if (_p3.ctor === 'Nothing') {
 					return model;
 				} else {
-					var _p3 = _p2._0;
+					var _p4 = _p3._0;
 					return _elm_lang$core$Native_Utils.update(
 						model,
 						{
-							copyStore: A2(_minekoa$elm_text_editor$TextEditor_Buffer$readRange, _p3, model.buffer),
+							copyStore: A2(_minekoa$elm_text_editor$TextEditor_Buffer$readRange, _p4, model.buffer),
 							buffer: _minekoa$elm_text_editor$TextEditor_Buffer$selectionClear(
-								A2(_minekoa$elm_text_editor$TextEditor_Buffer$deleteRange, _p3, model.buffer))
+								A2(_minekoa$elm_text_editor$TextEditor_Buffer$deleteRange, _p4, model.buffer))
 						});
 				}
 			}()));
@@ -11228,14 +11321,14 @@ var _minekoa$elm_text_editor$TextEditor_Core_Commands$copy = function (model) {
 	}(
 		_minekoa$elm_text_editor$TextEditor_Core$blinkBlock(
 			function () {
-				var _p4 = model.buffer.selection;
-				if (_p4.ctor === 'Nothing') {
+				var _p5 = model.buffer.selection;
+				if (_p5.ctor === 'Nothing') {
 					return model;
 				} else {
 					return _elm_lang$core$Native_Utils.update(
 						model,
 						{
-							copyStore: A2(_minekoa$elm_text_editor$TextEditor_Buffer$readRange, _p4._0, model.buffer),
+							copyStore: A2(_minekoa$elm_text_editor$TextEditor_Buffer$readRange, _p5._0, model.buffer),
 							buffer: _minekoa$elm_text_editor$TextEditor_Buffer$selectionClear(model.buffer)
 						});
 				}
@@ -11247,9 +11340,9 @@ var _minekoa$elm_text_editor$TextEditor_Core_Commands$undo = function (model) {
 			_elm_lang$core$Native_Utils.update(
 				model,
 				{
-					buffer: function (_p5) {
+					buffer: function (_p6) {
 						return _minekoa$elm_text_editor$TextEditor_Buffer$selectionClear(
-							_minekoa$elm_text_editor$TextEditor_Buffer$undo(_p5));
+							_minekoa$elm_text_editor$TextEditor_Buffer$undo(_p6));
 					}(model.buffer)
 				})));
 };
@@ -11318,13 +11411,13 @@ var _minekoa$elm_text_editor$TextEditor_Core_Commands$batch = function (commands
 		function (cmdMsgs, editorCmds, model) {
 			batch_proc:
 			while (true) {
-				var _p6 = editorCmds;
-				if (_p6.ctor === '::') {
-					var _p7 = _p6._0(model);
-					var m1 = _p7._0;
-					var c1 = _p7._1;
+				var _p7 = editorCmds;
+				if (_p7.ctor === '::') {
+					var _p8 = _p7._0(model);
+					var m1 = _p8._0;
+					var c1 = _p8._1;
 					var _v3 = {ctor: '::', _0: c1, _1: cmdMsgs},
-						_v4 = _p6._1,
+						_v4 = _p7._1,
 						_v5 = m1;
 					cmdMsgs = _v3;
 					editorCmds = _v4;
@@ -11372,6 +11465,7 @@ var _minekoa$elm_text_editor$TextEditor_KeyboardEvent$considerKeyboardEvent = fu
 		_minekoa$elm_text_editor$TextEditor_KeyboardEvent$decodeKeyboardEvent);
 };
 
+var _minekoa$elm_text_editor$TextEditor_Commands$unindent = {id: 'unindent', f: _minekoa$elm_text_editor$TextEditor_Core_Commands$unindent};
 var _minekoa$elm_text_editor$TextEditor_Commands$indent = {id: 'indent', f: _minekoa$elm_text_editor$TextEditor_Core_Commands$indent};
 var _minekoa$elm_text_editor$TextEditor_Commands$killLine = {id: 'killLine', f: _minekoa$elm_text_editor$TextEditor_Core_Commands$killLine};
 var _minekoa$elm_text_editor$TextEditor_Commands$paste = {
@@ -11484,7 +11578,11 @@ var _minekoa$elm_text_editor$TextEditor_KeyBind$emacsLike = {
 																	_1: {
 																		ctor: '::',
 																		_0: {ctrl: true, alt: false, shift: false, code: 73, f: _minekoa$elm_text_editor$TextEditor_Commands$indent},
-																		_1: {ctor: '[]'}
+																		_1: {
+																			ctor: '::',
+																			_0: {ctrl: false, alt: true, shift: false, code: 73, f: _minekoa$elm_text_editor$TextEditor_Commands$unindent},
+																			_1: {ctor: '[]'}
+																		}
 																	}
 																}
 															}
@@ -11557,7 +11655,11 @@ var _minekoa$elm_text_editor$TextEditor_KeyBind$basic = {
 										code: 9,
 										f: _minekoa$elm_text_editor$TextEditor_Commands$insert('\t')
 									},
-									_1: {ctor: '[]'}
+									_1: {
+										ctor: '::',
+										_0: {ctrl: false, alt: false, shift: true, code: 9, f: _minekoa$elm_text_editor$TextEditor_Commands$unindent},
+										_1: {ctor: '[]'}
+									}
 								}
 							}
 						}
@@ -16932,20 +17034,24 @@ var _minekoa$elm_text_editor$KeyBindMenu$editorCommandList = {
 																				_0: _minekoa$elm_text_editor$TextEditor_Commands$indent,
 																				_1: {
 																					ctor: '::',
-																					_0: _minekoa$elm_text_editor$TextEditor_Commands$copy,
+																					_0: _minekoa$elm_text_editor$TextEditor_Commands$unindent,
 																					_1: {
 																						ctor: '::',
-																						_0: _minekoa$elm_text_editor$TextEditor_Commands$cut,
+																						_0: _minekoa$elm_text_editor$TextEditor_Commands$copy,
 																						_1: {
 																							ctor: '::',
-																							_0: _minekoa$elm_text_editor$TextEditor_Commands$paste,
+																							_0: _minekoa$elm_text_editor$TextEditor_Commands$cut,
 																							_1: {
 																								ctor: '::',
-																								_0: _minekoa$elm_text_editor$TextEditor_Commands$killLine,
+																								_0: _minekoa$elm_text_editor$TextEditor_Commands$paste,
 																								_1: {
 																									ctor: '::',
-																									_0: _minekoa$elm_text_editor$TextEditor_Commands$undo,
-																									_1: {ctor: '[]'}
+																									_0: _minekoa$elm_text_editor$TextEditor_Commands$killLine,
+																									_1: {
+																										ctor: '::',
+																										_0: _minekoa$elm_text_editor$TextEditor_Commands$undo,
+																										_1: {ctor: '[]'}
+																									}
 																								}
 																							}
 																						}
