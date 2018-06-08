@@ -542,14 +542,14 @@ codeLayer model =
                                              , ("pointer-events", "none") -- マウスイベントの対象外にする
                                              ]
                                      ]
-                                     [ text <| String.left cursor.column ln]
+                                     [ String.left cursor.column ln |> replaceTab model.option.tabOrder |> text ]
                               , compositionPreview model.compositionPreview
                               , span [ style [ ("position", "relative")
                                              , ("white-space", "pre")
                                              , ("pointer-events", "none") -- マウスイベントの対象外にする
                                              ]
                                      ]
-                                     [ String.dropLeft cursor.column ln |> replaceTab model.option.tabOrder |> text]                                  
+                                     [ String.dropLeft cursor.column ln |> replaceTab model.option.tabOrder |> text ]                                  
                               ]
                           else
                               [ln |> replaceTab model.option.tabOrder |> text]

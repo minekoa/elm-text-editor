@@ -12741,7 +12741,10 @@ var _minekoa$elm_text_editor$TextEditor$codeLayer = function (model) {
 								{
 									ctor: '::',
 									_0: _elm_lang$html$Html$text(
-										A2(_elm_lang$core$String$left, cursor.column, ln)),
+										A2(
+											_minekoa$elm_text_editor$TextEditor$replaceTab,
+											model.option.tabOrder,
+											A2(_elm_lang$core$String$left, cursor.column, ln))),
 									_1: {ctor: '[]'}
 								}),
 							_1: {
