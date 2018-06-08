@@ -28,7 +28,7 @@ import StringTools exposing (..)
 
 type alias Model =
     { selectedSubMenu : SubMenu
-    , mainsPage : KeybindMainsPage -- サブメニュー間移動しても残すため
+    , mainsPage : EditMenusPage -- サブメニュー間移動しても残すため
     , currentIdx : Int
     , current : Maybe EditBuffer
     , resetOptions : KeyBindsResetOptions
@@ -97,11 +97,11 @@ initEditDelete kbind =
 
 
 type SubMenu
-    = KeybindMain
-    | KeybindNotes
-    | ResetKeybind
+    = EditMenu
+    | NotesMenu
+    | ResetMenu
 
-type KeybindMainsPage
+type EditMenusPage
     = ListPage
     | EditPage
     | AcceptPage
@@ -116,7 +116,7 @@ type alias KeyBindsResetOptions =
 
 initKeybindResetOptions : KeyBindsResetOptions
 initKeybindResetOptions =
-    { basic = True, gates = False, emacs = False }
+    { basic = True, gates = True, emacs = True }
 
 type Msg
     = LoadSetting (String, Maybe String)
@@ -142,7 +142,7 @@ type Msg
 
 init: (Model , Cmd Msg)
 init =
-    ( { selectedSubMenu = KeybindMain
+    ( { selectedSubMenu = NotesMenu
       , mainsPage = ListPage
       , currentIdx = 0
       , current = Nothing
@@ -188,7 +188,7 @@ update msg keybinds model =
         EditStart n ->
             ( keybinds
             , { model
-                  | selectedSubMenu = KeybindMain
+                  | selectedSubMenu = EditMenu
                   , mainsPage = EditPage
                   , currentIdx = n
                   , current    = keybinds |> List.drop n |> List.head |> Maybe.andThen (initEditUpdate >> Just)
@@ -199,7 +199,7 @@ update msg keybinds model =
         BackToEdit ->
             ( keybinds
             , { model
-                  | selectedSubMenu = KeybindMain
+                  | selectedSubMenu = EditMenu
                   , mainsPage = EditPage
                   , current   = model.current
                                   |> Maybe.andThen (\ edtbuf ->
@@ -216,7 +216,7 @@ update msg keybinds model =
         BackToList ->
             ( keybinds
             , { model
-                  | selectedSubMenu = KeybindMain
+                  | selectedSubMenu = EditMenu
                   , mainsPage = ListPage
                   , current = Nothing
               }
@@ -226,7 +226,7 @@ update msg keybinds model =
         ConfirmDelete ->
             ( keybinds
             , { model
-                  | selectedSubMenu = KeybindMain
+                  | selectedSubMenu = EditMenu
                   , mainsPage = AcceptPage
                   , current   = model.current
                                   |> Maybe.andThen (\ edtbuf ->
@@ -241,7 +241,7 @@ update msg keybinds model =
         ConfirmAccept ->
             ( keybinds
             , { model
-                  | selectedSubMenu = KeybindMain
+                  | selectedSubMenu = EditMenu
                   , mainsPage = AcceptPage
               }
             , Cmd.none
@@ -263,7 +263,7 @@ update msg keybinds model =
             in
                 ( nkeybind
                 , { model
-                      | selectedSubMenu = KeybindMain
+                      | selectedSubMenu = EditMenu
                       , mainsPage = ListPage
                       , current = Nothing
                   }
@@ -397,7 +397,7 @@ update msg keybinds model =
             ( keybinds
             , { model
                   | current = initEditNew |> Just
-                  , selectedSubMenu = KeybindMain
+                  , selectedSubMenu = EditMenu
                   , mainsPage = EditPage
               }
             , Cmd.none
@@ -455,27 +455,27 @@ view keybinds model =
 menuItemsView : Model -> Html Msg
 menuItemsView model =                
     div [ class "menu-itemlist" ]
-    [ div [ onClick <| SelectSubMenu KeybindMain
-          , class <| case model.selectedSubMenu of
-                         KeybindMain  -> "menu-item-active"
-                         _            -> "menu-item"
-          ]
-          [ span [] [ ( case model.mainsPage of
-                            ListPage   -> "Keybinds"
-                            EditPage   -> "Keybinds (Editing)"
-                            AcceptPage -> "Keybinds (Accept?)"
-                      ) |> text
-                    ]
-          ]
-
-    , div [ onClick <| SelectSubMenu KeybindNotes
-          , class <| if model.selectedSubMenu == KeybindNotes then "menu-item-active" else "menu-item"
+    [ div [ onClick <| SelectSubMenu NotesMenu
+          , class <| if model.selectedSubMenu == NotesMenu then "menu-item-active" else "menu-item"
           ]
           [ span [] [text "Notes"]
           ]
 
-    , div [ onClick <| SelectSubMenu ResetKeybind
-          , class <| if model.selectedSubMenu == ResetKeybind then "menu-item-active" else "menu-item"
+    , div [ onClick <| SelectSubMenu EditMenu
+          , class <| case model.selectedSubMenu of
+                         EditMenu  -> "menu-item-active"
+                         _            -> "menu-item"
+          ]
+          [ span [] [ text ( case model.mainsPage of
+                            ListPage   -> "Edit"
+                            EditPage   -> "Edit (Editing)"
+                            AcceptPage -> "Edit (Accept?)"
+                      )
+                    ]
+          ]
+
+    , div [ onClick <| SelectSubMenu ResetMenu
+          , class <| if model.selectedSubMenu == ResetMenu then "menu-item-active" else "menu-item"
           ]
           [ span [] [text "Reset"]
           ]
@@ -484,7 +484,7 @@ menuItemsView model =
 menuPalette : List KeyBind.KeyBind -> Model ->  Html Msg
 menuPalette keybinds model =
     case model.selectedSubMenu of
-        KeybindMain ->
+        EditMenu ->
             case model.mainsPage of
                 ListPage ->
                     div [class "menu-palette"] [ listPageView keybinds model ]
@@ -497,10 +497,10 @@ menuPalette keybinds model =
                 AcceptPage ->
                     div [class "menu-palette"] [ acceptPageView keybinds model ]
 
-        KeybindNotes ->
+        NotesMenu ->
             div [class "menu-palette"] [ notesView model ]
 
-        ResetKeybind -> 
+        ResetMenu -> 
             div [class "menu-palette"] [ resetView model ]
 
 listPageView : List KeyBind.KeyBind -> Model -> Html Msg
