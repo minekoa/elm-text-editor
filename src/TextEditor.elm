@@ -549,11 +549,12 @@ codeLayer model =
                                              , ("pointer-events", "none") -- マウスイベントの対象外にする
                                              ]
                                      ]
-                                     [ text <| String.dropLeft cursor.column ln]                                  
+                                     [ String.dropLeft cursor.column ln |> replaceTab model.option.tabOrder |> text]                                  
                               ]
                           else
-                              [text ln]
+                              [ln |> replaceTab model.option.tabOrder |> text]
                 ) contents
+
 
 cursorLayer : List KeyBind.KeyBind -> Core.Model -> Html Msg
 cursorLayer keymap model =
@@ -680,8 +681,8 @@ markerLayer model =
 
                 rect = getBoundingClientRect (codeAreaID model)
                 calc_w  = calcTextWidth (rulerID model)
-                bpix = calc_w (Buffer.line (Tuple.first bpos) model.buffer.contents |> Maybe.withDefault "" |> String.left (Tuple.second bpos))
-                epix = calc_w (Buffer.line (Tuple.first epos) model.buffer.contents |> Maybe.withDefault "" |> String.left (Tuple.second epos))
+                bpix = calc_w (Buffer.line (Tuple.first bpos) model.buffer.contents |> Maybe.withDefault "" |> String.left (Tuple.second bpos) |> replaceTab model.option.tabOrder)
+                epix = calc_w (Buffer.line (Tuple.first epos) model.buffer.contents |> Maybe.withDefault "" |> String.left (Tuple.second epos) |> replaceTab model.option.tabOrder)
 
 
                 ms = List.range (Tuple.first bpos) (Tuple.first epos)
@@ -726,6 +727,7 @@ markerLayer model =
                                             |> String.dropLeft m.begin_col
                                             |> String.left (m.end_col - m.begin_col)
                                             |> (\l -> if l == "" then " " else l)
+                                            |> replaceTab model.option.tabOrder
                                             |> text
                                       ]
                              ) ms )
@@ -743,22 +745,7 @@ pad model =
                  , ("pointer-events", "none") -- マウスイベントの対象外にする
                  ]
          ]
-         [ Buffer.line cur.row contents |> Maybe.withDefault "" |> String.left cur.column |> text ]
-
-padToCursor : (Int, Int) -> Core.Model -> Html msg
-padToCursor pos model =
-    let
-        contents = model.buffer.contents
-    in
-    span [ class "pad"
-         , style [ ("position", "relative")
-                 , ("white-space", "pre")
-                 , ("visibility", "hidden")                     
-                 , ("pointer-events", "none") -- マウスイベントの対象外にする
-                 ]
-         ]
-         [ Buffer.line (Tuple.first pos) contents |> Maybe.withDefault "" |> String.left (Tuple.second pos) |> text ]
-
+         [ Buffer.line cur.row contents |> Maybe.withDefault "" |> String.left cur.column |> replaceTab model.option.tabOrder |> text ]
 
 
 ruler : Core.Model -> Html msg
@@ -812,6 +799,29 @@ cursorView model =
          , id <| cursorID model
          ]
     []
+
+
+replaceTab : Int -> String -> String
+replaceTab tabOrder line =
+    let
+        rpl_s = "" -- "»"
+
+        f = (\ str n outstrs ->
+                case str of
+                    '\t' :: xs ->
+                        let
+                            sp_cnt = tabOrder - (n % tabOrder)
+                        in
+                            f xs (n + sp_cnt) ((String.padRight (sp_cnt) ' ' rpl_s) :: outstrs)
+                    x :: xs ->
+                        f xs (n + 1) ((String.fromChar x) :: outstrs)
+                    [] ->
+                        outstrs
+            )
+    in
+        f (line |> String.toList) 0 []
+            |> List.reverse
+            |> String.concat
 
 
 ------------------------------------------------------------
