@@ -1,11 +1,18 @@
 module TextEditor.StringExtra exposing
     ( nextWordPos
     , previosWordPos
+    , indentString
+    , indentLevel
     )
 
 
 import Char
 
+
+
+------------------------------------------------------------
+-- Word
+------------------------------------------------------------
 
 nextWordPos : String -> Int -> Maybe Int
 nextWordPos line column =
@@ -72,7 +79,46 @@ previosWordPosProc fwd_char_t reversed_str n =
             else
                 Just n
 
+------------------------------------------------------------
+-- Indent
+------------------------------------------------------------
 
+indentString : String -> String
+indentString line =
+    let
+        getIndentStringProc = (\l indent_str->
+                                   case l of
+                                       [] ->
+                                           indent_str |> List.reverse
+                                       x :: xs ->
+                                           if (x == ' ') || (x == '\t') then
+                                               getIndentStringProc xs (x :: indent_str)
+                                           else
+                                               indent_str |> List.reverse
+                              )
+    in
+        getIndentStringProc (line |> String.toList) []  |> String.fromList
+
+
+indentLevel : Int -> String -> Int
+indentLevel tabOrder s =
+    let
+        calcIndentLevel = (\ str n ->
+                               case str of
+                                   ' '  :: xs -> calcIndentLevel xs (n + 1)
+                                   '\t' :: xs -> calcIndentLevel xs (((n // tabOrder) + 1) * tabOrder)
+                                   x :: xs -> n
+                                   [] -> n
+                          )
+    in
+        calcIndentLevel (s |> String.toList) 0
+
+
+
+
+------------------------------------------------------------
+-- CharType
+------------------------------------------------------------
 
 type CharType
     = AlphaNumericChar

@@ -1,5 +1,6 @@
 module TextEditor.Core exposing
     ( Model
+    , Option
     , Msg(IgnoreResult)
     , init
     , update
@@ -43,6 +44,8 @@ type alias Model =
     { id : String -- frame id
     , buffer : Buffer.Model
 
+    , option : Option
+
     , copyStore : String
     , lastCommand : Maybe String
 
@@ -53,12 +56,19 @@ type alias Model =
     , blink : BlinkState
     }
 
+type alias Option =
+    { tabOrder : Int
+    , indentTabsMode : Bool
+    }
+
 
 init : String -> String -> (Model, Cmd Msg)
 init id text =
     ( Model
           id                     -- id
           (Buffer.init text)
+          initOption
+
           ""                     -- copyStore
           Nothing                -- last_command
 
@@ -68,6 +78,11 @@ init id text =
           BlinkBlocked           -- blink
     , Cmd.none
     )
+
+initOption =
+    { tabOrder = 4
+    , indentTabsMode = False
+    }
 
 
 ------------------------------------------------------------

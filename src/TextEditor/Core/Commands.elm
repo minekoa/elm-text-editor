@@ -34,6 +34,8 @@ module TextEditor.Core.Commands exposing
 import TextEditor.Buffer as Buffer
 import TextEditor.Core as Core  exposing (Model, Msg)
 
+import TextEditor.StringExtra exposing (..)
+
 
 batch : List (Model -> (Model, Cmd Msg)) -> (Model -> (Model, Cmd Msg))
 batch commands =
@@ -248,39 +250,29 @@ indent model =
         line     = model.buffer.contents |> Buffer.line row |> Maybe.withDefault ""
         prevline = model.buffer.contents |> Buffer.line (row - 1) |> Maybe.withDefault ""
 
-        getIndentString = (\l indent_str->
-                               case l of
-                                   [] ->
-                                       indent_str |> List.reverse
-                                   x :: xs ->
-                                       if (x == ' ') || (x == '\t') then
-                                           getIndentString xs (x :: indent_str)
-                                       else
-                                           indent_str |> List.reverse
-                          )
+        cur_indent  = indentString line
+        prev_indent = indentString prevline
 
-        prev_indent = getIndentString (prevline |> String.toList) []  |> String.fromList
-        cur_indent  = getIndentString (line |> String.toList) []  |> String.fromList
+        indent_str = if model.option.indentTabsMode
+                     then "\t"
+                     else String.pad model.option.tabOrder ' ' ""
     in
         { model
-            | buffer = if prev_indent == cur_indent then
-                           let
-                               plus_indent = if prev_indent == "" then "    " else prev_indent
-                           in
-                               model.buffer
-                                   |> Buffer.moveAt (row, (String.length cur_indent))
-                                   |> Buffer.insert plus_indent
-                                   |> Buffer.moveAt ( row
-                                                    , col + (String.length plus_indent)
-                                                    )
+            | buffer = if (indentLevel model.option.tabOrder prev_indent) == (indentLevel model.option.tabOrder cur_indent) then
+                           model.buffer
+                               |> Buffer.insertAt (row, (String.length cur_indent)) indent_str
+                               |> Buffer.moveAt ( row
+                                                , col + (String.length indent_str)
+                                                )
                        else
                            model.buffer 
                                |> Buffer.deleteRange (Buffer.Range (row, 0) (row, (String.length line) - (String.trimLeft line |> String.length) ) )
-                               |> Buffer.moveAt (row, 0)
-                               |> Buffer.insert prev_indent
+                               |> Buffer.insertAt (row, 0) prev_indent
                                |> Buffer.moveAt ( row
                                                 , col + ((String.length prev_indent ) - (String.length cur_indent)) |> max 0
                                                 )
         }
             |> Core.blinkBlock
             |> Core.withEnsureVisibleCmd
+
+

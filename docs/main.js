@@ -9202,6 +9202,72 @@ var _minekoa$elm_text_editor$TextEditor_StringExtra$isAlpabete = function (c) {
 var _minekoa$elm_text_editor$TextEditor_StringExtra$isAlpanumeric = function (c) {
 	return _minekoa$elm_text_editor$TextEditor_StringExtra$isAlpabete(c) || _elm_lang$core$Char$isDigit(c);
 };
+var _minekoa$elm_text_editor$TextEditor_StringExtra$indentLevel = F2(
+	function (tabOrder, s) {
+		var calcIndentLevel = F2(
+			function (str, n) {
+				calcIndentLevel:
+				while (true) {
+					var _p2 = str;
+					if (_p2.ctor === '::') {
+						switch (_p2._0.valueOf()) {
+							case ' ':
+								var _v3 = _p2._1,
+									_v4 = n + 1;
+								str = _v3;
+								n = _v4;
+								continue calcIndentLevel;
+							case '\t':
+								var _v5 = _p2._1,
+									_v6 = (((n / tabOrder) | 0) + 1) * tabOrder;
+								str = _v5;
+								n = _v6;
+								continue calcIndentLevel;
+							default:
+								return n;
+						}
+					} else {
+						return n;
+					}
+				}
+			});
+		return A2(
+			calcIndentLevel,
+			_elm_lang$core$String$toList(s),
+			0);
+	});
+var _minekoa$elm_text_editor$TextEditor_StringExtra$indentString = function (line) {
+	var getIndentStringProc = F2(
+		function (l, indent_str) {
+			getIndentStringProc:
+			while (true) {
+				var _p3 = l;
+				if (_p3.ctor === '[]') {
+					return _elm_lang$core$List$reverse(indent_str);
+				} else {
+					var _p4 = _p3._0;
+					if (_elm_lang$core$Native_Utils.eq(
+						_p4,
+						_elm_lang$core$Native_Utils.chr(' ')) || _elm_lang$core$Native_Utils.eq(
+						_p4,
+						_elm_lang$core$Native_Utils.chr('\t'))) {
+						var _v8 = _p3._1,
+							_v9 = {ctor: '::', _0: _p4, _1: indent_str};
+						l = _v8;
+						indent_str = _v9;
+						continue getIndentStringProc;
+					} else {
+						return _elm_lang$core$List$reverse(indent_str);
+					}
+				}
+			}
+		});
+	return _elm_lang$core$String$fromList(
+		A2(
+			getIndentStringProc,
+			_elm_lang$core$String$toList(line),
+			{ctor: '[]'}));
+};
 var _minekoa$elm_text_editor$TextEditor_StringExtra$MultibyteChar = {ctor: 'MultibyteChar'};
 var _minekoa$elm_text_editor$TextEditor_StringExtra$Kanji = {ctor: 'Kanji'};
 var _minekoa$elm_text_editor$TextEditor_StringExtra$Katakana = {ctor: 'Katakana'};
@@ -9216,61 +9282,61 @@ var _minekoa$elm_text_editor$TextEditor_StringExtra$nextWordPosProc = F3(
 	function (prev_char_t, str, n) {
 		nextWordPosProc:
 		while (true) {
-			var _p2 = str;
-			if (_p2.ctor === '::') {
-				var _p4 = _p2._1;
-				var char_t = _minekoa$elm_text_editor$TextEditor_StringExtra$chartype(_p2._0);
+			var _p5 = str;
+			if (_p5.ctor === '::') {
+				var _p7 = _p5._1;
+				var char_t = _minekoa$elm_text_editor$TextEditor_StringExtra$chartype(_p5._0);
 				if (_elm_lang$core$Native_Utils.eq(char_t, prev_char_t)) {
-					var _v3 = char_t,
-						_v4 = _p4,
-						_v5 = n + 1;
-					prev_char_t = _v3;
-					str = _v4;
-					n = _v5;
+					var _v11 = char_t,
+						_v12 = _p7,
+						_v13 = n + 1;
+					prev_char_t = _v11;
+					str = _v12;
+					n = _v13;
 					continue nextWordPosProc;
 				} else {
-					var _p3 = {ctor: '_Tuple2', _0: prev_char_t, _1: char_t};
-					_v6_3:
+					var _p6 = {ctor: '_Tuple2', _0: prev_char_t, _1: char_t};
+					_v14_3:
 					do {
-						if (_p3.ctor === '_Tuple2') {
-							switch (_p3._0.ctor) {
+						if (_p6.ctor === '_Tuple2') {
+							switch (_p6._0.ctor) {
 								case 'SpaceChar':
-									var _v7 = char_t,
-										_v8 = _p4,
-										_v9 = n + 1;
-									prev_char_t = _v7;
-									str = _v8;
-									n = _v9;
+									var _v15 = char_t,
+										_v16 = _p7,
+										_v17 = n + 1;
+									prev_char_t = _v15;
+									str = _v16;
+									n = _v17;
 									continue nextWordPosProc;
 								case 'Kanji':
-									if (_p3._1.ctor === 'Hiragana') {
-										var _v10 = char_t,
-											_v11 = _p4,
-											_v12 = n + 1;
-										prev_char_t = _v10;
-										str = _v11;
-										n = _v12;
+									if (_p6._1.ctor === 'Hiragana') {
+										var _v18 = char_t,
+											_v19 = _p7,
+											_v20 = n + 1;
+										prev_char_t = _v18;
+										str = _v19;
+										n = _v20;
 										continue nextWordPosProc;
 									} else {
-										break _v6_3;
+										break _v14_3;
 									}
 								case 'Katakana':
-									if (_p3._1.ctor === 'Hiragana') {
-										var _v13 = char_t,
-											_v14 = _p4,
-											_v15 = n + 1;
-										prev_char_t = _v13;
-										str = _v14;
-										n = _v15;
+									if (_p6._1.ctor === 'Hiragana') {
+										var _v21 = char_t,
+											_v22 = _p7,
+											_v23 = n + 1;
+										prev_char_t = _v21;
+										str = _v22;
+										n = _v23;
 										continue nextWordPosProc;
 									} else {
-										break _v6_3;
+										break _v14_3;
 									}
 								default:
-									break _v6_3;
+									break _v14_3;
 							}
 						} else {
-							break _v6_3;
+							break _v14_3;
 						}
 					} while(false);
 					return _elm_lang$core$Maybe$Just(n);
@@ -9300,58 +9366,58 @@ var _minekoa$elm_text_editor$TextEditor_StringExtra$previosWordPosProc = F3(
 	function (fwd_char_t, reversed_str, n) {
 		previosWordPosProc:
 		while (true) {
-			var _p5 = reversed_str;
-			if (_p5.ctor === '::') {
-				var _p7 = _p5._1;
-				var char_t = _minekoa$elm_text_editor$TextEditor_StringExtra$chartype(_p5._0);
+			var _p8 = reversed_str;
+			if (_p8.ctor === '::') {
+				var _p10 = _p8._1;
+				var char_t = _minekoa$elm_text_editor$TextEditor_StringExtra$chartype(_p8._0);
 				if (_elm_lang$core$Native_Utils.eq(char_t, fwd_char_t)) {
-					var _v17 = char_t,
-						_v18 = _p7,
-						_v19 = n - 1;
-					fwd_char_t = _v17;
-					reversed_str = _v18;
-					n = _v19;
+					var _v25 = char_t,
+						_v26 = _p10,
+						_v27 = n - 1;
+					fwd_char_t = _v25;
+					reversed_str = _v26;
+					n = _v27;
 					continue previosWordPosProc;
 				} else {
-					var _p6 = {ctor: '_Tuple2', _0: fwd_char_t, _1: char_t};
-					_v20_3:
+					var _p9 = {ctor: '_Tuple2', _0: fwd_char_t, _1: char_t};
+					_v28_3:
 					do {
-						if (_p6.ctor === '_Tuple2') {
-							switch (_p6._0.ctor) {
+						if (_p9.ctor === '_Tuple2') {
+							switch (_p9._0.ctor) {
 								case 'SpaceChar':
-									var _v21 = char_t,
-										_v22 = _p7,
-										_v23 = n - 1;
-									fwd_char_t = _v21;
-									reversed_str = _v22;
-									n = _v23;
+									var _v29 = char_t,
+										_v30 = _p10,
+										_v31 = n - 1;
+									fwd_char_t = _v29;
+									reversed_str = _v30;
+									n = _v31;
 									continue previosWordPosProc;
 								case 'Hiragana':
-									switch (_p6._1.ctor) {
+									switch (_p9._1.ctor) {
 										case 'Kanji':
-											var _v24 = char_t,
-												_v25 = _p7,
-												_v26 = n - 1;
-											fwd_char_t = _v24;
-											reversed_str = _v25;
-											n = _v26;
+											var _v32 = char_t,
+												_v33 = _p10,
+												_v34 = n - 1;
+											fwd_char_t = _v32;
+											reversed_str = _v33;
+											n = _v34;
 											continue previosWordPosProc;
 										case 'Katakana':
-											var _v27 = char_t,
-												_v28 = _p7,
-												_v29 = n - 1;
-											fwd_char_t = _v27;
-											reversed_str = _v28;
-											n = _v29;
+											var _v35 = char_t,
+												_v36 = _p10,
+												_v37 = n - 1;
+											fwd_char_t = _v35;
+											reversed_str = _v36;
+											n = _v37;
 											continue previosWordPosProc;
 										default:
-											break _v20_3;
+											break _v28_3;
 									}
 								default:
-									break _v20_3;
+									break _v28_3;
 							}
 						} else {
-							break _v20_3;
+							break _v28_3;
 						}
 					} while(false);
 					return _elm_lang$core$Maybe$Just(n);
@@ -10848,9 +10914,14 @@ var _minekoa$elm_text_editor$TextEditor_Core$sceneID = function (model) {
 var _minekoa$elm_text_editor$TextEditor_Core$frameID = function (model) {
 	return A2(_elm_lang$core$Basics_ops['++'], model.id, '-editor-frame');
 };
-var _minekoa$elm_text_editor$TextEditor_Core$Model = F7(
-	function (a, b, c, d, e, f, g) {
-		return {id: a, buffer: b, copyStore: c, lastCommand: d, compositionPreview: e, focus: f, blink: g};
+var _minekoa$elm_text_editor$TextEditor_Core$initOption = {tabOrder: 4, indentTabsMode: false};
+var _minekoa$elm_text_editor$TextEditor_Core$Model = F8(
+	function (a, b, c, d, e, f, g, h) {
+		return {id: a, buffer: b, option: c, copyStore: d, lastCommand: e, compositionPreview: f, focus: g, blink: h};
+	});
+var _minekoa$elm_text_editor$TextEditor_Core$Option = F2(
+	function (a, b) {
+		return {tabOrder: a, indentTabsMode: b};
 	});
 var _minekoa$elm_text_editor$TextEditor_Core$Rect = F8(
 	function (a, b, c, d, e, f, g, h) {
@@ -10924,10 +10995,11 @@ var _minekoa$elm_text_editor$TextEditor_Core$init = F2(
 	function (id, text) {
 		return {
 			ctor: '_Tuple2',
-			_0: A7(
+			_0: A8(
 				_minekoa$elm_text_editor$TextEditor_Core$Model,
 				id,
 				_minekoa$elm_text_editor$TextEditor_Buffer$init(text),
+				_minekoa$elm_text_editor$TextEditor_Core$initOption,
 				'',
 				_elm_lang$core$Maybe$Nothing,
 				_elm_lang$core$Maybe$Nothing,
@@ -11011,109 +11083,72 @@ var _minekoa$elm_text_editor$TextEditor_Core$update = F2(
 	});
 
 var _minekoa$elm_text_editor$TextEditor_Core_Commands$indent = function (model) {
-	var getIndentString = F2(
-		function (l, indent_str) {
-			getIndentString:
-			while (true) {
-				var _p0 = l;
-				if (_p0.ctor === '[]') {
-					return _elm_lang$core$List$reverse(indent_str);
-				} else {
-					var _p1 = _p0._0;
-					if (_elm_lang$core$Native_Utils.eq(
-						_p1,
-						_elm_lang$core$Native_Utils.chr(' ')) || _elm_lang$core$Native_Utils.eq(
-						_p1,
-						_elm_lang$core$Native_Utils.chr('\t'))) {
-						var _v1 = _p0._1,
-							_v2 = {ctor: '::', _0: _p1, _1: indent_str};
-						l = _v1;
-						indent_str = _v2;
-						continue getIndentString;
-					} else {
-						return _elm_lang$core$List$reverse(indent_str);
-					}
-				}
-			}
-		});
-	var _p2 = _minekoa$elm_text_editor$TextEditor_Buffer$nowCursorPos(model.buffer);
-	var row = _p2._0;
-	var col = _p2._1;
+	var indent_str = model.option.indentTabsMode ? '\t' : A3(
+		_elm_lang$core$String$pad,
+		model.option.tabOrder,
+		_elm_lang$core$Native_Utils.chr(' '),
+		'');
+	var _p0 = _minekoa$elm_text_editor$TextEditor_Buffer$nowCursorPos(model.buffer);
+	var row = _p0._0;
+	var col = _p0._1;
 	var line = A2(
 		_elm_lang$core$Maybe$withDefault,
 		'',
 		A2(_minekoa$elm_text_editor$TextEditor_Buffer$line, row, model.buffer.contents));
-	var cur_indent = _elm_lang$core$String$fromList(
-		A2(
-			getIndentString,
-			_elm_lang$core$String$toList(line),
-			{ctor: '[]'}));
+	var cur_indent = _minekoa$elm_text_editor$TextEditor_StringExtra$indentString(line);
 	var prevline = A2(
 		_elm_lang$core$Maybe$withDefault,
 		'',
 		A2(_minekoa$elm_text_editor$TextEditor_Buffer$line, row - 1, model.buffer.contents));
-	var prev_indent = _elm_lang$core$String$fromList(
-		A2(
-			getIndentString,
-			_elm_lang$core$String$toList(prevline),
-			{ctor: '[]'}));
+	var prev_indent = _minekoa$elm_text_editor$TextEditor_StringExtra$indentString(prevline);
 	return _minekoa$elm_text_editor$TextEditor_Core$withEnsureVisibleCmd(
 		_minekoa$elm_text_editor$TextEditor_Core$blinkBlock(
 			_elm_lang$core$Native_Utils.update(
 				model,
 				{
-					buffer: function () {
-						if (_elm_lang$core$Native_Utils.eq(prev_indent, cur_indent)) {
-							var plus_indent = _elm_lang$core$Native_Utils.eq(prev_indent, '') ? '    ' : prev_indent;
-							return A2(
-								_minekoa$elm_text_editor$TextEditor_Buffer$moveAt,
-								{
-									ctor: '_Tuple2',
-									_0: row,
-									_1: col + _elm_lang$core$String$length(plus_indent)
-								},
+					buffer: _elm_lang$core$Native_Utils.eq(
+						A2(_minekoa$elm_text_editor$TextEditor_StringExtra$indentLevel, model.option.tabOrder, prev_indent),
+						A2(_minekoa$elm_text_editor$TextEditor_StringExtra$indentLevel, model.option.tabOrder, cur_indent)) ? A2(
+						_minekoa$elm_text_editor$TextEditor_Buffer$moveAt,
+						{
+							ctor: '_Tuple2',
+							_0: row,
+							_1: col + _elm_lang$core$String$length(indent_str)
+						},
+						A3(
+							_minekoa$elm_text_editor$TextEditor_Buffer$insertAt,
+							{
+								ctor: '_Tuple2',
+								_0: row,
+								_1: _elm_lang$core$String$length(cur_indent)
+							},
+							indent_str,
+							model.buffer)) : A2(
+						_minekoa$elm_text_editor$TextEditor_Buffer$moveAt,
+						{
+							ctor: '_Tuple2',
+							_0: row,
+							_1: A2(
+								_elm_lang$core$Basics$max,
+								0,
+								col + (_elm_lang$core$String$length(prev_indent) - _elm_lang$core$String$length(cur_indent)))
+						},
+						A3(
+							_minekoa$elm_text_editor$TextEditor_Buffer$insertAt,
+							{ctor: '_Tuple2', _0: row, _1: 0},
+							prev_indent,
+							A2(
+								_minekoa$elm_text_editor$TextEditor_Buffer$deleteRange,
 								A2(
-									_minekoa$elm_text_editor$TextEditor_Buffer$insert,
-									plus_indent,
-									A2(
-										_minekoa$elm_text_editor$TextEditor_Buffer$moveAt,
-										{
-											ctor: '_Tuple2',
-											_0: row,
-											_1: _elm_lang$core$String$length(cur_indent)
-										},
-										model.buffer)));
-						} else {
-							return A2(
-								_minekoa$elm_text_editor$TextEditor_Buffer$moveAt,
-								{
-									ctor: '_Tuple2',
-									_0: row,
-									_1: A2(
-										_elm_lang$core$Basics$max,
-										0,
-										col + (_elm_lang$core$String$length(prev_indent) - _elm_lang$core$String$length(cur_indent)))
-								},
-								A2(
-									_minekoa$elm_text_editor$TextEditor_Buffer$insert,
-									prev_indent,
-									A2(
-										_minekoa$elm_text_editor$TextEditor_Buffer$moveAt,
-										{ctor: '_Tuple2', _0: row, _1: 0},
-										A2(
-											_minekoa$elm_text_editor$TextEditor_Buffer$deleteRange,
-											A2(
-												_minekoa$elm_text_editor$TextEditor_Buffer$Range,
-												{ctor: '_Tuple2', _0: row, _1: 0},
-												{
-													ctor: '_Tuple2',
-													_0: row,
-													_1: _elm_lang$core$String$length(line) - _elm_lang$core$String$length(
-														_elm_lang$core$String$trimLeft(line))
-												}),
-											model.buffer))));
-						}
-					}()
+									_minekoa$elm_text_editor$TextEditor_Buffer$Range,
+									{ctor: '_Tuple2', _0: row, _1: 0},
+									{
+										ctor: '_Tuple2',
+										_0: row,
+										_1: _elm_lang$core$String$length(line) - _elm_lang$core$String$length(
+											_elm_lang$core$String$trimLeft(line))
+									}),
+								model.buffer)))
 				})));
 };
 var _minekoa$elm_text_editor$TextEditor_Core_Commands$killLine = function (model) {
@@ -11122,9 +11157,9 @@ var _minekoa$elm_text_editor$TextEditor_Core_Commands$killLine = function (model
 			r + 1,
 			_elm_lang$core$List$length(model.buffer.contents)) > -1;
 	};
-	var _p3 = _minekoa$elm_text_editor$TextEditor_Buffer$nowCursorPos(model.buffer);
-	var row = _p3._0;
-	var col = _p3._1;
+	var _p1 = _minekoa$elm_text_editor$TextEditor_Buffer$nowCursorPos(model.buffer);
+	var row = _p1._0;
+	var col = _p1._1;
 	var line = A2(
 		_elm_lang$core$Maybe$withDefault,
 		'',
@@ -11172,17 +11207,17 @@ var _minekoa$elm_text_editor$TextEditor_Core_Commands$cut = function (model) {
 	return _minekoa$elm_text_editor$TextEditor_Core$withEnsureVisibleCmd(
 		_minekoa$elm_text_editor$TextEditor_Core$blinkBlock(
 			function () {
-				var _p4 = model.buffer.selection;
-				if (_p4.ctor === 'Nothing') {
+				var _p2 = model.buffer.selection;
+				if (_p2.ctor === 'Nothing') {
 					return model;
 				} else {
-					var _p5 = _p4._0;
+					var _p3 = _p2._0;
 					return _elm_lang$core$Native_Utils.update(
 						model,
 						{
-							copyStore: A2(_minekoa$elm_text_editor$TextEditor_Buffer$readRange, _p5, model.buffer),
+							copyStore: A2(_minekoa$elm_text_editor$TextEditor_Buffer$readRange, _p3, model.buffer),
 							buffer: _minekoa$elm_text_editor$TextEditor_Buffer$selectionClear(
-								A2(_minekoa$elm_text_editor$TextEditor_Buffer$deleteRange, _p5, model.buffer))
+								A2(_minekoa$elm_text_editor$TextEditor_Buffer$deleteRange, _p3, model.buffer))
 						});
 				}
 			}()));
@@ -11193,14 +11228,14 @@ var _minekoa$elm_text_editor$TextEditor_Core_Commands$copy = function (model) {
 	}(
 		_minekoa$elm_text_editor$TextEditor_Core$blinkBlock(
 			function () {
-				var _p6 = model.buffer.selection;
-				if (_p6.ctor === 'Nothing') {
+				var _p4 = model.buffer.selection;
+				if (_p4.ctor === 'Nothing') {
 					return model;
 				} else {
 					return _elm_lang$core$Native_Utils.update(
 						model,
 						{
-							copyStore: A2(_minekoa$elm_text_editor$TextEditor_Buffer$readRange, _p6._0, model.buffer),
+							copyStore: A2(_minekoa$elm_text_editor$TextEditor_Buffer$readRange, _p4._0, model.buffer),
 							buffer: _minekoa$elm_text_editor$TextEditor_Buffer$selectionClear(model.buffer)
 						});
 				}
@@ -11212,9 +11247,9 @@ var _minekoa$elm_text_editor$TextEditor_Core_Commands$undo = function (model) {
 			_elm_lang$core$Native_Utils.update(
 				model,
 				{
-					buffer: function (_p7) {
+					buffer: function (_p5) {
 						return _minekoa$elm_text_editor$TextEditor_Buffer$selectionClear(
-							_minekoa$elm_text_editor$TextEditor_Buffer$undo(_p7));
+							_minekoa$elm_text_editor$TextEditor_Buffer$undo(_p5));
 					}(model.buffer)
 				})));
 };
@@ -11283,17 +11318,17 @@ var _minekoa$elm_text_editor$TextEditor_Core_Commands$batch = function (commands
 		function (cmdMsgs, editorCmds, model) {
 			batch_proc:
 			while (true) {
-				var _p8 = editorCmds;
-				if (_p8.ctor === '::') {
-					var _p9 = _p8._0(model);
-					var m1 = _p9._0;
-					var c1 = _p9._1;
-					var _v6 = {ctor: '::', _0: c1, _1: cmdMsgs},
-						_v7 = _p8._1,
-						_v8 = m1;
-					cmdMsgs = _v6;
-					editorCmds = _v7;
-					model = _v8;
+				var _p6 = editorCmds;
+				if (_p6.ctor === '::') {
+					var _p7 = _p6._0(model);
+					var m1 = _p7._0;
+					var c1 = _p7._1;
+					var _v3 = {ctor: '::', _0: c1, _1: cmdMsgs},
+						_v4 = _p6._1,
+						_v5 = m1;
+					cmdMsgs = _v3;
+					editorCmds = _v4;
+					model = _v5;
 					continue batch_proc;
 				} else {
 					return {
