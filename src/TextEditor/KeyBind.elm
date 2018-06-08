@@ -39,6 +39,7 @@ basic =
     , {ctrl=False, alt=False, shift=False, code=  8, f=EditorCmds.backspace }    -- BS
     , {ctrl=False, alt=False, shift=False, code= 46, f=EditorCmds.delete }       -- DEL
     , {ctrl=False, alt=False, shift=False, code=  9, f=EditorCmds.insert "\t" }  -- tab
+    , {ctrl=False, alt=False, shift=True , code=  9, f=EditorCmds.unindent }     -- S-tab
     ]
 
 gates: List KeyBind
@@ -74,5 +75,6 @@ emacsLike =
     , {ctrl=True , alt=False, shift=False, code= 32, f=EditorCmds.markFlip }        -- 'C-SPE'
     , {ctrl=True , alt=False, shift=False, code=191, f=EditorCmds.undo }            -- 'C-/'
     , {ctrl=True , alt=False, shift=False, code= 73, f=EditorCmds.indent }          -- 'C-i'
+    , {ctrl=False, alt=True , shift=False, code= 73, f=EditorCmds.unindent }        -- 'M-i'
     ]
 

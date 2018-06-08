@@ -27,6 +27,7 @@ module TextEditor.Core.Commands exposing
     , killLine
 
     , indent
+    , unindent
 
     , batch
     )
@@ -247,18 +248,21 @@ indent model =
     let
         (row, col) = Buffer.nowCursorPos model.buffer
 
-        line     = model.buffer.contents |> Buffer.line row |> Maybe.withDefault ""
+        curline  = model.buffer.contents |> Buffer.line row |> Maybe.withDefault ""
         prevline = model.buffer.contents |> Buffer.line (row - 1) |> Maybe.withDefault ""
 
-        cur_indent  = indentString line
+        cur_indent  = indentString curline
         prev_indent = indentString prevline
+
+        cur_level = indentLevel model.option.tabOrder cur_indent
+        prev_level = indentLevel model.option.tabOrder prev_indent
 
         indent_str = if model.option.indentTabsMode
                      then "\t"
                      else String.pad model.option.tabOrder ' ' ""
     in
         { model
-            | buffer = if (indentLevel model.option.tabOrder prev_indent) == (indentLevel model.option.tabOrder cur_indent) then
+            | buffer = if prev_level == cur_level then
                            model.buffer
                                |> Buffer.insertAt (row, (String.length cur_indent)) indent_str
                                |> Buffer.moveAt ( row
@@ -266,7 +270,7 @@ indent model =
                                                 )
                        else
                            model.buffer 
-                               |> Buffer.deleteRange (Buffer.Range (row, 0) (row, (String.length line) - (String.trimLeft line |> String.length) ) )
+                               |> Buffer.deleteRange (Buffer.Range (row, 0) (row, String.length cur_indent) )
                                |> Buffer.insertAt (row, 0) prev_indent
                                |> Buffer.moveAt ( row
                                                 , col + ((String.length prev_indent ) - (String.length cur_indent)) |> max 0
@@ -274,5 +278,47 @@ indent model =
         }
             |> Core.blinkBlock
             |> Core.withEnsureVisibleCmd
+
+unindent : Model -> (Model, Cmd Msg)
+unindent model =
+    let
+        (row, col) = Buffer.nowCursorPos model.buffer
+
+        curline  = model.buffer.contents |> Buffer.line row |> Maybe.withDefault ""
+        prevline = model.buffer.contents |> Buffer.line (row - 1) |> Maybe.withDefault ""
+
+        cur_indent  = indentString curline
+        prev_indent = indentString prevline
+
+        cur_level = indentLevel model.option.tabOrder cur_indent
+        prev_level = indentLevel model.option.tabOrder prev_indent
+
+        indent_str = (\n -> if model.option.indentTabsMode
+                            then String.pad (n // model.option.tabOrder) '\t' (String.pad (n % model.option.tabOrder) ' ' "")
+                            else String.pad n ' ' ""
+                     )
+    in
+        { model
+            | buffer = if prev_level == cur_level then 
+                           let
+                               new_indent = indent_str (prev_level - model.option.tabOrder)
+                           in
+                               model.buffer
+                                   |> Buffer.deleteRange ( Buffer.Range (row, 0) (row, String.length cur_indent) )
+                                   |> Buffer.insertAt (row, 0) new_indent
+                                   |> Buffer.moveAt ( row
+                                                    , col + ((String.length new_indent) - (String.length cur_indent)) |> max 0
+                                                    )
+                       else
+                           model.buffer 
+                               |> Buffer.deleteRange (Buffer.Range (row, 0) (row, (String.length cur_indent) ) )
+                               |> Buffer.insertAt (row, 0) prev_indent
+                               |> Buffer.moveAt ( row
+                                                , col + ((String.length prev_indent ) - (String.length cur_indent)) |> max 0
+                                                )
+        }
+            |> Core.blinkBlock
+            |> Core.withEnsureVisibleCmd
+
 
 

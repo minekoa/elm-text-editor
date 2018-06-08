@@ -26,7 +26,7 @@ module TextEditor.Commands exposing
     , paste
     , killLine
     , indent
-
+    , unindent
 
     , Command
 
@@ -230,5 +230,12 @@ indent =
     { id = "indent"
     , f = CoreCommands.indent
     }
+
+unindent : Command
+unindent =
+    { id = "unindent"
+    , f = CoreCommands.unindent
+    }
+
 
 
