@@ -59,6 +59,7 @@ type alias Model =
 type alias Option =
     { tabOrder : Int
     , indentTabsMode : Bool
+    , showControlCharactor : Bool
     }
 
 
@@ -82,6 +83,7 @@ init id text =
 initOption =
     { tabOrder = 4
     , indentTabsMode = False
+    , showControlCharactor = False
     }
 
 

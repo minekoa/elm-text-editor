@@ -10914,14 +10914,14 @@ var _minekoa$elm_text_editor$TextEditor_Core$sceneID = function (model) {
 var _minekoa$elm_text_editor$TextEditor_Core$frameID = function (model) {
 	return A2(_elm_lang$core$Basics_ops['++'], model.id, '-editor-frame');
 };
-var _minekoa$elm_text_editor$TextEditor_Core$initOption = {tabOrder: 4, indentTabsMode: false};
+var _minekoa$elm_text_editor$TextEditor_Core$initOption = {tabOrder: 4, indentTabsMode: false, showControlCharactor: false};
 var _minekoa$elm_text_editor$TextEditor_Core$Model = F8(
 	function (a, b, c, d, e, f, g, h) {
 		return {id: a, buffer: b, option: c, copyStore: d, lastCommand: e, compositionPreview: f, focus: g, blink: h};
 	});
-var _minekoa$elm_text_editor$TextEditor_Core$Option = F2(
-	function (a, b) {
-		return {tabOrder: a, indentTabsMode: b};
+var _minekoa$elm_text_editor$TextEditor_Core$Option = F3(
+	function (a, b, c) {
+		return {tabOrder: a, indentTabsMode: b, showControlCharactor: c};
 	});
 var _minekoa$elm_text_editor$TextEditor_Core$Rect = F8(
 	function (a, b, c, d, e, f, g, h) {
@@ -12131,44 +12131,58 @@ var _minekoa$elm_text_editor$TextEditor$keyboarEvent_toString = function (e) {
 			}
 		});
 };
-var _minekoa$elm_text_editor$TextEditor$replaceTab = F2(
-	function (tabOrder, line) {
-		var rpl_s = '';
+var _minekoa$elm_text_editor$TextEditor$replaceTab = F3(
+	function (showCtrlChar, tabOrder, line) {
+		var jsp_c = showCtrlChar ? _elm_lang$core$Native_Utils.chr('□') : _elm_lang$core$Native_Utils.chr('　');
+		var rpl_s = showCtrlChar ? '»' : '';
 		var f = F3(
 			function (str, n, outstrs) {
 				f:
 				while (true) {
 					var _p4 = str;
 					if (_p4.ctor === '::') {
-						if (_p4._0.valueOf() === '\t') {
-							var sp_cnt = tabOrder - A2(_elm_lang$core$Basics_ops['%'], n, tabOrder);
-							var _v2 = _p4._1,
-								_v3 = n + sp_cnt,
-								_v4 = {
-								ctor: '::',
-								_0: A3(
-									_elm_lang$core$String$padRight,
-									sp_cnt,
-									_elm_lang$core$Native_Utils.chr(' '),
-									rpl_s),
-								_1: outstrs
-							};
-							str = _v2;
-							n = _v3;
-							outstrs = _v4;
-							continue f;
-						} else {
-							var _v5 = _p4._1,
-								_v6 = n + 1,
-								_v7 = {
-								ctor: '::',
-								_0: _elm_lang$core$String$fromChar(_p4._0),
-								_1: outstrs
-							};
-							str = _v5;
-							n = _v6;
-							outstrs = _v7;
-							continue f;
+						switch (_p4._0.valueOf()) {
+							case '\t':
+								var sp_cnt = tabOrder - A2(_elm_lang$core$Basics_ops['%'], n, tabOrder);
+								var _v2 = _p4._1,
+									_v3 = n + sp_cnt,
+									_v4 = {
+									ctor: '::',
+									_0: A3(
+										_elm_lang$core$String$padRight,
+										sp_cnt,
+										_elm_lang$core$Native_Utils.chr(' '),
+										rpl_s),
+									_1: outstrs
+								};
+								str = _v2;
+								n = _v3;
+								outstrs = _v4;
+								continue f;
+							case '　':
+								var _v5 = _p4._1,
+									_v6 = n + 1,
+									_v7 = {
+									ctor: '::',
+									_0: _elm_lang$core$String$fromChar(jsp_c),
+									_1: outstrs
+								};
+								str = _v5;
+								n = _v6;
+								outstrs = _v7;
+								continue f;
+							default:
+								var _v8 = _p4._1,
+									_v9 = n + 1,
+									_v10 = {
+									ctor: '::',
+									_0: _elm_lang$core$String$fromChar(_p4._0),
+									_1: outstrs
+								};
+								str = _v8;
+								n = _v9;
+								outstrs = _v10;
+								continue f;
 						}
 					} else {
 						return outstrs;
@@ -12388,8 +12402,9 @@ var _minekoa$elm_text_editor$TextEditor$pad = function (model) {
 		{
 			ctor: '::',
 			_0: _elm_lang$html$Html$text(
-				A2(
+				A3(
 					_minekoa$elm_text_editor$TextEditor$replaceTab,
+					model.option.showControlCharactor,
 					model.option.tabOrder,
 					A2(
 						_elm_lang$core$String$left,
@@ -12413,8 +12428,9 @@ var _minekoa$elm_text_editor$TextEditor$markerLayer = function (model) {
 			_minekoa$elm_text_editor$TextEditor_Core$codeAreaID(model));
 		var epos = A2(_minekoa$elm_text_editor$TextEditor_Buffer$isPreviosPos, _p9.begin, _p9.end) ? _p9.end : _p9.begin;
 		var epix = calc_w(
-			A2(
+			A3(
 				_minekoa$elm_text_editor$TextEditor$replaceTab,
+				model.option.showControlCharactor,
 				model.option.tabOrder,
 				A2(
 					_elm_lang$core$String$left,
@@ -12428,8 +12444,9 @@ var _minekoa$elm_text_editor$TextEditor$markerLayer = function (model) {
 							model.buffer.contents)))));
 		var bpos = A2(_minekoa$elm_text_editor$TextEditor_Buffer$isPreviosPos, _p9.begin, _p9.end) ? _p9.begin : _p9.end;
 		var bpix = calc_w(
-			A2(
+			A3(
 				_minekoa$elm_text_editor$TextEditor$replaceTab,
+				model.option.showControlCharactor,
 				model.option.tabOrder,
 				A2(
 					_elm_lang$core$String$left,
@@ -12552,23 +12569,32 @@ var _minekoa$elm_text_editor$TextEditor$markerLayer = function (model) {
 						{
 							ctor: '::',
 							_0: _elm_lang$html$Html$text(
-								A2(
+								A3(
 									_minekoa$elm_text_editor$TextEditor$replaceTab,
+									model.option.showControlCharactor,
 									model.option.tabOrder,
-									function (l) {
-										return _elm_lang$core$Native_Utils.eq(l, '') ? ' ' : l;
-									}(
+									A2(
+										_elm_lang$core$String$left,
+										m.end_col - m.begin_col,
 										A2(
-											_elm_lang$core$String$left,
-											m.end_col - m.begin_col,
+											_elm_lang$core$String$dropLeft,
+											m.begin_col,
 											A2(
-												_elm_lang$core$String$dropLeft,
-												m.begin_col,
-												A2(
-													_elm_lang$core$Maybe$withDefault,
-													'',
-													A2(_minekoa$elm_text_editor$TextEditor_Buffer$line, m.row, model.buffer.contents))))))),
-							_1: {ctor: '[]'}
+												_elm_lang$core$Maybe$withDefault,
+												'',
+												A2(_minekoa$elm_text_editor$TextEditor_Buffer$line, m.row, model.buffer.contents)))))),
+							_1: {
+								ctor: '::',
+								_0: _elm_lang$html$Html$text(
+									(model.option.showControlCharactor && _elm_lang$core$Native_Utils.eq(
+										_elm_lang$core$String$length(
+											A2(
+												_elm_lang$core$Maybe$withDefault,
+												'',
+												A2(_minekoa$elm_text_editor$TextEditor_Buffer$line, m.row, model.buffer.contents))),
+										m.end_col)) ? '↵' : ''),
+								_1: {ctor: '[]'}
+							}
 						});
 				},
 				ms));
@@ -12741,8 +12767,9 @@ var _minekoa$elm_text_editor$TextEditor$codeLayer = function (model) {
 								{
 									ctor: '::',
 									_0: _elm_lang$html$Html$text(
-										A2(
+										A3(
 											_minekoa$elm_text_editor$TextEditor$replaceTab,
+											model.option.showControlCharactor,
 											model.option.tabOrder,
 											A2(_elm_lang$core$String$left, cursor.column, ln))),
 									_1: {ctor: '[]'}
@@ -12775,11 +12802,17 @@ var _minekoa$elm_text_editor$TextEditor$codeLayer = function (model) {
 										{
 											ctor: '::',
 											_0: _elm_lang$html$Html$text(
-												A2(
+												A3(
 													_minekoa$elm_text_editor$TextEditor$replaceTab,
+													model.option.showControlCharactor,
 													model.option.tabOrder,
 													A2(_elm_lang$core$String$dropLeft, cursor.column, ln))),
-											_1: {ctor: '[]'}
+											_1: {
+												ctor: '::',
+												_0: _elm_lang$html$Html$text(
+													model.option.showControlCharactor ? '↵' : ''),
+												_1: {ctor: '[]'}
+											}
 										}),
 									_1: {ctor: '[]'}
 								}
@@ -12787,8 +12820,13 @@ var _minekoa$elm_text_editor$TextEditor$codeLayer = function (model) {
 						} : {
 							ctor: '::',
 							_0: _elm_lang$html$Html$text(
-								A2(_minekoa$elm_text_editor$TextEditor$replaceTab, model.option.tabOrder, ln)),
-							_1: {ctor: '[]'}
+								A3(_minekoa$elm_text_editor$TextEditor$replaceTab, model.option.showControlCharactor, model.option.tabOrder, ln)),
+							_1: {
+								ctor: '::',
+								_0: _elm_lang$html$Html$text(
+									model.option.showControlCharactor ? '↵' : ''),
+								_1: {ctor: '[]'}
+							}
 						});
 				}),
 			contents));
@@ -12930,12 +12968,12 @@ var _minekoa$elm_text_editor$TextEditor$xToColumn = F3(
 						c) < 0)) {
 						return c - 1;
 					} else {
-						var _v13 = ln,
-							_v14 = c + 1,
-							_v15 = x;
-						ln = _v13;
-						c = _v14;
-						x = _v15;
+						var _v16 = ln,
+							_v17 = c + 1,
+							_v18 = x;
+						ln = _v16;
+						c = _v17;
+						x = _v18;
 						continue calc_col;
 					}
 				}

@@ -542,17 +542,21 @@ codeLayer model =
                                              , ("pointer-events", "none") -- マウスイベントの対象外にする
                                              ]
                                      ]
-                                     [ String.left cursor.column ln |> replaceTab model.option.tabOrder |> text ]
+                                     [ String.left cursor.column ln |> replaceTab model.option.showControlCharactor model.option.tabOrder |> text ]
                               , compositionPreview model.compositionPreview
                               , span [ style [ ("position", "relative")
                                              , ("white-space", "pre")
                                              , ("pointer-events", "none") -- マウスイベントの対象外にする
                                              ]
                                      ]
-                                     [ String.dropLeft cursor.column ln |> replaceTab model.option.tabOrder |> text ]                                  
+                                     [ String.dropLeft cursor.column ln |> replaceTab model.option.showControlCharactor model.option.tabOrder |> text
+                                     , text <| if  model.option.showControlCharactor then "↵" else ""
+                                     ]
                               ]
                           else
-                              [ln |> replaceTab model.option.tabOrder |> text]
+                              [ ln |> replaceTab model.option.showControlCharactor model.option.tabOrder |> text
+                              , text <| if  model.option.showControlCharactor then "↵" else ""
+                              ]
                 ) contents
 
 
@@ -681,8 +685,8 @@ markerLayer model =
 
                 rect = getBoundingClientRect (codeAreaID model)
                 calc_w  = calcTextWidth (rulerID model)
-                bpix = calc_w (Buffer.line (Tuple.first bpos) model.buffer.contents |> Maybe.withDefault "" |> String.left (Tuple.second bpos) |> replaceTab model.option.tabOrder)
-                epix = calc_w (Buffer.line (Tuple.first epos) model.buffer.contents |> Maybe.withDefault "" |> String.left (Tuple.second epos) |> replaceTab model.option.tabOrder)
+                bpix = calc_w (Buffer.line (Tuple.first bpos) model.buffer.contents |> Maybe.withDefault "" |> String.left (Tuple.second bpos) |> replaceTab model.option.showControlCharactor model.option.tabOrder)
+                epix = calc_w (Buffer.line (Tuple.first epos) model.buffer.contents |> Maybe.withDefault "" |> String.left (Tuple.second epos) |> replaceTab model.option.showControlCharactor model.option.tabOrder)
 
 
                 ms = List.range (Tuple.first bpos) (Tuple.first epos)
@@ -726,9 +730,12 @@ markerLayer model =
                                       [ Buffer.line m.row model.buffer.contents |> Maybe.withDefault ""
                                             |> String.dropLeft m.begin_col
                                             |> String.left (m.end_col - m.begin_col)
-                                            |> (\l -> if l == "" then " " else l)
-                                            |> replaceTab model.option.tabOrder
+                                            |> replaceTab model.option.showControlCharactor model.option.tabOrder
                                             |> text
+                                      , text <|
+                                          if model.option.showControlCharactor 
+                                          && (Buffer.line m.row model.buffer.contents |> Maybe.withDefault "" |> String.length) == m.end_col
+                                          then "↵" else ""
                                       ]
                              ) ms )
 
@@ -745,7 +752,7 @@ pad model =
                  , ("pointer-events", "none") -- マウスイベントの対象外にする
                  ]
          ]
-         [ Buffer.line cur.row contents |> Maybe.withDefault "" |> String.left cur.column |> replaceTab model.option.tabOrder |> text ]
+         [ Buffer.line cur.row contents |> Maybe.withDefault "" |> String.left cur.column |> replaceTab model.option.showControlCharactor model.option.tabOrder |> text ]
 
 
 ruler : Core.Model -> Html msg
@@ -801,10 +808,11 @@ cursorView model =
     []
 
 
-replaceTab : Int -> String -> String
-replaceTab tabOrder line =
+replaceTab : Bool -> Int -> String -> String
+replaceTab showCtrlChar tabOrder line =
     let
-        rpl_s = "" -- "»"
+        rpl_s = if showCtrlChar then "»"  else ""
+        jsp_c = if showCtrlChar then '□' else '　'
 
         f = (\ str n outstrs ->
                 case str of
@@ -813,6 +821,9 @@ replaceTab tabOrder line =
                             sp_cnt = tabOrder - (n % tabOrder)
                         in
                             f xs (n + sp_cnt) ((String.padRight (sp_cnt) ' ' rpl_s) :: outstrs)
+                    '　' :: xs ->
+                        f xs (n + 1) ((String.fromChar jsp_c) :: outstrs)
+
                     x :: xs ->
                         f xs (n + 1) ((String.fromChar x) :: outstrs)
                     [] ->
