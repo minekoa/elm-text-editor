@@ -3,14 +3,18 @@ module SettingMenu exposing
     , Msg
     , init
     , update
+    , subscriptions
     , view
     )
 
 import Html exposing (..)
 import Html.Attributes exposing (..)
 import Html.Events exposing (..)
+import Json.Encode
+import Json.Decode
 
 import TextEditor.Core
+import Ports.WebStrage as WebStrage
 
 
 type alias Model =
@@ -21,14 +25,21 @@ type alias Model =
 type SubMenu
     = RenderingOptionMenu
 
-init : TextEditor.Core.Option -> Model
+init : TextEditor.Core.Option -> (Model, Cmd Msg)
 init core_opts =
-    { options         = core_opts
-    , selectedSubMenu = RenderingOptionMenu
-    }
+    ( { options         = core_opts
+      , selectedSubMenu = RenderingOptionMenu
+      }
+    , WebStrage.localStrage_getItem "core.option"
+    )
+
+------------------------------------------------------------
+-- update
+------------------------------------------------------------
 
 type Msg
-    = SelectSubMenu SubMenu
+    = LoadSetting (String, Maybe String)
+    | SelectSubMenu SubMenu
     | ChangeShowCtrlChar Bool
     | ChangeTabOrder Int
     | ChangeIndentTabs Bool
@@ -39,6 +50,17 @@ update msg model =
         core_opts = model.options
     in
         case msg of
+            LoadSetting ("core.option", maybe_value) ->
+                ( maybe_value
+                    |> Result.fromMaybe "value is nothing"
+                    |> Result.andThen (Json.Decode.decodeString decodeCoreOption)
+                    |> Result.withDefault core_opts
+                    |> (\new_opts -> { model | options = new_opts })
+                , Cmd.none
+                )
+            LoadSetting _ ->
+                ( model, Cmd.none )
+
             SelectSubMenu s ->
                 ( { model
                       | selectedSubMenu = s
@@ -47,24 +69,48 @@ update msg model =
                 )
 
             ChangeShowCtrlChar b ->
-                ( { model
-                      | options = { core_opts | showControlCharactor = b }
-                  }
-                , Cmd.none
-                )
+                let
+                    new_opts = { core_opts | showControlCharactor = b }
+                in
+                    ( { model | options = new_opts }
+                    , WebStrage.localStrage_setItem ("core.option"
+                                                    , new_opts |> encodeCoreOption |> Json.Encode.encode 0
+                                                    )
+                    )
+
             ChangeTabOrder i ->
-                ( { model
-                      | options = { core_opts | tabOrder = i }
-                  }
-                , Cmd.none
-                )
+                let
+                    new_opts = { core_opts | tabOrder = i }
+                in
+                    ( { model | options = new_opts }
+                    , WebStrage.localStrage_setItem ("core.option"
+                                                    , new_opts  |> encodeCoreOption |> Json.Encode.encode 0
+                                                    )
+                    )
 
             ChangeIndentTabs b ->
-                ( { model
-                      | options = { core_opts | indentTabsMode = b }
-                  }
-                , Cmd.none
-                )
+                let
+                    new_opts = { core_opts | indentTabsMode = b }
+                in
+                    ( { model | options = new_opts }
+                    , WebStrage.localStrage_setItem ("core.option"
+                                                    , new_opts |> encodeCoreOption |> Json.Encode.encode 0
+                                                    )
+                    )
+
+------------------------------------------------------------
+-- Subscriptions
+------------------------------------------------------------
+
+subscriptions : Model -> Sub Msg
+subscriptions model =
+    Sub.batch [ WebStrage.localStrage_getItemEnded LoadSetting
+              ]
+
+
+------------------------------------------------------------
+-- view
+------------------------------------------------------------
 
 view : Model -> Html Msg
 view model =
@@ -129,4 +175,25 @@ intOptionSettingControl label tagger opts value =
                               )
               )
         ]
+
+
+------------------------------------------------------------
+-- encode / decode for save local strage
+------------------------------------------------------------
+
+encodeCoreOption : TextEditor.Core.Option -> Json.Encode.Value
+encodeCoreOption core_opts =
+    Json.Encode.object 
+        [ ("tabOrder"            , core_opts.tabOrder |> Json.Encode.int)
+        , ("indentTabsMode"      , core_opts.indentTabsMode  |> Json.Encode.bool)
+        , ("showControlCharactor", core_opts.showControlCharactor |> Json.Encode.bool)
+        ]
+
+decodeCoreOption : Json.Decode.Decoder TextEditor.Core.Option
+decodeCoreOption =
+    Json.Decode.map3
+        TextEditor.Core.Option
+            (Json.Decode.field "tabOrder"             Json.Decode.int)
+            (Json.Decode.field "indentTabsMode"       Json.Decode.bool)
+            (Json.Decode.field "showControlCharactor" Json.Decode.bool)
 

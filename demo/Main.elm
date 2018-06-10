@@ -74,6 +74,7 @@ init =
         (bm, bc) = Editor.init "editor-sample1" (KeyBind.basic ++ KeyBind.gates ++ KeyBind.emacsLike) content
         (smm, smc) = StyleMenu.init
         (kmm, kmc) = KeyBindMenu.init
+        (stm, stc) = SettingMenu.init bm.core.option
     in
         ( Model bm
               [ buf ]
@@ -85,10 +86,11 @@ init =
               smm
               FileMenu.init
               kmm
-              (SettingMenu.init bm.core.option)
+              stm
         , Cmd.batch [ Cmd.map EditorMsg bc
                     , Cmd.map StyleMenuMsg smc
                     , Cmd.map KeyBindMenuMsg kmc
+                    , Cmd.map SettingMenuMsg stc
                     ]
         )
 
@@ -336,6 +338,7 @@ subscriptions model =
     Sub.batch [ Sub.map EditorMsg  (Editor.subscriptions model.editor)
               , Sub.map StyleMenuMsg (StyleMenu.subscriptions model.style)
               , Sub.map KeyBindMenuMsg (KeyBindMenu.subscriptions model.keybindMenu)
+              , Sub.map SettingMenuMsg (SettingMenu.subscriptions model.settingMenu)
               ]
 
 
