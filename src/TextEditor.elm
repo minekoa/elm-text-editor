@@ -25,6 +25,7 @@ import TextEditor.Core as Core exposing (..)
 import TextEditor.Core.Commands as Commands
 
 import TextEditor.KeyboardEvent exposing (..)
+import TextEditor.TextMarker as TextMarker
 
 import TextEditor.Commands
 import TextEditor.KeyBind as KeyBind
@@ -542,21 +543,26 @@ codeLayer model =
                                              , ("pointer-events", "none") -- マウスイベントの対象外にする
                                              ]
                                      ]
-                                     [ String.left cursor.column ln |> replaceTab model.option.showControlCharactor model.option.tabOrder |> text ]
+                                     ( String.left cursor.column ln
+                                             |> TextMarker.markupChank model.option.showControlCharactor model.option.tabOrder
+                                             |> TextMarker.toHtml
+                                     )
                               , compositionPreview model.compositionPreview
                               , span [ style [ ("position", "relative")
                                              , ("white-space", "pre")
                                              , ("pointer-events", "none") -- マウスイベントの対象外にする
                                              ]
                                      ]
-                                     [ String.dropLeft cursor.column ln |> replaceTab model.option.showControlCharactor model.option.tabOrder |> text
-                                     , text <| if  model.option.showControlCharactor then "↵" else ""
-                                     ]
+                                     ( String.dropLeft cursor.column ln
+                                           |> TextMarker.markupLine model.option.showControlCharactor model.option.tabOrder
+                                           |> TextMarker.toHtml
+                                     )
                               ]
                           else
-                              [ ln |> replaceTab model.option.showControlCharactor model.option.tabOrder |> text
-                              , text <| if  model.option.showControlCharactor then "↵" else ""
-                              ]
+                              ( ln
+                                  |> TextMarker.markupLine model.option.showControlCharactor model.option.tabOrder
+                                  |> TextMarker.toHtml
+                              )
                 ) contents
 
 
@@ -685,9 +691,8 @@ markerLayer model =
 
                 rect = getBoundingClientRect (codeAreaID model)
                 calc_w  = calcTextWidth (rulerID model)
-                bpix = calc_w (Buffer.line (Tuple.first bpos) model.buffer.contents |> Maybe.withDefault "" |> String.left (Tuple.second bpos) |> replaceTab model.option.showControlCharactor model.option.tabOrder)
-                epix = calc_w (Buffer.line (Tuple.first epos) model.buffer.contents |> Maybe.withDefault "" |> String.left (Tuple.second epos) |> replaceTab model.option.showControlCharactor model.option.tabOrder)
-
+                bpix = calc_w (Buffer.line (Tuple.first bpos) model.buffer.contents |> Maybe.withDefault "" |> String.left (Tuple.second bpos) |> TextMarker.markupChank model.option.showControlCharactor model.option.tabOrder |> TextMarker.toString )
+                epix = calc_w (Buffer.line (Tuple.first epos) model.buffer.contents |> Maybe.withDefault "" |> String.left (Tuple.second epos) |> TextMarker.markupChank model.option.showControlCharactor model.option.tabOrder |> TextMarker.toString )
 
                 ms = List.range (Tuple.first bpos) (Tuple.first epos)
                    |> List.map (\ r ->
@@ -727,16 +732,15 @@ markerLayer model =
                                               , ("white-space", "pre")
                                               ]
                                       ]
-                                      [ Buffer.line m.row model.buffer.contents |> Maybe.withDefault ""
+                                      ( Buffer.line m.row model.buffer.contents |> Maybe.withDefault ""
                                             |> String.dropLeft m.begin_col
                                             |> String.left (m.end_col - m.begin_col)
-                                            |> replaceTab model.option.showControlCharactor model.option.tabOrder
-                                            |> text
-                                      , text <|
-                                          if model.option.showControlCharactor 
-                                          && (Buffer.line m.row model.buffer.contents |> Maybe.withDefault "" |> String.length) == m.end_col
-                                          then "↵" else ""
-                                      ]
+                                            |> (\ln -> if (Buffer.line m.row model.buffer.contents |> Maybe.withDefault "" |> String.length) == m.end_col
+                                                       then TextMarker.markupLine  model.option.showControlCharactor model.option.tabOrder ln
+                                                       else TextMarker.markupChank model.option.showControlCharactor model.option.tabOrder ln
+                                               )
+                                            |> TextMarker.toHtml
+                                      )
                              ) ms )
 
 pad : Core.Model -> Html msg
@@ -752,7 +756,12 @@ pad model =
                  , ("pointer-events", "none") -- マウスイベントの対象外にする
                  ]
          ]
-         [ Buffer.line cur.row contents |> Maybe.withDefault "" |> String.left cur.column |> replaceTab model.option.showControlCharactor model.option.tabOrder |> text ]
+         ( Buffer.line cur.row contents
+               |> Maybe.withDefault ""
+               |> String.left cur.column
+               |> TextMarker.markupChank model.option.showControlCharactor model.option.tabOrder
+               |> TextMarker.toHtml
+         )
 
 
 ruler : Core.Model -> Html msg
@@ -806,33 +815,6 @@ cursorView model =
          , id <| cursorID model
          ]
     []
-
-
-replaceTab : Bool -> Int -> String -> String
-replaceTab showCtrlChar tabOrder line =
-    let
-        rpl_s = if showCtrlChar then "»"  else ""
-        jsp_c = if showCtrlChar then '□' else '　'
-
-        f = (\ str n outstrs ->
-                case str of
-                    '\t' :: xs ->
-                        let
-                            sp_cnt = tabOrder - (n % tabOrder)
-                        in
-                            f xs (n + sp_cnt) ((String.padRight (sp_cnt) ' ' rpl_s) :: outstrs)
-                    '　' :: xs ->
-                        f xs (n + 1) ((String.fromChar jsp_c) :: outstrs)
-
-                    x :: xs ->
-                        f xs (n + 1) ((String.fromChar x) :: outstrs)
-                    [] ->
-                        outstrs
-            )
-    in
-        f (line |> String.toList) 0 []
-            |> List.reverse
-            |> String.concat
 
 
 ------------------------------------------------------------
