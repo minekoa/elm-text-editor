@@ -11465,6 +11465,260 @@ var _minekoa$elm_text_editor$TextEditor_KeyboardEvent$considerKeyboardEvent = fu
 		_minekoa$elm_text_editor$TextEditor_KeyboardEvent$decodeKeyboardEvent);
 };
 
+var _minekoa$elm_text_editor$TextEditor_TextMarker$toString = function (txts) {
+	return _elm_lang$core$String$concat(
+		A2(
+			_elm_lang$core$List$map,
+			function (txt) {
+				var _p0 = txt;
+				if (_p0.ctor === 'Marked') {
+					return _elm_lang$core$String$fromList(_p0._1);
+				} else {
+					return _elm_lang$core$String$fromList(_p0._0);
+				}
+			},
+			txts));
+};
+var _minekoa$elm_text_editor$TextEditor_TextMarker$toHtml = function (txts) {
+	return A2(
+		_elm_lang$core$List$map,
+		function (txt) {
+			var _p1 = txt;
+			if (_p1.ctor === 'Marked') {
+				return A2(
+					_elm_lang$html$Html$span,
+					{
+						ctor: '::',
+						_0: _elm_lang$html$Html_Attributes$class(_p1._0),
+						_1: {ctor: '[]'}
+					},
+					{
+						ctor: '::',
+						_0: _elm_lang$html$Html$text(
+							_elm_lang$core$String$fromList(_p1._1)),
+						_1: {ctor: '[]'}
+					});
+			} else {
+				return _elm_lang$html$Html$text(
+					_elm_lang$core$String$fromList(_p1._0));
+			}
+		},
+		txts);
+};
+var _minekoa$elm_text_editor$TextEditor_TextMarker$Marked = F2(
+	function (a, b) {
+		return {ctor: 'Marked', _0: a, _1: b};
+	});
+var _minekoa$elm_text_editor$TextEditor_TextMarker$Plane = function (a) {
+	return {ctor: 'Plane', _0: a};
+};
+var _minekoa$elm_text_editor$TextEditor_TextMarker$deepReverse = function (lst) {
+	return _elm_lang$core$List$reverse(
+		A2(
+			_elm_lang$core$List$map,
+			function (elm) {
+				var _p2 = elm;
+				if (_p2.ctor === 'Plane') {
+					return _minekoa$elm_text_editor$TextEditor_TextMarker$Plane(
+						_elm_lang$core$List$reverse(_p2._0));
+				} else {
+					return A2(
+						_minekoa$elm_text_editor$TextEditor_TextMarker$Marked,
+						_p2._0,
+						_elm_lang$core$List$reverse(_p2._1));
+				}
+			},
+			lst));
+};
+var _minekoa$elm_text_editor$TextEditor_TextMarker$markupControlChars = F2(
+	function (tabOrder, line) {
+		var f = F3(
+			function (str, n, outtxts) {
+				f:
+				while (true) {
+					var _p3 = str;
+					if (_p3.ctor === '::') {
+						switch (_p3._0.valueOf()) {
+							case '\t':
+								var sp_cnt = tabOrder - A2(_elm_lang$core$Basics_ops['%'], n, tabOrder);
+								var rpl_txt = _elm_lang$core$List$reverse(
+									_elm_lang$core$String$toList(
+										A3(
+											_elm_lang$core$String$padRight,
+											sp_cnt,
+											_elm_lang$core$Native_Utils.chr(' '),
+											'»')));
+								var _v4 = _p3._1,
+									_v5 = n + sp_cnt,
+									_v6 = {
+									ctor: '::',
+									_0: A2(_minekoa$elm_text_editor$TextEditor_TextMarker$Marked, 'tab-face', rpl_txt),
+									_1: outtxts
+								};
+								str = _v4;
+								n = _v5;
+								outtxts = _v6;
+								continue f;
+							case '\n':
+								var _v7 = _p3._1,
+									_v8 = n + 1,
+									_v9 = {
+									ctor: '::',
+									_0: A2(
+										_minekoa$elm_text_editor$TextEditor_TextMarker$Marked,
+										'eol-face',
+										{
+											ctor: '::',
+											_0: _elm_lang$core$Native_Utils.chr('↵'),
+											_1: {ctor: '[]'}
+										}),
+									_1: outtxts
+								};
+								str = _v7;
+								n = _v8;
+								outtxts = _v9;
+								continue f;
+							case '　':
+								var _v10 = _p3._1,
+									_v11 = n + 1,
+									_v12 = {
+									ctor: '::',
+									_0: A2(
+										_minekoa$elm_text_editor$TextEditor_TextMarker$Marked,
+										'jaspace-face',
+										{
+											ctor: '::',
+											_0: _elm_lang$core$Native_Utils.chr('□'),
+											_1: {ctor: '[]'}
+										}),
+									_1: outtxts
+								};
+								str = _v10;
+								n = _v11;
+								outtxts = _v12;
+								continue f;
+							default:
+								var _p6 = _p3._1;
+								var _p5 = _p3._0;
+								var _p4 = outtxts;
+								if ((_p4.ctor === '::') && (_p4._0.ctor === 'Plane')) {
+									var _v14 = _p6,
+										_v15 = n + 1,
+										_v16 = {
+										ctor: '::',
+										_0: _minekoa$elm_text_editor$TextEditor_TextMarker$Plane(
+											{ctor: '::', _0: _p5, _1: _p4._0._0}),
+										_1: _p4._1
+									};
+									str = _v14;
+									n = _v15;
+									outtxts = _v16;
+									continue f;
+								} else {
+									var _v17 = _p6,
+										_v18 = n + 1,
+										_v19 = {
+										ctor: '::',
+										_0: _minekoa$elm_text_editor$TextEditor_TextMarker$Plane(
+											{
+												ctor: '::',
+												_0: _p5,
+												_1: {ctor: '[]'}
+											}),
+										_1: outtxts
+									};
+									str = _v17;
+									n = _v18;
+									outtxts = _v19;
+									continue f;
+								}
+						}
+					} else {
+						return outtxts;
+					}
+				}
+			});
+		return _minekoa$elm_text_editor$TextEditor_TextMarker$deepReverse(
+			A3(
+				f,
+				_elm_lang$core$String$toList(line),
+				0,
+				{ctor: '[]'}));
+	});
+var _minekoa$elm_text_editor$TextEditor_TextMarker$replaceTab = F2(
+	function (tabOrder, line) {
+		var f = F3(
+			function (str, n, outchars) {
+				f:
+				while (true) {
+					var _p7 = str;
+					if (_p7.ctor === '::') {
+						if (_p7._0.valueOf() === '\t') {
+							var sp_cnt = tabOrder - A2(_elm_lang$core$Basics_ops['%'], n, tabOrder);
+							var rpl_txt = _elm_lang$core$List$reverse(
+								_elm_lang$core$String$toList(
+									A3(
+										_elm_lang$core$String$padRight,
+										sp_cnt,
+										_elm_lang$core$Native_Utils.chr(' '),
+										'')));
+							var _v21 = _p7._1,
+								_v22 = n + sp_cnt,
+								_v23 = A2(_elm_lang$core$Basics_ops['++'], rpl_txt, outchars);
+							str = _v21;
+							n = _v22;
+							outchars = _v23;
+							continue f;
+						} else {
+							var _v24 = _p7._1,
+								_v25 = n + 1,
+								_v26 = {ctor: '::', _0: _p7._0, _1: outchars};
+							str = _v24;
+							n = _v25;
+							outchars = _v26;
+							continue f;
+						}
+					} else {
+						return outchars;
+					}
+				}
+			});
+		return function (cs) {
+			return {
+				ctor: '::',
+				_0: _minekoa$elm_text_editor$TextEditor_TextMarker$Plane(cs),
+				_1: {ctor: '[]'}
+			};
+		}(
+			_elm_lang$core$List$reverse(
+				A3(
+					f,
+					_elm_lang$core$String$toList(line),
+					0,
+					{ctor: '[]'})));
+	});
+var _minekoa$elm_text_editor$TextEditor_TextMarker$markupLine = F3(
+	function (showControlCharactor, tabOrder, line) {
+		var _p8 = showControlCharactor;
+		if (_p8 === true) {
+			return A2(
+				_minekoa$elm_text_editor$TextEditor_TextMarker$markupControlChars,
+				tabOrder,
+				A2(_elm_lang$core$Basics_ops['++'], line, '\n'));
+		} else {
+			return A2(_minekoa$elm_text_editor$TextEditor_TextMarker$replaceTab, tabOrder, line);
+		}
+	});
+var _minekoa$elm_text_editor$TextEditor_TextMarker$markupChank = F3(
+	function (showControlCharactor, tabOrder, line) {
+		var _p9 = showControlCharactor;
+		if (_p9 === true) {
+			return A2(_minekoa$elm_text_editor$TextEditor_TextMarker$markupControlChars, tabOrder, line);
+		} else {
+			return A2(_minekoa$elm_text_editor$TextEditor_TextMarker$replaceTab, tabOrder, line);
+		}
+	});
+
 var _minekoa$elm_text_editor$TextEditor_Commands$unindent = {id: 'unindent', f: _minekoa$elm_text_editor$TextEditor_Core_Commands$unindent};
 var _minekoa$elm_text_editor$TextEditor_Commands$indent = {id: 'indent', f: _minekoa$elm_text_editor$TextEditor_Core_Commands$indent};
 var _minekoa$elm_text_editor$TextEditor_Commands$killLine = {id: 'killLine', f: _minekoa$elm_text_editor$TextEditor_Core_Commands$killLine};
@@ -12131,82 +12385,16 @@ var _minekoa$elm_text_editor$TextEditor$keyboarEvent_toString = function (e) {
 			}
 		});
 };
-var _minekoa$elm_text_editor$TextEditor$replaceTab = F3(
-	function (showCtrlChar, tabOrder, line) {
-		var jsp_c = showCtrlChar ? _elm_lang$core$Native_Utils.chr('□') : _elm_lang$core$Native_Utils.chr('　');
-		var rpl_s = showCtrlChar ? '»' : '';
-		var f = F3(
-			function (str, n, outstrs) {
-				f:
-				while (true) {
-					var _p4 = str;
-					if (_p4.ctor === '::') {
-						switch (_p4._0.valueOf()) {
-							case '\t':
-								var sp_cnt = tabOrder - A2(_elm_lang$core$Basics_ops['%'], n, tabOrder);
-								var _v2 = _p4._1,
-									_v3 = n + sp_cnt,
-									_v4 = {
-									ctor: '::',
-									_0: A3(
-										_elm_lang$core$String$padRight,
-										sp_cnt,
-										_elm_lang$core$Native_Utils.chr(' '),
-										rpl_s),
-									_1: outstrs
-								};
-								str = _v2;
-								n = _v3;
-								outstrs = _v4;
-								continue f;
-							case '　':
-								var _v5 = _p4._1,
-									_v6 = n + 1,
-									_v7 = {
-									ctor: '::',
-									_0: _elm_lang$core$String$fromChar(jsp_c),
-									_1: outstrs
-								};
-								str = _v5;
-								n = _v6;
-								outstrs = _v7;
-								continue f;
-							default:
-								var _v8 = _p4._1,
-									_v9 = n + 1,
-									_v10 = {
-									ctor: '::',
-									_0: _elm_lang$core$String$fromChar(_p4._0),
-									_1: outstrs
-								};
-								str = _v8;
-								n = _v9;
-								outstrs = _v10;
-								continue f;
-						}
-					} else {
-						return outstrs;
-					}
-				}
-			});
-		return _elm_lang$core$String$concat(
-			_elm_lang$core$List$reverse(
-				A3(
-					f,
-					_elm_lang$core$String$toList(line),
-					0,
-					{ctor: '[]'})));
-	});
 var _minekoa$elm_text_editor$TextEditor$cursorView = function (model) {
-	var blink_off = function (_p5) {
+	var blink_off = function (_p4) {
 		return !function (blnk) {
-			var _p6 = blnk;
-			if (_p6.ctor === 'Blink') {
-				return _p6._0;
+			var _p5 = blnk;
+			if (_p5.ctor === 'Blink') {
+				return _p5._0;
 			} else {
 				return true;
 			}
-		}(_p5);
+		}(_p4);
 	};
 	return A2(
 		_elm_lang$html$Html$span,
@@ -12256,8 +12444,8 @@ var _minekoa$elm_text_editor$TextEditor$cursorView = function (model) {
 		{ctor: '[]'});
 };
 var _minekoa$elm_text_editor$TextEditor$compositionPreview = function (compositionData) {
-	var _p7 = compositionData;
-	if (_p7.ctor === 'Just') {
+	var _p6 = compositionData;
+	if (_p6.ctor === 'Just') {
 		return A2(
 			_elm_lang$html$Html$span,
 			{
@@ -12280,7 +12468,7 @@ var _minekoa$elm_text_editor$TextEditor$compositionPreview = function (compositi
 			},
 			{
 				ctor: '::',
-				_0: _elm_lang$html$Html$text(_p7._0),
+				_0: _elm_lang$html$Html$text(_p6._0),
 				_1: {ctor: '[]'}
 			});
 	} else {
@@ -12399,65 +12587,63 @@ var _minekoa$elm_text_editor$TextEditor$pad = function (model) {
 				_1: {ctor: '[]'}
 			}
 		},
-		{
-			ctor: '::',
-			_0: _elm_lang$html$Html$text(
-				A3(
-					_minekoa$elm_text_editor$TextEditor$replaceTab,
-					model.option.showControlCharactor,
-					model.option.tabOrder,
+		_minekoa$elm_text_editor$TextEditor_TextMarker$toHtml(
+			A3(
+				_minekoa$elm_text_editor$TextEditor_TextMarker$markupChank,
+				model.option.showControlCharactor,
+				model.option.tabOrder,
+				A2(
+					_elm_lang$core$String$left,
+					cur.column,
 					A2(
-						_elm_lang$core$String$left,
-						cur.column,
-						A2(
-							_elm_lang$core$Maybe$withDefault,
-							'',
-							A2(_minekoa$elm_text_editor$TextEditor_Buffer$line, cur.row, contents))))),
-			_1: {ctor: '[]'}
-		});
+						_elm_lang$core$Maybe$withDefault,
+						'',
+						A2(_minekoa$elm_text_editor$TextEditor_Buffer$line, cur.row, contents))))));
 };
 var _minekoa$elm_text_editor$TextEditor$markerLayer = function (model) {
-	var _p8 = model.buffer.selection;
-	if (_p8.ctor === 'Nothing') {
+	var _p7 = model.buffer.selection;
+	if (_p7.ctor === 'Nothing') {
 		return _elm_lang$html$Html$text('');
 	} else {
-		var _p9 = _p8._0;
+		var _p8 = _p7._0;
 		var calc_w = _minekoa$elm_text_editor$TextEditor$calcTextWidth(
 			_minekoa$elm_text_editor$TextEditor_Core$rulerID(model));
 		var rect = _minekoa$elm_text_editor$TextEditor$getBoundingClientRect(
 			_minekoa$elm_text_editor$TextEditor_Core$codeAreaID(model));
-		var epos = A2(_minekoa$elm_text_editor$TextEditor_Buffer$isPreviosPos, _p9.begin, _p9.end) ? _p9.end : _p9.begin;
+		var epos = A2(_minekoa$elm_text_editor$TextEditor_Buffer$isPreviosPos, _p8.begin, _p8.end) ? _p8.end : _p8.begin;
 		var epix = calc_w(
-			A3(
-				_minekoa$elm_text_editor$TextEditor$replaceTab,
-				model.option.showControlCharactor,
-				model.option.tabOrder,
-				A2(
-					_elm_lang$core$String$left,
-					_elm_lang$core$Tuple$second(epos),
+			_minekoa$elm_text_editor$TextEditor_TextMarker$toString(
+				A3(
+					_minekoa$elm_text_editor$TextEditor_TextMarker$markupChank,
+					model.option.showControlCharactor,
+					model.option.tabOrder,
 					A2(
-						_elm_lang$core$Maybe$withDefault,
-						'',
+						_elm_lang$core$String$left,
+						_elm_lang$core$Tuple$second(epos),
 						A2(
-							_minekoa$elm_text_editor$TextEditor_Buffer$line,
-							_elm_lang$core$Tuple$first(epos),
-							model.buffer.contents)))));
-		var bpos = A2(_minekoa$elm_text_editor$TextEditor_Buffer$isPreviosPos, _p9.begin, _p9.end) ? _p9.begin : _p9.end;
+							_elm_lang$core$Maybe$withDefault,
+							'',
+							A2(
+								_minekoa$elm_text_editor$TextEditor_Buffer$line,
+								_elm_lang$core$Tuple$first(epos),
+								model.buffer.contents))))));
+		var bpos = A2(_minekoa$elm_text_editor$TextEditor_Buffer$isPreviosPos, _p8.begin, _p8.end) ? _p8.begin : _p8.end;
 		var bpix = calc_w(
-			A3(
-				_minekoa$elm_text_editor$TextEditor$replaceTab,
-				model.option.showControlCharactor,
-				model.option.tabOrder,
-				A2(
-					_elm_lang$core$String$left,
-					_elm_lang$core$Tuple$second(bpos),
+			_minekoa$elm_text_editor$TextEditor_TextMarker$toString(
+				A3(
+					_minekoa$elm_text_editor$TextEditor_TextMarker$markupChank,
+					model.option.showControlCharactor,
+					model.option.tabOrder,
 					A2(
-						_elm_lang$core$Maybe$withDefault,
-						'',
+						_elm_lang$core$String$left,
+						_elm_lang$core$Tuple$second(bpos),
 						A2(
-							_minekoa$elm_text_editor$TextEditor_Buffer$line,
-							_elm_lang$core$Tuple$first(bpos),
-							model.buffer.contents)))));
+							_elm_lang$core$Maybe$withDefault,
+							'',
+							A2(
+								_minekoa$elm_text_editor$TextEditor_Buffer$line,
+								_elm_lang$core$Tuple$first(bpos),
+								model.buffer.contents))))));
 		var ms = A2(
 			_elm_lang$core$List$map,
 			function (r) {
@@ -12566,48 +12752,38 @@ var _minekoa$elm_text_editor$TextEditor$markerLayer = function (model) {
 								}),
 							_1: {ctor: '[]'}
 						},
-						{
-							ctor: '::',
-							_0: _elm_lang$html$Html$text(
-								A3(
-									_minekoa$elm_text_editor$TextEditor$replaceTab,
-									model.option.showControlCharactor,
-									model.option.tabOrder,
-									A2(
-										_elm_lang$core$String$left,
-										m.end_col - m.begin_col,
+						_minekoa$elm_text_editor$TextEditor_TextMarker$toHtml(
+							function (ln) {
+								return _elm_lang$core$Native_Utils.eq(
+									_elm_lang$core$String$length(
 										A2(
-											_elm_lang$core$String$dropLeft,
-											m.begin_col,
-											A2(
-												_elm_lang$core$Maybe$withDefault,
-												'',
-												A2(_minekoa$elm_text_editor$TextEditor_Buffer$line, m.row, model.buffer.contents)))))),
-							_1: {
-								ctor: '::',
-								_0: _elm_lang$html$Html$text(
-									(model.option.showControlCharactor && _elm_lang$core$Native_Utils.eq(
-										_elm_lang$core$String$length(
-											A2(
-												_elm_lang$core$Maybe$withDefault,
-												'',
-												A2(_minekoa$elm_text_editor$TextEditor_Buffer$line, m.row, model.buffer.contents))),
-										m.end_col)) ? '↵' : ''),
-								_1: {ctor: '[]'}
-							}
-						});
+											_elm_lang$core$Maybe$withDefault,
+											'',
+											A2(_minekoa$elm_text_editor$TextEditor_Buffer$line, m.row, model.buffer.contents))),
+									m.end_col) ? A3(_minekoa$elm_text_editor$TextEditor_TextMarker$markupLine, model.option.showControlCharactor, model.option.tabOrder, ln) : A3(_minekoa$elm_text_editor$TextEditor_TextMarker$markupChank, model.option.showControlCharactor, model.option.tabOrder, ln);
+							}(
+								A2(
+									_elm_lang$core$String$left,
+									m.end_col - m.begin_col,
+									A2(
+										_elm_lang$core$String$dropLeft,
+										m.begin_col,
+										A2(
+											_elm_lang$core$Maybe$withDefault,
+											'',
+											A2(_minekoa$elm_text_editor$TextEditor_Buffer$line, m.row, model.buffer.contents)))))));
 				},
 				ms));
 	}
 };
 var _minekoa$elm_text_editor$TextEditor$selectedTouchPad = function (model) {
-	var _p10 = model.buffer.selection;
-	if (_p10.ctor === 'Nothing') {
+	var _p9 = model.buffer.selection;
+	if (_p9.ctor === 'Nothing') {
 		return {ctor: '[]'};
 	} else {
-		var _p11 = _p10._0;
-		var epos = A2(_minekoa$elm_text_editor$TextEditor_Buffer$isPreviosPos, _p11.begin, _p11.end) ? _p11.end : _p11.begin;
-		var bpos = A2(_minekoa$elm_text_editor$TextEditor_Buffer$isPreviosPos, _p11.begin, _p11.end) ? _p11.begin : _p11.end;
+		var _p10 = _p9._0;
+		var epos = A2(_minekoa$elm_text_editor$TextEditor_Buffer$isPreviosPos, _p10.begin, _p10.end) ? _p10.end : _p10.begin;
+		var bpos = A2(_minekoa$elm_text_editor$TextEditor_Buffer$isPreviosPos, _p10.begin, _p10.end) ? _p10.begin : _p10.end;
 		return A2(
 			_elm_lang$core$List$map,
 			function (row) {
@@ -12764,16 +12940,12 @@ var _minekoa$elm_text_editor$TextEditor$codeLayer = function (model) {
 										}),
 									_1: {ctor: '[]'}
 								},
-								{
-									ctor: '::',
-									_0: _elm_lang$html$Html$text(
-										A3(
-											_minekoa$elm_text_editor$TextEditor$replaceTab,
-											model.option.showControlCharactor,
-											model.option.tabOrder,
-											A2(_elm_lang$core$String$left, cursor.column, ln))),
-									_1: {ctor: '[]'}
-								}),
+								_minekoa$elm_text_editor$TextEditor_TextMarker$toHtml(
+									A3(
+										_minekoa$elm_text_editor$TextEditor_TextMarker$markupChank,
+										model.option.showControlCharactor,
+										model.option.tabOrder,
+										A2(_elm_lang$core$String$left, cursor.column, ln)))),
 							_1: {
 								ctor: '::',
 								_0: _minekoa$elm_text_editor$TextEditor$compositionPreview(model.compositionPreview),
@@ -12799,35 +12971,17 @@ var _minekoa$elm_text_editor$TextEditor$codeLayer = function (model) {
 												}),
 											_1: {ctor: '[]'}
 										},
-										{
-											ctor: '::',
-											_0: _elm_lang$html$Html$text(
-												A3(
-													_minekoa$elm_text_editor$TextEditor$replaceTab,
-													model.option.showControlCharactor,
-													model.option.tabOrder,
-													A2(_elm_lang$core$String$dropLeft, cursor.column, ln))),
-											_1: {
-												ctor: '::',
-												_0: _elm_lang$html$Html$text(
-													model.option.showControlCharactor ? '↵' : ''),
-												_1: {ctor: '[]'}
-											}
-										}),
+										_minekoa$elm_text_editor$TextEditor_TextMarker$toHtml(
+											A3(
+												_minekoa$elm_text_editor$TextEditor_TextMarker$markupLine,
+												model.option.showControlCharactor,
+												model.option.tabOrder,
+												A2(_elm_lang$core$String$dropLeft, cursor.column, ln)))),
 									_1: {ctor: '[]'}
 								}
 							}
-						} : {
-							ctor: '::',
-							_0: _elm_lang$html$Html$text(
-								A3(_minekoa$elm_text_editor$TextEditor$replaceTab, model.option.showControlCharactor, model.option.tabOrder, ln)),
-							_1: {
-								ctor: '::',
-								_0: _elm_lang$html$Html$text(
-									model.option.showControlCharactor ? '↵' : ''),
-								_1: {ctor: '[]'}
-							}
-						});
+						} : _minekoa$elm_text_editor$TextEditor_TextMarker$toHtml(
+							A3(_minekoa$elm_text_editor$TextEditor_TextMarker$markupLine, model.option.showControlCharactor, model.option.tabOrder, ln)));
 				}),
 			contents));
 };
@@ -12927,8 +13081,8 @@ var _minekoa$elm_text_editor$TextEditor$blinkBlock = function (model) {
 		});
 };
 var _minekoa$elm_text_editor$TextEditor$printDragInfo = F2(
-	function (xy, _p12) {
-		var _p13 = _p12;
+	function (xy, _p11) {
+		var _p12 = _p11;
 		return A2(
 			_elm_lang$core$Basics_ops['++'],
 			'pos=',
@@ -12946,11 +13100,11 @@ var _minekoa$elm_text_editor$TextEditor$printDragInfo = F2(
 							'; row_col=',
 							A2(
 								_elm_lang$core$Basics_ops['++'],
-								_elm_lang$core$Basics$toString(_p13._0),
+								_elm_lang$core$Basics$toString(_p12._0),
 								A2(
 									_elm_lang$core$Basics_ops['++'],
 									',',
-									_elm_lang$core$Basics$toString(_p13._1))))))));
+									_elm_lang$core$Basics$toString(_p12._1))))))));
 	});
 var _minekoa$elm_text_editor$TextEditor$xToColumn = F3(
 	function (model, line, pos_x) {
@@ -12968,12 +13122,12 @@ var _minekoa$elm_text_editor$TextEditor$xToColumn = F3(
 						c) < 0)) {
 						return c - 1;
 					} else {
-						var _v16 = ln,
-							_v17 = c + 1,
-							_v18 = x;
-						ln = _v16;
-						c = _v17;
-						x = _v18;
+						var _v6 = ln,
+							_v7 = c + 1,
+							_v8 = x;
+						ln = _v6;
+						c = _v7;
+						x = _v8;
 						continue calc_col;
 					}
 				}
@@ -13007,14 +13161,14 @@ var _minekoa$elm_text_editor$TextEditor$posToRowColumn = F2(
 		return {ctor: '_Tuple2', _0: row, _1: col};
 	});
 var _minekoa$elm_text_editor$TextEditor$setLastCommand = F2(
-	function (id, _p14) {
-		var _p15 = _p14;
-		var _p16 = _p15._0;
-		var cm = _p16.core;
+	function (id, _p13) {
+		var _p14 = _p13;
+		var _p15 = _p14._0;
+		var cm = _p15.core;
 		return {
 			ctor: '_Tuple2',
 			_0: _elm_lang$core$Native_Utils.update(
-				_p16,
+				_p15,
 				{
 					core: _elm_lang$core$Native_Utils.update(
 						cm,
@@ -13022,7 +13176,7 @@ var _minekoa$elm_text_editor$TextEditor$setLastCommand = F2(
 							lastCommand: _elm_lang$core$Maybe$Just(id)
 						})
 				}),
-			_1: _p15._1
+			_1: _p14._1
 		};
 	});
 var _minekoa$elm_text_editor$TextEditor$setBuffer = F2(
@@ -13060,19 +13214,19 @@ var _minekoa$elm_text_editor$TextEditor$Logging = F3(
 		return {ctor: 'Logging', _0: a, _1: b, _2: c};
 	});
 var _minekoa$elm_text_editor$TextEditor$logging = F3(
-	function (ev_name, ev_data, _p17) {
-		var _p18 = _p17;
-		var _p21 = _p18._0;
-		var _p20 = _p18._1;
-		var _p19 = _p21.event_log;
-		if (_p19.ctor === 'Just') {
+	function (ev_name, ev_data, _p16) {
+		var _p17 = _p16;
+		var _p20 = _p17._0;
+		var _p19 = _p17._1;
+		var _p18 = _p20.event_log;
+		if (_p18.ctor === 'Just') {
 			return {
 				ctor: '_Tuple2',
-				_0: _p21,
+				_0: _p20,
 				_1: _elm_lang$core$Platform_Cmd$batch(
 					{
 						ctor: '::',
-						_0: _p20,
+						_0: _p19,
 						_1: {
 							ctor: '::',
 							_0: A2(
@@ -13084,7 +13238,7 @@ var _minekoa$elm_text_editor$TextEditor$logging = F3(
 					})
 			};
 		} else {
-			return {ctor: '_Tuple2', _0: _p21, _1: _p20};
+			return {ctor: '_Tuple2', _0: _p20, _1: _p19};
 		}
 	});
 var _minekoa$elm_text_editor$TextEditor$keyPress = F2(
@@ -13447,9 +13601,9 @@ var _minekoa$elm_text_editor$TextEditor$CoreMsg = function (a) {
 };
 var _minekoa$elm_text_editor$TextEditor$init = F3(
 	function (id, keymap, text) {
-		var _p22 = A2(_minekoa$elm_text_editor$TextEditor_Core$init, id, text);
-		var coreM = _p22._0;
-		var coreC = _p22._1;
+		var _p21 = A2(_minekoa$elm_text_editor$TextEditor_Core$init, id, text);
+		var coreM = _p21._0;
+		var coreC = _p21._1;
 		return {
 			ctor: '_Tuple2',
 			_0: A5(_minekoa$elm_text_editor$TextEditor$Model, coreM, false, false, keymap, _elm_lang$core$Maybe$Nothing),
@@ -13458,9 +13612,9 @@ var _minekoa$elm_text_editor$TextEditor$init = F3(
 	});
 var _minekoa$elm_text_editor$TextEditor$exec_command_proc = F2(
 	function (cmd, model) {
-		var _p23 = cmd.f(model.core);
-		var cm = _p23._0;
-		var cc = _p23._1;
+		var _p22 = cmd.f(model.core);
+		var cm = _p22._0;
+		var cc = _p22._1;
 		return {
 			ctor: '_Tuple2',
 			_0: _elm_lang$core$Native_Utils.update(
@@ -13485,20 +13639,20 @@ var _minekoa$elm_text_editor$TextEditor$execCommand = F2(
 	});
 var _minekoa$elm_text_editor$TextEditor$keyDown = F2(
 	function (e, model) {
-		var _p24 = A2(
+		var _p23 = A2(
 			_minekoa$elm_text_editor$TextEditor_KeyBind$find,
 			{ctor: '_Tuple4', _0: e.ctrlKey, _1: e.altKey, _2: e.shiftKey, _3: e.keyCode},
 			model.keymap);
-		if (_p24.ctor === 'Just') {
-			var _p25 = _p24._0;
+		if (_p23.ctor === 'Just') {
+			var _p24 = _p23._0;
 			return A3(
 				_minekoa$elm_text_editor$TextEditor$logging,
 				'keydown',
 				A2(
 					_elm_lang$core$Basics_ops['++'],
 					_minekoa$elm_text_editor$TextEditor$keyboarEvent_toString(e),
-					A2(_elm_lang$core$Basics_ops['++'], ', editorcmd=', _p25.id)),
-				A2(_minekoa$elm_text_editor$TextEditor$exec_command_proc, _p25, model));
+					A2(_elm_lang$core$Basics_ops['++'], ', editorcmd=', _p24.id)),
+				A2(_minekoa$elm_text_editor$TextEditor$exec_command_proc, _p24, model));
 		} else {
 			return A3(
 				_minekoa$elm_text_editor$TextEditor$logging,
@@ -13509,9 +13663,9 @@ var _minekoa$elm_text_editor$TextEditor$keyDown = F2(
 	});
 var _minekoa$elm_text_editor$TextEditor$compositionEnd = F2(
 	function (data, model) {
-		var _p26 = A2(_minekoa$elm_text_editor$TextEditor_Core$compositionEnd, data, model.core);
-		var m = _p26._0;
-		var c = _p26._1;
+		var _p25 = A2(_minekoa$elm_text_editor$TextEditor_Core$compositionEnd, data, model.core);
+		var m = _p25._0;
+		var c = _p25._1;
 		return A3(
 			_minekoa$elm_text_editor$TextEditor$logging,
 			'compositionend',
@@ -13537,20 +13691,20 @@ var _minekoa$elm_text_editor$TextEditor$compositionEnd = F2(
 				}));
 	});
 var _minekoa$elm_text_editor$TextEditor$updateMap = F2(
-	function (model, _p27) {
-		var _p28 = _p27;
+	function (model, _p26) {
+		var _p27 = _p26;
 		return {
 			ctor: '_Tuple2',
 			_0: _elm_lang$core$Native_Utils.update(
 				model,
-				{core: _p28._0}),
-			_1: A2(_elm_lang$core$Platform_Cmd$map, _minekoa$elm_text_editor$TextEditor$CoreMsg, _p28._1)
+				{core: _p27._0}),
+			_1: A2(_elm_lang$core$Platform_Cmd$map, _minekoa$elm_text_editor$TextEditor$CoreMsg, _p27._1)
 		};
 	});
 var _minekoa$elm_text_editor$TextEditor$input = F2(
 	function (s, model) {
-		var _p29 = model.enableComposer;
-		if (_p29 === true) {
+		var _p28 = model.enableComposer;
+		if (_p28 === true) {
 			return A3(
 				_minekoa$elm_text_editor$TextEditor$logging,
 				'input (ignored)',
@@ -13584,8 +13738,8 @@ var _minekoa$elm_text_editor$TextEditor$input = F2(
 	});
 var _minekoa$elm_text_editor$TextEditor$update = F2(
 	function (msg, model) {
-		var _p30 = msg;
-		switch (_p30.ctor) {
+		var _p29 = msg;
+		switch (_p29.ctor) {
 			case 'CoreMsg':
 				return A2(
 					_elm_lang$core$Tuple$mapSecond,
@@ -13597,9 +13751,9 @@ var _minekoa$elm_text_editor$TextEditor$update = F2(
 								model,
 								{core: cm});
 						},
-						A2(_minekoa$elm_text_editor$TextEditor_Core$update, _p30._0, model.core)));
+						A2(_minekoa$elm_text_editor$TextEditor_Core$update, _p29._0, model.core)));
 			case 'Pasted':
-				var _p31 = _p30._0;
+				var _p30 = _p29._0;
 				return A2(
 					_elm_lang$core$Tuple$mapSecond,
 					function (c) {
@@ -13620,7 +13774,7 @@ var _minekoa$elm_text_editor$TextEditor$update = F2(
 					A3(
 						_minekoa$elm_text_editor$TextEditor$logging,
 						'pasted',
-						_p31,
+						_p30,
 						A2(
 							_minekoa$elm_text_editor$TextEditor$setLastCommand,
 							'clipboard_pasete',
@@ -13634,7 +13788,7 @@ var _minekoa$elm_text_editor$TextEditor$update = F2(
 								A2(
 									_minekoa$elm_text_editor$TextEditor$updateMap,
 									model,
-									A2(_minekoa$elm_text_editor$TextEditor_Core_Commands$paste, _p31, model.core))))));
+									A2(_minekoa$elm_text_editor$TextEditor_Core_Commands$paste, _p30, model.core))))));
 			case 'Copied':
 				return A2(
 					_elm_lang$core$Tuple$mapSecond,
@@ -13656,7 +13810,7 @@ var _minekoa$elm_text_editor$TextEditor$update = F2(
 					A3(
 						_minekoa$elm_text_editor$TextEditor$logging,
 						'copied',
-						_p30._0,
+						_p29._0,
 						A2(
 							_minekoa$elm_text_editor$TextEditor$setLastCommand,
 							'clipboard_copy',
@@ -13692,7 +13846,7 @@ var _minekoa$elm_text_editor$TextEditor$update = F2(
 					A3(
 						_minekoa$elm_text_editor$TextEditor$logging,
 						'cutted',
-						_p30._0,
+						_p29._0,
 						A2(
 							_minekoa$elm_text_editor$TextEditor$setLastCommand,
 							'clipboard_cut',
@@ -13708,17 +13862,17 @@ var _minekoa$elm_text_editor$TextEditor$update = F2(
 									model,
 									_minekoa$elm_text_editor$TextEditor_Core_Commands$cut(model.core))))));
 			case 'Input':
-				return A2(_minekoa$elm_text_editor$TextEditor$input, _p30._0, model);
+				return A2(_minekoa$elm_text_editor$TextEditor$input, _p29._0, model);
 			case 'KeyDown':
-				return A2(_minekoa$elm_text_editor$TextEditor$keyDown, _p30._0, model);
+				return A2(_minekoa$elm_text_editor$TextEditor$keyDown, _p29._0, model);
 			case 'KeyPress':
-				return A2(_minekoa$elm_text_editor$TextEditor$keyPress, _p30._0, model);
+				return A2(_minekoa$elm_text_editor$TextEditor$keyPress, _p29._0, model);
 			case 'CompositionStart':
-				return A2(_minekoa$elm_text_editor$TextEditor$compositionStart, _p30._0, model);
+				return A2(_minekoa$elm_text_editor$TextEditor$compositionStart, _p29._0, model);
 			case 'CompositionUpdate':
-				return A2(_minekoa$elm_text_editor$TextEditor$compositionUpdate, _p30._0, model);
+				return A2(_minekoa$elm_text_editor$TextEditor$compositionUpdate, _p29._0, model);
 			case 'CompositionEnd':
-				return A2(_minekoa$elm_text_editor$TextEditor$compositionEnd, _p30._0, model);
+				return A2(_minekoa$elm_text_editor$TextEditor$compositionEnd, _p29._0, model);
 			case 'FocusIn':
 				var cm = model.core;
 				return {
@@ -13774,12 +13928,12 @@ var _minekoa$elm_text_editor$TextEditor$update = F2(
 							_minekoa$elm_text_editor$TextEditor_Core$doFocus(model.core))
 					});
 			case 'DragStart':
-				var _p35 = _p30._0;
-				var xy = {x: _p35.x, y: _p35.y};
-				var _p32 = A2(_minekoa$elm_text_editor$TextEditor$posToRowColumn, model.core, xy);
-				var row = _p32._0;
-				var col = _p32._1;
-				var _p33 = A2(
+				var _p34 = _p29._0;
+				var xy = {x: _p34.x, y: _p34.y};
+				var _p31 = A2(_minekoa$elm_text_editor$TextEditor$posToRowColumn, model.core, xy);
+				var row = _p31._0;
+				var col = _p31._1;
+				var _p32 = A2(
 					_minekoa$elm_text_editor$TextEditor_Core_Commands$batch,
 					{
 						ctor: '::',
@@ -13792,10 +13946,10 @@ var _minekoa$elm_text_editor$TextEditor$update = F2(
 						}
 					},
 					model.core);
-				var cm = _p33._0;
-				var cc = _p33._1;
-				var _p34 = _p35.button;
-				switch (_p34.ctor) {
+				var cm = _p32._0;
+				var cc = _p32._1;
+				var _p33 = _p34.button;
+				switch (_p33.ctor) {
 					case 'LeftMouse':
 						return A3(
 							_minekoa$elm_text_editor$TextEditor$logging,
@@ -13866,22 +14020,22 @@ var _minekoa$elm_text_editor$TextEditor$update = F2(
 						return {ctor: '_Tuple2', _0: model, _1: _elm_lang$core$Platform_Cmd$none};
 				}
 			case 'DragAt':
-				var _p38 = _p30._0;
-				var _p36 = A2(_minekoa$elm_text_editor$TextEditor$posToRowColumn, model.core, _p38);
-				var row = _p36._0;
-				var col = _p36._1;
-				var _p37 = A2(
+				var _p37 = _p29._0;
+				var _p35 = A2(_minekoa$elm_text_editor$TextEditor$posToRowColumn, model.core, _p37);
+				var row = _p35._0;
+				var col = _p35._1;
+				var _p36 = A2(
 					_minekoa$elm_text_editor$TextEditor_Core_Commands$selectAt,
 					{ctor: '_Tuple2', _0: row, _1: col},
 					model.core);
-				var cm = _p37._0;
-				var cc = _p37._1;
+				var cm = _p36._0;
+				var cc = _p36._1;
 				return A3(
 					_minekoa$elm_text_editor$TextEditor$logging,
 					'dragat',
 					A2(
 						_minekoa$elm_text_editor$TextEditor$printDragInfo,
-						_p38,
+						_p37,
 						{ctor: '_Tuple2', _0: row, _1: col}),
 					A2(
 						_minekoa$elm_text_editor$TextEditor$setLastCommand,
@@ -13930,7 +14084,7 @@ var _minekoa$elm_text_editor$TextEditor$update = F2(
 						_1: _elm_lang$core$Platform_Cmd$none
 					});
 			default:
-				var new_event = {name: _p30._0, data: _p30._1, date: _p30._2};
+				var new_event = {name: _p29._0, data: _p29._1, date: _p29._2};
 				return {
 					ctor: '_Tuple2',
 					_0: _elm_lang$core$Native_Utils.update(
@@ -13968,8 +14122,8 @@ var _minekoa$elm_text_editor$TextEditor$subscriptions = function (model) {
 					_1: {ctor: '[]'}
 				},
 				function () {
-					var _p39 = model.drag;
-					if (_p39 === true) {
+					var _p38 = model.drag;
+					if (_p38 === true) {
 						return {
 							ctor: '::',
 							_0: _elm_lang$mouse$Mouse$moves(_minekoa$elm_text_editor$TextEditor$DragAt),
@@ -13988,8 +14142,8 @@ var _minekoa$elm_text_editor$TextEditor$LeftMouse = {ctor: 'LeftMouse'};
 var _minekoa$elm_text_editor$TextEditor$mouseButton = A2(
 	_elm_lang$core$Json_Decode$andThen,
 	function (n) {
-		var _p40 = n;
-		switch (_p40) {
+		var _p39 = n;
+		switch (_p39) {
 			case 0:
 				return _elm_lang$core$Json_Decode$succeed(_minekoa$elm_text_editor$TextEditor$LeftMouse);
 			case 1:
@@ -14007,7 +14161,7 @@ var _minekoa$elm_text_editor$TextEditor$mouseButton = A2(
 						'unknown mouse button value (',
 						A2(
 							_elm_lang$core$Basics_ops['++'],
-							_elm_lang$core$Basics$toString(_p40),
+							_elm_lang$core$Basics$toString(_p39),
 							')')));
 		}
 	},
@@ -23208,6 +23362,320 @@ var _minekoa$elm_text_editor$StyleMenu$update = F2(
 		}
 	});
 
+var _minekoa$elm_text_editor$SettingMenu$intOptionSettingControl = F4(
+	function (label, tagger, opts, value) {
+		return A2(
+			_elm_lang$html$Html$div,
+			{
+				ctor: '::',
+				_0: _elm_lang$html$Html_Attributes$class('settingmenu-option'),
+				_1: {ctor: '[]'}
+			},
+			{
+				ctor: '::',
+				_0: A2(
+					_elm_lang$html$Html$div,
+					{
+						ctor: '::',
+						_0: _elm_lang$html$Html_Attributes$class('settingmenu-option-label'),
+						_1: {ctor: '[]'}
+					},
+					{
+						ctor: '::',
+						_0: _elm_lang$html$Html$text(label),
+						_1: {ctor: '[]'}
+					}),
+				_1: {
+					ctor: '::',
+					_0: A2(
+						_elm_lang$html$Html$div,
+						{
+							ctor: '::',
+							_0: _elm_lang$html$Html_Attributes$class('settingmenu-option-control'),
+							_1: {ctor: '[]'}
+						},
+						A2(
+							_elm_lang$core$List$map,
+							function (i) {
+								return A2(
+									_elm_lang$html$Html$div,
+									{
+										ctor: '::',
+										_0: _elm_lang$html$Html_Attributes$class(
+											_elm_lang$core$Native_Utils.eq(value, i) ? 'setting-option-value-active' : 'setting-option-value-disactive'),
+										_1: {
+											ctor: '::',
+											_0: _elm_lang$html$Html_Events$onClick(
+												tagger(i)),
+											_1: {ctor: '[]'}
+										}
+									},
+									{
+										ctor: '::',
+										_0: _elm_lang$html$Html$text(
+											_elm_lang$core$Basics$toString(i)),
+										_1: {ctor: '[]'}
+									});
+							},
+							opts)),
+					_1: {ctor: '[]'}
+				}
+			});
+	});
+var _minekoa$elm_text_editor$SettingMenu$boolSettingControl = F3(
+	function (label, tagger, value) {
+		return A2(
+			_elm_lang$html$Html$div,
+			{
+				ctor: '::',
+				_0: _elm_lang$html$Html_Attributes$class('settingmenu-option'),
+				_1: {ctor: '[]'}
+			},
+			{
+				ctor: '::',
+				_0: A2(
+					_elm_lang$html$Html$div,
+					{
+						ctor: '::',
+						_0: _elm_lang$html$Html_Attributes$class('settingmenu-option-label'),
+						_1: {ctor: '[]'}
+					},
+					{
+						ctor: '::',
+						_0: _elm_lang$html$Html$text(label),
+						_1: {ctor: '[]'}
+					}),
+				_1: {
+					ctor: '::',
+					_0: A2(
+						_elm_lang$html$Html$div,
+						{
+							ctor: '::',
+							_0: _elm_lang$html$Html_Attributes$class('settingmenu-option-control'),
+							_1: {ctor: '[]'}
+						},
+						{
+							ctor: '::',
+							_0: A2(
+								_elm_lang$html$Html$div,
+								{
+									ctor: '::',
+									_0: _elm_lang$html$Html_Attributes$class(
+										value ? 'setting-option-value-active' : 'setting-option-value-disactive'),
+									_1: {
+										ctor: '::',
+										_0: _elm_lang$html$Html_Events$onClick(
+											tagger(!value)),
+										_1: {ctor: '[]'}
+									}
+								},
+								{
+									ctor: '::',
+									_0: _elm_lang$html$Html$text(
+										_elm_lang$core$Basics$toString(value)),
+									_1: {ctor: '[]'}
+								}),
+							_1: {ctor: '[]'}
+						}),
+					_1: {ctor: '[]'}
+				}
+			});
+	});
+var _minekoa$elm_text_editor$SettingMenu$update = F2(
+	function (msg, model) {
+		var core_opts = model.options;
+		var _p0 = msg;
+		switch (_p0.ctor) {
+			case 'SelectSubMenu':
+				return {
+					ctor: '_Tuple2',
+					_0: _elm_lang$core$Native_Utils.update(
+						model,
+						{selectedSubMenu: _p0._0}),
+					_1: _elm_lang$core$Platform_Cmd$none
+				};
+			case 'ChangeShowCtrlChar':
+				return {
+					ctor: '_Tuple2',
+					_0: _elm_lang$core$Native_Utils.update(
+						model,
+						{
+							options: _elm_lang$core$Native_Utils.update(
+								core_opts,
+								{showControlCharactor: _p0._0})
+						}),
+					_1: _elm_lang$core$Platform_Cmd$none
+				};
+			case 'ChangeTabOrder':
+				return {
+					ctor: '_Tuple2',
+					_0: _elm_lang$core$Native_Utils.update(
+						model,
+						{
+							options: _elm_lang$core$Native_Utils.update(
+								core_opts,
+								{tabOrder: _p0._0})
+						}),
+					_1: _elm_lang$core$Platform_Cmd$none
+				};
+			default:
+				return {
+					ctor: '_Tuple2',
+					_0: _elm_lang$core$Native_Utils.update(
+						model,
+						{
+							options: _elm_lang$core$Native_Utils.update(
+								core_opts,
+								{indentTabsMode: _p0._0})
+						}),
+					_1: _elm_lang$core$Platform_Cmd$none
+				};
+		}
+	});
+var _minekoa$elm_text_editor$SettingMenu$Model = F2(
+	function (a, b) {
+		return {options: a, selectedSubMenu: b};
+	});
+var _minekoa$elm_text_editor$SettingMenu$RenderingOptionMenu = {ctor: 'RenderingOptionMenu'};
+var _minekoa$elm_text_editor$SettingMenu$init = function (core_opts) {
+	return {options: core_opts, selectedSubMenu: _minekoa$elm_text_editor$SettingMenu$RenderingOptionMenu};
+};
+var _minekoa$elm_text_editor$SettingMenu$ChangeIndentTabs = function (a) {
+	return {ctor: 'ChangeIndentTabs', _0: a};
+};
+var _minekoa$elm_text_editor$SettingMenu$ChangeTabOrder = function (a) {
+	return {ctor: 'ChangeTabOrder', _0: a};
+};
+var _minekoa$elm_text_editor$SettingMenu$ChangeShowCtrlChar = function (a) {
+	return {ctor: 'ChangeShowCtrlChar', _0: a};
+};
+var _minekoa$elm_text_editor$SettingMenu$renderingOptionView = function (core_opts) {
+	return A2(
+		_elm_lang$html$Html$div,
+		{ctor: '[]'},
+		{
+			ctor: '::',
+			_0: A3(_minekoa$elm_text_editor$SettingMenu$boolSettingControl, 'show ctrl charactor', _minekoa$elm_text_editor$SettingMenu$ChangeShowCtrlChar, core_opts.showControlCharactor),
+			_1: {
+				ctor: '::',
+				_0: A4(
+					_minekoa$elm_text_editor$SettingMenu$intOptionSettingControl,
+					'tab order',
+					_minekoa$elm_text_editor$SettingMenu$ChangeTabOrder,
+					{
+						ctor: '::',
+						_0: 2,
+						_1: {
+							ctor: '::',
+							_0: 4,
+							_1: {
+								ctor: '::',
+								_0: 8,
+								_1: {
+									ctor: '::',
+									_0: 16,
+									_1: {ctor: '[]'}
+								}
+							}
+						}
+					},
+					core_opts.tabOrder),
+				_1: {
+					ctor: '::',
+					_0: A3(_minekoa$elm_text_editor$SettingMenu$boolSettingControl, 'indent tabs mode', _minekoa$elm_text_editor$SettingMenu$ChangeIndentTabs, core_opts.indentTabsMode),
+					_1: {ctor: '[]'}
+				}
+			}
+		});
+};
+var _minekoa$elm_text_editor$SettingMenu$menuPalette = function (model) {
+	var _p1 = model.selectedSubMenu;
+	return A2(
+		_elm_lang$html$Html$div,
+		{
+			ctor: '::',
+			_0: _elm_lang$html$Html_Attributes$class('menu-palette'),
+			_1: {ctor: '[]'}
+		},
+		{
+			ctor: '::',
+			_0: _minekoa$elm_text_editor$SettingMenu$renderingOptionView(model.options),
+			_1: {ctor: '[]'}
+		});
+};
+var _minekoa$elm_text_editor$SettingMenu$SelectSubMenu = function (a) {
+	return {ctor: 'SelectSubMenu', _0: a};
+};
+var _minekoa$elm_text_editor$SettingMenu$menuItemsView = function (model) {
+	return A2(
+		_elm_lang$html$Html$div,
+		{
+			ctor: '::',
+			_0: _elm_lang$html$Html_Attributes$class('menu-itemlist'),
+			_1: {ctor: '[]'}
+		},
+		{
+			ctor: '::',
+			_0: A2(
+				_elm_lang$html$Html$div,
+				{
+					ctor: '::',
+					_0: _elm_lang$html$Html_Events$onClick(
+						_minekoa$elm_text_editor$SettingMenu$SelectSubMenu(_minekoa$elm_text_editor$SettingMenu$RenderingOptionMenu)),
+					_1: {
+						ctor: '::',
+						_0: _elm_lang$html$Html_Attributes$class(
+							_elm_lang$core$Native_Utils.eq(model.selectedSubMenu, _minekoa$elm_text_editor$SettingMenu$RenderingOptionMenu) ? 'menu-item-active' : 'menu-item'),
+						_1: {ctor: '[]'}
+					}
+				},
+				{
+					ctor: '::',
+					_0: A2(
+						_elm_lang$html$Html$span,
+						{ctor: '[]'},
+						{
+							ctor: '::',
+							_0: _elm_lang$html$Html$text('Rendering Options'),
+							_1: {ctor: '[]'}
+						}),
+					_1: {ctor: '[]'}
+				}),
+			_1: {ctor: '[]'}
+		});
+};
+var _minekoa$elm_text_editor$SettingMenu$view = function (model) {
+	return A2(
+		_elm_lang$html$Html$div,
+		{
+			ctor: '::',
+			_0: _elm_lang$html$Html_Attributes$class('setting-menu'),
+			_1: {
+				ctor: '::',
+				_0: _elm_lang$html$Html_Attributes$class('menu-root'),
+				_1: {
+					ctor: '::',
+					_0: _elm_lang$html$Html_Attributes$style(
+						{
+							ctor: '::',
+							_0: {ctor: '_Tuple2', _0: 'min-height', _1: '17em'},
+							_1: {ctor: '[]'}
+						}),
+					_1: {ctor: '[]'}
+				}
+			}
+		},
+		{
+			ctor: '::',
+			_0: _minekoa$elm_text_editor$SettingMenu$menuItemsView(model),
+			_1: {
+				ctor: '::',
+				_0: _minekoa$elm_text_editor$SettingMenu$menuPalette(model),
+				_1: {ctor: '[]'}
+			}
+		});
+};
+
 var _minekoa$elm_text_editor$Main$modeline = function (model) {
 	var toSelectionString = function (selection) {
 		return A2(
@@ -23478,7 +23946,9 @@ var _minekoa$elm_text_editor$Main$Model = function (a) {
 							return function (h) {
 								return function (i) {
 									return function (j) {
-										return {editor: a, buffers: b, currentBufferIndex: c, currentBufferName: d, pane: e, $debugger: f, swkeyboard: g, style: h, filer: i, keybindMenu: j};
+										return function (k) {
+											return {editor: a, buffers: b, currentBufferIndex: c, currentBufferName: d, pane: e, $debugger: f, swkeyboard: g, style: h, filer: i, keybindMenu: j, settingMenu: k};
+										};
 									};
 								};
 							};
@@ -23494,6 +23964,7 @@ var _minekoa$elm_text_editor$Main$Buffer = F2(
 		return {name: a, buffer: b};
 	});
 var _minekoa$elm_text_editor$Main$AboutPane = {ctor: 'AboutPane'};
+var _minekoa$elm_text_editor$Main$SettingMenuPane = {ctor: 'SettingMenuPane'};
 var _minekoa$elm_text_editor$Main$KeyBindMenuPane = {ctor: 'KeyBindMenuPane'};
 var _minekoa$elm_text_editor$Main$FileMenuPane = {ctor: 'FileMenuPane'};
 var _minekoa$elm_text_editor$Main$StyleMenuPane = {ctor: 'StyleMenuPane'};
@@ -23601,6 +24072,9 @@ var _minekoa$elm_text_editor$Main$aboutPane = function (model) {
 			}
 		});
 };
+var _minekoa$elm_text_editor$Main$SettingMenuMsg = function (a) {
+	return {ctor: 'SettingMenuMsg', _0: a};
+};
 var _minekoa$elm_text_editor$Main$KeyBindMenuMsg = function (a) {
 	return {ctor: 'KeyBindMenuMsg', _0: a};
 };
@@ -23679,14 +24153,18 @@ var _minekoa$elm_text_editor$Main$menuBar = function (model) {
 						_0: A2(tab, _minekoa$elm_text_editor$Main$KeyBindMenuPane, 'Keybind'),
 						_1: {
 							ctor: '::',
-							_0: A2(tab, _minekoa$elm_text_editor$Main$KeyboardPane, 'Keyboard'),
+							_0: A2(tab, _minekoa$elm_text_editor$Main$SettingMenuPane, 'Setting'),
 							_1: {
 								ctor: '::',
-								_0: A2(tab, _minekoa$elm_text_editor$Main$DebugMenuPane, 'Debug'),
+								_0: A2(tab, _minekoa$elm_text_editor$Main$KeyboardPane, 'Keyboard'),
 								_1: {
 									ctor: '::',
-									_0: A2(tab, _minekoa$elm_text_editor$Main$AboutPane, 'About'),
-									_1: {ctor: '[]'}
+									_0: A2(tab, _minekoa$elm_text_editor$Main$DebugMenuPane, 'Debug'),
+									_1: {
+										ctor: '::',
+										_0: A2(tab, _minekoa$elm_text_editor$Main$AboutPane, 'About'),
+										_1: {ctor: '[]'}
+									}
 								}
 							}
 						}
@@ -23738,6 +24216,11 @@ var _minekoa$elm_text_editor$Main$applicationMenu = function (model) {
 								_elm_lang$html$Html$map,
 								_minekoa$elm_text_editor$Main$KeyBindMenuMsg,
 								A2(_minekoa$elm_text_editor$KeyBindMenu$view, model.editor.keymap, model.keybindMenu));
+						case 'SettingMenuPane':
+							return A2(
+								_elm_lang$html$Html$map,
+								_minekoa$elm_text_editor$Main$SettingMenuMsg,
+								_minekoa$elm_text_editor$SettingMenu$view(model.settingMenu));
 						default:
 							return _minekoa$elm_text_editor$Main$aboutPane(model);
 					}
@@ -23841,7 +24324,8 @@ var _minekoa$elm_text_editor$Main$init = function () {
 				ctor: '::',
 				_0: buf,
 				_1: {ctor: '[]'}
-			})(0)(buf.name)(_minekoa$elm_text_editor$Main$NoPane)(_minekoa$elm_text_editor$DebugMenu$init)(_minekoa$elm_text_editor$SoftwareKeyboard$init)(smm)(_minekoa$elm_text_editor$FileMenu$init)(kmm),
+			})(0)(buf.name)(_minekoa$elm_text_editor$Main$NoPane)(_minekoa$elm_text_editor$DebugMenu$init)(_minekoa$elm_text_editor$SoftwareKeyboard$init)(smm)(_minekoa$elm_text_editor$FileMenu$init)(kmm)(
+			_minekoa$elm_text_editor$SettingMenu$init(bm.core.option)),
 		_1: _elm_lang$core$Platform_Cmd$batch(
 			{
 				ctor: '::',
@@ -24077,6 +24561,31 @@ var _minekoa$elm_text_editor$Main$update = F2(
 							keybindMenu: km
 						}),
 					_1: A2(_elm_lang$core$Platform_Cmd$map, _minekoa$elm_text_editor$Main$KeyBindMenuMsg, kc)
+				};
+			case 'SettingMenuMsg':
+				var updateCoreOpts = F2(
+					function (em, opts) {
+						var core = em.core;
+						return _elm_lang$core$Native_Utils.update(
+							em,
+							{
+								core: _elm_lang$core$Native_Utils.update(
+									core,
+									{option: opts})
+							});
+					});
+				var _p22 = A2(_minekoa$elm_text_editor$SettingMenu$update, _p10._0, model.settingMenu);
+				var sm = _p22._0;
+				var sc = _p22._1;
+				return {
+					ctor: '_Tuple2',
+					_0: _elm_lang$core$Native_Utils.update(
+						model,
+						{
+							editor: A2(updateCoreOpts, model.editor, sm.options),
+							settingMenu: sm
+						}),
+					_1: A2(_elm_lang$core$Platform_Cmd$map, _minekoa$elm_text_editor$Main$SettingMenuMsg, sc)
 				};
 			default:
 				return {

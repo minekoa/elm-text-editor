@@ -1,0 +1,37 @@
+.setting-menu {
+    --menu-item-list-width: 12em;
+}
+
+.settingmenu-option {
+    border-top: 3px dotted lightgray;
+    margin-top: 0.5em;
+}
+
+.settingmenu-option-label {
+    color: darkgray;
+}
+
+.settingmenu-option-control {
+    padding: 0.5em;
+    margin-left : 1.5em;
+
+    display: inline-flex;
+    align-items: flex-start;
+    
+}
+
+.setting-option-value-active {
+    color: royalblue;
+
+    padding: 3px 1em;
+    border-radius: 1em;
+    border: 2px dotted royalblue;
+}
+
+.setting-option-value-disactive {
+    color: lisghtgray;
+
+    padding: 3px 1em;
+    border-radius: 1em;
+    border: 2px dotted lightgray;
+}

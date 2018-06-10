@@ -17,6 +17,7 @@ import SoftwareKeyboard
 import StyleMenu
 import FileMenu
 import KeyBindMenu
+import SettingMenu
 
 import Ports.WebStrage
 
@@ -41,6 +42,7 @@ type alias Model =
     , style : StyleMenu.Model
     , filer : FileMenu.Model
     , keybindMenu : KeyBindMenu.Model
+    , settingMenu : SettingMenu.Model
     }
 
 type MenuPane
@@ -50,6 +52,7 @@ type MenuPane
     | StyleMenuPane
     | FileMenuPane
     | KeyBindMenuPane
+    | SettingMenuPane
     | AboutPane
 
 type alias Buffer =
@@ -82,6 +85,7 @@ init =
               smm
               FileMenu.init
               kmm
+              (SettingMenu.init bm.core.option)
         , Cmd.batch [ Cmd.map EditorMsg bc
                     , Cmd.map StyleMenuMsg smc
                     , Cmd.map KeyBindMenuMsg kmc
@@ -104,6 +108,7 @@ type Msg
     | StyleMenuMsg (StyleMenu.Msg)
     | FileMenuMsg (FileMenu.Msg)
     | KeyBindMenuMsg (KeyBindMenu.Msg)
+    | SettingMenuMsg (SettingMenu.Msg)
     | ClearSettings
 
 updateMap: Model -> (Editor.Model, Cmd Editor.Msg) -> (Model, Cmd Msg)
@@ -240,6 +245,26 @@ update msg model =
                 , Cmd.map KeyBindMenuMsg kc
                 )
 
+        SettingMenuMsg smsg ->
+            let
+                (sm, sc) = SettingMenu.update smsg model.settingMenu
+
+                updateCoreOpts = (\ em opts ->
+                                      let
+                                          core = em.core
+                                      in
+                                          { em
+                                              | core = { core | option = opts }
+                                          }
+                                 )
+            in
+                ( { model
+                      | editor = updateCoreOpts model.editor sm.options
+                      , settingMenu = sm
+                  }
+                , Cmd.map SettingMenuMsg sc
+                )
+
         -- about menu
         ClearSettings ->
             ( model
@@ -358,6 +383,8 @@ applicationMenu model =
                   Html.map FileMenuMsg (FileMenu.view model.filer)
               KeyBindMenuPane ->
                   Html.map KeyBindMenuMsg (KeyBindMenu.view model.editor.keymap model.keybindMenu)
+              SettingMenuPane ->
+                  Html.map SettingMenuMsg (SettingMenu.view model.settingMenu)
               AboutPane ->
                   aboutPane model
         ]
@@ -379,6 +406,7 @@ menuBar model =
         , tab FileMenuPane "File"
         , tab StyleMenuPane "Style"
         , tab KeyBindMenuPane "Keybind"
+        , tab SettingMenuPane "Setting"
         , tab KeyboardPane "Keyboard"
         , tab DebugMenuPane "Debug"
         , tab AboutPane "About"
