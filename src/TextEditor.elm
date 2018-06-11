@@ -281,7 +281,7 @@ update msg model =
 
 input: String -> Model -> (Model, Cmd Msg)
 input s model =
-    case model.enableComposer of
+    case model.enableComposer || String.isEmpty s of -- Firefox のcompositionEnd後のinputを弾くため、空文字判定 (JavaScript側で空にしている）
         True ->
             ( model
             , Cmd.none
@@ -291,6 +291,21 @@ input s model =
             updateMap model (Commands.insert (String.right 1 s) model.core)
                 |> setLastCommand ( ["insert ", s] |> String.concat )
                 |> logging "input" (String.right 1 s)
+
+-- note:
+--   compositionStart ~ ..End で ON/OFFしている enableComposer フラグは、
+--   `inputEvent.isComposing` と状態が一致するので、こちらを使えば良いように思える。
+-- 
+--   しかし、
+--
+--   ```
+--   on "input" Json.Decode.map2 tagger
+--                  (Json.Decode.field "data" Json.Decode.string)
+--                  (Json.Decode.field "isComposing" Json.Decode.bool)
+--   ```
+--
+--    は、できあいの onInputと異なり、改行文字入力を拾えないため(chrome)、わざわざフラグ管理を行っている
+
 
 
 keyDown : KeyboardEvent -> Model -> (Model, Cmd Msg)
@@ -308,14 +323,7 @@ keyDown e model =
 
 keyPress : Int -> Model -> (Model, Cmd Msg)
 keyPress code model =
-    -- IME入力中にkeypress イベントがこないことを利用して IME入力モード(inputを反映するか否かのフラグ）を解除
-    -- ※ compositonEnd で解除してしまうと、firefoxとchromeの振る舞いの違いでハマる
-    --        chrome  :: keydown 229 -> compositionend s
-    --        firefox ::   (null)    -> compositionend s -> input s
-    ( model
-        |> composerDisable
-    , Cmd.none
-    )
+    ( model, Cmd.none )
         |> logging "keypress" (toString code)
 
 keyUp : Int -> Model -> (Model, Cmd Msg)
@@ -346,15 +354,13 @@ compositionUpdate data model =
 
 compositionEnd : String -> Model -> (Model, Cmd Msg)
 compositionEnd data model =
-    -- note: 変換プレビューのクリアはするが、
-    --        firefox ではこの後 input イベントがくるので、
-    --        それを無視する為 enable-conposerは立てたままにする (keypressイベントで解除する、そちらを参照)
     let
         (m, c) = Core.compositionEnd data model.core
     in
         ( { model
               | core = m
           }
+              |> composerDisable
         , Cmd.map CoreMsg c
         )
           |> setLastCommand ( ["insert ", data] |> String.concat )

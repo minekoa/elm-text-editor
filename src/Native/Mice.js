@@ -99,9 +99,7 @@ var _minekoa$elm_text_editor$Native_Mice = function() {
 
         /* IMEを考慮した input_area のクリア制御
          *      - input
-         *      - compositionstart
          *      - compositionend
-         *      - keypress
          * note:
          *   一見 Elm 世界でやれそうに見えるが、
          *   TEA は、1周の処理が終えるまでの間、 以降のJSイベントを待たせてくれるわけではないので、
@@ -110,29 +108,24 @@ var _minekoa$elm_text_editor$Native_Mice = function() {
          */
 
         input_area.addEventListener( "input", e => {
-            if (!input_area.enableComposer) {
+            if (!e.isComposing) {
                 input_area.value = "";
             }
         });
 
-        input_area.addEventListener( "compositionstart", e => {
-            input_area.enableComposer = true;
-        });
-
         input_area.addEventListener( "compositionend", e => {
+            /* chrome と firefox の挙動を違いを吸収するため、valueをここでクリアする
+             *
+             *     chrome  :: keydown 229 -> compositionUpdate s -> compositionend s -> (null)
+             *     firefox ::   (null)    ->     (null)          -> compositionend s -> input s
+             *
+             * compositionEnd で、textarea.valueをクリアすれば、
+             * firefoxの最後の `input s` の s を空文字にできる
+             */
+
             input_area.value = "";
         });
 
-        input_area.addEventListener( "keypress", e => {
-
-            /* IME入力中にkeypress イベントがこないことを利用して IME入力モード(inputを反映するか否かのフラグ）を解除
-             *  ※ compositonEnd で解除してしまうと、firefoxとchromeの振る舞いの違いでハマる
-             *        chrome  :: keydown 229 -> compositionend s
-             *        firefox ::   (null)    -> compositionend s -> input s
-             */
-
-            input_area.enableComposer = false;
-        });
 
 
         /* クリップボード制御
