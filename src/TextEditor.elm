@@ -123,6 +123,7 @@ type Msg
     | Input String
     | KeyDown KeyboardEvent
     | KeyPress Int
+    | KeyUp Int
     | CompositionStart String
     | CompositionUpdate String
     | CompositionEnd String
@@ -175,6 +176,9 @@ update msg model =
  
         KeyPress code ->
             keyPress code model
+
+        KeyUp code ->
+            keyUp code model
 
         CompositionStart data ->
             compositionStart data model
@@ -314,6 +318,10 @@ keyPress code model =
     )
         |> logging "keypress" (toString code)
 
+keyUp : Int -> Model -> (Model, Cmd Msg)
+keyUp code model =
+    ( model, Cmd.none )
+        |> logging "keyup" (toString code)
 
 compositionStart : String -> Model -> (Model, Cmd Msg)
 compositionStart data model =
@@ -591,7 +599,9 @@ cursorLayer keymap model =
                      [ textarea [ id <| inputAreaID model
                                 , onInput Input
                                 , onKeyDown keymap KeyDown
+--                                , onKeyDownForDeepAnalayze KeyDown  -- すべてのkeydownイベントを見たい場合は onKeyDown を無効にしてこちらを有効にする
                                 , onKeyPress KeyPress
+                                , onKeyUp KeyUp
                                 , onCompositionStart CompositionStart
                                 , onCompositionUpdate CompositionUpdate
                                 , onCompositionEnd CompositionEnd
@@ -857,6 +867,18 @@ onKeyDown keymap tagger =
                                        Just _  -> Just (tagger e)
                                        Nothing -> Nothing
                               )
+
+onKeyDownForDeepAnalayze : List KeyBind.KeyBind -> (KeyboardEvent -> msg) -> Attribute msg
+onKeyDownForDeepAnalayze keymap tagger =
+    -- すべてのkeydownイベントをフックするかわりに preventDefault しない版。挙動が変わる
+    onWithOptions "keydown" { stopPropagation=False, preventDefault=False } <|
+        -- eventlog 用に、onKeyDown で拾わなかったキーイベントのみ発火させる
+        considerKeyboardEvent (\e ->
+                                   case KeyBind.find (e.ctrlKey, e.altKey, e.shiftKey, e.keyCode) keymap of
+                                       Just _  -> Just (tagger e)
+                                       Nothing -> Just (tagger e)
+                              )
+
 
 onKeyPress : (Int -> msg) -> Attribute msg
 onKeyPress tagger =
