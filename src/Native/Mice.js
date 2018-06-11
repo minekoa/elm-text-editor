@@ -120,7 +120,7 @@ var _minekoa$elm_text_editor$Native_Mice = function() {
              *     firefox ::   (null)    ->     (null)          -> compositionend s -> input s
              *
              * compositionEnd で、textarea.valueをクリアすれば、
-             * firefoxの最後の `input s` の s を空文字にできる
+             * firefoxの最後の `input s` の s を空文字にできる(後はelm側で切り分ければ良い)
              */
 
             input_area.value = "";
