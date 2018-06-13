@@ -164,18 +164,16 @@ suite =
                   "abc, def. g"
                       |> \s -> StringExtra.nextWordPos s 8
                       |> Expect.equal (Just 11)
-        , test "RX-78-2\", 0" <|
+        , test "nextwordpos, RX-78-2\", 0" <|
               \_ ->
                   "RX-72-2"
                       |> \s -> StringExtra.nextWordPos s 0
                       |> Expect.equal (Just 2)
-        , test "RX-78-2\", 2" <|
+        , test "nextwordpos, RX-78-2\", 2" <|
               \_ ->
                   "RX-72-2"
                       |> \s -> StringExtra.nextWordPos s 2
                       |> Expect.equal (Just 5)
-
-
 
 
         , test "previoswordpos, \"This| is| a| pen.\", 13" <|
@@ -298,4 +296,28 @@ suite =
                   "宇宙よりも遠い場所"
                       |> \s -> StringExtra.previosWordPos s 5
                       |> Expect.equal (Just 0)
+
+
+        , test "previoswordpos, \"abc|, def|. g\", 0" <|
+              \_ ->
+                  "abc, def. g"
+                      |> \s -> StringExtra.previosWordPos s 10
+                      |> Expect.equal (Just 5)
+        , test "previoswordpos, \"abc|, def|. g\", 5" <|
+              \_ ->
+                  "abc, def. g"
+                      |> \s -> StringExtra.previosWordPos s 5
+                      |> Expect.equal (Just 0)
+        , test "previoswordpos, RX-78-2\", 4" <|
+              \_ ->
+                  "RX-72-2"
+                      |> \s -> StringExtra.previosWordPos s 4
+                      |> Expect.equal (Just 3)
+        , test "previoswordpos, RX-78-2\", 3" <|
+              \_ ->
+                  "RX-72-2"
+                      |> \s -> StringExtra.previosWordPos s 3
+                      |> Expect.equal (Just 0)
+
+
         ]
