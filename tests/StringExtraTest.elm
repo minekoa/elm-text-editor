@@ -175,6 +175,26 @@ suite =
                       |> \s -> StringExtra.nextWordPos s 2
                       |> Expect.equal (Just 5)
 
+        , test "nextwordpos, あいうえお、かきくけこ。たちつてと！なにぬねの？はひふへほ\", 0" <|
+              \_ ->
+                  "あいうえお、かきくけこ。たちつてと！なにぬねの？はひふへほ"
+                      |> \s -> StringExtra.nextWordPos s 0
+                      |> Expect.equal (Just 5)
+        , test "nextwordpos, あいうえお、かきくけこ。たちつてと！なにぬねの？はひふへほ\", 5" <|
+              \_ ->
+                  "あいうえお、かきくけこ。たちつてと！なにぬねの？はひふへほ"
+                      |> \s -> StringExtra.nextWordPos s 5
+                      |> Expect.equal (Just 11)
+        , test "nextwordpos, あいうえお、かきくけこ。たちつてと！なにぬねの？はひふへほ\", 11" <|
+              \_ ->
+                  "あいうえお、かきくけこ。たちつてと！なにぬねの？はひふへほ"
+                      |> \s -> StringExtra.nextWordPos s 11
+                      |> Expect.equal (Just 17)
+        , test "nextwordpos, あいうえお、かきくけこ。たちつてと！なにぬねの？はひふへほ\", 17" <|
+              \_ ->
+                  "あいうえお、かきくけこ。たちつてと！なにぬねの？はひふへほ"
+                      |> \s -> StringExtra.nextWordPos s 17
+                      |> Expect.equal (Just 23)
 
         , test "previoswordpos, \"This| is| a| pen.\", 13" <|
               \_ ->
@@ -319,5 +339,30 @@ suite =
                       |> \s -> StringExtra.previosWordPos s 3
                       |> Expect.equal (Just 0)
 
+        , test "previoswordpos, あいうえお、かきくけこ。たちつてと！なにぬねの？はひふへほ\", 28" <|
+              \_ ->
+                  "あいうえお、かきくけこ。たちつてと！なにぬねの？はひふへほ"
+                      |> \s -> StringExtra.previosWordPos s 28
+                      |> Expect.equal (Just 24)
+        , test "previoswordpos, あいうえお、かきくけこ。たちつてと！なにぬねの？はひふへほ\", 24" <|
+              \_ ->
+                  "あいうえお、かきくけこ。たちつてと！なにぬねの？はひふへほ"
+                      |> \s -> StringExtra.previosWordPos s 24
+                      |> Expect.equal (Just 18)
+        , test "previoswordpos, あいうえお、かきくけこ。たちつてと！なにぬねの？はひふへほ\", 17" <|
+              \_ ->
+                  "あいうえお、かきくけこ。たちつてと！なにぬねの？はひふへほ"
+                      |> \s -> StringExtra.previosWordPos s 18
+                      |> Expect.equal (Just 12)
+        , test "previoswordpos, あいうえお、かきくけこ。たちつてと！なにぬねの？はひふへほ\", 11" <|
+              \_ ->
+                  "あいうえお、かきくけこ。たちつてと！なにぬねの？はひふへほ"
+                      |> \s -> StringExtra.previosWordPos s 12
+                      |> Expect.equal (Just 6)
+        , test "previoswordpos, あいうえお、かきくけこ。たちつてと！なにぬねの？はひふへほ\", 5" <|
+              \_ ->
+                  "あいうえお、かきくけこ。たちつてと！なにぬねの？はひふへほ"
+                      |> \s -> StringExtra.previosWordPos s 6
+                      |> Expect.equal (Just 0)
 
         ]
