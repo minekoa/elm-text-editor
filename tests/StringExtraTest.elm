@@ -149,6 +149,34 @@ suite =
                       |> \s -> StringExtra.nextWordPos s 6
                       |> Expect.equal (Just 7)
 
+        , test "nextwordpos, \"abc|, def|. g\", 0" <|
+              \_ ->
+                  "abc, def. g"
+                      |> \s -> StringExtra.nextWordPos s 0
+                      |> Expect.equal (Just 3)
+        , test "nextwordpos, \"abc|, def|. g\", 3" <|
+              \_ ->
+                  "abc, def. g"
+                      |> \s -> StringExtra.nextWordPos s 3
+                      |> Expect.equal (Just 8)
+        , test "nextwordpos, \"abc|, def|. g\", 8" <|
+              \_ ->
+                  "abc, def. g"
+                      |> \s -> StringExtra.nextWordPos s 8
+                      |> Expect.equal (Just 11)
+        , test "RX-78-2\", 0" <|
+              \_ ->
+                  "RX-72-2"
+                      |> \s -> StringExtra.nextWordPos s 0
+                      |> Expect.equal (Just 2)
+        , test "RX-78-2\", 2" <|
+              \_ ->
+                  "RX-72-2"
+                      |> \s -> StringExtra.nextWordPos s 2
+                      |> Expect.equal (Just 5)
+
+
+
 
         , test "previoswordpos, \"This| is| a| pen.\", 13" <|
               \_ ->
