@@ -36,10 +36,11 @@ nextWordPosProc prev_char_t str n =
                     nextWordPosProc char_t cs (n + 1)
                 else
                     case (prev_char_t, char_t) of
-                        (SpaceChar , _)       -> nextWordPosProc char_t cs (n + 1)
-                        (Kanji, Hiragana)     -> nextWordPosProc char_t cs (n + 1)
-                        (Katakana, Hiragana)  -> nextWordPosProc char_t cs (n + 1)
-                        _                     -> Just n
+                        (SpaceChar , _)           -> nextWordPosProc char_t cs (n + 1)
+                        (PanctuationAndSymbol, _) -> nextWordPosProc char_t cs (n + 1)
+                        (Kanji, Hiragana)         -> nextWordPosProc char_t cs (n + 1)
+                        (Katakana, Hiragana)      -> nextWordPosProc char_t cs (n + 1)
+                        _                         -> Just n
             
         [] ->
             if prev_char_t == SpaceChar then
@@ -68,10 +69,11 @@ previosWordPosProc fwd_char_t reversed_str n =
                     previosWordPosProc char_t cs (n - 1)
                 else
                     case (fwd_char_t, char_t) of
-                        (SpaceChar , _)       -> previosWordPosProc char_t cs (n - 1)
-                        (Hiragana, Kanji)     -> previosWordPosProc char_t cs (n - 1)
-                        (Hiragana, Katakana)  -> previosWordPosProc char_t cs (n - 1)
-                        _                     -> Just n
+                        (SpaceChar , _)           -> previosWordPosProc char_t cs (n - 1)
+                        (PanctuationAndSymbol, _) -> previosWordPosProc char_t cs (n - 1)
+                        (Hiragana, Kanji)         -> previosWordPosProc char_t cs (n - 1)
+                        (Hiragana, Katakana)      -> previosWordPosProc char_t cs (n - 1)
+                        _                         -> Just n
             
         [] ->
             if fwd_char_t == SpaceChar then
@@ -123,6 +125,7 @@ indentLevel tabOrder s =
 type CharType
     = AlphaNumericChar
     | SpaceChar
+    | PanctuationAndSymbol
     | SignChar
     | Hiragana
     | Katakana
@@ -132,12 +135,13 @@ type CharType
 
 chartype : Char -> CharType
 chartype c =
-    if      isAlpanumeric c   then AlphaNumericChar
-    else if isSpace c         then SpaceChar
-    else if isHiragana c      then Hiragana
-    else if isKatakana c      then Katakana
-    else if isKanji c         then Kanji
-    else if isMultiByteChar c then MultibyteChar
+    if      isAlpanumeric c          then AlphaNumericChar
+    else if isSpace c                then SpaceChar
+    else if isPanctuationAndSymbol c then PanctuationAndSymbol
+    else if isHiragana c             then Hiragana
+    else if isKatakana c             then Katakana
+    else if isKanji c                then Kanji
+    else if isMultiByteChar c        then MultibyteChar
     else SignChar
 
 isAlpanumeric: Char -> Bool
@@ -206,6 +210,52 @@ isKanji c =
         || ((0xFA30 <= cd) && (cd <= 0xFA6A)) -- CJK 互換漢字 JIS X 0213
 
 
+
+isPanctuationAndSymbol : Char -> Bool
+isPanctuationAndSymbol c =
+    -- http://www.asahi-net.or.jp/~ax2s-kmtn/ref/unicode/punctuation.html
+    (isInCodeRange
+         [ (0x0021 , 0x007F ) -- ASCII句読点と記号      ASCII punctuation and symbols
+         , (0x003A , 0x0040 )
+         , (0x005B , 0x0060 )
+         , (0x007B , 0x007F )
+         , (0x00A1 , 0x00BF ) -- ラテン1句読点
+         , (0x2000 , 0x206F ) -- 一般句読点             General Punctuation                 .. ラテン言語で最も一般的に用いられる句読点
+         , (0x2E00 , 0x2E7F ) -- 補助句読点             Supplemental Punctuation            .. 特殊な表記法や古代写本に用いられる、比較的頻度の少ない句読点
+         , (0x3000 , 0x303F ) -- CJKの記号及び句読点    CJK Symbols and Punctuation         .. CJK 東アジアの表意文字で用いられる記号と句読点
+         , (0x16FE0, 0x16FFF) -- 表意文字の記号と句読点 Ideographic Symbols and Punctuation .. 西夏文字、女書などの東アジアの表意文字で用いられる記号と句読点
+         , (0xFE30 , 0xFE4F ) -- CJK互換形              CJK Compatibility Forms             .. 台湾の規格CNS 11643用の互換文字です。
+         , (0xFE50 , 0xFE6F ) -- 小字形                 Small Form Variants                 .. 台湾の規格CNS 11643用の互換文字です。
+         , (0xFE10 , 0xFE1F ) -- 縦書き形               Vertical Forms                      .. 中国の規格GB 18030用の互換文字です。
+         , (0xFF01 , 0xFF0F ) -- 全角ASCII句読点と記号  ASCII Fullwidth punctuation and symbols
+         , (0xFF1A , 0xFF20 )
+         , (0xFF3B , 0xFF40 )
+         , (0xFF5B , 0xFF5D )
+         , (0xFF5F , 0xFF60 ) --   全角括弧             Fullwidth brackets
+         , (0xFF61 , 0xFF64 ) --   半角CJK句読点        Halfwidth CJK punctuation
+         , (0xFFE0 , 0xFFE6 ) --   全角記号             Fullwidth symbol variants
+         , (0xFFE8 , 0xFFEE ) --   半角記号             Halfwidth symbol variants
+
+         ]
+         c
+    ) && not (isSpace c)
+
+
 isMultiByteChar : Char -> Bool
 isMultiByteChar c =
     0x7F < (Char.toCode c)
+
+
+isInCodeRange : List (Int, Int) -> Char -> Bool
+isInCodeRange ranges c =
+    let
+        cd = Char.toCode c
+    in
+        List.foldl
+            (\ range b ->
+                 case b of
+                     True  -> True
+                     False -> (Tuple.first range) <= cd  && (cd <= Tuple.second range)
+            )
+            False ranges
+

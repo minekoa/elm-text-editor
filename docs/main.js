@@ -9117,6 +9117,27 @@ var _elm_lang$mouse$Mouse$subMap = F2(
 	});
 _elm_lang$core$Native_Platform.effectManagers['Mouse'] = {pkg: 'elm-lang/mouse', init: _elm_lang$mouse$Mouse$init, onEffects: _elm_lang$mouse$Mouse$onEffects, onSelfMsg: _elm_lang$mouse$Mouse$onSelfMsg, tag: 'sub', subMap: _elm_lang$mouse$Mouse$subMap};
 
+var _minekoa$elm_text_editor$TextEditor_StringExtra$isInCodeRange = F2(
+	function (ranges, c) {
+		var cd = _elm_lang$core$Char$toCode(c);
+		return A3(
+			_elm_lang$core$List$foldl,
+			F2(
+				function (range, b) {
+					var _p0 = b;
+					if (_p0 === true) {
+						return true;
+					} else {
+						return (_elm_lang$core$Native_Utils.cmp(
+							_elm_lang$core$Tuple$first(range),
+							cd) < 1) && (_elm_lang$core$Native_Utils.cmp(
+							cd,
+							_elm_lang$core$Tuple$second(range)) < 1);
+					}
+				}),
+			false,
+			ranges);
+	});
 var _minekoa$elm_text_editor$TextEditor_StringExtra$isMultiByteChar = function (c) {
 	return _elm_lang$core$Native_Utils.cmp(
 		127,
@@ -9135,8 +9156,8 @@ var _minekoa$elm_text_editor$TextEditor_StringExtra$isHiragana = function (c) {
 	return (_elm_lang$core$Native_Utils.cmp(12352, cd) < 1) && (_elm_lang$core$Native_Utils.cmp(cd, 12447) < 1);
 };
 var _minekoa$elm_text_editor$TextEditor_StringExtra$isJustSpace = function (c) {
-	var _p0 = _elm_lang$core$Char$toCode(c);
-	switch (_p0) {
+	var _p1 = _elm_lang$core$Char$toCode(c);
+	switch (_p1) {
 		case 32:
 			return true;
 		case 160:
@@ -9183,8 +9204,8 @@ var _minekoa$elm_text_editor$TextEditor_StringExtra$isJustSpace = function (c) {
 };
 var _minekoa$elm_text_editor$TextEditor_StringExtra$isSpace = function (c) {
 	return _minekoa$elm_text_editor$TextEditor_StringExtra$isJustSpace(c) || function () {
-		var _p1 = c;
-		switch (_p1.valueOf()) {
+		var _p2 = c;
+		switch (_p2.valueOf()) {
 			case '\t':
 				return true;
 			case '\v':
@@ -9195,6 +9216,92 @@ var _minekoa$elm_text_editor$TextEditor_StringExtra$isSpace = function (c) {
 				return false;
 		}
 	}();
+};
+var _minekoa$elm_text_editor$TextEditor_StringExtra$isPanctuationAndSymbol = function (c) {
+	return A2(
+		_minekoa$elm_text_editor$TextEditor_StringExtra$isInCodeRange,
+		{
+			ctor: '::',
+			_0: {ctor: '_Tuple2', _0: 33, _1: 127},
+			_1: {
+				ctor: '::',
+				_0: {ctor: '_Tuple2', _0: 58, _1: 64},
+				_1: {
+					ctor: '::',
+					_0: {ctor: '_Tuple2', _0: 91, _1: 96},
+					_1: {
+						ctor: '::',
+						_0: {ctor: '_Tuple2', _0: 123, _1: 127},
+						_1: {
+							ctor: '::',
+							_0: {ctor: '_Tuple2', _0: 161, _1: 191},
+							_1: {
+								ctor: '::',
+								_0: {ctor: '_Tuple2', _0: 8192, _1: 8303},
+								_1: {
+									ctor: '::',
+									_0: {ctor: '_Tuple2', _0: 11776, _1: 11903},
+									_1: {
+										ctor: '::',
+										_0: {ctor: '_Tuple2', _0: 12288, _1: 12351},
+										_1: {
+											ctor: '::',
+											_0: {ctor: '_Tuple2', _0: 94176, _1: 94207},
+											_1: {
+												ctor: '::',
+												_0: {ctor: '_Tuple2', _0: 65072, _1: 65103},
+												_1: {
+													ctor: '::',
+													_0: {ctor: '_Tuple2', _0: 65104, _1: 65135},
+													_1: {
+														ctor: '::',
+														_0: {ctor: '_Tuple2', _0: 65040, _1: 65055},
+														_1: {
+															ctor: '::',
+															_0: {ctor: '_Tuple2', _0: 65281, _1: 65295},
+															_1: {
+																ctor: '::',
+																_0: {ctor: '_Tuple2', _0: 65306, _1: 65312},
+																_1: {
+																	ctor: '::',
+																	_0: {ctor: '_Tuple2', _0: 65339, _1: 65344},
+																	_1: {
+																		ctor: '::',
+																		_0: {ctor: '_Tuple2', _0: 65371, _1: 65373},
+																		_1: {
+																			ctor: '::',
+																			_0: {ctor: '_Tuple2', _0: 65375, _1: 65376},
+																			_1: {
+																				ctor: '::',
+																				_0: {ctor: '_Tuple2', _0: 65377, _1: 65380},
+																				_1: {
+																					ctor: '::',
+																					_0: {ctor: '_Tuple2', _0: 65504, _1: 65510},
+																					_1: {
+																						ctor: '::',
+																						_0: {ctor: '_Tuple2', _0: 65512, _1: 65518},
+																						_1: {ctor: '[]'}
+																					}
+																				}
+																			}
+																		}
+																	}
+																}
+															}
+														}
+													}
+												}
+											}
+										}
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		},
+		c) && (!_minekoa$elm_text_editor$TextEditor_StringExtra$isSpace(c));
 };
 var _minekoa$elm_text_editor$TextEditor_StringExtra$isAlpabete = function (c) {
 	return _elm_lang$core$Char$isUpper(c) || _elm_lang$core$Char$isLower(c);
@@ -9208,20 +9315,20 @@ var _minekoa$elm_text_editor$TextEditor_StringExtra$indentLevel = F2(
 			function (str, n) {
 				calcIndentLevel:
 				while (true) {
-					var _p2 = str;
-					if (_p2.ctor === '::') {
-						switch (_p2._0.valueOf()) {
+					var _p3 = str;
+					if (_p3.ctor === '::') {
+						switch (_p3._0.valueOf()) {
 							case ' ':
-								var _v3 = _p2._1,
-									_v4 = n + 1;
-								str = _v3;
-								n = _v4;
+								var _v4 = _p3._1,
+									_v5 = n + 1;
+								str = _v4;
+								n = _v5;
 								continue calcIndentLevel;
 							case '\t':
-								var _v5 = _p2._1,
-									_v6 = (((n / tabOrder) | 0) + 1) * tabOrder;
-								str = _v5;
-								n = _v6;
+								var _v6 = _p3._1,
+									_v7 = (((n / tabOrder) | 0) + 1) * tabOrder;
+								str = _v6;
+								n = _v7;
 								continue calcIndentLevel;
 							default:
 								return n;
@@ -9241,20 +9348,20 @@ var _minekoa$elm_text_editor$TextEditor_StringExtra$indentString = function (lin
 		function (l, indent_str) {
 			getIndentStringProc:
 			while (true) {
-				var _p3 = l;
-				if (_p3.ctor === '[]') {
+				var _p4 = l;
+				if (_p4.ctor === '[]') {
 					return _elm_lang$core$List$reverse(indent_str);
 				} else {
-					var _p4 = _p3._0;
+					var _p5 = _p4._0;
 					if (_elm_lang$core$Native_Utils.eq(
-						_p4,
+						_p5,
 						_elm_lang$core$Native_Utils.chr(' ')) || _elm_lang$core$Native_Utils.eq(
-						_p4,
+						_p5,
 						_elm_lang$core$Native_Utils.chr('\t'))) {
-						var _v8 = _p3._1,
-							_v9 = {ctor: '::', _0: _p4, _1: indent_str};
-						l = _v8;
-						indent_str = _v9;
+						var _v9 = _p4._1,
+							_v10 = {ctor: '::', _0: _p5, _1: indent_str};
+						l = _v9;
+						indent_str = _v10;
 						continue getIndentStringProc;
 					} else {
 						return _elm_lang$core$List$reverse(indent_str);
@@ -9273,70 +9380,79 @@ var _minekoa$elm_text_editor$TextEditor_StringExtra$Kanji = {ctor: 'Kanji'};
 var _minekoa$elm_text_editor$TextEditor_StringExtra$Katakana = {ctor: 'Katakana'};
 var _minekoa$elm_text_editor$TextEditor_StringExtra$Hiragana = {ctor: 'Hiragana'};
 var _minekoa$elm_text_editor$TextEditor_StringExtra$SignChar = {ctor: 'SignChar'};
+var _minekoa$elm_text_editor$TextEditor_StringExtra$PanctuationAndSymbol = {ctor: 'PanctuationAndSymbol'};
 var _minekoa$elm_text_editor$TextEditor_StringExtra$SpaceChar = {ctor: 'SpaceChar'};
 var _minekoa$elm_text_editor$TextEditor_StringExtra$AlphaNumericChar = {ctor: 'AlphaNumericChar'};
 var _minekoa$elm_text_editor$TextEditor_StringExtra$chartype = function (c) {
-	return _minekoa$elm_text_editor$TextEditor_StringExtra$isAlpanumeric(c) ? _minekoa$elm_text_editor$TextEditor_StringExtra$AlphaNumericChar : (_minekoa$elm_text_editor$TextEditor_StringExtra$isSpace(c) ? _minekoa$elm_text_editor$TextEditor_StringExtra$SpaceChar : (_minekoa$elm_text_editor$TextEditor_StringExtra$isHiragana(c) ? _minekoa$elm_text_editor$TextEditor_StringExtra$Hiragana : (_minekoa$elm_text_editor$TextEditor_StringExtra$isKatakana(c) ? _minekoa$elm_text_editor$TextEditor_StringExtra$Katakana : (_minekoa$elm_text_editor$TextEditor_StringExtra$isKanji(c) ? _minekoa$elm_text_editor$TextEditor_StringExtra$Kanji : (_minekoa$elm_text_editor$TextEditor_StringExtra$isMultiByteChar(c) ? _minekoa$elm_text_editor$TextEditor_StringExtra$MultibyteChar : _minekoa$elm_text_editor$TextEditor_StringExtra$SignChar)))));
+	return _minekoa$elm_text_editor$TextEditor_StringExtra$isAlpanumeric(c) ? _minekoa$elm_text_editor$TextEditor_StringExtra$AlphaNumericChar : (_minekoa$elm_text_editor$TextEditor_StringExtra$isSpace(c) ? _minekoa$elm_text_editor$TextEditor_StringExtra$SpaceChar : (_minekoa$elm_text_editor$TextEditor_StringExtra$isPanctuationAndSymbol(c) ? _minekoa$elm_text_editor$TextEditor_StringExtra$PanctuationAndSymbol : (_minekoa$elm_text_editor$TextEditor_StringExtra$isHiragana(c) ? _minekoa$elm_text_editor$TextEditor_StringExtra$Hiragana : (_minekoa$elm_text_editor$TextEditor_StringExtra$isKatakana(c) ? _minekoa$elm_text_editor$TextEditor_StringExtra$Katakana : (_minekoa$elm_text_editor$TextEditor_StringExtra$isKanji(c) ? _minekoa$elm_text_editor$TextEditor_StringExtra$Kanji : (_minekoa$elm_text_editor$TextEditor_StringExtra$isMultiByteChar(c) ? _minekoa$elm_text_editor$TextEditor_StringExtra$MultibyteChar : _minekoa$elm_text_editor$TextEditor_StringExtra$SignChar))))));
 };
 var _minekoa$elm_text_editor$TextEditor_StringExtra$nextWordPosProc = F3(
 	function (prev_char_t, str, n) {
 		nextWordPosProc:
 		while (true) {
-			var _p5 = str;
-			if (_p5.ctor === '::') {
-				var _p7 = _p5._1;
-				var char_t = _minekoa$elm_text_editor$TextEditor_StringExtra$chartype(_p5._0);
+			var _p6 = str;
+			if (_p6.ctor === '::') {
+				var _p8 = _p6._1;
+				var char_t = _minekoa$elm_text_editor$TextEditor_StringExtra$chartype(_p6._0);
 				if (_elm_lang$core$Native_Utils.eq(char_t, prev_char_t)) {
-					var _v11 = char_t,
-						_v12 = _p7,
-						_v13 = n + 1;
-					prev_char_t = _v11;
-					str = _v12;
-					n = _v13;
+					var _v12 = char_t,
+						_v13 = _p8,
+						_v14 = n + 1;
+					prev_char_t = _v12;
+					str = _v13;
+					n = _v14;
 					continue nextWordPosProc;
 				} else {
-					var _p6 = {ctor: '_Tuple2', _0: prev_char_t, _1: char_t};
-					_v14_3:
+					var _p7 = {ctor: '_Tuple2', _0: prev_char_t, _1: char_t};
+					_v15_4:
 					do {
-						if (_p6.ctor === '_Tuple2') {
-							switch (_p6._0.ctor) {
+						if (_p7.ctor === '_Tuple2') {
+							switch (_p7._0.ctor) {
 								case 'SpaceChar':
-									var _v15 = char_t,
-										_v16 = _p7,
-										_v17 = n + 1;
-									prev_char_t = _v15;
-									str = _v16;
-									n = _v17;
+									var _v16 = char_t,
+										_v17 = _p8,
+										_v18 = n + 1;
+									prev_char_t = _v16;
+									str = _v17;
+									n = _v18;
+									continue nextWordPosProc;
+								case 'PanctuationAndSymbol':
+									var _v19 = char_t,
+										_v20 = _p8,
+										_v21 = n + 1;
+									prev_char_t = _v19;
+									str = _v20;
+									n = _v21;
 									continue nextWordPosProc;
 								case 'Kanji':
-									if (_p6._1.ctor === 'Hiragana') {
-										var _v18 = char_t,
-											_v19 = _p7,
-											_v20 = n + 1;
-										prev_char_t = _v18;
-										str = _v19;
-										n = _v20;
+									if (_p7._1.ctor === 'Hiragana') {
+										var _v22 = char_t,
+											_v23 = _p8,
+											_v24 = n + 1;
+										prev_char_t = _v22;
+										str = _v23;
+										n = _v24;
 										continue nextWordPosProc;
 									} else {
-										break _v14_3;
+										break _v15_4;
 									}
 								case 'Katakana':
-									if (_p6._1.ctor === 'Hiragana') {
-										var _v21 = char_t,
-											_v22 = _p7,
-											_v23 = n + 1;
-										prev_char_t = _v21;
-										str = _v22;
-										n = _v23;
+									if (_p7._1.ctor === 'Hiragana') {
+										var _v25 = char_t,
+											_v26 = _p8,
+											_v27 = n + 1;
+										prev_char_t = _v25;
+										str = _v26;
+										n = _v27;
 										continue nextWordPosProc;
 									} else {
-										break _v14_3;
+										break _v15_4;
 									}
 								default:
-									break _v14_3;
+									break _v15_4;
 							}
 						} else {
-							break _v14_3;
+							break _v15_4;
 						}
 					} while(false);
 					return _elm_lang$core$Maybe$Just(n);
@@ -9366,58 +9482,66 @@ var _minekoa$elm_text_editor$TextEditor_StringExtra$previosWordPosProc = F3(
 	function (fwd_char_t, reversed_str, n) {
 		previosWordPosProc:
 		while (true) {
-			var _p8 = reversed_str;
-			if (_p8.ctor === '::') {
-				var _p10 = _p8._1;
-				var char_t = _minekoa$elm_text_editor$TextEditor_StringExtra$chartype(_p8._0);
+			var _p9 = reversed_str;
+			if (_p9.ctor === '::') {
+				var _p11 = _p9._1;
+				var char_t = _minekoa$elm_text_editor$TextEditor_StringExtra$chartype(_p9._0);
 				if (_elm_lang$core$Native_Utils.eq(char_t, fwd_char_t)) {
-					var _v25 = char_t,
-						_v26 = _p10,
-						_v27 = n - 1;
-					fwd_char_t = _v25;
-					reversed_str = _v26;
-					n = _v27;
+					var _v29 = char_t,
+						_v30 = _p11,
+						_v31 = n - 1;
+					fwd_char_t = _v29;
+					reversed_str = _v30;
+					n = _v31;
 					continue previosWordPosProc;
 				} else {
-					var _p9 = {ctor: '_Tuple2', _0: fwd_char_t, _1: char_t};
-					_v28_3:
+					var _p10 = {ctor: '_Tuple2', _0: fwd_char_t, _1: char_t};
+					_v32_4:
 					do {
-						if (_p9.ctor === '_Tuple2') {
-							switch (_p9._0.ctor) {
+						if (_p10.ctor === '_Tuple2') {
+							switch (_p10._0.ctor) {
 								case 'SpaceChar':
-									var _v29 = char_t,
-										_v30 = _p10,
-										_v31 = n - 1;
-									fwd_char_t = _v29;
-									reversed_str = _v30;
-									n = _v31;
+									var _v33 = char_t,
+										_v34 = _p11,
+										_v35 = n - 1;
+									fwd_char_t = _v33;
+									reversed_str = _v34;
+									n = _v35;
+									continue previosWordPosProc;
+								case 'PanctuationAndSymbol':
+									var _v36 = char_t,
+										_v37 = _p11,
+										_v38 = n - 1;
+									fwd_char_t = _v36;
+									reversed_str = _v37;
+									n = _v38;
 									continue previosWordPosProc;
 								case 'Hiragana':
-									switch (_p9._1.ctor) {
+									switch (_p10._1.ctor) {
 										case 'Kanji':
-											var _v32 = char_t,
-												_v33 = _p10,
-												_v34 = n - 1;
-											fwd_char_t = _v32;
-											reversed_str = _v33;
-											n = _v34;
+											var _v39 = char_t,
+												_v40 = _p11,
+												_v41 = n - 1;
+											fwd_char_t = _v39;
+											reversed_str = _v40;
+											n = _v41;
 											continue previosWordPosProc;
 										case 'Katakana':
-											var _v35 = char_t,
-												_v36 = _p10,
-												_v37 = n - 1;
-											fwd_char_t = _v35;
-											reversed_str = _v36;
-											n = _v37;
+											var _v42 = char_t,
+												_v43 = _p11,
+												_v44 = n - 1;
+											fwd_char_t = _v42;
+											reversed_str = _v43;
+											n = _v44;
 											continue previosWordPosProc;
 										default:
-											break _v28_3;
+											break _v32_4;
 									}
 								default:
-									break _v28_3;
+									break _v32_4;
 							}
 						} else {
-							break _v28_3;
+							break _v32_4;
 						}
 					} while(false);
 					return _elm_lang$core$Maybe$Just(n);
@@ -12076,7 +12200,7 @@ var _minekoa$elm_text_editor$Native_Mice = function() {
              *     firefox ::   (null)    ->     (null)          -> compositionend s -> input s
              *
              * compositionEnd で、textarea.valueをクリアすれば、
-             * firefoxの最後の `input s` の s を空文字にできる
+             * firefoxの最後の `input s` の s を空文字にできる(後はelm側で切り分ければ良い)
              */
 
             input_area.value = "";
