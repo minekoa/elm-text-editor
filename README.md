@@ -7,11 +7,12 @@ There are the following advantages for textarea.
 * Line number is displayed
 * You can set your favorite key binding (however, as the browser allows it. For example, you can not change the key binding for access to the clipboard)
 * Operation from Elm is easy to do
+* Control code display (for example, line feed code, tab character, etc.)
 
 The following does not correspond (yet).
 
 * Syntax highlight
-* Control code display (for example, line feed code, tab character, etc.)
+
 
 ## Browser support
 
