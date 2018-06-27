@@ -6,9 +6,23 @@ module TextEditor.KeyBind exposing
     , emacsLike
     )
 
+{-|
+
+# Definition
+
+@docs KeyBind, find
+
+# Default Keybinds
+
+@docs basic, gates, emacsLike
+-}
+
+
 import TextEditor.Commands as EditorCmds
 import TextEditor.Core as Core  exposing (Model, Msg)
 
+{-| Keybind Data.
+-}
 type alias KeyBind =
     { ctrl: Bool
     , alt : Bool
@@ -17,6 +31,8 @@ type alias KeyBind =
     , f : EditorCmds.Command
     }
 
+{-| Find a keybind from keycode and modifires.
+-}
 find : (Bool, Bool, Bool, Int) -> List KeyBind -> Maybe EditorCmds.Command
 find (ctrl, alt, shift, keycode) keymap =
     case keymap of
@@ -28,6 +44,8 @@ find (ctrl, alt, shift, keycode) keymap =
             then Just x.f
             else find (ctrl, alt, shift, keycode) xs
 
+{-| Basic Keybinds. ex) arrow-keys, <Home>, <End>, <Backspace> ..etc.
+-}
 basic: List KeyBind
 basic =
     [ {ctrl=False, alt=False, shift=False, code= 37, f=EditorCmds.moveBackward }    -- '←'
@@ -42,6 +60,12 @@ basic =
     , {ctrl=False, alt=False, shift=True , code=  9, f=EditorCmds.unindent }        -- S-tab
     ]
 
+{-| Windows like keybinds 
+
+note: Ctrl-c, Ctrl-x and Ctrl-v are not defined here 
+because they want to link with the system 's clipboard and fire the browser' s ClipboardEvent (copy, cut, paste).
+
+-}
 gates: List KeyBind
 gates =
     [ {ctrl=False, alt=False, shift=True , code= 37, f=EditorCmds.selectBackward }    -- 'S-←'
@@ -59,6 +83,9 @@ gates =
     , {ctrl=True , alt=False, shift=False, code= 90, f= EditorCmds.undo }          -- 'C-z'
     ]
 
+
+{-| Emacs like keybinds
+-}
 emacsLike: List KeyBind
 emacsLike =
     [ {ctrl=True , alt=False, shift=False, code= 70, f=EditorCmds.moveForward }     -- 'C-f'

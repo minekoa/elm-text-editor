@@ -7,10 +7,10 @@ SRC_DIR=src
 TARGET=main.js
 subdirs=demo
 
-.PHONY: all env clean $(subdirs)
+.PHONY: all env clean package $(subdirs)
 
 
-all: $(subdirs) test
+all: $(subdirs) test package
 
 $(subdirs):
 	$(MAKE) -C $@
@@ -24,6 +24,7 @@ env:
 clean:
 	rm -rf docs
 
-
+package:
+	$(ELM_MAKE) --docs=documentation.json
 
 

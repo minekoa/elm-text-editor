@@ -9856,9 +9856,6 @@ var _minekoa$elm_text_editor$TextEditor_Buffer$position_fromTuple = function (_p
 var _minekoa$elm_text_editor$TextEditor_Buffer$position_toTuple = function (pos) {
 	return {ctor: '_Tuple2', _0: pos.row, _1: pos.column};
 };
-var _minekoa$elm_text_editor$TextEditor_Buffer$nowCursorPos = function (model) {
-	return _minekoa$elm_text_editor$TextEditor_Buffer$position_toTuple(model.cursor);
-};
 var _minekoa$elm_text_editor$TextEditor_Buffer$updateMark = F2(
 	function (cmd, model) {
 		var _p16 = model.mark;

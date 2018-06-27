@@ -2,90 +2,83 @@ module TextEditor.Buffer exposing
     ( Position
     , Range
     , (@)
+    , isPreviosPos
     , makeRange
 
+    , Model
+    , init
 
-                                  , Model
-                                  , init
+    , line
+    , readRange
+    , selectedString
 
-                                  , isPreviosPos
-                                  , line
-                                  , readRange
-                                  , selectedString
+    -- history
+    , EditCommand(Cmd_Insert, Cmd_Backspace, Cmd_Delete)
 
-                                  -- history
-                                  , EditCommand(Cmd_Insert, Cmd_Backspace, Cmd_Delete)
+    -- cursor move
+    , moveForward
+    , moveBackward
+    , movePreviosLine
+    , moveNextLine
+    , moveNextWord
+    , movePreviosWord
+    , moveAt
 
-                                  -- cursor move
-                                  , moveForward
-                                  , moveBackward
-                                  , movePreviosLine
-                                  , moveNextLine
-                                  , moveNextWord
-                                  , movePreviosWord
-                                  , moveAt
+    -- selection
+    , selectBackward
+    , selectForward
+    , selectPreviosLine
+    , selectNextLine
+    , selectPreviosWord
+    , selectNextWord
+    , selectAt
+    , selectionClear
 
-                                  -- selection
-                                  , selectBackward
-                                  , selectForward
-                                  , selectPreviosLine
-                                  , selectNextLine
-                                  , selectPreviosWord
-                                  , selectNextWord
-                                  , selectAt
-                                  , selectionClear
+    -- mark
+    , Mark -- for elm-test
+    , markSet
+    , markClear
+    , gotoMark
+    , isMarkActive
 
-                                  -- mark
-                                  , Mark -- for elm-test
-                                  , markSet
-                                  , markClear
-                                  , gotoMark
-                                  , isMarkActive
-
-                                  -- edit
-                                  , insert
-                                  , insertAt
-                                  , backspace
-                                  , backspaceAt
-                                  , delete
-                                  , deleteAt
-                                  , deleteRange
-                                  , deleteSelection
-                                  , undo
-                                  )
+    -- edit
+    , insert
+    , insertAt
+    , backspace
+    , backspaceAt
+    , delete
+    , deleteAt
+    , deleteRange
+    , deleteSelection
+    , undo
+    )
 
 {-|
 
-# Definitions
+# Definition
+@docs Position, Range, Mark, EditCommand, Model
 
-@docs Position, Range
+# Position and Range helpers
+@docs (@), isPreviosPos
+@docs makeRange
 
-# Selections
-
-                                  -- selection
-                                  , selectBackward
-                                  , selectForward
-                                  , selectPreviosLine
-                                  , selectNextLine
-                                  , selectPreviosWord
-                                  , selectNextWord
-                                  , selectAt
-                                  , selectionClear
-
-
-# Marks
-
-@docs Mark
+# Mark operating
 @docs markSet, markClear, gotoMark, isMarkActive
 
-# Editing
+## Model Helpler
+@docs init
+@docs line, readRange, selectedString
 
+# Move cursor and move cursor while selecting
+@docs moveForward, moveBackward, movePreviosLine, moveNextLine, moveNextWord, movePreviosWord, moveAt
+@docs selectBackward, selectForward, selectPreviosLine, selectNextLine, selectPreviosWord, selectNextWord, selectAt, selectionClear
+
+# Editing contents
 @docs insert, insertAt
 @docs backspace, backspaceAt
 @docs delete, deleteAt, deleteRange, deleteSelection
 
 # Undo / Redo
-
 @docs undo
 -}
 
@@ -95,14 +88,14 @@ import TextEditor.StringExtra as StringExtra
 -- Definitions
 ------------------------------------------------------------
 
-{-| Charactor position
+{-| Charactor position. 0 origin.
 -}
 type alias Position =
     { row : Int
     , column : Int
     }
 
-{-| Make position
+{-| Make position (Syntax Suger)
 -}
 (@) : Int -> Int -> Position
 (@) = Position
@@ -127,10 +120,11 @@ makeRange : (Int, Int) -> (Int, Int) -> Range
 makeRange (br, bc) (er, ec) =
     Range (Position br bc) (Position er ec)
 
-{-|
+{-| The buffer model
+
 * `cursor`    .. Current cursor Position
 * `selection` .. selected text range. If you not selected text, this member is Nothing.
-* `mark`      .. Emacs like mark.
+* `mark`      .. Emacs like mark. Has marked-position and (select by moving) is active? flag.
 * `contents`  .. Line separated text.
 * `history`   .. Operating history for `undo`/`redo`
 -}
@@ -142,9 +136,11 @@ type alias Model =
     , history : List EditCommand
     }
 
+{-| Create buffer.
+-}
 init : String -> Model
 init text =
-    Model (Position 0 0)           -- cursor
+    Model (Position 0 0)         -- cursor
           Nothing                -- selection
           Nothing                -- mark
           (String.lines text)    -- contents
@@ -160,10 +156,8 @@ defaultCursor contents =
     in
         Position (if n < 0 then 0 else n) 0
 
-nowCursorPos : Model -> (Int, Int)
-nowCursorPos model = 
-    model.cursor |> position_toTuple
-
+{-| Determine which of the two `Position` is before
+-} 
 isPreviosPos : Position -> Position -> Bool
 isPreviosPos p q =
     if p.row == q.row
@@ -173,6 +167,8 @@ isPreviosPos p q =
 
 -- buffer > contents
 
+{-| Get aline by line number
+-}
 line : Int -> List String -> Maybe String
 line n lines =
     if n < 0
@@ -222,11 +218,15 @@ selectedString model =
 
 -- mark
 
+{-| Emacs like Mark 
+-}
 type alias Mark =
     { pos : (Int, Int)
     , actived : Bool
     }
 
+{-| Set Mark to Position and make it active
+-}
 markSet : Model -> Model
 markSet model =
     let
@@ -240,6 +240,8 @@ markSet model =
             , selection = Just <| Range pos pos
         }
 
+{-| Deactivate mark
+-}
 markClear : Model -> Model
 markClear model =
     case model.mark of
@@ -251,12 +253,16 @@ markClear model =
         Nothing ->
             model
 
+{-| (It is inactive at the time of Nothing)
+-}
 isMarkActive : Model -> Bool
 isMarkActive model =
     case model.mark of
         Just mk -> mk.actived
         Nothing -> False
 
+{-| Move to the position where the cursor is marked and memorize the original cursor position in the mark.
+-}
 gotoMark : Model -> Model 
 gotoMark model =
     case model.mark of
@@ -267,6 +273,9 @@ gotoMark model =
         Nothing ->
             model
 
+{- 編集に際して動いてしまったマーク位置の辻褄を合わせる
+   (たとえば、マークの前の文字を削除すればその分マークは一つ前に動く)
+ -}                
 updateMark : EditCommand -> Model -> Model
 updateMark cmd model =
     case model.mark of
@@ -343,6 +352,13 @@ updateMarkPos_byDelete bgn_pos s (mk_row, mk_col) =
 -- History
 ------------------------------------------------------------
 
+{-| Data for undo
+
+Each data type has a cursor position before editing, 
+a cursor position after editing, 
+an edited character string (inserted string at `Cmd_Insert`, deleted string at `Cmd_Delete` and `Cmd_Backspace`),
+and a mark position before editing.
+-}
 type EditCommand
     = Cmd_Insert Position Position String (Maybe Mark)    -- befor-cur after-cur inserted_str
     | Cmd_Backspace Position Position String (Maybe Mark) -- befor-cur after-cur deleted_str
@@ -374,35 +390,61 @@ appendHistory cmd model =
 -- Cursor move
 ------------------------------------------------------------
 
+{-|
+-}
 moveForward : Model -> Model
 moveForward model =
     case isMarkActive model of
         True  -> selectWithMove moveForwardProc model
         False -> model |> moveForwardProc |> selectionClear
 
+{-|
+-}
 moveBackward : Model -> Model
 moveBackward model =
     case isMarkActive model of
         True  -> selectWithMove moveBackwardProc model
         False -> model |> moveBackwardProc |> selectionClear
 
+{-|
+-}
 movePreviosLine : Model -> Model
 movePreviosLine model =
     case isMarkActive model of
         True  -> selectWithMove movePreviosLineProc model
         False -> model |> movePreviosLineProc |> selectionClear
 
+{-|
+-}
 moveNextLine : Model -> Model
 moveNextLine model =
     case isMarkActive model of
         True  -> selectWithMove moveNextLineProc model
         False -> model |>  moveNextLineProc |> selectionClear
 
+{-|
+-}
 moveAt : Position -> Model -> Model
 moveAt pos model =
     case isMarkActive model of
         True  -> selectWithMove (moveAtProc pos) model
         False -> model |>  moveAtProc pos |> selectionClear
+
+{-|
+-}
+moveNextWord : Model -> Model
+moveNextWord model =
+    case isMarkActive model of
+        True  -> selectWithMove (moveNextWordProc model.cursor) model
+        False -> model |> moveNextWordProc model.cursor |> selectionClear
+{-|
+-}
+movePreviosWord : Model -> Model
+movePreviosWord model =
+    case isMarkActive model of
+        True  -> selectWithMove (movePreviosWordProc model.cursor) model
+        False -> model |> movePreviosWordProc model.cursor |> selectionClear
+
 
 
 moveForwardProc : Model -> Model
@@ -475,12 +517,6 @@ moveAtProc pos model =
     { model | cursor = pos }
 
 
-moveNextWord : Model -> Model
-moveNextWord model =
-    case isMarkActive model of
-        True  -> selectWithMove (moveNextWordProc model.cursor) model
-        False -> model |> moveNextWordProc model.cursor |> selectionClear
-
 moveNextWordProc : Position -> Model -> Model
 moveNextWordProc cur model =
     let
@@ -501,12 +537,6 @@ moveNextWordProc cur model =
                 else
                     moveNextWordProc (Position (cur.row + 1) 0) model
 
-
-movePreviosWord : Model -> Model
-movePreviosWord model =
-    case isMarkActive model of
-        True  -> selectWithMove (movePreviosWordProc model.cursor) model
-        False -> model |> movePreviosWordProc model.cursor |> selectionClear
 
 movePreviosWordProc : Position -> Model -> Model
 movePreviosWordProc cur model =
@@ -531,37 +561,53 @@ movePreviosWordProc cur model =
 -- selection (with cursor move)
 ------------------------------------------------------------
 
+{-|
+-}
 selectBackward: Model -> Model
 selectBackward = selectWithMove moveBackwardProc
                  << \m -> if isMarkActive m then markClear m else m
 
+{-|
+-}
 selectForward: Model -> Model
 selectForward = selectWithMove moveForwardProc
                  << \m -> if isMarkActive m then markClear m else m
 
 
+{-|
+-}
 selectPreviosLine: Model -> Model
 selectPreviosLine = selectWithMove movePreviosLineProc
                  << \m -> if isMarkActive m then markClear m else m
 
+{-|
+-}
 selectNextLine: Model -> Model
 selectNextLine = selectWithMove moveNextLineProc
                  << \m -> if isMarkActive m then markClear m else m
 
+{-|
+-}
 selectPreviosWord: Model -> Model
 selectPreviosWord = selectWithMove (\m -> movePreviosWordProc m.cursor m)
                  << \m -> if isMarkActive m then markClear m else m
 
+{-|
+-}
 selectNextWord: Model -> Model
 selectNextWord = selectWithMove (\m -> moveNextWordProc m.cursor m)
                  << \m -> if isMarkActive m then markClear m else m
 
 
+{-|
+-}
 selectAt: Position -> Model -> Model
 selectAt pos = selectWithMove (moveAtProc pos)
                  << \m -> if isMarkActive m then markClear m else m
 
 
+{-|
+-}
 selectionClear: Model -> Model
 selectionClear model =
     { model
@@ -586,7 +632,7 @@ selectWithMove move_f model =
 ------------------------------------------------------------
 
 
-{-| Insert character at current cursor position
+{-| Insert character at current cursor position.
 -}
 insert : String -> Model -> Model
 insert text model=
@@ -613,6 +659,8 @@ insertAt pos text model =
                   |> updateMark edtcmd
        )
 
+{-| Delete charactor before current cursor position, and cursor back to deleted char(s) before.
+-}
 backspace : Model -> Model
 backspace model =
     case model.selection of
@@ -623,6 +671,8 @@ backspace model =
                 |> deleteRange s
                 |> selectionClear
 
+{-| Delete charactor(s) before specified position, and cursor back to deleted char(s) before.
+-}
 backspaceAt: Position -> Model -> Model
 backspaceAt pos model =
     let
@@ -641,6 +691,8 @@ backspaceAt pos model =
                               |> updateMark edtcmd
        )
 
+{-| Delete charactor at current cursor positon.
+-}
 delete : Model -> Model
 delete model =
     case model.selection of
@@ -651,6 +703,8 @@ delete model =
                 |> deleteRange s
                 |> selectionClear
 
+{-| Delete charactor at specified positon.
+-}
 deleteAt: Position -> Model -> Model
 deleteAt pos model =
     let
@@ -669,6 +723,8 @@ deleteAt pos model =
                               |> updateMark edtcmd
                    )
 
+{-| Delete charactor at specified positions range.
+-}
 deleteRange: Range -> Model -> Model
 deleteRange range model =
     let
@@ -690,6 +746,8 @@ deleteRange range model =
                        )
 
 
+{-| Delete charactor at current selection range.
+-}
 deleteSelection: Model -> Model
 deleteSelection model =
     case model.selection of
@@ -701,6 +759,8 @@ deleteSelection model =
                 |> selectionClear
 
 
+{-| undo editing
+-}
 undo : Model -> Model
 undo model =
     case List.head model.history of
