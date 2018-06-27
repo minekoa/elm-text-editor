@@ -120,7 +120,7 @@ historyView editorModel =
                          let
                              pos2str = \ p -> "(" ++ (toString p.row) ++ ", " ++ (toString p.column) ++")" 
                              mark2str = \ mk -> case mk of
-                                                    Just m -> "{pos=" ++ (pos2str (Buffer.Position (Tuple.first m.pos) (Tuple.second m.pos)) ) ++ ", actived=" ++ (toString m.actived) ++ "}"
+                                                    Just m -> "{pos=" ++ (pos2str m.pos ) ++ ", actived=" ++ (toString m.actived) ++ "}"
                                                     Nothing -> "Nothing"
                              editParm2str = \ bfr afr str mk ->
                                  "{begin=" ++ (pos2str bfr) ++ ", end=" ++ (pos2str afr) ++ ", str=\"" ++ str ++ "\", mark=" ++ (mark2str mk) ++ "}"
@@ -265,9 +265,9 @@ markToString maybe_mark =
     case maybe_mark of
         Just mark ->
             [ "pos=("
-            , mark.pos |> Tuple.first |> toString
+            , mark.pos.row |> toString
             , ","
-            , mark.pos |> Tuple.second |> toString
+            , mark.pos.column |> toString
             , "), actived="
             , mark.actived |> toString
             ]

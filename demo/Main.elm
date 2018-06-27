@@ -470,7 +470,7 @@ modeline model =
                       |> Maybe.andThen (\mk -> Just <|
                                             if mk.actived then
                                                 " mark-set:("
-                                                ++ (mk.pos |> Tuple.first |> toString) ++ "," ++ (mk.pos |> Tuple.second |> toString)
+                                                ++ (mk.pos.row |> toString) ++ "," ++ (mk.pos.column |> toString)
                                                 ++ ")"
                                             else
                                                 ""

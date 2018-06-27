@@ -96,6 +96,8 @@ type alias Position =
     }
 
 {-| Make position (Syntax Suger)
+
+Use like `row @ col`
 -}
 (@) : Int -> Int -> Position
 (@) = Position
@@ -221,7 +223,7 @@ selectedString model =
 {-| Emacs like Mark 
 -}
 type alias Mark =
-    { pos : (Int, Int)
+    { pos : Position
     , actived : Bool
     }
 
@@ -231,7 +233,7 @@ markSet : Model -> Model
 markSet model =
     let
         pos = model.cursor
-        new_mark = { pos = (pos |> position_toTuple)
+        new_mark = { pos = pos
                    , actived = True
                    }
     in
@@ -269,7 +271,7 @@ gotoMark model =
         Just mk ->
             model
                 |> markSet
-                |> moveAt (mk.pos |> position_fromTuple)
+                |> moveAt mk.pos
         Nothing ->
             model
 
@@ -281,42 +283,39 @@ updateMark cmd model =
     case model.mark of
         Just mk ->
             let
-                mk_row = mk.pos |> Tuple.first
-                mk_col = mk.pos |> Tuple.second
-
                 count_lf             = String.lines >> List.length >> flip (-) 1
                 count_last_line_char = String.lines >> List.reverse >> List.head >> Maybe.withDefault "" >> String.length
             in
                 case cmd of
                     Cmd_Insert bfr afr s _ ->
-                        if mk_row > bfr.row then
-                            { model | mark = Just { mk | pos = (mk_row + afr.row - bfr.row, mk_col) } }
-                        else if (mk_row == bfr.row) && (bfr.column <= mk_col) then
+                        if mk.pos.row > bfr.row then
+                            { model | mark = Just { mk | pos = ((mk.pos.row + afr.row - bfr.row) @ mk.pos.column) } }
+                        else if (mk.pos.row == bfr.row) && (bfr.column <= mk.pos.column) then
                             let
                                 add_line_cnt = count_lf s
-                                new_col = if add_line_cnt == 0 then mk_col + (afr.column - bfr.column)
-                                                               else (count_last_line_char s) + (mk_col - bfr.column)
+                                new_col = if add_line_cnt == 0 then mk.pos.column + (afr.column - bfr.column)
+                                                               else (count_last_line_char s) + (mk.pos.column - bfr.column)
                             in
-                                { model | mark = Just { mk | pos = (mk_row + add_line_cnt, new_col) } }
+                                { model | mark = Just { mk | pos = ((mk.pos.row + add_line_cnt) @ new_col) } }
                         else
                            model
 
                     Cmd_Backspace before_pos after_pos s _ ->
                         { model
-                              | mark = Just <| { mk | pos = updateMarkPos_byDelete (after_pos |> position_toTuple) s mk.pos}
+                              | mark = Just <| { mk | pos = updateMarkPos_byDelete after_pos s mk.pos}
                         }
 
                     Cmd_Delete before_pos after_pos s _ ->
                         { model
-                            | mark = Just <| { mk | pos = updateMarkPos_byDelete (before_pos |> position_toTuple) s mk.pos}
+                            | mark = Just <| { mk | pos = updateMarkPos_byDelete before_pos s mk.pos}
                         }
                             
         Nothing ->
             model
 
 
-updateMarkPos_byDelete : (Int, Int) -> String -> (Int, Int) -> (Int, Int)
-updateMarkPos_byDelete bgn_pos s (mk_row, mk_col) =
+updateMarkPos_byDelete : Position -> String -> Position -> Position
+updateMarkPos_byDelete bgn_pos s marked_pos =
     let
         count_lf             = String.lines >> List.length >> flip (-) 1
         count_last_line_char = String.lines >> List.reverse >> List.head >> Maybe.withDefault "" >> String.length
@@ -324,29 +323,28 @@ updateMarkPos_byDelete bgn_pos s (mk_row, mk_col) =
         deleted_lf_cnt            = count_lf s
         deleted_lastline_char_cnt = count_last_line_char s
 
-        (bgn_row, bgn_col) = bgn_pos
-        (end_row, end_col) = ( bgn_row + deleted_lf_cnt
-                             , if (deleted_lf_cnt == 0) then bgn_col + deleted_lastline_char_cnt else deleted_lastline_char_cnt
+        (end_row, end_col) = ( bgn_pos.row + deleted_lf_cnt
+                             , if (deleted_lf_cnt == 0) then bgn_pos.column + deleted_lastline_char_cnt else deleted_lastline_char_cnt
                              )
     in
         -- before mark
-        if end_row < mk_row then
-            (mk_row - deleted_lf_cnt, mk_col)
+        if end_row < marked_pos.row then
+            ((marked_pos.row - deleted_lf_cnt) @ marked_pos.column)
 
-        else if (mk_row == end_row) && (end_col < mk_col) then
-            if ( end_row /= bgn_row) then
-                (mk_row - deleted_lf_cnt, mk_col + bgn_col)
+        else if (marked_pos.row == end_row) && (end_col < marked_pos.column) then
+            if ( end_row /= bgn_pos.row) then
+                ((marked_pos.row - deleted_lf_cnt) @ (marked_pos.column + bgn_pos.column))
             else
-                (mk_row, mk_col - deleted_lastline_char_cnt)
+                (marked_pos.row @ (marked_pos.column - deleted_lastline_char_cnt))
 
         -- contain mark
-        else if    ( (bgn_row < mk_row) || (bgn_row == mk_row && bgn_col <= mk_col) )
-                && ( (mk_row < end_row) || (end_row == mk_row && mk_col <= end_col ) ) then
-            (bgn_row, bgn_col)
+        else if    ( (bgn_pos.row < marked_pos.row) || (bgn_pos.row == marked_pos.row && bgn_pos.column <= marked_pos.column) )
+                && ( (marked_pos.row < end_row) || (end_row == marked_pos.row && marked_pos.column <= end_col ) ) then
+            bgn_pos
 
         -- after mark
         else
-            (mk_row, mk_col)
+            marked_pos
 
 ------------------------------------------------------------
 -- History

@@ -9591,62 +9591,23 @@ var _minekoa$elm_text_editor$TextEditor_Buffer$moveAtProc = F2(
 			model,
 			{cursor: pos});
 	});
-var _minekoa$elm_text_editor$TextEditor_Buffer$updateMarkPos_byDelete = F3(
-	function (bgn_pos, s, _p0) {
-		var _p1 = _p0;
-		var _p7 = _p1._0;
-		var _p6 = _p1._1;
-		var _p2 = bgn_pos;
-		var bgn_row = _p2._0;
-		var bgn_col = _p2._1;
-		var count_last_line_char = function (_p3) {
-			return _elm_lang$core$String$length(
-				A2(
-					_elm_lang$core$Maybe$withDefault,
-					'',
-					_elm_lang$core$List$head(
-						_elm_lang$core$List$reverse(
-							_elm_lang$core$String$lines(_p3)))));
-		};
-		var deleted_lastline_char_cnt = count_last_line_char(s);
-		var count_lf = function (_p4) {
-			return A3(
-				_elm_lang$core$Basics$flip,
-				F2(
-					function (x, y) {
-						return x - y;
-					}),
-				1,
-				_elm_lang$core$List$length(
-					_elm_lang$core$String$lines(_p4)));
-		};
-		var deleted_lf_cnt = count_lf(s);
-		var _p5 = {
-			ctor: '_Tuple2',
-			_0: bgn_row + deleted_lf_cnt,
-			_1: _elm_lang$core$Native_Utils.eq(deleted_lf_cnt, 0) ? (bgn_col + deleted_lastline_char_cnt) : deleted_lastline_char_cnt
-		};
-		var end_row = _p5._0;
-		var end_col = _p5._1;
-		return (_elm_lang$core$Native_Utils.cmp(end_row, _p7) < 0) ? {ctor: '_Tuple2', _0: _p7 - deleted_lf_cnt, _1: _p6} : ((_elm_lang$core$Native_Utils.eq(_p7, end_row) && (_elm_lang$core$Native_Utils.cmp(end_col, _p6) < 0)) ? ((!_elm_lang$core$Native_Utils.eq(end_row, bgn_row)) ? {ctor: '_Tuple2', _0: _p7 - deleted_lf_cnt, _1: _p6 + bgn_col} : {ctor: '_Tuple2', _0: _p7, _1: _p6 - deleted_lastline_char_cnt}) : ((((_elm_lang$core$Native_Utils.cmp(bgn_row, _p7) < 0) || (_elm_lang$core$Native_Utils.eq(bgn_row, _p7) && (_elm_lang$core$Native_Utils.cmp(bgn_col, _p6) < 1))) && ((_elm_lang$core$Native_Utils.cmp(_p7, end_row) < 0) || (_elm_lang$core$Native_Utils.eq(end_row, _p7) && (_elm_lang$core$Native_Utils.cmp(_p6, end_col) < 1)))) ? {ctor: '_Tuple2', _0: bgn_row, _1: bgn_col} : {ctor: '_Tuple2', _0: _p7, _1: _p6}));
-	});
 var _minekoa$elm_text_editor$TextEditor_Buffer$isMarkActive = function (model) {
-	var _p8 = model.mark;
-	if (_p8.ctor === 'Just') {
-		return _p8._0.actived;
+	var _p0 = model.mark;
+	if (_p0.ctor === 'Just') {
+		return _p0._0.actived;
 	} else {
 		return false;
 	}
 };
 var _minekoa$elm_text_editor$TextEditor_Buffer$markClear = function (model) {
-	var _p9 = model.mark;
-	if (_p9.ctor === 'Just') {
+	var _p1 = model.mark;
+	if (_p1.ctor === 'Just') {
 		return _elm_lang$core$Native_Utils.update(
 			model,
 			{
 				mark: _elm_lang$core$Maybe$Just(
 					_elm_lang$core$Native_Utils.update(
-						_p9._0,
+						_p1._0,
 						{actived: false})),
 				selection: _elm_lang$core$Maybe$Nothing
 			});
@@ -9678,10 +9639,10 @@ var _minekoa$elm_text_editor$TextEditor_Buffer$movePreviosLineProc = function (m
 			A2(
 				_elm_lang$core$Maybe$andThen,
 				function (ln) {
-					var _p10 = _elm_lang$core$Native_Utils.cmp(
+					var _p2 = _elm_lang$core$Native_Utils.cmp(
 						cur.column,
 						_minekoa$elm_text_editor$TextEditor_Buffer$maxColumn(ln) + 1) < 0;
-					if (_p10 === true) {
+					if (_p2 === true) {
 						return _elm_lang$core$Maybe$Just(
 							_elm_lang$core$Native_Utils.update(
 								cur,
@@ -9711,10 +9672,10 @@ var _minekoa$elm_text_editor$TextEditor_Buffer$moveNextLineProc = function (mode
 			A2(
 				_elm_lang$core$Maybe$andThen,
 				function (ln) {
-					var _p11 = _elm_lang$core$Native_Utils.cmp(
+					var _p3 = _elm_lang$core$Native_Utils.cmp(
 						cur.column,
 						_minekoa$elm_text_editor$TextEditor_Buffer$maxColumn(ln) + 1) < 0;
-					if (_p11 === true) {
+					if (_p3 === true) {
 						return _elm_lang$core$Maybe$Just(
 							_elm_lang$core$Native_Utils.update(
 								cur,
@@ -9740,8 +9701,8 @@ var _minekoa$elm_text_editor$TextEditor_Buffer$readRange = F2(
 		var epos = A2(_minekoa$elm_text_editor$TextEditor_Buffer$isPreviosPos, sel.begin, sel.end) ? sel.end : sel.begin;
 		var bpos = A2(_minekoa$elm_text_editor$TextEditor_Buffer$isPreviosPos, sel.begin, sel.end) ? sel.begin : sel.end;
 		var lcnt = epos.row - bpos.row;
-		var _p12 = lcnt;
-		if (_p12 === 0) {
+		var _p4 = lcnt;
+		if (_p4 === 0) {
 			var l = A2(
 				_elm_lang$core$Maybe$withDefault,
 				'',
@@ -9796,8 +9757,8 @@ var _minekoa$elm_text_editor$TextEditor_Buffer$delete_range_proc = F2(
 		var epos = A2(_minekoa$elm_text_editor$TextEditor_Buffer$isPreviosPos, sel.begin, sel.end) ? sel.end : sel.begin;
 		var bpos = A2(_minekoa$elm_text_editor$TextEditor_Buffer$isPreviosPos, sel.begin, sel.end) ? sel.begin : sel.end;
 		var lcnt = epos.row - bpos.row;
-		var _p13 = lcnt;
-		if (_p13 === 0) {
+		var _p5 = lcnt;
+		if (_p5 === 0) {
 			var nls = A2(_elm_lang$core$List$drop, epos.row + 1, model.contents);
 			var pls = A2(_elm_lang$core$List$take, bpos.row, model.contents);
 			var ln = A2(
@@ -9849,28 +9810,67 @@ var _minekoa$elm_text_editor$TextEditor_Buffer$delete_range_proc = F2(
 				});
 		}
 	});
-var _minekoa$elm_text_editor$TextEditor_Buffer$position_fromTuple = function (_p14) {
-	var _p15 = _p14;
-	return {row: _p15._0, column: _p15._1};
+var _minekoa$elm_text_editor$TextEditor_Buffer$position_fromTuple = function (_p6) {
+	var _p7 = _p6;
+	return {row: _p7._0, column: _p7._1};
 };
 var _minekoa$elm_text_editor$TextEditor_Buffer$position_toTuple = function (pos) {
 	return {ctor: '_Tuple2', _0: pos.row, _1: pos.column};
 };
+var _minekoa$elm_text_editor$TextEditor_Buffer$Position = F2(
+	function (a, b) {
+		return {row: a, column: b};
+	});
+var _minekoa$elm_text_editor$TextEditor_Buffer_ops = _minekoa$elm_text_editor$TextEditor_Buffer_ops || {};
+_minekoa$elm_text_editor$TextEditor_Buffer_ops['@'] = _minekoa$elm_text_editor$TextEditor_Buffer$Position;
+var _minekoa$elm_text_editor$TextEditor_Buffer$updateMarkPos_byDelete = F3(
+	function (bgn_pos, s, marked_pos) {
+		var count_last_line_char = function (_p8) {
+			return _elm_lang$core$String$length(
+				A2(
+					_elm_lang$core$Maybe$withDefault,
+					'',
+					_elm_lang$core$List$head(
+						_elm_lang$core$List$reverse(
+							_elm_lang$core$String$lines(_p8)))));
+		};
+		var deleted_lastline_char_cnt = count_last_line_char(s);
+		var count_lf = function (_p9) {
+			return A3(
+				_elm_lang$core$Basics$flip,
+				F2(
+					function (x, y) {
+						return x - y;
+					}),
+				1,
+				_elm_lang$core$List$length(
+					_elm_lang$core$String$lines(_p9)));
+		};
+		var deleted_lf_cnt = count_lf(s);
+		var _p10 = {
+			ctor: '_Tuple2',
+			_0: bgn_pos.row + deleted_lf_cnt,
+			_1: _elm_lang$core$Native_Utils.eq(deleted_lf_cnt, 0) ? (bgn_pos.column + deleted_lastline_char_cnt) : deleted_lastline_char_cnt
+		};
+		var end_row = _p10._0;
+		var end_col = _p10._1;
+		return (_elm_lang$core$Native_Utils.cmp(end_row, marked_pos.row) < 0) ? A2(_minekoa$elm_text_editor$TextEditor_Buffer_ops['@'], marked_pos.row - deleted_lf_cnt, marked_pos.column) : ((_elm_lang$core$Native_Utils.eq(marked_pos.row, end_row) && (_elm_lang$core$Native_Utils.cmp(end_col, marked_pos.column) < 0)) ? ((!_elm_lang$core$Native_Utils.eq(end_row, bgn_pos.row)) ? A2(_minekoa$elm_text_editor$TextEditor_Buffer_ops['@'], marked_pos.row - deleted_lf_cnt, marked_pos.column + bgn_pos.column) : A2(_minekoa$elm_text_editor$TextEditor_Buffer_ops['@'], marked_pos.row, marked_pos.column - deleted_lastline_char_cnt)) : ((((_elm_lang$core$Native_Utils.cmp(bgn_pos.row, marked_pos.row) < 0) || (_elm_lang$core$Native_Utils.eq(bgn_pos.row, marked_pos.row) && (_elm_lang$core$Native_Utils.cmp(bgn_pos.column, marked_pos.column) < 1))) && ((_elm_lang$core$Native_Utils.cmp(marked_pos.row, end_row) < 0) || (_elm_lang$core$Native_Utils.eq(end_row, marked_pos.row) && (_elm_lang$core$Native_Utils.cmp(marked_pos.column, end_col) < 1)))) ? bgn_pos : marked_pos));
+	});
 var _minekoa$elm_text_editor$TextEditor_Buffer$updateMark = F2(
 	function (cmd, model) {
-		var _p16 = model.mark;
-		if (_p16.ctor === 'Just') {
-			var _p23 = _p16._0;
-			var count_last_line_char = function (_p17) {
+		var _p11 = model.mark;
+		if (_p11.ctor === 'Just') {
+			var _p18 = _p11._0;
+			var count_last_line_char = function (_p12) {
 				return _elm_lang$core$String$length(
 					A2(
 						_elm_lang$core$Maybe$withDefault,
 						'',
 						_elm_lang$core$List$head(
 							_elm_lang$core$List$reverse(
-								_elm_lang$core$String$lines(_p17)))));
+								_elm_lang$core$String$lines(_p12)))));
 			};
-			var count_lf = function (_p18) {
+			var count_lf = function (_p13) {
 				return A3(
 					_elm_lang$core$Basics$flip,
 					F2(
@@ -9879,39 +9879,37 @@ var _minekoa$elm_text_editor$TextEditor_Buffer$updateMark = F2(
 						}),
 					1,
 					_elm_lang$core$List$length(
-						_elm_lang$core$String$lines(_p18)));
+						_elm_lang$core$String$lines(_p13)));
 			};
-			var mk_col = _elm_lang$core$Tuple$second(_p23.pos);
-			var mk_row = _elm_lang$core$Tuple$first(_p23.pos);
-			var _p19 = cmd;
-			switch (_p19.ctor) {
+			var _p14 = cmd;
+			switch (_p14.ctor) {
 				case 'Cmd_Insert':
-					var _p22 = _p19._2;
-					var _p21 = _p19._0;
-					var _p20 = _p19._1;
-					if (_elm_lang$core$Native_Utils.cmp(mk_row, _p21.row) > 0) {
+					var _p17 = _p14._2;
+					var _p16 = _p14._0;
+					var _p15 = _p14._1;
+					if (_elm_lang$core$Native_Utils.cmp(_p18.pos.row, _p16.row) > 0) {
 						return _elm_lang$core$Native_Utils.update(
 							model,
 							{
 								mark: _elm_lang$core$Maybe$Just(
 									_elm_lang$core$Native_Utils.update(
-										_p23,
+										_p18,
 										{
-											pos: {ctor: '_Tuple2', _0: (mk_row + _p20.row) - _p21.row, _1: mk_col}
+											pos: A2(_minekoa$elm_text_editor$TextEditor_Buffer_ops['@'], (_p18.pos.row + _p15.row) - _p16.row, _p18.pos.column)
 										}))
 							});
 					} else {
-						if (_elm_lang$core$Native_Utils.eq(mk_row, _p21.row) && (_elm_lang$core$Native_Utils.cmp(_p21.column, mk_col) < 1)) {
-							var add_line_cnt = count_lf(_p22);
-							var new_col = _elm_lang$core$Native_Utils.eq(add_line_cnt, 0) ? (mk_col + (_p20.column - _p21.column)) : (count_last_line_char(_p22) + (mk_col - _p21.column));
+						if (_elm_lang$core$Native_Utils.eq(_p18.pos.row, _p16.row) && (_elm_lang$core$Native_Utils.cmp(_p16.column, _p18.pos.column) < 1)) {
+							var add_line_cnt = count_lf(_p17);
+							var new_col = _elm_lang$core$Native_Utils.eq(add_line_cnt, 0) ? (_p18.pos.column + (_p15.column - _p16.column)) : (count_last_line_char(_p17) + (_p18.pos.column - _p16.column));
 							return _elm_lang$core$Native_Utils.update(
 								model,
 								{
 									mark: _elm_lang$core$Maybe$Just(
 										_elm_lang$core$Native_Utils.update(
-											_p23,
+											_p18,
 											{
-												pos: {ctor: '_Tuple2', _0: mk_row + add_line_cnt, _1: new_col}
+												pos: A2(_minekoa$elm_text_editor$TextEditor_Buffer_ops['@'], _p18.pos.row + add_line_cnt, new_col)
 											}))
 								});
 						} else {
@@ -9924,13 +9922,9 @@ var _minekoa$elm_text_editor$TextEditor_Buffer$updateMark = F2(
 						{
 							mark: _elm_lang$core$Maybe$Just(
 								_elm_lang$core$Native_Utils.update(
-									_p23,
+									_p18,
 									{
-										pos: A3(
-											_minekoa$elm_text_editor$TextEditor_Buffer$updateMarkPos_byDelete,
-											_minekoa$elm_text_editor$TextEditor_Buffer$position_toTuple(_p19._1),
-											_p19._2,
-											_p23.pos)
+										pos: A3(_minekoa$elm_text_editor$TextEditor_Buffer$updateMarkPos_byDelete, _p14._1, _p14._2, _p18.pos)
 									}))
 						});
 				default:
@@ -9939,13 +9933,9 @@ var _minekoa$elm_text_editor$TextEditor_Buffer$updateMark = F2(
 						{
 							mark: _elm_lang$core$Maybe$Just(
 								_elm_lang$core$Native_Utils.update(
-									_p23,
+									_p18,
 									{
-										pos: A3(
-											_minekoa$elm_text_editor$TextEditor_Buffer$updateMarkPos_byDelete,
-											_minekoa$elm_text_editor$TextEditor_Buffer$position_toTuple(_p19._0),
-											_p19._2,
-											_p23.pos)
+										pos: A3(_minekoa$elm_text_editor$TextEditor_Buffer$updateMarkPos_byDelete, _p14._0, _p14._2, _p18.pos)
 									}))
 						});
 			}
@@ -9953,12 +9943,6 @@ var _minekoa$elm_text_editor$TextEditor_Buffer$updateMark = F2(
 			return model;
 		}
 	});
-var _minekoa$elm_text_editor$TextEditor_Buffer$Position = F2(
-	function (a, b) {
-		return {row: a, column: b};
-	});
-var _minekoa$elm_text_editor$TextEditor_Buffer_ops = _minekoa$elm_text_editor$TextEditor_Buffer_ops || {};
-_minekoa$elm_text_editor$TextEditor_Buffer_ops['@'] = _minekoa$elm_text_editor$TextEditor_Buffer$Position;
 var _minekoa$elm_text_editor$TextEditor_Buffer$defaultCursor = function (contents) {
 	var n = _elm_lang$core$List$length(contents);
 	return A2(
@@ -9979,7 +9963,7 @@ var _minekoa$elm_text_editor$TextEditor_Buffer$moveForwardProc = function (model
 			A2(
 				_elm_lang$core$Maybe$andThen,
 				function (ln) {
-					var _p24 = {
+					var _p19 = {
 						ctor: '_Tuple2',
 						_0: _elm_lang$core$Native_Utils.cmp(
 							cur.column,
@@ -9988,13 +9972,13 @@ var _minekoa$elm_text_editor$TextEditor_Buffer$moveForwardProc = function (model
 							cur.row,
 							_minekoa$elm_text_editor$TextEditor_Buffer$maxRow(model.contents)) < 0
 					};
-					if (_p24._0 === true) {
+					if (_p19._0 === true) {
 						return _elm_lang$core$Maybe$Just(
 							_elm_lang$core$Native_Utils.update(
 								cur,
 								{column: cur.column + 1}));
 					} else {
-						if (_p24._1 === true) {
+						if (_p19._1 === true) {
 							return _elm_lang$core$Maybe$Just(
 								_elm_lang$core$Native_Utils.update(
 									cur,
@@ -10023,18 +10007,18 @@ var _minekoa$elm_text_editor$TextEditor_Buffer$moveBackwardProc = function (mode
 			A2(
 				_elm_lang$core$Maybe$andThen,
 				function (ln) {
-					var _p25 = {
+					var _p20 = {
 						ctor: '_Tuple2',
 						_0: _elm_lang$core$Native_Utils.cmp(cur.column, 0) > 0,
 						_1: _elm_lang$core$Native_Utils.cmp(cur.row, 0) > 0
 					};
-					if (_p25._0 === true) {
+					if (_p20._0 === true) {
 						return _elm_lang$core$Maybe$Just(
 							_elm_lang$core$Native_Utils.update(
 								cur,
 								{column: cur.column - 1}));
 					} else {
-						if (_p25._1 === true) {
+						if (_p20._1 === true) {
 							return _elm_lang$core$Maybe$Just(
 								_elm_lang$core$Native_Utils.update(
 									cur,
@@ -10061,11 +10045,11 @@ var _minekoa$elm_text_editor$TextEditor_Buffer$moveNextWordProc = F2(
 					A2(_minekoa$elm_text_editor$TextEditor_Buffer$line, cur.row, model.contents)),
 				cur.column);
 			var last_row = _elm_lang$core$List$length(model.contents) - 1;
-			var _p26 = col;
-			if (_p26.ctor === 'Just') {
+			var _p21 = col;
+			if (_p21.ctor === 'Just') {
 				return A2(
 					_minekoa$elm_text_editor$TextEditor_Buffer$moveAtProc,
-					A2(_minekoa$elm_text_editor$TextEditor_Buffer$Position, cur.row, _p26._0),
+					A2(_minekoa$elm_text_editor$TextEditor_Buffer$Position, cur.row, _p21._0),
 					model);
 			} else {
 				if (_elm_lang$core$Native_Utils.cmp(cur.row + 1, last_row) > 0) {
@@ -10081,10 +10065,10 @@ var _minekoa$elm_text_editor$TextEditor_Buffer$moveNextWordProc = F2(
 									A2(_minekoa$elm_text_editor$TextEditor_Buffer$line, last_row, model.contents)))),
 						model);
 				} else {
-					var _v13 = A2(_minekoa$elm_text_editor$TextEditor_Buffer$Position, cur.row + 1, 0),
-						_v14 = model;
-					cur = _v13;
-					model = _v14;
+					var _v12 = A2(_minekoa$elm_text_editor$TextEditor_Buffer$Position, cur.row + 1, 0),
+						_v13 = model;
+					cur = _v12;
+					model = _v13;
 					continue moveNextWordProc;
 				}
 			}
@@ -10101,11 +10085,11 @@ var _minekoa$elm_text_editor$TextEditor_Buffer$movePreviosWordProc = F2(
 					'',
 					A2(_minekoa$elm_text_editor$TextEditor_Buffer$line, cur.row, model.contents)),
 				cur.column);
-			var _p27 = col;
-			if (_p27.ctor === 'Just') {
+			var _p22 = col;
+			if (_p22.ctor === 'Just') {
 				return A2(
 					_minekoa$elm_text_editor$TextEditor_Buffer$moveAtProc,
-					A2(_minekoa$elm_text_editor$TextEditor_Buffer$Position, cur.row, _p27._0),
+					A2(_minekoa$elm_text_editor$TextEditor_Buffer$Position, cur.row, _p22._0),
 					model);
 			} else {
 				if (_elm_lang$core$Native_Utils.cmp(cur.row - 1, 0) < 0) {
@@ -10114,7 +10098,7 @@ var _minekoa$elm_text_editor$TextEditor_Buffer$movePreviosWordProc = F2(
 						A2(_minekoa$elm_text_editor$TextEditor_Buffer$Position, 0, 0),
 						model);
 				} else {
-					var _v16 = A2(
+					var _v15 = A2(
 						_minekoa$elm_text_editor$TextEditor_Buffer$Position,
 						cur.row - 1,
 						_elm_lang$core$String$length(
@@ -10122,9 +10106,9 @@ var _minekoa$elm_text_editor$TextEditor_Buffer$movePreviosWordProc = F2(
 								_elm_lang$core$Maybe$withDefault,
 								'',
 								A2(_minekoa$elm_text_editor$TextEditor_Buffer$line, cur.row - 1, model.contents)))),
-						_v17 = model;
-					cur = _v16;
-					model = _v17;
+						_v16 = model;
+					cur = _v15;
+					model = _v16;
 					continue movePreviosWordProc;
 				}
 			}
@@ -10132,17 +10116,17 @@ var _minekoa$elm_text_editor$TextEditor_Buffer$movePreviosWordProc = F2(
 	});
 var _minekoa$elm_text_editor$TextEditor_Buffer$insert_proc = F3(
 	function (pos, text, model) {
-		var car = function (_p28) {
+		var car = function (_p23) {
 			return A2(
 				_elm_lang$core$Maybe$withDefault,
 				'',
-				_elm_lang$core$List$head(_p28));
+				_elm_lang$core$List$head(_p23));
 		};
 		var texts = _elm_lang$core$String$lines(text);
 		var contents = model.contents;
-		var _p29 = _minekoa$elm_text_editor$TextEditor_Buffer$position_toTuple(pos);
-		var row = _p29._0;
-		var col = _p29._1;
+		var _p24 = _minekoa$elm_text_editor$TextEditor_Buffer$position_toTuple(pos);
+		var row = _p24._0;
+		var col = _p24._1;
 		var prows = A2(_elm_lang$core$List$take, row, contents);
 		var crow = A2(
 			_elm_lang$core$Maybe$withDefault,
@@ -10151,8 +10135,8 @@ var _minekoa$elm_text_editor$TextEditor_Buffer$insert_proc = F3(
 		var nrows = A2(_elm_lang$core$List$drop, row + 1, contents);
 		var left = A2(_elm_lang$core$String$left, col, crow);
 		var right = A2(_elm_lang$core$String$dropLeft, col, crow);
-		var _p30 = _elm_lang$core$List$length(texts);
-		switch (_p30) {
+		var _p25 = _elm_lang$core$List$length(texts);
+		switch (_p25) {
 			case 0:
 				return model;
 			case 1:
@@ -10203,9 +10187,9 @@ var _minekoa$elm_text_editor$TextEditor_Buffer$insert_proc = F3(
 							_elm_lang$core$String$length(lst_ln))
 					});
 			default:
-				var _p31 = _p30;
+				var _p26 = _p25;
 				var lst_ln = car(
-					A2(_elm_lang$core$List$drop, _p31 - 1, texts));
+					A2(_elm_lang$core$List$drop, _p26 - 1, texts));
 				var fst_ln = car(texts);
 				return _elm_lang$core$Native_Utils.update(
 					model,
@@ -10225,7 +10209,7 @@ var _minekoa$elm_text_editor$TextEditor_Buffer$insert_proc = F3(
 									A2(
 										_elm_lang$core$List$drop,
 										1,
-										A2(_elm_lang$core$List$take, _p31 - 1, texts)),
+										A2(_elm_lang$core$List$take, _p26 - 1, texts)),
 									A2(
 										_elm_lang$core$Basics_ops['++'],
 										{
@@ -10236,7 +10220,7 @@ var _minekoa$elm_text_editor$TextEditor_Buffer$insert_proc = F3(
 										nrows)))),
 						cursor: A2(
 							_minekoa$elm_text_editor$TextEditor_Buffer$Position,
-							(row + _p31) - 1,
+							(row + _p26) - 1,
 							_elm_lang$core$String$length(lst_ln))
 					});
 		}
@@ -10256,25 +10240,25 @@ var _minekoa$elm_text_editor$TextEditor_Buffer$undo_delete_proc = F4(
 	});
 var _minekoa$elm_text_editor$TextEditor_Buffer$backspace_proc = F2(
 	function (pos, model) {
-		var _p32 = _minekoa$elm_text_editor$TextEditor_Buffer$position_toTuple(pos);
-		if (_p32._1 === 0) {
-			if (_p32._0 === 0) {
+		var _p27 = _minekoa$elm_text_editor$TextEditor_Buffer$position_toTuple(pos);
+		if (_p27._1 === 0) {
+			if (_p27._0 === 0) {
 				return {ctor: '_Tuple2', _0: model, _1: _elm_lang$core$Maybe$Nothing};
 			} else {
-				var _p33 = _p32._0;
+				var _p28 = _p27._0;
 				var n_col = _elm_lang$core$String$length(
 					A2(
 						_elm_lang$core$Maybe$withDefault,
 						'',
 						_elm_lang$core$List$head(
-							A2(_elm_lang$core$List$drop, _p33 - 1, model.contents))));
-				var nrows = A2(_elm_lang$core$List$drop, _p33 + 1, model.contents);
+							A2(_elm_lang$core$List$drop, _p28 - 1, model.contents))));
+				var nrows = A2(_elm_lang$core$List$drop, _p28 + 1, model.contents);
 				var crow = _elm_lang$core$String$concat(
 					A2(
 						_elm_lang$core$List$take,
 						2,
-						A2(_elm_lang$core$List$drop, _p33 - 1, model.contents)));
-				var prows = A2(_elm_lang$core$List$take, _p33 - 1, model.contents);
+						A2(_elm_lang$core$List$drop, _p28 - 1, model.contents)));
+				var prows = A2(_elm_lang$core$List$take, _p28 - 1, model.contents);
 				return {
 					ctor: '_Tuple2',
 					_0: _elm_lang$core$Native_Utils.update(
@@ -10284,22 +10268,22 @@ var _minekoa$elm_text_editor$TextEditor_Buffer$backspace_proc = F2(
 								_elm_lang$core$Basics_ops['++'],
 								prows,
 								{ctor: '::', _0: crow, _1: nrows}),
-							cursor: A2(_minekoa$elm_text_editor$TextEditor_Buffer$Position, _p33 - 1, n_col)
+							cursor: A2(_minekoa$elm_text_editor$TextEditor_Buffer$Position, _p28 - 1, n_col)
 						}),
 					_1: _elm_lang$core$Maybe$Just('\n')
 				};
 			}
 		} else {
-			var _p35 = _p32._0;
-			var _p34 = _p32._1;
-			var nrows = A2(_elm_lang$core$List$drop, _p35 + 1, model.contents);
+			var _p30 = _p27._0;
+			var _p29 = _p27._1;
+			var nrows = A2(_elm_lang$core$List$drop, _p30 + 1, model.contents);
 			var crow = A2(
 				_elm_lang$core$Maybe$withDefault,
 				'',
-				A2(_minekoa$elm_text_editor$TextEditor_Buffer$line, _p35, model.contents));
-			var left = A2(_elm_lang$core$String$left, _p34 - 1, crow);
-			var right = A2(_elm_lang$core$String$dropLeft, _p34, crow);
-			var prows = A2(_elm_lang$core$List$take, _p35, model.contents);
+				A2(_minekoa$elm_text_editor$TextEditor_Buffer$line, _p30, model.contents));
+			var left = A2(_elm_lang$core$String$left, _p29 - 1, crow);
+			var right = A2(_elm_lang$core$String$dropLeft, _p29, crow);
+			var prows = A2(_elm_lang$core$List$take, _p30, model.contents);
 			return {
 				ctor: '_Tuple2',
 				_0: _elm_lang$core$Native_Utils.update(
@@ -10313,33 +10297,33 @@ var _minekoa$elm_text_editor$TextEditor_Buffer$backspace_proc = F2(
 								_0: A2(_elm_lang$core$Basics_ops['++'], left, right),
 								_1: nrows
 							}),
-						cursor: A2(_minekoa$elm_text_editor$TextEditor_Buffer$Position, _p35, _p34 - 1)
+						cursor: A2(_minekoa$elm_text_editor$TextEditor_Buffer$Position, _p30, _p29 - 1)
 					}),
 				_1: _elm_lang$core$Maybe$Just(
 					A2(
 						_elm_lang$core$String$left,
 						1,
-						A2(_elm_lang$core$String$dropLeft, _p34 - 1, crow)))
+						A2(_elm_lang$core$String$dropLeft, _p29 - 1, crow)))
 			};
 		}
 	});
 var _minekoa$elm_text_editor$TextEditor_Buffer$delete_proc = F2(
 	function (pos, model) {
 		var max_row = _minekoa$elm_text_editor$TextEditor_Buffer$maxRow(model.contents);
-		var _p36 = _minekoa$elm_text_editor$TextEditor_Buffer$position_toTuple(pos);
-		var row = _p36._0;
-		var col = _p36._1;
+		var _p31 = _minekoa$elm_text_editor$TextEditor_Buffer$position_toTuple(pos);
+		var row = _p31._0;
+		var col = _p31._1;
 		var ln = A2(
 			_elm_lang$core$Maybe$withDefault,
 			'',
 			A2(_minekoa$elm_text_editor$TextEditor_Buffer$line, row, model.contents));
 		var max_col = _minekoa$elm_text_editor$TextEditor_Buffer$maxColumn(ln);
-		var _p37 = {
+		var _p32 = {
 			ctor: '_Tuple2',
 			_0: _elm_lang$core$Native_Utils.eq(row, max_row),
 			_1: _elm_lang$core$Native_Utils.cmp(col, max_col) > 0
 		};
-		if (_p37._1 === false) {
+		if (_p32._1 === false) {
 			var current = A2(
 				_elm_lang$core$Basics_ops['++'],
 				A2(_elm_lang$core$String$left, col, ln),
@@ -10364,7 +10348,7 @@ var _minekoa$elm_text_editor$TextEditor_Buffer$delete_proc = F2(
 						A2(_elm_lang$core$String$dropLeft, col, ln)))
 			};
 		} else {
-			if (_p37._0 === true) {
+			if (_p32._0 === true) {
 				return {ctor: '_Tuple2', _0: model, _1: _elm_lang$core$Maybe$Nothing};
 			} else {
 				var nrows = A2(_elm_lang$core$List$drop, row + 2, model.contents);
@@ -10395,20 +10379,17 @@ var _minekoa$elm_text_editor$TextEditor_Buffer$Range = F2(
 		return {begin: a, end: b};
 	});
 var _minekoa$elm_text_editor$TextEditor_Buffer$makeRange = F2(
-	function (_p39, _p38) {
-		var _p40 = _p39;
-		var _p41 = _p38;
+	function (_p34, _p33) {
+		var _p35 = _p34;
+		var _p36 = _p33;
 		return A2(
 			_minekoa$elm_text_editor$TextEditor_Buffer$Range,
-			A2(_minekoa$elm_text_editor$TextEditor_Buffer$Position, _p40._0, _p40._1),
-			A2(_minekoa$elm_text_editor$TextEditor_Buffer$Position, _p41._0, _p41._1));
+			A2(_minekoa$elm_text_editor$TextEditor_Buffer$Position, _p35._0, _p35._1),
+			A2(_minekoa$elm_text_editor$TextEditor_Buffer$Position, _p36._0, _p36._1));
 	});
 var _minekoa$elm_text_editor$TextEditor_Buffer$markSet = function (model) {
 	var pos = model.cursor;
-	var new_mark = {
-		pos: _minekoa$elm_text_editor$TextEditor_Buffer$position_toTuple(pos),
-		actived: true
-	};
+	var new_mark = {pos: pos, actived: true};
 	return _elm_lang$core$Native_Utils.update(
 		model,
 		{
@@ -10446,8 +10427,8 @@ var _minekoa$elm_text_editor$TextEditor_Buffer$selectWithMove = F2(
 		}(model);
 	});
 var _minekoa$elm_text_editor$TextEditor_Buffer$moveForward = function (model) {
-	var _p42 = _minekoa$elm_text_editor$TextEditor_Buffer$isMarkActive(model);
-	if (_p42 === true) {
+	var _p37 = _minekoa$elm_text_editor$TextEditor_Buffer$isMarkActive(model);
+	if (_p37 === true) {
 		return A2(_minekoa$elm_text_editor$TextEditor_Buffer$selectWithMove, _minekoa$elm_text_editor$TextEditor_Buffer$moveForwardProc, model);
 	} else {
 		return _minekoa$elm_text_editor$TextEditor_Buffer$selectionClear(
@@ -10455,8 +10436,8 @@ var _minekoa$elm_text_editor$TextEditor_Buffer$moveForward = function (model) {
 	}
 };
 var _minekoa$elm_text_editor$TextEditor_Buffer$moveBackward = function (model) {
-	var _p43 = _minekoa$elm_text_editor$TextEditor_Buffer$isMarkActive(model);
-	if (_p43 === true) {
+	var _p38 = _minekoa$elm_text_editor$TextEditor_Buffer$isMarkActive(model);
+	if (_p38 === true) {
 		return A2(_minekoa$elm_text_editor$TextEditor_Buffer$selectWithMove, _minekoa$elm_text_editor$TextEditor_Buffer$moveBackwardProc, model);
 	} else {
 		return _minekoa$elm_text_editor$TextEditor_Buffer$selectionClear(
@@ -10464,8 +10445,8 @@ var _minekoa$elm_text_editor$TextEditor_Buffer$moveBackward = function (model) {
 	}
 };
 var _minekoa$elm_text_editor$TextEditor_Buffer$movePreviosLine = function (model) {
-	var _p44 = _minekoa$elm_text_editor$TextEditor_Buffer$isMarkActive(model);
-	if (_p44 === true) {
+	var _p39 = _minekoa$elm_text_editor$TextEditor_Buffer$isMarkActive(model);
+	if (_p39 === true) {
 		return A2(_minekoa$elm_text_editor$TextEditor_Buffer$selectWithMove, _minekoa$elm_text_editor$TextEditor_Buffer$movePreviosLineProc, model);
 	} else {
 		return _minekoa$elm_text_editor$TextEditor_Buffer$selectionClear(
@@ -10473,8 +10454,8 @@ var _minekoa$elm_text_editor$TextEditor_Buffer$movePreviosLine = function (model
 	}
 };
 var _minekoa$elm_text_editor$TextEditor_Buffer$moveNextLine = function (model) {
-	var _p45 = _minekoa$elm_text_editor$TextEditor_Buffer$isMarkActive(model);
-	if (_p45 === true) {
+	var _p40 = _minekoa$elm_text_editor$TextEditor_Buffer$isMarkActive(model);
+	if (_p40 === true) {
 		return A2(_minekoa$elm_text_editor$TextEditor_Buffer$selectWithMove, _minekoa$elm_text_editor$TextEditor_Buffer$moveNextLineProc, model);
 	} else {
 		return _minekoa$elm_text_editor$TextEditor_Buffer$selectionClear(
@@ -10483,8 +10464,8 @@ var _minekoa$elm_text_editor$TextEditor_Buffer$moveNextLine = function (model) {
 };
 var _minekoa$elm_text_editor$TextEditor_Buffer$moveAt = F2(
 	function (pos, model) {
-		var _p46 = _minekoa$elm_text_editor$TextEditor_Buffer$isMarkActive(model);
-		if (_p46 === true) {
+		var _p41 = _minekoa$elm_text_editor$TextEditor_Buffer$isMarkActive(model);
+		if (_p41 === true) {
 			return A2(
 				_minekoa$elm_text_editor$TextEditor_Buffer$selectWithMove,
 				_minekoa$elm_text_editor$TextEditor_Buffer$moveAtProc(pos),
@@ -10495,19 +10476,19 @@ var _minekoa$elm_text_editor$TextEditor_Buffer$moveAt = F2(
 		}
 	});
 var _minekoa$elm_text_editor$TextEditor_Buffer$gotoMark = function (model) {
-	var _p47 = model.mark;
-	if (_p47.ctor === 'Just') {
+	var _p42 = model.mark;
+	if (_p42.ctor === 'Just') {
 		return A2(
 			_minekoa$elm_text_editor$TextEditor_Buffer$moveAt,
-			_minekoa$elm_text_editor$TextEditor_Buffer$position_fromTuple(_p47._0.pos),
+			_p42._0.pos,
 			_minekoa$elm_text_editor$TextEditor_Buffer$markSet(model));
 	} else {
 		return model;
 	}
 };
 var _minekoa$elm_text_editor$TextEditor_Buffer$moveNextWord = function (model) {
-	var _p48 = _minekoa$elm_text_editor$TextEditor_Buffer$isMarkActive(model);
-	if (_p48 === true) {
+	var _p43 = _minekoa$elm_text_editor$TextEditor_Buffer$isMarkActive(model);
+	if (_p43 === true) {
 		return A2(
 			_minekoa$elm_text_editor$TextEditor_Buffer$selectWithMove,
 			_minekoa$elm_text_editor$TextEditor_Buffer$moveNextWordProc(model.cursor),
@@ -10518,8 +10499,8 @@ var _minekoa$elm_text_editor$TextEditor_Buffer$moveNextWord = function (model) {
 	}
 };
 var _minekoa$elm_text_editor$TextEditor_Buffer$movePreviosWord = function (model) {
-	var _p49 = _minekoa$elm_text_editor$TextEditor_Buffer$isMarkActive(model);
-	if (_p49 === true) {
+	var _p44 = _minekoa$elm_text_editor$TextEditor_Buffer$isMarkActive(model);
+	if (_p44 === true) {
 		return A2(
 			_minekoa$elm_text_editor$TextEditor_Buffer$selectWithMove,
 			_minekoa$elm_text_editor$TextEditor_Buffer$movePreviosWordProc(model.cursor),
@@ -10529,39 +10510,39 @@ var _minekoa$elm_text_editor$TextEditor_Buffer$movePreviosWord = function (model
 			A2(_minekoa$elm_text_editor$TextEditor_Buffer$movePreviosWordProc, model.cursor, model));
 	}
 };
-var _minekoa$elm_text_editor$TextEditor_Buffer$selectBackward = function (_p50) {
+var _minekoa$elm_text_editor$TextEditor_Buffer$selectBackward = function (_p45) {
 	return A2(
 		_minekoa$elm_text_editor$TextEditor_Buffer$selectWithMove,
 		_minekoa$elm_text_editor$TextEditor_Buffer$moveBackwardProc,
 		function (m) {
 			return _minekoa$elm_text_editor$TextEditor_Buffer$isMarkActive(m) ? _minekoa$elm_text_editor$TextEditor_Buffer$markClear(m) : m;
-		}(_p50));
+		}(_p45));
 };
-var _minekoa$elm_text_editor$TextEditor_Buffer$selectForward = function (_p51) {
+var _minekoa$elm_text_editor$TextEditor_Buffer$selectForward = function (_p46) {
 	return A2(
 		_minekoa$elm_text_editor$TextEditor_Buffer$selectWithMove,
 		_minekoa$elm_text_editor$TextEditor_Buffer$moveForwardProc,
 		function (m) {
 			return _minekoa$elm_text_editor$TextEditor_Buffer$isMarkActive(m) ? _minekoa$elm_text_editor$TextEditor_Buffer$markClear(m) : m;
-		}(_p51));
+		}(_p46));
 };
-var _minekoa$elm_text_editor$TextEditor_Buffer$selectPreviosLine = function (_p52) {
+var _minekoa$elm_text_editor$TextEditor_Buffer$selectPreviosLine = function (_p47) {
 	return A2(
 		_minekoa$elm_text_editor$TextEditor_Buffer$selectWithMove,
 		_minekoa$elm_text_editor$TextEditor_Buffer$movePreviosLineProc,
 		function (m) {
 			return _minekoa$elm_text_editor$TextEditor_Buffer$isMarkActive(m) ? _minekoa$elm_text_editor$TextEditor_Buffer$markClear(m) : m;
-		}(_p52));
+		}(_p47));
 };
-var _minekoa$elm_text_editor$TextEditor_Buffer$selectNextLine = function (_p53) {
+var _minekoa$elm_text_editor$TextEditor_Buffer$selectNextLine = function (_p48) {
 	return A2(
 		_minekoa$elm_text_editor$TextEditor_Buffer$selectWithMove,
 		_minekoa$elm_text_editor$TextEditor_Buffer$moveNextLineProc,
 		function (m) {
 			return _minekoa$elm_text_editor$TextEditor_Buffer$isMarkActive(m) ? _minekoa$elm_text_editor$TextEditor_Buffer$markClear(m) : m;
-		}(_p53));
+		}(_p48));
 };
-var _minekoa$elm_text_editor$TextEditor_Buffer$selectPreviosWord = function (_p54) {
+var _minekoa$elm_text_editor$TextEditor_Buffer$selectPreviosWord = function (_p49) {
 	return A2(
 		_minekoa$elm_text_editor$TextEditor_Buffer$selectWithMove,
 		function (m) {
@@ -10569,9 +10550,9 @@ var _minekoa$elm_text_editor$TextEditor_Buffer$selectPreviosWord = function (_p5
 		},
 		function (m) {
 			return _minekoa$elm_text_editor$TextEditor_Buffer$isMarkActive(m) ? _minekoa$elm_text_editor$TextEditor_Buffer$markClear(m) : m;
-		}(_p54));
+		}(_p49));
 };
-var _minekoa$elm_text_editor$TextEditor_Buffer$selectNextWord = function (_p55) {
+var _minekoa$elm_text_editor$TextEditor_Buffer$selectNextWord = function (_p50) {
 	return A2(
 		_minekoa$elm_text_editor$TextEditor_Buffer$selectWithMove,
 		function (m) {
@@ -10579,16 +10560,16 @@ var _minekoa$elm_text_editor$TextEditor_Buffer$selectNextWord = function (_p55) 
 		},
 		function (m) {
 			return _minekoa$elm_text_editor$TextEditor_Buffer$isMarkActive(m) ? _minekoa$elm_text_editor$TextEditor_Buffer$markClear(m) : m;
-		}(_p55));
+		}(_p50));
 };
 var _minekoa$elm_text_editor$TextEditor_Buffer$selectAt = function (pos) {
-	return function (_p56) {
+	return function (_p51) {
 		return A2(
 			_minekoa$elm_text_editor$TextEditor_Buffer$selectWithMove,
 			_minekoa$elm_text_editor$TextEditor_Buffer$moveAtProc(pos),
 			function (m) {
 				return _minekoa$elm_text_editor$TextEditor_Buffer$isMarkActive(m) ? _minekoa$elm_text_editor$TextEditor_Buffer$markClear(m) : m;
-			}(_p56));
+			}(_p51));
 	};
 };
 var _minekoa$elm_text_editor$TextEditor_Buffer$undo_insert_proc = F4(
@@ -10599,8 +10580,8 @@ var _minekoa$elm_text_editor$TextEditor_Buffer$undo_insert_proc = F4(
 			model);
 	});
 var _minekoa$elm_text_editor$TextEditor_Buffer$undo = function (model) {
-	var _p57 = _elm_lang$core$List$head(model.history);
-	if (_p57.ctor === 'Nothing') {
+	var _p52 = _elm_lang$core$List$head(model.history);
+	if (_p52.ctor === 'Nothing') {
 		return model;
 	} else {
 		return function (m) {
@@ -10611,29 +10592,29 @@ var _minekoa$elm_text_editor$TextEditor_Buffer$undo = function (model) {
 				});
 		}(
 			function () {
-				var _p58 = _p57._0;
-				switch (_p58.ctor) {
+				var _p53 = _p52._0;
+				switch (_p53.ctor) {
 					case 'Cmd_Insert':
 						return function (m) {
 							return _elm_lang$core$Native_Utils.update(
 								m,
-								{mark: _p58._3});
+								{mark: _p53._3});
 						}(
-							A4(_minekoa$elm_text_editor$TextEditor_Buffer$undo_insert_proc, _p58._0, _p58._1, _p58._2, model));
+							A4(_minekoa$elm_text_editor$TextEditor_Buffer$undo_insert_proc, _p53._0, _p53._1, _p53._2, model));
 					case 'Cmd_Backspace':
 						return function (m) {
 							return _elm_lang$core$Native_Utils.update(
 								m,
-								{mark: _p58._3});
+								{mark: _p53._3});
 						}(
-							A4(_minekoa$elm_text_editor$TextEditor_Buffer$undo_backspace_proc, _p58._0, _p58._1, _p58._2, model));
+							A4(_minekoa$elm_text_editor$TextEditor_Buffer$undo_backspace_proc, _p53._0, _p53._1, _p53._2, model));
 					default:
 						return function (m) {
 							return _elm_lang$core$Native_Utils.update(
 								m,
-								{mark: _p58._3});
+								{mark: _p53._3});
 						}(
-							A4(_minekoa$elm_text_editor$TextEditor_Buffer$undo_delete_proc, _p58._0, _p58._1, _p58._2, model));
+							A4(_minekoa$elm_text_editor$TextEditor_Buffer$undo_delete_proc, _p53._0, _p53._1, _p53._2, model));
 				}
 			}());
 	}
@@ -10669,30 +10650,30 @@ var _minekoa$elm_text_editor$TextEditor_Buffer$Cmd_Insert = F4(
 	});
 var _minekoa$elm_text_editor$TextEditor_Buffer$appendHistory = F2(
 	function (cmd, model) {
-		var _p59 = {
+		var _p54 = {
 			ctor: '_Tuple2',
 			_0: cmd,
 			_1: _elm_lang$core$List$head(model.history)
 		};
-		_v33_3:
+		_v32_3:
 		do {
-			if (_p59._1.ctor === 'Just') {
-				switch (_p59._0.ctor) {
+			if (_p54._1.ctor === 'Just') {
+				switch (_p54._0.ctor) {
 					case 'Cmd_Insert':
-						if (_p59._1._0.ctor === 'Cmd_Insert') {
-							var _p61 = _p59._1._0._0;
-							var _p60 = _p59._0._0;
-							return (_elm_lang$core$Native_Utils.eq(_p60.row, _p61.row) && _elm_lang$core$Native_Utils.eq(_p60.column, _p59._1._0._1.column)) ? _elm_lang$core$Native_Utils.update(
+						if (_p54._1._0.ctor === 'Cmd_Insert') {
+							var _p56 = _p54._1._0._0;
+							var _p55 = _p54._0._0;
+							return (_elm_lang$core$Native_Utils.eq(_p55.row, _p56.row) && _elm_lang$core$Native_Utils.eq(_p55.column, _p54._1._0._1.column)) ? _elm_lang$core$Native_Utils.update(
 								model,
 								{
 									history: {
 										ctor: '::',
 										_0: A4(
 											_minekoa$elm_text_editor$TextEditor_Buffer$Cmd_Insert,
-											_p61,
-											_p59._0._1,
-											A2(_elm_lang$core$Basics_ops['++'], _p59._1._0._2, _p59._0._2),
-											_p59._1._0._3),
+											_p56,
+											_p54._0._1,
+											A2(_elm_lang$core$Basics_ops['++'], _p54._1._0._2, _p54._0._2),
+											_p54._1._0._3),
 										_1: A2(_elm_lang$core$List$drop, 1, model.history)
 									}
 								}) : _elm_lang$core$Native_Utils.update(
@@ -10701,23 +10682,23 @@ var _minekoa$elm_text_editor$TextEditor_Buffer$appendHistory = F2(
 									history: {ctor: '::', _0: cmd, _1: model.history}
 								});
 						} else {
-							break _v33_3;
+							break _v32_3;
 						}
 					case 'Cmd_Backspace':
-						if (_p59._1._0.ctor === 'Cmd_Backspace') {
-							var _p63 = _p59._1._0._0;
-							var _p62 = _p59._0._0;
-							return (_elm_lang$core$Native_Utils.eq(_p62.row, _p63.row) && _elm_lang$core$Native_Utils.eq(_p62.column, _p59._1._0._1.column)) ? _elm_lang$core$Native_Utils.update(
+						if (_p54._1._0.ctor === 'Cmd_Backspace') {
+							var _p58 = _p54._1._0._0;
+							var _p57 = _p54._0._0;
+							return (_elm_lang$core$Native_Utils.eq(_p57.row, _p58.row) && _elm_lang$core$Native_Utils.eq(_p57.column, _p54._1._0._1.column)) ? _elm_lang$core$Native_Utils.update(
 								model,
 								{
 									history: {
 										ctor: '::',
 										_0: A4(
 											_minekoa$elm_text_editor$TextEditor_Buffer$Cmd_Backspace,
-											_p63,
-											_p59._0._1,
-											A2(_elm_lang$core$Basics_ops['++'], _p59._0._2, _p59._1._0._2),
-											_p59._1._0._3),
+											_p58,
+											_p54._0._1,
+											A2(_elm_lang$core$Basics_ops['++'], _p54._0._2, _p54._1._0._2),
+											_p54._1._0._3),
 										_1: A2(_elm_lang$core$List$drop, 1, model.history)
 									}
 								}) : _elm_lang$core$Native_Utils.update(
@@ -10726,23 +10707,23 @@ var _minekoa$elm_text_editor$TextEditor_Buffer$appendHistory = F2(
 									history: {ctor: '::', _0: cmd, _1: model.history}
 								});
 						} else {
-							break _v33_3;
+							break _v32_3;
 						}
 					default:
-						if (_p59._1._0.ctor === 'Cmd_Delete') {
-							var _p65 = _p59._1._0._0;
-							var _p64 = _p59._0._0;
-							return (_elm_lang$core$Native_Utils.eq(_p64.row, _p65.row) && _elm_lang$core$Native_Utils.eq(_p64.column, _p65.column)) ? _elm_lang$core$Native_Utils.update(
+						if (_p54._1._0.ctor === 'Cmd_Delete') {
+							var _p60 = _p54._1._0._0;
+							var _p59 = _p54._0._0;
+							return (_elm_lang$core$Native_Utils.eq(_p59.row, _p60.row) && _elm_lang$core$Native_Utils.eq(_p59.column, _p60.column)) ? _elm_lang$core$Native_Utils.update(
 								model,
 								{
 									history: {
 										ctor: '::',
 										_0: A4(
 											_minekoa$elm_text_editor$TextEditor_Buffer$Cmd_Delete,
-											_p65,
-											_p59._0._1,
-											A2(_elm_lang$core$Basics_ops['++'], _p59._1._0._2, _p59._0._2),
-											_p59._1._0._3),
+											_p60,
+											_p54._0._1,
+											A2(_elm_lang$core$Basics_ops['++'], _p54._1._0._2, _p54._0._2),
+											_p54._1._0._3),
 										_1: A2(_elm_lang$core$List$drop, 1, model.history)
 									}
 								}) : _elm_lang$core$Native_Utils.update(
@@ -10751,11 +10732,11 @@ var _minekoa$elm_text_editor$TextEditor_Buffer$appendHistory = F2(
 									history: {ctor: '::', _0: cmd, _1: model.history}
 								});
 						} else {
-							break _v33_3;
+							break _v32_3;
 						}
 				}
 			} else {
-				break _v33_3;
+				break _v32_3;
 			}
 		} while(false);
 		return _elm_lang$core$Native_Utils.update(
@@ -10766,15 +10747,15 @@ var _minekoa$elm_text_editor$TextEditor_Buffer$appendHistory = F2(
 	});
 var _minekoa$elm_text_editor$TextEditor_Buffer$backspaceAt = F2(
 	function (pos, model) {
-		var _p66 = A2(_minekoa$elm_text_editor$TextEditor_Buffer$backspace_proc, pos, model);
-		var m = _p66._0;
-		var deleted = _p66._1;
-		var _p67 = deleted;
-		if (_p67.ctor === 'Nothing') {
+		var _p61 = A2(_minekoa$elm_text_editor$TextEditor_Buffer$backspace_proc, pos, model);
+		var m = _p61._0;
+		var deleted = _p61._1;
+		var _p62 = deleted;
+		if (_p62.ctor === 'Nothing') {
 			return m;
 		} else {
 			return function (m) {
-				var edtcmd = A4(_minekoa$elm_text_editor$TextEditor_Buffer$Cmd_Backspace, pos, m.cursor, _p67._0, m.mark);
+				var edtcmd = A4(_minekoa$elm_text_editor$TextEditor_Buffer$Cmd_Backspace, pos, m.cursor, _p62._0, m.mark);
 				return A2(
 					_minekoa$elm_text_editor$TextEditor_Buffer$updateMark,
 					edtcmd,
@@ -10784,15 +10765,15 @@ var _minekoa$elm_text_editor$TextEditor_Buffer$backspaceAt = F2(
 	});
 var _minekoa$elm_text_editor$TextEditor_Buffer$deleteAt = F2(
 	function (pos, model) {
-		var _p68 = A2(_minekoa$elm_text_editor$TextEditor_Buffer$delete_proc, pos, model);
-		var m = _p68._0;
-		var deleted = _p68._1;
-		var _p69 = deleted;
-		if (_p69.ctor === 'Nothing') {
+		var _p63 = A2(_minekoa$elm_text_editor$TextEditor_Buffer$delete_proc, pos, model);
+		var m = _p63._0;
+		var deleted = _p63._1;
+		var _p64 = deleted;
+		if (_p64.ctor === 'Nothing') {
 			return m;
 		} else {
 			return function (m) {
-				var edtcmd = A4(_minekoa$elm_text_editor$TextEditor_Buffer$Cmd_Delete, pos, m.cursor, _p69._0, m.mark);
+				var edtcmd = A4(_minekoa$elm_text_editor$TextEditor_Buffer$Cmd_Delete, pos, m.cursor, _p64._0, m.mark);
 				return A2(
 					_minekoa$elm_text_editor$TextEditor_Buffer$updateMark,
 					edtcmd,
@@ -10804,8 +10785,8 @@ var _minekoa$elm_text_editor$TextEditor_Buffer$deleteRange = F2(
 	function (range, model) {
 		var head_pos = A2(_minekoa$elm_text_editor$TextEditor_Buffer$isPreviosPos, range.begin, range.end) ? range.begin : range.end;
 		var deleted = A2(_minekoa$elm_text_editor$TextEditor_Buffer$readRange, range, model);
-		var _p70 = deleted;
-		if (_p70 === '') {
+		var _p65 = deleted;
+		if (_p65 === '') {
 			return model;
 		} else {
 			return function (m) {
@@ -10819,30 +10800,30 @@ var _minekoa$elm_text_editor$TextEditor_Buffer$deleteRange = F2(
 		}
 	});
 var _minekoa$elm_text_editor$TextEditor_Buffer$backspace = function (model) {
-	var _p71 = model.selection;
-	if (_p71.ctor === 'Nothing') {
+	var _p66 = model.selection;
+	if (_p66.ctor === 'Nothing') {
 		return A2(_minekoa$elm_text_editor$TextEditor_Buffer$backspaceAt, model.cursor, model);
 	} else {
 		return _minekoa$elm_text_editor$TextEditor_Buffer$selectionClear(
-			A2(_minekoa$elm_text_editor$TextEditor_Buffer$deleteRange, _p71._0, model));
+			A2(_minekoa$elm_text_editor$TextEditor_Buffer$deleteRange, _p66._0, model));
 	}
 };
 var _minekoa$elm_text_editor$TextEditor_Buffer$delete = function (model) {
-	var _p72 = model.selection;
-	if (_p72.ctor === 'Nothing') {
+	var _p67 = model.selection;
+	if (_p67.ctor === 'Nothing') {
 		return A2(_minekoa$elm_text_editor$TextEditor_Buffer$deleteAt, model.cursor, model);
 	} else {
 		return _minekoa$elm_text_editor$TextEditor_Buffer$selectionClear(
-			A2(_minekoa$elm_text_editor$TextEditor_Buffer$deleteRange, _p72._0, model));
+			A2(_minekoa$elm_text_editor$TextEditor_Buffer$deleteRange, _p67._0, model));
 	}
 };
 var _minekoa$elm_text_editor$TextEditor_Buffer$deleteSelection = function (model) {
-	var _p73 = model.selection;
-	if (_p73.ctor === 'Nothing') {
+	var _p68 = model.selection;
+	if (_p68.ctor === 'Nothing') {
 		return model;
 	} else {
 		return _minekoa$elm_text_editor$TextEditor_Buffer$selectionClear(
-			A2(_minekoa$elm_text_editor$TextEditor_Buffer$deleteRange, _p73._0, model));
+			A2(_minekoa$elm_text_editor$TextEditor_Buffer$deleteRange, _p68._0, model));
 	}
 };
 var _minekoa$elm_text_editor$TextEditor_Buffer$insertAt = F3(
@@ -10858,15 +10839,15 @@ var _minekoa$elm_text_editor$TextEditor_Buffer$insertAt = F3(
 	});
 var _minekoa$elm_text_editor$TextEditor_Buffer$insert = F2(
 	function (text, model) {
-		var _p74 = model.selection;
-		if (_p74.ctor === 'Nothing') {
+		var _p69 = model.selection;
+		if (_p69.ctor === 'Nothing') {
 			return A3(_minekoa$elm_text_editor$TextEditor_Buffer$insertAt, model.cursor, text, model);
 		} else {
 			return function (m) {
 				return A3(_minekoa$elm_text_editor$TextEditor_Buffer$insertAt, m.cursor, text, m);
 			}(
 				_minekoa$elm_text_editor$TextEditor_Buffer$selectionClear(
-					A2(_minekoa$elm_text_editor$TextEditor_Buffer$deleteRange, _p74._0, model)));
+					A2(_minekoa$elm_text_editor$TextEditor_Buffer$deleteRange, _p69._0, model)));
 		}
 	});
 
@@ -14874,15 +14855,13 @@ var _minekoa$elm_text_editor$DebugMenu$markToString = function (maybe_mark) {
 				_0: 'pos=(',
 				_1: {
 					ctor: '::',
-					_0: _elm_lang$core$Basics$toString(
-						_elm_lang$core$Tuple$first(_p2.pos)),
+					_0: _elm_lang$core$Basics$toString(_p2.pos.row),
 					_1: {
 						ctor: '::',
 						_0: ',',
 						_1: {
 							ctor: '::',
-							_0: _elm_lang$core$Basics$toString(
-								_elm_lang$core$Tuple$second(_p2.pos)),
+							_0: _elm_lang$core$Basics$toString(_p2.pos.column),
 							_1: {
 								ctor: '::',
 								_0: '), actived=',
@@ -15689,11 +15668,7 @@ var _minekoa$elm_text_editor$DebugMenu$historyView = function (editorModel) {
 										'{pos=',
 										A2(
 											_elm_lang$core$Basics_ops['++'],
-											pos2str(
-												A2(
-													_minekoa$elm_text_editor$TextEditor_Buffer$Position,
-													_elm_lang$core$Tuple$first(_p7.pos),
-													_elm_lang$core$Tuple$second(_p7.pos))),
+											pos2str(_p7.pos),
 											A2(
 												_elm_lang$core$Basics_ops['++'],
 												', actived=',
@@ -23863,15 +23838,13 @@ var _minekoa$elm_text_editor$Main$modeline = function (model) {
 							' mark-set:(',
 							A2(
 								_elm_lang$core$Basics_ops['++'],
-								_elm_lang$core$Basics$toString(
-									_elm_lang$core$Tuple$first(mk.pos)),
+								_elm_lang$core$Basics$toString(mk.pos.row),
 								A2(
 									_elm_lang$core$Basics_ops['++'],
 									',',
 									A2(
 										_elm_lang$core$Basics_ops['++'],
-										_elm_lang$core$Basics$toString(
-											_elm_lang$core$Tuple$second(mk.pos)),
+										_elm_lang$core$Basics$toString(mk.pos.column),
 										')')))) : '');
 				},
 				mark));
