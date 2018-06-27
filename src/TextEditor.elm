@@ -11,7 +11,58 @@ module TextEditor exposing ( Model
                            , execCommand
                            )
 
-{-| This module is simple text editor.
+{-| It is a simple text editor widget. It is a component.
+
+It is used as follows:
+
+```
+import TextEditor
+import TextEditor.KeyBind
+
+type alias FooModel =
+    { editor : TextEditor.Model }
+
+type FooMsg
+    = EditorMsg (TextEditor.Msg)
+
+main : Program Never Model Msg
+main =
+    Html.program
+        { init = init
+        , view = view
+        , subscriptions = subscriptions
+        , update = update
+        }
+
+init : (FooModel, Cmd FooMsg)
+init =
+    let
+        (m, c) = Editor.init 
+                     "editor-id1" 
+                     (TextEditor.KeyBind.basic ++ TextEditor.KeyBind.gates ++ TextEditor.KeyBind.emacsLike)
+                     "foobar hogehoge"
+    in
+        ( Model m
+        , Cmd.map EditorMsg c
+        )
+
+update : FooMsg -> FooModel -> (FooModel, Cmd FooMsg)
+update msg model =
+    case msg of
+        EditorMsg edmsg ->
+            let
+                (m, c) = TextEditor.update edmsg model.editor
+            in
+                ( { model | editor = m}, Cmd.map EditorMsg c)
+
+subscriptions : FooModel -> Sub FooMsg
+subscriptions model =
+    Sub.map EditorMsg (TextEditor.subscriptions model.editor)
+
+view : FooModel -> Html FooMsg
+view model =
+    div [] [ Html.map EditorMsg (TextEditor.view model.editor) ]
+```
 
 # Definition
 
