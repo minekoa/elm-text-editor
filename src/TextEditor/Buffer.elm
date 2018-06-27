@@ -1,11 +1,15 @@
-module TextEditor.Buffer exposing ( Model
+module TextEditor.Buffer exposing
+    ( Position
+    , Range
+    , (@)
+    , makeRange
+
+
+                                  , Model
                                   , init
-                                      
-                                  , Cursor
-                                  , nowCursorPos
+
                                   , isPreviosPos
                                   , line
-                                  , Range
                                   , readRange
                                   , selectedString
 
@@ -50,11 +54,88 @@ module TextEditor.Buffer exposing ( Model
                                   , undo
                                   )
 
+{-|
+
+# Definitions
+
+@docs Position, Range
+
+# Selections
+
+                                  -- selection
+                                  , selectBackward
+                                  , selectForward
+                                  , selectPreviosLine
+                                  , selectNextLine
+                                  , selectPreviosWord
+                                  , selectNextWord
+                                  , selectAt
+                                  , selectionClear
+
+
+# Marks
+
+@docs Mark
+@docs markSet, markClear, gotoMark, isMarkActive
+
+# Editing
+
+@docs insert, insertAt
+@docs backspace, backspaceAt
+@docs delete, deleteAt, deleteRange, deleteSelection
+
+# Undo / Redo
+
+@docs undo
+-}
+
 import TextEditor.StringExtra as StringExtra
 
+------------------------------------------------------------
+-- Definitions
+------------------------------------------------------------
 
+{-| Charactor position
+-}
+type alias Position =
+    { row : Int
+    , column : Int
+    }
+
+{-| Make position
+-}
+(@) : Int -> Int -> Position
+(@) = Position
+
+
+position_toTuple : Position -> (Int, Int)
+position_toTuple pos = (pos.row, pos.column)
+
+position_fromTuple : (Int, Int) -> Position
+position_fromTuple (r, c) = { row = r, column=c }
+
+{-| Range of charactor positions 
+-}
+type alias Range =
+    { begin : Position
+    , end : Position
+    }
+
+{-| Create a range from two tuples
+-}
+makeRange : (Int, Int) -> (Int, Int) -> Range
+makeRange (br, bc) (er, ec) =
+    Range (Position br bc) (Position er ec)
+
+{-|
+* `cursor`    .. Current cursor Position
+* `selection` .. selected text range. If you not selected text, this member is Nothing.
+* `mark`      .. Emacs like mark.
+* `contents`  .. Line separated text.
+* `history`   .. Operating history for `undo`/`redo`
+-}
 type alias Model =
-    { cursor : Cursor
+    { cursor : Position
     , selection : Maybe Range
     , mark : Maybe Mark
     , contents : List String
@@ -63,7 +144,7 @@ type alias Model =
 
 init : String -> Model
 init text =
-    Model (Cursor 0 0)           -- cursor
+    Model (Position 0 0)           -- cursor
           Nothing                -- selection
           Nothing                -- mark
           (String.lines text)    -- contents
@@ -72,27 +153,22 @@ init text =
 
 -- buffer > cursor
 
-type alias Cursor =
-    { row : Int
-    , column : Int
-    }
-
-defaultCursor : List String -> Cursor
+defaultCursor : List String -> Position
 defaultCursor contents =             
     let
         n = List.length contents
     in
-        Cursor (if n < 0 then 0 else n) 0
+        Position (if n < 0 then 0 else n) 0
 
 nowCursorPos : Model -> (Int, Int)
 nowCursorPos model = 
-    ( model.cursor.row, model.cursor.column )
+    model.cursor |> position_toTuple
 
-isPreviosPos : (Int, Int) -> (Int, Int) -> Bool
+isPreviosPos : Position -> Position -> Bool
 isPreviosPos p q =
-    if Tuple.first p == Tuple.first q
-    then Tuple.second p < Tuple.second q
-    else Tuple.first p < Tuple.first q
+    if p.row == q.row
+    then p.column < q.column
+    else p.row < q.row
 
 
 -- buffer > contents
@@ -113,34 +189,33 @@ maxRow contents =
 
 -- selection
 
-type alias Range =
-    { begin : (Int, Int)
-    , end : (Int, Int)
-    }
-
+{-| Retrieve the character string in the specified range
+-}
 readRange : Range -> Model -> String
 readRange sel model =
     let
         bpos = if (isPreviosPos sel.begin sel.end) then sel.begin else sel.end
         epos = if (isPreviosPos sel.begin sel.end) then sel.end else sel.begin
 
-        lcnt = (Tuple.first epos) - (Tuple.first bpos)
+        lcnt = epos.row - bpos.row
     in
         case lcnt of
             0 ->
                 let 
-                    l = line (Tuple.first bpos) model.contents |> Maybe.withDefault ""
+                    l = line bpos.row model.contents |> Maybe.withDefault ""
                 in
-                    l |> String.dropLeft (Tuple.second bpos) |> String.left ((Tuple.second epos) - (Tuple.second bpos))
+                    l |> String.dropLeft bpos.column |> String.left (epos.column - bpos.column)
             _ ->
                 let
-                    bl = model.contents |> line (Tuple.first bpos) |> Maybe.withDefault "" |> String.dropLeft (Tuple.second bpos)
-                    el = model.contents |> line (Tuple.first epos) |> Maybe.withDefault "" |> String.left (Tuple.second epos)
+                    bl = model.contents |> line bpos.row |> Maybe.withDefault "" |> String.dropLeft bpos.column
+                    el = model.contents |> line epos.row |> Maybe.withDefault "" |> String.left epos.column
 
-                    ls = model.contents |> List.drop ((Tuple.first bpos) + 1) |> List.take (lcnt - 1)
+                    ls = model.contents |> List.drop (bpos.row + 1) |> List.take (lcnt - 1)
                 in
                     String.join "\n" ((bl :: ls) ++ [el])
 
+{-| Retrieve the selected character string
+-}
 selectedString : Model -> Maybe String
 selectedString model =
     Maybe.andThen (\sel-> readRange sel model |> Just ) model.selection 
@@ -155,8 +230,8 @@ type alias Mark =
 markSet : Model -> Model
 markSet model =
     let
-        pos = nowCursorPos model
-        new_mark = { pos = pos
+        pos = model.cursor
+        new_mark = { pos = (pos |> position_toTuple)
                    , actived = True
                    }
     in
@@ -188,7 +263,7 @@ gotoMark model =
         Just mk ->
             model
                 |> markSet
-                |> moveAt mk.pos
+                |> moveAt (mk.pos |> position_fromTuple)
         Nothing ->
             model
 
@@ -204,14 +279,14 @@ updateMark cmd model =
                 count_last_line_char = String.lines >> List.reverse >> List.head >> Maybe.withDefault "" >> String.length
             in
                 case cmd of
-                    Cmd_Insert (bfr_row, bfr_col) (afr_row, afr_col) s _ ->
-                        if mk_row > bfr_row then
-                            { model | mark = Just { mk | pos = (mk_row + afr_row - bfr_row, mk_col) } }
-                        else if (mk_row == bfr_row) && (bfr_col <= mk_col) then
+                    Cmd_Insert bfr afr s _ ->
+                        if mk_row > bfr.row then
+                            { model | mark = Just { mk | pos = (mk_row + afr.row - bfr.row, mk_col) } }
+                        else if (mk_row == bfr.row) && (bfr.column <= mk_col) then
                             let
                                 add_line_cnt = count_lf s
-                                new_col = if add_line_cnt == 0 then mk_col + (afr_col - bfr_col)
-                                                               else (count_last_line_char s) + (mk_col - bfr_col)
+                                new_col = if add_line_cnt == 0 then mk_col + (afr.column - bfr.column)
+                                                               else (count_last_line_char s) + (mk_col - bfr.column)
                             in
                                 { model | mark = Just { mk | pos = (mk_row + add_line_cnt, new_col) } }
                         else
@@ -219,12 +294,12 @@ updateMark cmd model =
 
                     Cmd_Backspace before_pos after_pos s _ ->
                         { model
-                              | mark = Just <| { mk | pos = updateMarkPos_byDelete after_pos s mk.pos}
+                              | mark = Just <| { mk | pos = updateMarkPos_byDelete (after_pos |> position_toTuple) s mk.pos}
                         }
 
                     Cmd_Delete before_pos after_pos s _ ->
                         { model
-                            | mark = Just <| { mk | pos = updateMarkPos_byDelete before_pos s mk.pos}
+                            | mark = Just <| { mk | pos = updateMarkPos_byDelete (before_pos |> position_toTuple) s mk.pos}
                         }
                             
         Nothing ->
@@ -269,30 +344,26 @@ updateMarkPos_byDelete bgn_pos s (mk_row, mk_col) =
 ------------------------------------------------------------
 
 type EditCommand
-    = Cmd_Insert (Int, Int) (Int, Int) String (Maybe Mark)    -- befor-cur after-cur inserted_str
-    | Cmd_Backspace (Int, Int) (Int, Int) String (Maybe Mark) -- befor-cur after-cur deleted_str
-    | Cmd_Delete (Int, Int) (Int, Int) String (Maybe Mark)    -- befor-cur after-cur deleted_str
+    = Cmd_Insert Position Position String (Maybe Mark)    -- befor-cur after-cur inserted_str
+    | Cmd_Backspace Position Position String (Maybe Mark) -- befor-cur after-cur deleted_str
+    | Cmd_Delete Position Position String (Maybe Mark)    -- befor-cur after-cur deleted_str
 --    | Cmd_Undo EditCommand
 
 appendHistory: EditCommand -> Model -> Model
 appendHistory cmd model =
-    let
-        row = Tuple.first
-        col = Tuple.second
-    in
     case (cmd, List.head model.history) of
         ( (Cmd_Insert befor after s mk), Just (Cmd_Insert old_befor old_after old_s old_mk) ) ->
-            if ((befor |> row) == (old_befor |> row)) && ((befor |> col) == (old_after |> col))
+            if (befor.row == old_befor.row) && (befor.column == old_after.column)
             then { model | history = (Cmd_Insert old_befor after (old_s ++ s) old_mk) :: List.drop 1 model.history }
             else { model | history = cmd :: model.history }
 
         ( (Cmd_Backspace befor after s mk), Just (Cmd_Backspace old_befor old_after old_s old_mk) ) ->
-            if ((befor |> row) == (old_befor |> row)) && ((befor |> col) == (old_after |> col))
+            if (befor.row == old_befor.row) && (befor.column == old_after.column)
             then { model | history = (Cmd_Backspace old_befor after (s ++ old_s) old_mk) :: List.drop 1 model.history }
             else { model | history = cmd :: model.history }
 
         ( (Cmd_Delete befor after s mk), Just (Cmd_Delete old_befor old_after old_s old_mk) ) ->
-            if ((befor |> row) == (old_befor |> row)) && ((befor |> col) == (old_befor |> col))
+            if (befor.row == old_befor.row) && (befor.column == old_befor.column)
             then { model | history = (Cmd_Delete old_befor after (old_s ++ s) old_mk) :: List.drop 1 model.history }
             else { model | history = cmd :: model.history }
 
@@ -327,11 +398,11 @@ moveNextLine model =
         True  -> selectWithMove moveNextLineProc model
         False -> model |>  moveNextLineProc |> selectionClear
 
-moveAt : (Int, Int) -> Model -> Model
-moveAt (row, col) model =
+moveAt : Position -> Model -> Model
+moveAt pos model =
     case isMarkActive model of
-        True  -> selectWithMove (moveAtProc (row, col)) model
-        False -> model |>  moveAtProc (row, col) |> selectionClear
+        True  -> selectWithMove (moveAtProc pos) model
+        False -> model |>  moveAtProc pos |> selectionClear
 
 
 moveForwardProc : Model -> Model
@@ -399,9 +470,9 @@ moveNextLineProc model =
         |> Maybe.withDefault cur
         |> (λ c -> {model | cursor = c})
 
-moveAtProc : (Int, Int) -> Model -> Model
-moveAtProc (row, col) model =
-    { model | cursor = Cursor row col }
+moveAtProc : Position -> Model -> Model
+moveAtProc pos model =
+    { model | cursor = pos }
 
 
 moveNextWord : Model -> Model
@@ -410,7 +481,7 @@ moveNextWord model =
         True  -> selectWithMove (moveNextWordProc model.cursor) model
         False -> model |> moveNextWordProc model.cursor |> selectionClear
 
-moveNextWordProc : Cursor -> Model -> Model
+moveNextWordProc : Position -> Model -> Model
 moveNextWordProc cur model =
     let
         last_row = (List.length model.contents) - 1
@@ -419,16 +490,16 @@ moveNextWordProc cur model =
     in
         case col of
             Just nchar ->
-                moveAtProc (cur.row, nchar) model
+                moveAtProc (Position cur.row nchar) model
             Nothing ->
                 if cur.row + 1 > last_row then
-                    moveAtProc (last_row, (line last_row model.contents
+                    moveAtProc (Position last_row (line last_row model.contents
                                               |> Maybe.withDefault ""
                                               |> String.length
                                           )
                                ) model
                 else
-                    moveNextWordProc (Cursor (cur.row + 1) 0) model
+                    moveNextWordProc (Position (cur.row + 1) 0) model
 
 
 movePreviosWord : Model -> Model
@@ -437,19 +508,19 @@ movePreviosWord model =
         True  -> selectWithMove (movePreviosWordProc model.cursor) model
         False -> model |> movePreviosWordProc model.cursor |> selectionClear
 
-movePreviosWordProc : Cursor -> Model -> Model
+movePreviosWordProc : Position -> Model -> Model
 movePreviosWordProc cur model =
     let
         col = StringExtra.previosWordPos (line cur.row model.contents |> Maybe.withDefault "") cur.column
     in
         case col of
             Just nchar ->
-                moveAtProc (cur.row, nchar) model
+                moveAtProc (Position cur.row nchar) model
             Nothing ->
                 if cur.row - 1  < 0 then
-                    moveAtProc (0, 0) model
+                    moveAtProc (Position 0 0) model
                 else
-                    movePreviosWordProc (Cursor
+                    movePreviosWordProc (Position
                                              (cur.row - 1)
                                              (line (cur.row - 1) model.contents |> Maybe.withDefault "" |> String.length)
                                         ) model
@@ -486,7 +557,7 @@ selectNextWord = selectWithMove (\m -> moveNextWordProc m.cursor m)
                  << \m -> if isMarkActive m then markClear m else m
 
 
-selectAt: (Int, Int) -> Model -> Model
+selectAt: Position -> Model -> Model
 selectAt pos = selectWithMove (moveAtProc pos)
                  << \m -> if isMarkActive m then markClear m else m
 
@@ -506,33 +577,37 @@ selectionClear model =
 selectWithMove : (Model -> Model) -> Model -> Model
 selectWithMove move_f model =
     model
-        |> \m -> { m | selection = m.selection |> Maybe.withDefault (Range (nowCursorPos m) (nowCursorPos m)) |> Just }
+        |> \m -> { m | selection = m.selection |> Maybe.withDefault (Range m.cursor m.cursor) |> Just }
         |> move_f
-        |> \m -> { m | selection = m.selection |> Maybe.andThen (\s -> Just (Range s.begin (nowCursorPos m))) }
+        |> \m -> { m | selection = m.selection |> Maybe.andThen (\s -> Just (Range s.begin m.cursor)) }
 
 ------------------------------------------------------------
 -- edit
 ------------------------------------------------------------
 
 
+{-| Insert character at current cursor position
+-}
 insert : String -> Model -> Model
 insert text model=
     case model.selection of
         Nothing ->
-            insertAt (nowCursorPos model) text model
+            insertAt model.cursor text model
         Just s ->
             model
                 |> deleteRange s
                 |> selectionClear
-                |> (\m -> insertAt (nowCursorPos m) text m)
+                |> (\m -> insertAt m.cursor text m)
 
-insertAt: (Int, Int) -> String -> Model -> Model
-insertAt (row, col) text model =
+{-| Insert character at specified position
+-}
+insertAt: Position -> String -> Model -> Model
+insertAt pos text model =
     model
-    |> insert_proc (row, col) text
+    |> insert_proc pos text
     |> (\m ->
             let
-                edtcmd = Cmd_Insert (row, col) (nowCursorPos m) text m.mark
+                edtcmd = Cmd_Insert pos m.cursor text m.mark
             in
                 m |> appendHistory edtcmd
                   |> updateMark edtcmd
@@ -542,16 +617,16 @@ backspace : Model -> Model
 backspace model =
     case model.selection of
         Nothing ->
-            backspaceAt (nowCursorPos model) model
+            backspaceAt model.cursor model
         Just s ->
             model
                 |> deleteRange s
                 |> selectionClear
 
-backspaceAt: (Int, Int) -> Model -> Model
-backspaceAt (row, col) model =
+backspaceAt: Position -> Model -> Model
+backspaceAt pos model =
     let
-        (m, deleted) = backspace_proc (row, col) model 
+        (m, deleted) = backspace_proc pos model 
     in
         case deleted of
             Nothing ->
@@ -560,7 +635,7 @@ backspaceAt (row, col) model =
                 m
                 |> (\m ->
                         let
-                            edtcmd = Cmd_Backspace (row, col) (nowCursorPos m) s m.mark
+                            edtcmd = Cmd_Backspace pos m.cursor s m.mark
                         in
                             m |> appendHistory edtcmd
                               |> updateMark edtcmd
@@ -570,16 +645,16 @@ delete : Model -> Model
 delete model =
     case model.selection of
         Nothing ->
-            deleteAt (nowCursorPos model) model
+            deleteAt model.cursor model
         Just s ->
             model
                 |> deleteRange s
                 |> selectionClear
 
-deleteAt: (Int, Int) -> Model -> Model
-deleteAt (row, col) model =
+deleteAt: Position -> Model -> Model
+deleteAt pos model =
     let
-        (m, deleted) = delete_proc (row, col) model
+        (m, deleted) = delete_proc pos model
     in
         case deleted of
             Nothing ->
@@ -588,7 +663,7 @@ deleteAt (row, col) model =
                 m
                 |> (\m ->
                         let
-                            edtcmd = Cmd_Delete (row, col) (nowCursorPos m) s m.mark
+                            edtcmd = Cmd_Delete pos m.cursor s m.mark
                         in
                             m |> appendHistory edtcmd
                               |> updateMark edtcmd
@@ -608,7 +683,7 @@ deleteRange range model =
                     |> delete_range_proc range
                     |> (\m ->
                             let
-                                edtcmd = Cmd_Delete head_pos (nowCursorPos m) deleted m.mark
+                                edtcmd = Cmd_Delete head_pos m.cursor deleted m.mark
                             in
                                 m |> appendHistory edtcmd
                                   |> updateMark edtcmd
@@ -656,9 +731,11 @@ undo model =
 -- (private) edit
 ------------------------------------------------------------
 
-insert_proc: (Int, Int) -> String -> Model -> Model
-insert_proc (row, col) text model =
+insert_proc: Position -> String -> Model -> Model
+insert_proc pos text model =
     let
+        (row, col) = position_toTuple pos
+
         contents = model.contents
         prows = List.take row contents
         crow  = line row model.contents |> Maybe.withDefault ""
@@ -676,7 +753,7 @@ insert_proc (row, col) text model =
             1 ->
                 { model
                     | contents = prows ++ ((left ++ text ++ right) :: nrows)
-                    , cursor = Cursor row (col + (String.length text))
+                    , cursor = Position row (col + (String.length text))
                 }
             2 ->
                 let
@@ -686,7 +763,7 @@ insert_proc (row, col) text model =
                     { model
                         | contents = prows ++ [ left ++ fst_ln, lst_ln ++ right]
                                            ++ nrows
-                         , cursor = Cursor (row + 1) (String.length lst_ln)
+                         , cursor = Position (row + 1) (String.length lst_ln)
                     }
             n ->
                 let
@@ -696,16 +773,16 @@ insert_proc (row, col) text model =
                     { model
                         | contents = prows ++ [ left ++ fst_ln ] ++ (List.drop 1 (List.take (n - 1) texts)) ++ [lst_ln ++ right]
                                            ++ nrows
-                        , cursor = Cursor (row + n - 1) (String.length lst_ln)
+                        , cursor = Position (row + n - 1) (String.length lst_ln)
                     }
 
-backspace_proc: (Int, Int) -> Model -> (Model, Maybe String)
-backspace_proc (row, col) model =
-    case (row, col) of
+backspace_proc: Position -> Model -> (Model, Maybe String)
+backspace_proc pos model =
+    case (position_toTuple pos) of
         (0, 0) ->
             (model, Nothing)
 
-        (_, 0) ->
+        (row, 0) ->
             let
                 prows  = List.take (row - 1) model.contents
                 crow   = List.drop (row - 1) model.contents |> List.take 2 |> String.concat
@@ -715,11 +792,11 @@ backspace_proc (row, col) model =
             in
                 ( { model
                       | contents = prows ++ (crow :: nrows )
-                      , cursor = Cursor (row - 1) (n_col)
+                      , cursor = Position (row - 1) (n_col)
                   }
                 , Just "\n")
 
-        (_, n) ->
+        (row, col) ->
             let
                 prows = List.take row model.contents
                 crow  = line row model.contents |> Maybe.withDefault ""
@@ -730,14 +807,16 @@ backspace_proc (row, col) model =
             in
                 ( { model
                       | contents = prows ++ ((left ++ right) :: nrows)
-                      , cursor = Cursor row  (col - 1)
+                      , cursor = Position row  (col - 1)
                   }
                 , Just (crow |> String.dropLeft (col - 1) |> String.left 1) )
 
 
-delete_proc: (Int, Int) -> Model -> (Model, Maybe String)
-delete_proc (row, col) model =
+delete_proc: Position -> Model -> (Model, Maybe String)
+delete_proc pos model =
     let
+        (row, col) = position_toTuple pos
+
         ln      = line row model.contents |> Maybe.withDefault ""
         max_row = maxRow model.contents
         max_col = maxColumn ln
@@ -755,7 +834,7 @@ delete_proc (row, col) model =
                  in
                      ( { model
                            | contents = prows ++ (current :: nrows)
-                           , cursor = Cursor row col
+                           , cursor = Position row col
                        }
                      , Just (ln |> String.dropLeft col |> String.left 1) )
 
@@ -769,7 +848,7 @@ delete_proc (row, col) model =
                  in
                      ( { model
                            | contents = prows ++ (current :: nrows)
-                           , cursor = Cursor row col
+                           , cursor = Position row col
                        }
                      , Just "\n" )
 
@@ -780,44 +859,44 @@ delete_range_proc sel model =
         bpos = if (isPreviosPos sel.begin sel.end) then sel.begin else sel.end
         epos = if (isPreviosPos sel.begin sel.end) then sel.end else sel.begin
 
-        lcnt = (Tuple.first epos) - (Tuple.first bpos)
+        lcnt = epos.row - bpos.row
     in
         case lcnt of
             0 ->
                 let 
-                    ln  = line (Tuple.first bpos) model.contents |> Maybe.withDefault ""
-                    current = (String.left (Tuple.second bpos) ln) ++ (String.dropLeft (Tuple.second epos) ln)
+                    ln  = line bpos.row model.contents |> Maybe.withDefault ""
+                    current = (String.left bpos.column ln) ++ (String.dropLeft epos.column ln)
 
-                    pls = List.take ((Tuple.first bpos)    ) model.contents
-                    nls = List.drop ((Tuple.first epos) + 1) model.contents
+                    pls = List.take (bpos.row    ) model.contents
+                    nls = List.drop (epos.row + 1) model.contents
                 in
                     { model
                         | contents = pls ++ (current :: nls)
-                        , cursor = Cursor (Tuple.first bpos) (Tuple.second bpos)
+                        , cursor = bpos
                     }
             _ ->
                 let
-                    bln  = line (Tuple.first bpos) model.contents |> Maybe.withDefault "" |> String.left (Tuple.second bpos)
-                    eln  = line (Tuple.first epos) model.contents |> Maybe.withDefault "" |> String.dropLeft (Tuple.second epos)
-                    pls = List.take ((Tuple.first bpos)    ) model.contents
-                    nls = List.drop ((Tuple.first epos) + 1) model.contents
+                    bln  = line bpos.row model.contents |> Maybe.withDefault "" |> String.left bpos.column
+                    eln  = line epos.row model.contents |> Maybe.withDefault "" |> String.dropLeft epos.column
+                    pls = List.take (bpos.row    ) model.contents
+                    nls = List.drop (epos.row + 1) model.contents
                 in
                     { model
                         | contents = pls ++ ((bln ++ eln) :: nls)
-                        , cursor = Cursor (Tuple.first bpos) (Tuple.second bpos)
+                        , cursor = bpos
                     }
 
     
-undo_insert_proc : (Int, Int) -> (Int, Int) -> String -> Model -> Model
-undo_insert_proc (bf_row, bf_col) (af_row, af_col) str model =
-    delete_range_proc (Range (bf_row, bf_col) (af_row, af_col)) model
+undo_insert_proc : Position -> Position -> String -> Model -> Model
+undo_insert_proc bf_pos af_pos str model =
+    delete_range_proc (Range bf_pos af_pos) model
 
-undo_backspace_proc : (Int, Int) -> (Int, Int) -> String -> Model ->Model
-undo_backspace_proc (bf_row, bf_col) (af_row, af_col) str model =
-    insert_proc (af_row, af_col) str model 
+undo_backspace_proc : Position -> Position -> String -> Model ->Model
+undo_backspace_proc bf_pos af_pos str model =
+    insert_proc af_pos str model 
 
-undo_delete_proc : (Int, Int) -> (Int, Int) -> String -> Model ->Model
-undo_delete_proc (bf_row, bf_col) (af_row, af_col) str model =
-    insert_proc (bf_row, bf_col) str model
-        |> (\m -> { m | cursor = Cursor bf_row bf_col })
+undo_delete_proc : Position -> Position -> String -> Model ->Model
+undo_delete_proc bf_pos af_pos str model =
+    insert_proc bf_pos str model
+        |> (\m -> { m | cursor = bf_pos })
 

@@ -37,7 +37,7 @@ module TextEditor.Core.Commands exposing
     , batch
     )
 
-import TextEditor.Buffer as Buffer
+import TextEditor.Buffer as Buffer exposing (Position)
 import TextEditor.Core as Core  exposing (Model, Msg)
 
 import TextEditor.StringExtra exposing (..)
@@ -77,7 +77,7 @@ moveNextLine : Model -> (Model, Cmd Msg)
 moveNextLine = editF Buffer.moveNextLine
 
 moveBOL : Model -> (Model, Cmd Msg)
-moveBOL model = editF (Buffer.moveAt (model.buffer.cursor.row, 0)) model
+moveBOL model = editF (Buffer.moveAt (Position model.buffer.cursor.row 0)) model
 
 moveEOL : Model -> (Model, Cmd Msg)
 moveEOL model =
@@ -86,9 +86,9 @@ moveEOL model =
                 |> Maybe.withDefault ""
                 |> String.length
     in
-        editF (Buffer.moveAt (model.buffer.cursor.row, col)) model
+        editF (Buffer.moveAt (Position model.buffer.cursor.row col)) model
 
-moveAt : (Int, Int) -> Model -> (Model, Cmd Msg)
+moveAt : Buffer.Position -> Model -> (Model, Cmd Msg)
 moveAt pos =  editF (Buffer.moveAt pos)
 
 moveNextWord : Model -> (Model, Cmd Msg)
@@ -121,7 +121,7 @@ selectNextWord: Model -> (Model, Cmd Msg)
 selectNextWord = editF Buffer.selectNextWord
 
 
-selectAt: (Int, Int) -> Model -> (Model, Cmd Msg)
+selectAt: Buffer.Position -> Model -> (Model, Cmd Msg)
 selectAt pos = editF (Buffer.selectAt pos)
 
 ------------------------------------------------------------
@@ -230,19 +230,19 @@ killLine : Model -> (Model, Cmd Msg)
 killLine model = 
     -- note: ブラウザのセキュリティ制約により、sytem の clipboard  にはコピーされません
     let
-        (row, col) = model.buffer |> Buffer.nowCursorPos
+        cur = model.buffer.cursor
         line = model.buffer.contents
-                 |> Buffer.line row
+                 |> Buffer.line cur.row
                  |> Maybe.withDefault ""
 
         isEOFLine = \r -> (r + 1) >= List.length model.buffer.contents
 
         delete_str = line
-                 |> String.dropLeft col
-                 |> \l -> if (l == "") && (not (isEOFLine row)) then "\n" else l
+                 |> String.dropLeft cur.column
+                 |> \l -> if (l == "") && (not (isEOFLine cur.row)) then "\n" else l
 
-        delete_range =  if delete_str == "\n" then Buffer.Range (row, col) (row + 1, 0)
-                                              else Buffer.Range (row, col) (row, String.length line)
+        delete_range =  if delete_str == "\n" then Buffer.Range cur (Position (cur.row + 1) 0)
+                                              else Buffer.Range cur (Position cur.row (String.length line))
     in
         { model
             | copyStore = if model.lastCommand == Just "killLine" then model.copyStore ++ delete_str else delete_str
@@ -278,7 +278,7 @@ killWord model =
 indent : Model -> (Model, Cmd Msg)
 indent model =
     let
-        (row, col) = Buffer.nowCursorPos model.buffer
+        (row, col) = (model.buffer.cursor.row, model.buffer.cursor.column)
 
         curline  = model.buffer.contents |> Buffer.line row |> Maybe.withDefault ""
         prevline = model.buffer.contents |> Buffer.line (row - 1) |> Maybe.withDefault ""
@@ -296,16 +296,18 @@ indent model =
         { model
             | buffer = if prev_level == cur_level then
                            model.buffer
-                               |> Buffer.insertAt (row, (String.length cur_indent)) indent_str
-                               |> Buffer.moveAt ( row
-                                                , col + (String.length indent_str)
+                               |> Buffer.insertAt (Position row (String.length cur_indent)) indent_str
+                               |> Buffer.moveAt ( Position
+                                                      row
+                                                      (col + (String.length indent_str))
                                                 )
                        else
                            model.buffer 
-                               |> Buffer.deleteRange (Buffer.Range (row, 0) (row, String.length cur_indent) )
-                               |> Buffer.insertAt (row, 0) prev_indent
-                               |> Buffer.moveAt ( row
-                                                , col + ((String.length prev_indent ) - (String.length cur_indent)) |> max 0
+                               |> Buffer.deleteRange (Buffer.Range (Position row 0) (Position row (String.length cur_indent)) )
+                               |> Buffer.insertAt (Position row 0) prev_indent
+                               |> Buffer.moveAt ( Position
+                                                      row
+                                                      (col + ((String.length prev_indent ) - (String.length cur_indent)) |> max 0)
                                                 )
         }
             |> Core.blinkBlock
@@ -314,7 +316,7 @@ indent model =
 unindent : Model -> (Model, Cmd Msg)
 unindent model =
     let
-        (row, col) = Buffer.nowCursorPos model.buffer
+        (row, col) = (model.buffer.cursor.row, model.buffer.cursor.column)
 
         curline  = model.buffer.contents |> Buffer.line row |> Maybe.withDefault ""
         prevline = model.buffer.contents |> Buffer.line (row - 1) |> Maybe.withDefault ""
@@ -336,17 +338,19 @@ unindent model =
                                new_indent = indent_str (prev_level - model.option.tabOrder)
                            in
                                model.buffer
-                                   |> Buffer.deleteRange ( Buffer.Range (row, 0) (row, String.length cur_indent) )
-                                   |> Buffer.insertAt (row, 0) new_indent
-                                   |> Buffer.moveAt ( row
-                                                    , col + ((String.length new_indent) - (String.length cur_indent)) |> max 0
+                                   |> Buffer.deleteRange ( Buffer.Range (Position row 0) (Position row (String.length cur_indent)) )
+                                   |> Buffer.insertAt (Position row 0) new_indent
+                                   |> Buffer.moveAt ( Position
+                                                          row
+                                                          (col + ((String.length new_indent) - (String.length cur_indent)) |> max 0)
                                                     )
                        else
                            model.buffer 
-                               |> Buffer.deleteRange (Buffer.Range (row, 0) (row, (String.length cur_indent) ) )
-                               |> Buffer.insertAt (row, 0) prev_indent
-                               |> Buffer.moveAt ( row
-                                                , col + ((String.length prev_indent ) - (String.length cur_indent)) |> max 0
+                               |> Buffer.deleteRange (Buffer.Range (Position row 0) (Position row (String.length cur_indent) ) )
+                               |> Buffer.insertAt (Position row 0) prev_indent
+                               |> Buffer.moveAt ( Position
+                                                      row
+                                                      (col + ((String.length prev_indent ) - (String.length cur_indent)) |> max 0)
                                                 )
         }
             |> Core.blinkBlock

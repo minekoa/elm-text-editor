@@ -35,6 +35,7 @@ module TextEditor.Commands exposing
     , Command
     )
 
+import TextEditor.Buffer as Buffer
 import TextEditor.Core as Core
 import TextEditor.Core.Commands as CoreCommands
 --import TextEditor exposing (Model, Msg)
@@ -107,7 +108,7 @@ moveEOL =
     , f  = CoreCommands.moveEOL
     }
 
-moveAt : (Int, Int) -> Command
+moveAt : Buffer.Position -> Command
 moveAt pos =
     { id = "moveAt"
     , f = CoreCommands.moveAt pos
@@ -161,7 +162,7 @@ selectNextWord =
     , f = CoreCommands.selectNextWord
     }
 
-selectAt: (Int, Int) -> Command
+selectAt: Buffer.Position -> Command
 selectAt pos =
     { id= "selectAt"
     , f = CoreCommands.selectAt pos

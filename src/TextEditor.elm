@@ -270,10 +270,10 @@ update msg model =
         DragStart mouseEvent  ->
             let
                 xy = { x = mouseEvent.x, y = mouseEvent.y }
-                (row, col) = posToRowColumn model.core xy
+                chpos = geoPosToCharPos model.core xy
 
                 (cm, cc) =  model.core
-                              |> Commands.batch [ Commands.moveAt (row, col)
+                              |> Commands.batch [ Commands.moveAt chpos
                                                 , Commands.markClear
                                                 ]
             in
@@ -285,7 +285,7 @@ update msg model =
                             |> blinkBlock
                         , Cmd.batch [ Cmd.map CoreMsg cc ]
                         )
-                            |> logging "dragstart" (printDragInfo xy (row, col))
+                            |> logging "dragstart" (printDragInfo xy chpos)
 
                     RightMouse ->
                         if model.core.buffer.selection == Nothing then
@@ -293,8 +293,8 @@ update msg model =
                                 |> blinkBlock
                             , Cmd.batch [ Cmd.map CoreMsg cc ]
                             )
-                                |> setLastCommand ( ["moveTo (", row |> toString, ", ", col |> toString, ")"] |> String.concat )
-                                |> logging "moveto" (printDragInfo xy (row, col) )
+                                |> setLastCommand ( ["moveTo (", chpos.row |> toString, ", ", chpos.column |> toString, ")"] |> String.concat )
+                                |> logging "moveto" (printDragInfo xy chpos )
                                                     
                         else
                             (model, Cmd.none)
@@ -304,16 +304,16 @@ update msg model =
 
         DragAt xy ->
             let
-                (row, col) = posToRowColumn model.core xy
-                (cm, cc) =  Commands.selectAt (row, col) model.core
+                chpos = geoPosToCharPos model.core xy
+                (cm, cc) =  Commands.selectAt chpos model.core
             in
                 ( { model | core = cm }
                   |> blinkBlock
                 , Cmd.batch [ Cmd.map CoreMsg cc
                             ]
                 )
-                    |> setLastCommand ( ["selectAt (", row |> toString, ", ", col |> toString, ")"] |> String.concat )
-                    |> logging "dragat" (printDragInfo xy (row, col) )
+                    |> setLastCommand ( ["selectAt (", chpos.row |> toString, ", ", chpos.column |> toString, ")"] |> String.concat )
+                    |> logging "dragat" (printDragInfo xy chpos )
 
         DragEnd xy ->
             ( {model | drag = False }
@@ -421,15 +421,15 @@ compositionEnd data model =
           |> logging "compositionend" data
 
 
-posToRowColumn : Core.Model -> {x : Int, y : Int } -> (Int, Int)
-posToRowColumn model xy =
+geoPosToCharPos : Core.Model -> {x : Int, y : Int } -> Buffer.Position
+geoPosToCharPos model xy =
     let
         rect = getBoundingClientRect (codeAreaID model)
         row  = yToRow model (xy.y - rect.top)
         line = Buffer.line row model.buffer.contents |> Maybe.withDefault ""
         col = xToColumn model line (xy.x - rect.left)
     in
-        (row, col)
+        Buffer.Position row col
 
 yToRow : Core.Model -> Int -> Int
 yToRow model pos_y =
@@ -448,10 +448,10 @@ xToColumn model line pos_x =
     in
         calc_col line 0 pos_x
 
-printDragInfo: Mouse.Position -> (Int, Int) -> String
-printDragInfo xy (row, col) =
+printDragInfo: Mouse.Position -> Buffer.Position -> String
+printDragInfo xy rowcol =
     "pos=" ++ (toString xy.x) ++ "," ++ (toString xy.y)
-        ++ "; row_col=" ++ (toString row) ++ "," ++(toString col)
+        ++ "; row_col=" ++ (toString rowcol.row) ++ "," ++(toString rowcol.column)
 
 ------------------------------------------------------------
 -- control state update
@@ -733,7 +733,7 @@ selectedTouchPad model =
                 bpos = if (Buffer.isPreviosPos sel.begin sel.end) then sel.begin else sel.end
                 epos = if (Buffer.isPreviosPos sel.begin sel.end) then sel.end else sel.begin
             in
-                (List.range (Tuple.first bpos) (Tuple.first epos))
+                (List.range bpos.row epos.row)
                    |> List.map (\ row ->
                                   div [ style [ ("position", "absolute")
                                               , ("top" , row |> emToPxString model )
@@ -763,24 +763,24 @@ markerLayer model =
 
                 rect = getBoundingClientRect (codeAreaID model)
                 calc_w  = calcTextWidth (rulerID model)
-                bpix = calc_w (Buffer.line (Tuple.first bpos) model.buffer.contents |> Maybe.withDefault "" |> String.left (Tuple.second bpos) |> TextMarker.markupChank model.option.showControlCharactor model.option.tabOrder |> TextMarker.toString )
-                epix = calc_w (Buffer.line (Tuple.first epos) model.buffer.contents |> Maybe.withDefault "" |> String.left (Tuple.second epos) |> TextMarker.markupChank model.option.showControlCharactor model.option.tabOrder |> TextMarker.toString )
+                bpix = calc_w (Buffer.line bpos.row model.buffer.contents |> Maybe.withDefault "" |> String.left bpos.column |> TextMarker.markupChank model.option.showControlCharactor model.option.tabOrder |> TextMarker.toString )
+                epix = calc_w (Buffer.line epos.row model.buffer.contents |> Maybe.withDefault "" |> String.left epos.column |> TextMarker.markupChank model.option.showControlCharactor model.option.tabOrder |> TextMarker.toString )
 
-                ms = List.range (Tuple.first bpos) (Tuple.first epos)
+                ms = List.range bpos.row epos.row
                    |> List.map (\ r ->
                                     let
-                                        pb = if r == (Tuple.first bpos)
+                                        pb = if r == bpos.row
                                              then bpix
                                              else 0 -- rect.left
-                                        pe = if r == (Tuple.first epos)
+                                        pe = if r == epos.row
                                              then epix
                                              else rect.right - rect.left
 
-                                        cb = if r == (Tuple.first bpos)
-                                             then bpos |> Tuple.second
+                                        cb = if r == bpos.row
+                                             then bpos.column
                                              else 0
-                                        ce = if r == (Tuple.first epos)
-                                             then epos |> Tuple.second
+                                        ce = if r == epos.row
+                                             then epos.column
                                              else String.length <| (Buffer.line r model.buffer.contents |> Maybe.withDefault "")
                                     in
                                         {row =r, begin_col = cb, end_col = ce, begin_px = pb, end_px = pe}

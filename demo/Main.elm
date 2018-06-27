@@ -480,10 +480,10 @@ modeline model =
         toSelectionString =
             \ selection -> selection
                         |> Maybe.andThen (\s-> Just <|
-                                              " select:(" ++ (s.begin |> Tuple.first |> toString)
-                                              ++ "," ++ (s.begin |> Tuple.second |> toString) 
-                                              ++ ")-(" ++ (s.end |> Tuple.first |> toString)
-                                              ++ "," ++ (s.end |> Tuple.second |> toString) ++ ")"
+                                              " select:(" ++ (s.begin.row |> toString)
+                                              ++ "," ++ (s.begin.column |> toString) 
+                                              ++ ")-(" ++ (s.end.row |> toString)
+                                              ++ "," ++ (s.end.column |> toString) ++ ")"
                                          )
                         |> Maybe.withDefault ""
     in

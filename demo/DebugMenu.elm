@@ -118,21 +118,21 @@ historyView editorModel =
               ( List.map
                     (\ c ->
                          let
-                             pos2str = \ row col -> "(" ++ (toString row) ++ ", " ++ (toString col) ++")" 
+                             pos2str = \ p -> "(" ++ (toString p.row) ++ ", " ++ (toString p.column) ++")" 
                              mark2str = \ mk -> case mk of
-                                                    Just m -> "{pos=" ++ (pos2str (Tuple.first m.pos) (Tuple.second m.pos) ) ++ ", actived=" ++ (toString m.actived) ++ "}"
+                                                    Just m -> "{pos=" ++ (pos2str (Buffer.Position (Tuple.first m.pos) (Tuple.second m.pos)) ) ++ ", actived=" ++ (toString m.actived) ++ "}"
                                                     Nothing -> "Nothing"
-                             editParm2str = \ (bfr_row, bfr_col) (afr_row, afr_col) str mk ->
-                                 "{begin=" ++ (pos2str bfr_row bfr_col) ++ ", end=" ++ (pos2str afr_row afr_col) ++ ", str=\"" ++ str ++ "\", mark=" ++ (mark2str mk) ++ "}"
+                             editParm2str = \ bfr afr str mk ->
+                                 "{begin=" ++ (pos2str bfr) ++ ", end=" ++ (pos2str afr) ++ ", str=\"" ++ str ++ "\", mark=" ++ (mark2str mk) ++ "}"
                              celstyle = style [("text-wrap", "none"), ("white-space","nowrap"), ("color", "gray")]
                          in
                              case c of
-                                 Buffer.Cmd_Insert (row, col) (ar, ac) str mk ->
-                                     div [celstyle] [ "Insert " ++ editParm2str (row, col) (ar, ac) str mk |> text ]
-                                 Buffer.Cmd_Backspace (row, col) (ar, ac) str mk->
-                                     div [celstyle] [ "Backspace " ++ editParm2str (row, col) (ar, ac) str mk  |> text ]
-                                 Buffer.Cmd_Delete (row, col) (ar, ac) str mk ->
-                                     div [celstyle] [ "Delete " ++ editParm2str (row, col) (ar, ac) str mk  |> text ]
+                                 Buffer.Cmd_Insert bpos epos str mk ->
+                                     div [celstyle] [ "Insert " ++ editParm2str bpos epos str mk |> text ]
+                                 Buffer.Cmd_Backspace bpos epos str mk->
+                                     div [celstyle] [ "Backspace " ++ editParm2str bpos epos str mk  |> text ]
+                                 Buffer.Cmd_Delete bpos epos str mk ->
+                                     div [celstyle] [ "Delete " ++ editParm2str bpos epos str mk  |> text ]
                     ) editorModel.core.buffer.history
               )
         ]
@@ -192,11 +192,11 @@ inspectorView editorModel =
 
         histToString = (\ hist ->
                              case hist of
-                                 Buffer.Cmd_Insert (row, col) (ar, ac) str mk ->
+                                 Buffer.Cmd_Insert bp ep str mk ->
                                     "ins(" ++ (String.length str |> toString) ++ "char)"
-                                 Buffer.Cmd_Backspace (row, col) (ar, ac) str mk->
+                                 Buffer.Cmd_Backspace bp ep str mk->
                                     "bs(" ++ (String.length str |> toString) ++ "char)"
-                                 Buffer.Cmd_Delete (row, col) (ar, ac) str mk ->
+                                 Buffer.Cmd_Delete bp ep str mk ->
                                     "del(" ++ (String.length str |> toString) ++ "char)"
                        )
     in
@@ -234,7 +234,7 @@ inspectorView editorModel =
             ]
 
 
-cursorToString : Buffer.Cursor -> String
+cursorToString : Buffer.Position -> String
 cursorToString cur =
     [ cur.row |> toString
     , ", "
@@ -247,13 +247,13 @@ selectionToString maybe_sel =
     case maybe_sel of
         Just sel ->
             [ "("
-            , sel.begin |> Tuple.first |> toString
+            , sel.begin.row |> toString
             , ","
-            , sel.begin |> Tuple.second |> toString
+            , sel.begin.column |> toString
             , ") ~ ("
-            , sel.end |> Tuple.first |> toString
+            , sel.end.row |> toString
             , ","
-            , sel.end |> Tuple.second |> toString
+            , sel.end.column |> toString
             , ")"
             ]
                  |> String.concat

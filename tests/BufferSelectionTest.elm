@@ -4,7 +4,11 @@ import Expect exposing (Expectation)
 import Test exposing (..)
 
 
-import TextEditor.Buffer as Buffer
+import TextEditor.Buffer as Buffer exposing ((@))
+
+curWithTuple : Buffer.Model -> (Int, Int)
+curWithTuple m =
+    (m.cursor.row, m.cursor.column)
 
 suite : Test
 suite =
@@ -18,31 +22,31 @@ suite =
               \_ ->
                   Buffer.init "ABC\nDE\nGHIJ\nK\n"
                       |> Buffer.selectForward
-                      |> Expect.all [ \m -> Expect.equal (Buffer.Range (0,0) (0,1) |> Just) m.selection
-                                    , \m -> Expect.equal (0,1) (Buffer.nowCursorPos m)
+                      |> Expect.all [ \m -> Expect.equal (Buffer.Range (0@0) (0@1) |> Just) m.selection
+                                    , \m -> Expect.equal (0,1) (curWithTuple m)
                                     ]
         , test "selection start (backward)" <|
               \_ ->
                   Buffer.init "ABC\nDE\nGHIJ\nK\n"
                       |> Buffer.moveForward
                       |> Buffer.selectBackward
-                      |> Expect.all [ \m -> Expect.equal (Buffer.Range (0,1) (0,0) |> Just) m.selection
-                                    , \m -> Expect.equal (0,0) (Buffer.nowCursorPos m)
+                      |> Expect.all [ \m -> Expect.equal (Buffer.Range (0@1) (0@0) |> Just) m.selection
+                                    , \m -> Expect.equal (0,0) (curWithTuple m)
                                     ]
         , test "selection start (next)" <|
               \_ ->
                   Buffer.init "ABC\nDE\nGHIJ\nK\n"
                       |> Buffer.selectNextLine
-                      |> Expect.all [ \m -> Expect.equal (Buffer.Range (0,0) (1,0) |> Just) m.selection
-                                    , \m -> Expect.equal (1,0) (Buffer.nowCursorPos m)
+                      |> Expect.all [ \m -> Expect.equal (Buffer.Range (0@0) (1@0) |> Just) m.selection
+                                    , \m -> Expect.equal (1,0) (curWithTuple m)
                                     ]
         , test "selection start (previos)" <|
               \_ ->
                   Buffer.init "ABC\nDE\nGHIJ\nK\n"
                       |> Buffer.moveNextLine
                       |> Buffer.selectPreviosLine
-                      |> Expect.all [ \m -> Expect.equal (Buffer.Range (1,0) (0,0) |> Just) m.selection
-                                    , \m -> Expect.equal (0,0) (Buffer.nowCursorPos m)
+                      |> Expect.all [ \m -> Expect.equal (Buffer.Range (1@0) (0@0) |> Just) m.selection
+                                    , \m -> Expect.equal (0,0) (curWithTuple m)
                                     ]
         , test "selection extend (forward, inline)" <|
               \_ ->
@@ -50,8 +54,8 @@ suite =
                       |> Buffer.moveForward
                       |> Buffer.selectForward
                       |> Buffer.selectForward
-                      |> Expect.all [ \m -> Expect.equal (Buffer.Range (0,1) (0,3) |> Just) m.selection
-                                    , \m -> Expect.equal (0,3) (Buffer.nowCursorPos m)
+                      |> Expect.all [ \m -> Expect.equal (Buffer.Range (0@1) (0@3) |> Just) m.selection
+                                    , \m -> Expect.equal (0,3) (curWithTuple m)
                                     ]
         , test "selection extend (forward, multiline)" <|
               \_ ->
@@ -60,8 +64,8 @@ suite =
                       |> Buffer.selectForward
                       |> Buffer.selectForward
                       |> Buffer.selectForward
-                      |> Expect.all [ \m -> Expect.equal (Buffer.Range (0,1) (1,0) |> Just) m.selection
-                                    , \m -> Expect.equal (1,0) (Buffer.nowCursorPos m)
+                      |> Expect.all [ \m -> Expect.equal (Buffer.Range (0@1) (1@0) |> Just) m.selection
+                                    , \m -> Expect.equal (1,0) (curWithTuple m)
                                     ]
         , test "selection extend (forward, begin=end)" <|
               \_ ->
@@ -69,8 +73,8 @@ suite =
                       |> Buffer.moveForward
                       |> Buffer.selectBackward
                       |> Buffer.selectForward
-                      |> Expect.all [ \m -> Expect.equal (Buffer.Range (0,1) (0,1) |> Just) m.selection
-                                    , \m -> Expect.equal (0,1) (Buffer.nowCursorPos m)
+                      |> Expect.all [ \m -> Expect.equal (Buffer.Range (0@1) (0@1) |> Just) m.selection
+                                    , \m -> Expect.equal (0,1) (curWithTuple m)
                                     ]
         , test "selection extend (forward, EOF)" <|
               \_ ->
@@ -81,8 +85,8 @@ suite =
                       |> Buffer.selectForward
                       |> Buffer.selectForward
                       |> Buffer.selectForward
-                      |> Expect.all [ \m -> Expect.equal (Buffer.Range (0,1) (1,1) |> Just) m.selection
-                                    , \m -> Expect.equal (1,1) (Buffer.nowCursorPos m)
+                      |> Expect.all [ \m -> Expect.equal (Buffer.Range (0@1) (1@1) |> Just) m.selection
+                                    , \m -> Expect.equal (1,1) (curWithTuple m)
                                     ]
         , test "selection extend (backward, inline)" <|
               \_ ->
@@ -91,8 +95,8 @@ suite =
                       |> Buffer.moveForward
                       |> Buffer.selectBackward
                       |> Buffer.selectBackward
-                      |> Expect.all [ \m -> Expect.equal (Buffer.Range (0,2) (0,0) |> Just) m.selection
-                                    , \m -> Expect.equal (0,0) (Buffer.nowCursorPos m)
+                      |> Expect.all [ \m -> Expect.equal (Buffer.Range (0@2) (0@0) |> Just) m.selection
+                                    , \m -> Expect.equal (0,0) (curWithTuple m)
                                     ]
         , test "selection extend (backword, multiline)" <|
               \_ ->
@@ -101,8 +105,8 @@ suite =
                       |> Buffer.moveForward
                       |> Buffer.selectBackward
                       |> Buffer.selectBackward
-                      |> Expect.all [ \m -> Expect.equal (Buffer.Range (1,1) (0,3) |> Just) m.selection
-                                    , \m -> Expect.equal (0,3) (Buffer.nowCursorPos m)
+                      |> Expect.all [ \m -> Expect.equal (Buffer.Range (1@1) (0@3) |> Just) m.selection
+                                    , \m -> Expect.equal (0,3) (curWithTuple m)
                                     ]
         , test "selection extend (backward, BOF)" <|
               \_ ->
@@ -113,8 +117,8 @@ suite =
                       |> Buffer.selectBackward
                       |> Buffer.selectBackward
                       |> Buffer.selectBackward
-                      |> Expect.all [ \m -> Expect.equal (Buffer.Range (0,2) (0,0) |> Just) m.selection
-                                    , \m -> Expect.equal (0,0) (Buffer.nowCursorPos m)
+                      |> Expect.all [ \m -> Expect.equal (Buffer.Range (0@2) (0@0) |> Just) m.selection
+                                    , \m -> Expect.equal (0,0) (curWithTuple m)
                                     ]
         , test "selection extend (next)" <|
               \_ ->
@@ -122,8 +126,8 @@ suite =
                       |> Buffer.moveForward
                       |> Buffer.selectNextLine
                       |> Buffer.selectNextLine
-                      |> Expect.all [ \m -> Expect.equal (Buffer.Range (0,1) (2,1) |> Just) m.selection
-                                    , \m -> Expect.equal (2,1) (Buffer.nowCursorPos m)
+                      |> Expect.all [ \m -> Expect.equal (Buffer.Range (0@1) (2@1) |> Just) m.selection
+                                    , \m -> Expect.equal (2,1) (curWithTuple m)
                                     ]
         , test "selection extend (next, shorterline)" <|
               \_ ->
@@ -133,8 +137,8 @@ suite =
                       |> Buffer.moveForward
                       |> Buffer.selectNextLine
                       |> Buffer.selectNextLine
-                      |> Expect.all [ \m -> Expect.equal (Buffer.Range (0,3) (2,2) |> Just) m.selection
-                                    , \m -> Expect.equal (2,2) (Buffer.nowCursorPos m)
+                      |> Expect.all [ \m -> Expect.equal (Buffer.Range (0@3) (2@2) |> Just) m.selection
+                                    , \m -> Expect.equal (2,2) (curWithTuple m)
                                     ]
         , test "selection extend (next, EOF)" <|
               \_ ->
@@ -144,8 +148,8 @@ suite =
                       |> Buffer.selectNextLine
                       |> Buffer.selectNextLine
                       |> Buffer.selectNextLine
-                      |> Expect.all [ \m -> Expect.equal (Buffer.Range (0,1) (1,1) |> Just) m.selection
-                                    , \m -> Expect.equal (1,1) (Buffer.nowCursorPos m)
+                      |> Expect.all [ \m -> Expect.equal (Buffer.Range (0@1) (1@1) |> Just) m.selection
+                                    , \m -> Expect.equal (1,1) (curWithTuple m)
                                     ]
         , test "selection extend (next, EOF, shorterline)" <|
               \_ ->
@@ -156,8 +160,8 @@ suite =
                       |> Buffer.selectNextLine
                       |> Buffer.selectNextLine
                       |> Buffer.selectNextLine
-                      |> Expect.all [ \m -> Expect.equal (Buffer.Range (0,2) (1,1) |> Just) m.selection
-                                    , \m -> Expect.equal (1,1) (Buffer.nowCursorPos m)
+                      |> Expect.all [ \m -> Expect.equal (Buffer.Range (0@2) (1@1) |> Just) m.selection
+                                    , \m -> Expect.equal (1,1) (curWithTuple m)
                                     ]
         , test "selection extend (previos)" <|
               \_ ->
@@ -167,8 +171,8 @@ suite =
                       |> Buffer.moveForward
                       |> Buffer.selectPreviosLine
                       |> Buffer.selectPreviosLine
-                      |> Expect.all [ \m -> Expect.equal (Buffer.Range (2,1) (0,1) |> Just) m.selection
-                                    , \m -> Expect.equal (0,1) (Buffer.nowCursorPos m)
+                      |> Expect.all [ \m -> Expect.equal (Buffer.Range (2@1) (0@1) |> Just) m.selection
+                                    , \m -> Expect.equal (0,1) (curWithTuple m)
                                     ]
         , test "selection extend (previos, shorterline)" <|
               \_ ->
@@ -180,8 +184,8 @@ suite =
                       |> Buffer.moveForward
                       |> Buffer.selectPreviosLine
                       |> Buffer.selectPreviosLine
-                      |> Expect.all [ \m -> Expect.equal (Buffer.Range (2,3) (0,2) |> Just) m.selection
-                                    , \m -> Expect.equal (0,2) (Buffer.nowCursorPos m)
+                      |> Expect.all [ \m -> Expect.equal (Buffer.Range (2@3) (0@2) |> Just) m.selection
+                                    , \m -> Expect.equal (0,2) (curWithTuple m)
                                     ]
         , test "selection extend (previos, BOF)" <|
               \_ ->
@@ -195,8 +199,8 @@ suite =
                       |> Buffer.selectPreviosLine
                       |> Buffer.selectPreviosLine
                       |> Buffer.selectPreviosLine
-                      |> Expect.all [ \m -> Expect.equal (Buffer.Range (2,1) (0,1) |> Just) m.selection
-                                    , \m -> Expect.equal (0,1) (Buffer.nowCursorPos m)
+                      |> Expect.all [ \m -> Expect.equal (Buffer.Range (2@1) (0@1) |> Just) m.selection
+                                    , \m -> Expect.equal (0,1) (curWithTuple m)
                                     ]
         , test "selection extend (previos, BOF, shorterline)" <|
               \_ ->
@@ -212,8 +216,8 @@ suite =
                       |> Buffer.selectPreviosLine
                       |> Buffer.selectPreviosLine
                       |> Buffer.selectPreviosLine
-                      |> Expect.all [ \m -> Expect.equal (Buffer.Range (2,3) (0,1) |> Just) m.selection
-                                    , \m -> Expect.equal (0,1) (Buffer.nowCursorPos m)
+                      |> Expect.all [ \m -> Expect.equal (Buffer.Range (2@3) (0@1) |> Just) m.selection
+                                    , \m -> Expect.equal (0,1) (curWithTuple m)
                                     ]
 
         ]
