@@ -1047,6 +1047,7 @@ editorCommandList =
     , EditorCmds.killLine
     , EditorCmds.killWord
     , EditorCmds.undo
+    , EditorCmds.nop
     ]
 
 fidToEditCmd : String -> Maybe EditorCmds.Command

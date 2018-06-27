@@ -32,6 +32,8 @@ module TextEditor.Core.Commands exposing
     , indent
     , unindent
 
+    , nop
+
     , batch
     )
 
@@ -351,4 +353,7 @@ unindent model =
             |> Core.withEnsureVisibleCmd
 
 
+nop : Model -> (Model, Cmd Msg)
+nop model =
+    ( model, Cmd.none )
 

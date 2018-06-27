@@ -30,10 +30,9 @@ module TextEditor.Commands exposing
     , killWord
     , indent
     , unindent
+    , nop
 
     , Command
-
---    , batch
     )
 
 import TextEditor.Core as Core
@@ -258,5 +257,10 @@ unindent =
     , f = CoreCommands.unindent
     }
 
-
-
+{-| This is a placeholder for hooking the keydown event.
+-}
+nop : Command
+nop =
+    { id = "nop"
+    , f = CoreCommands.nop
+    }
