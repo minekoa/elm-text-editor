@@ -27,6 +27,7 @@ module TextEditor.Commands exposing
     , cut
     , paste
     , killLine
+    , killWord
     , indent
     , unindent
 
@@ -237,6 +238,12 @@ killLine : Command
 killLine =
     { id = "killLine"
     , f = CoreCommands.killLine
+    }
+
+killWord : Command
+killWord =
+    { id = "killWord"
+    , f = CoreCommands.killWord
     }
 
 indent : Command

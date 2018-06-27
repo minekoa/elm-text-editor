@@ -1045,6 +1045,7 @@ editorCommandList =
     , EditorCmds.cut
     , EditorCmds.paste
     , EditorCmds.killLine
+    , EditorCmds.killWord
     , EditorCmds.undo
     ]
 

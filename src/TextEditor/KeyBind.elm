@@ -74,6 +74,7 @@ emacsLike =
     , {ctrl=False, alt=True , shift=False, code= 87, f=EditorCmds.copy }            -- 'M-w' (注: クリップボード連携なし)
     , {ctrl=True , alt=False, shift=False, code= 87, f=EditorCmds.cut  }            -- 'C-w' (注: クリップボード連携なし)
     , {ctrl=True , alt=False, shift=False, code= 75, f=EditorCmds.killLine }        -- 'C-k' (注: クリップボード連携なし)
+    , {ctrl=False, alt=True , shift=False, code= 68, f=EditorCmds.killWord }        -- 'M-d' (注: クリップボード連携なし)
     , {ctrl=True , alt=False, shift=False, code= 77, f=EditorCmds.insert "\n" }     -- 'C-m'
     , {ctrl=True , alt=False, shift=False, code= 89, f=EditorCmds.paste }           -- 'C-y'
     , {ctrl=True , alt=False, shift=False, code= 32, f=EditorCmds.markFlip }        -- 'C-SPE'

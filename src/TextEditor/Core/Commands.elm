@@ -27,6 +27,7 @@ module TextEditor.Core.Commands exposing
     , cut
     , paste
     , killLine
+    , killWord
 
     , indent
     , unindent
@@ -249,6 +250,24 @@ killLine model =
           }
         |> Core.blinkBlock
         |> Core.withEnsureVisibleCmd
+
+
+killWord : Model -> (Model, Cmd Msg)
+killWord model =
+    let
+        bm  = (Buffer.selectionClear >> Buffer.selectNextWord) model.buffer
+    in
+        case bm.selection of
+            Just sel ->
+                { model
+                    | copyStore = Buffer.readRange sel bm
+                    , buffer = bm |> Buffer.deleteRange sel |> Buffer.selectionClear
+                }
+                     |> Core.blinkBlock
+                     |> Core.withEnsureVisibleCmd
+
+            Nothing ->
+                (model, Cmd.none)
 
 
 
