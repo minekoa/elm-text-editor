@@ -1,8 +1,8 @@
 module TextEditor.Commands exposing
     ( moveForward
     , moveBackward
-    , movePrevios
-    , moveNext
+    , movePreviosLine
+    , moveNextLine
     , moveBOL
     , moveEOL
     , moveAt
@@ -10,8 +10,10 @@ module TextEditor.Commands exposing
     , movePreviosWord
     , selectForward
     , selectBackward
-    , selectPrevios
-    , selectNext
+    , selectPreviosLine
+    , selectNextLine
+    , selectPreviosWord
+    , selectNextWord
     , selectAt
     , markSet
     , markClear
@@ -81,16 +83,16 @@ moveBackward =
     , f = CoreCommands.moveBackward
     }
 
-movePrevios : Command
-movePrevios =
-    { id= "movePrevios"
-    , f = CoreCommands.movePrevios
+movePreviosLine : Command
+movePreviosLine =
+    { id= "movePreviosLine"
+    , f = CoreCommands.movePreviosLine
     }
 
-moveNext : Command
-moveNext =
-    { id= "moveNext"
-    , f = CoreCommands.moveNext
+moveNextLine : Command
+moveNextLine =
+    { id= "moveNextLine"
+    , f = CoreCommands.moveNextLine
     }
 
 moveBOL : Command
@@ -135,16 +137,28 @@ selectForward =
     , f = CoreCommands.selectForward
     }
 
-selectPrevios : Command
-selectPrevios =
-    { id= "selectPrevios"
-    , f = CoreCommands.selectPrevios
+selectPreviosLine : Command
+selectPreviosLine =
+    { id= "selectPreviosLine"
+    , f = CoreCommands.selectPreviosLine
     }
 
-selectNext : Command
-selectNext =
-    { id= "selectNext"
-    , f = CoreCommands.selectNext
+selectNextLine : Command
+selectNextLine =
+    { id= "selectNextLine"
+    , f = CoreCommands.selectNextLine
+    }
+
+selectPreviosWord : Command
+selectPreviosWord =
+    { id= "selectPreviosWord"
+    , f = CoreCommands.selectPreviosWord
+    }
+
+selectNextWord : Command
+selectNextWord =
+    { id= "selectNextWord"
+    , f = CoreCommands.selectNextWord
     }
 
 selectAt: (Int, Int) -> Command

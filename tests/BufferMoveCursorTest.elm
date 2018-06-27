@@ -54,29 +54,29 @@ suite =
         , test "move-next (normally)" <|
               \_ ->
                   Buffer.init "ABC\nDE\nGHIJ\nK\n"
-                      |> Buffer.moveNext
+                      |> Buffer.moveNextLine
                       |> Buffer.nowCursorPos
                       |> Expect.equal (1,0)
         , test "move-next (to shorter line)" <|
               \_ ->
                   Buffer.init "ABCD\nDE\nGHIJ\nK\n"
                       |> ntimesdo 3 Buffer.moveForward
-                      |> Buffer.moveNext
+                      |> Buffer.moveNextLine
                       |> Buffer.nowCursorPos
                       |> Expect.equal (1,2)
         , test "move-next (a shorter line caught in between)" <|
               \_ ->
                   Buffer.init "ABCD\nDE\nGHIJ\nK\n"
                       |> ntimesdo 3 Buffer.moveForward
-                      |> Buffer.moveNext
-                      |> Buffer.moveNext
+                      |> Buffer.moveNextLine
+                      |> Buffer.moveNextLine
                       |> Buffer.nowCursorPos
                       |> Expect.equal (2,2)
         , test "move-next (EOF)" <|
               \_ ->
                   Buffer.init "ABCD\nDE\nGHIJ\nK\n"
-                      |> ntimesdo 5 Buffer.moveNext
-                      |> Buffer.moveNext
+                      |> ntimesdo 5 Buffer.moveNextLine
+                      |> Buffer.moveNextLine
                       |> Buffer.nowCursorPos
                       |> Expect.equal (4, 0)
         , test "move-backword" <|
@@ -89,7 +89,7 @@ suite =
         , test "move-backword (previos line)" <|
             \_ ->
                 Buffer.init "ABCDE\nGHIJ\nK\n"
-                      |> Buffer.moveNext
+                      |> Buffer.moveNextLine
                       |> Buffer.moveBackward
                       |> Buffer.nowCursorPos
                       |> Expect.equal (0, 5)
@@ -103,33 +103,33 @@ suite =
         , test "move-previos (normally)" <|
               \_ ->
                   Buffer.init "ABC\nDE\nGHIJ\nK\n"
-                      |> Buffer.moveNext
+                      |> Buffer.moveNextLine
                       |> Buffer.moveForward
-                      |> Buffer.movePrevios
+                      |> Buffer.movePreviosLine
                       |> Buffer.nowCursorPos
                       |> Expect.equal (0,1)
         , test "move-previos (to shorter line)" <|
               \_ ->
                   Buffer.init "ABCD\nEF\nGHIJ\nK\n"
-                      |> ntimesdo 2 Buffer.moveNext
+                      |> ntimesdo 2 Buffer.moveNextLine
                       |> ntimesdo 3 Buffer.moveForward
-                      |> Buffer.movePrevios
+                      |> Buffer.movePreviosLine
                       |> Buffer.nowCursorPos
                       |> Expect.equal (1,2)
         , test "move-previos (a shorter line caught in between)" <|
               \_ ->
                   Buffer.init "ABCD\nEF\nGHIJ\nK\n"
-                      |> ntimesdo 2 Buffer.moveNext
+                      |> ntimesdo 2 Buffer.moveNextLine
                       |> ntimesdo 3 Buffer.moveForward
-                      |> Buffer.movePrevios
-                      |> Buffer.movePrevios
+                      |> Buffer.movePreviosLine
+                      |> Buffer.movePreviosLine
                       |> Buffer.nowCursorPos
                       |> Expect.equal (0,2)
         , test "move-previos (BOF)" <|
               \_ ->
                   Buffer.init "ABCD\nEF\nGHIJ\nK\n"
-                      |> ntimesdo 2 Buffer.moveNext
-                      |> ntimesdo 5 Buffer.movePrevios
+                      |> ntimesdo 2 Buffer.moveNextLine
+                      |> ntimesdo 5 Buffer.movePreviosLine
                       |> Buffer.nowCursorPos
                       |> Expect.equal (0,0)
 
@@ -186,8 +186,8 @@ suite =
         , test "move-previos-word" <|
               \_ ->
                   Buffer.init "ABC DE\nHIJ\n"
-                      |> Buffer.moveNext
-                      |> Buffer.moveNext
+                      |> Buffer.moveNextLine
+                      |> Buffer.moveNextLine
                       |> Buffer.movePreviosWord
                       |> Buffer.nowCursorPos
                       |> Expect.equal (1,0)
@@ -200,8 +200,8 @@ suite =
         , test "move-previos-word (prev-line, space)" <|
               \_ ->
                   Buffer.init "ABC DE\n  HIJ  \n"
-                      |> Buffer.moveNext
-                      |> Buffer.moveNext
+                      |> Buffer.moveNextLine
+                      |> Buffer.moveNextLine
                       |> Buffer.movePreviosWord
                       |> Buffer.nowCursorPos
                       |> Expect.equal (1,2)

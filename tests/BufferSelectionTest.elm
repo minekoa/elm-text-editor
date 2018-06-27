@@ -32,15 +32,15 @@ suite =
         , test "selection start (next)" <|
               \_ ->
                   Buffer.init "ABC\nDE\nGHIJ\nK\n"
-                      |> Buffer.selectNext
+                      |> Buffer.selectNextLine
                       |> Expect.all [ \m -> Expect.equal (Buffer.Range (0,0) (1,0) |> Just) m.selection
                                     , \m -> Expect.equal (1,0) (Buffer.nowCursorPos m)
                                     ]
         , test "selection start (previos)" <|
               \_ ->
                   Buffer.init "ABC\nDE\nGHIJ\nK\n"
-                      |> Buffer.moveNext
-                      |> Buffer.selectPrevios
+                      |> Buffer.moveNextLine
+                      |> Buffer.selectPreviosLine
                       |> Expect.all [ \m -> Expect.equal (Buffer.Range (1,0) (0,0) |> Just) m.selection
                                     , \m -> Expect.equal (0,0) (Buffer.nowCursorPos m)
                                     ]
@@ -97,7 +97,7 @@ suite =
         , test "selection extend (backword, multiline)" <|
               \_ ->
                   Buffer.init "ABC\nDE\nGHIJ\nK\n"
-                      |> Buffer.moveNext
+                      |> Buffer.moveNextLine
                       |> Buffer.moveForward
                       |> Buffer.selectBackward
                       |> Buffer.selectBackward
@@ -120,8 +120,8 @@ suite =
               \_ ->
                   Buffer.init "ABC\nDE\nGHIJ\nK\n"
                       |> Buffer.moveForward
-                      |> Buffer.selectNext
-                      |> Buffer.selectNext
+                      |> Buffer.selectNextLine
+                      |> Buffer.selectNextLine
                       |> Expect.all [ \m -> Expect.equal (Buffer.Range (0,1) (2,1) |> Just) m.selection
                                     , \m -> Expect.equal (2,1) (Buffer.nowCursorPos m)
                                     ]
@@ -131,8 +131,8 @@ suite =
                       |> Buffer.moveForward
                       |> Buffer.moveForward
                       |> Buffer.moveForward
-                      |> Buffer.selectNext
-                      |> Buffer.selectNext
+                      |> Buffer.selectNextLine
+                      |> Buffer.selectNextLine
                       |> Expect.all [ \m -> Expect.equal (Buffer.Range (0,3) (2,2) |> Just) m.selection
                                     , \m -> Expect.equal (2,2) (Buffer.nowCursorPos m)
                                     ]
@@ -140,10 +140,10 @@ suite =
               \_ ->
                   Buffer.init "ABC\nDEFG"
                       |> Buffer.moveForward
-                      |> Buffer.selectNext
-                      |> Buffer.selectNext
-                      |> Buffer.selectNext
-                      |> Buffer.selectNext
+                      |> Buffer.selectNextLine
+                      |> Buffer.selectNextLine
+                      |> Buffer.selectNextLine
+                      |> Buffer.selectNextLine
                       |> Expect.all [ \m -> Expect.equal (Buffer.Range (0,1) (1,1) |> Just) m.selection
                                     , \m -> Expect.equal (1,1) (Buffer.nowCursorPos m)
                                     ]
@@ -152,66 +152,66 @@ suite =
                   Buffer.init "ABC\nD"
                       |> Buffer.moveForward
                       |> Buffer.moveForward
-                      |> Buffer.selectNext
-                      |> Buffer.selectNext
-                      |> Buffer.selectNext
-                      |> Buffer.selectNext
+                      |> Buffer.selectNextLine
+                      |> Buffer.selectNextLine
+                      |> Buffer.selectNextLine
+                      |> Buffer.selectNextLine
                       |> Expect.all [ \m -> Expect.equal (Buffer.Range (0,2) (1,1) |> Just) m.selection
                                     , \m -> Expect.equal (1,1) (Buffer.nowCursorPos m)
                                     ]
         , test "selection extend (previos)" <|
               \_ ->
                   Buffer.init "ABC\nDE\nGHIJ\nK\n"
-                      |> Buffer.moveNext
-                      |> Buffer.moveNext
+                      |> Buffer.moveNextLine
+                      |> Buffer.moveNextLine
                       |> Buffer.moveForward
-                      |> Buffer.selectPrevios
-                      |> Buffer.selectPrevios
+                      |> Buffer.selectPreviosLine
+                      |> Buffer.selectPreviosLine
                       |> Expect.all [ \m -> Expect.equal (Buffer.Range (2,1) (0,1) |> Just) m.selection
                                     , \m -> Expect.equal (0,1) (Buffer.nowCursorPos m)
                                     ]
         , test "selection extend (previos, shorterline)" <|
               \_ ->
                   Buffer.init "ABC\nDE\nGHIJ\nK\n"
-                      |> Buffer.moveNext
-                      |> Buffer.moveNext
+                      |> Buffer.moveNextLine
+                      |> Buffer.moveNextLine
                       |> Buffer.moveForward
                       |> Buffer.moveForward
                       |> Buffer.moveForward
-                      |> Buffer.selectPrevios
-                      |> Buffer.selectPrevios
+                      |> Buffer.selectPreviosLine
+                      |> Buffer.selectPreviosLine
                       |> Expect.all [ \m -> Expect.equal (Buffer.Range (2,3) (0,2) |> Just) m.selection
                                     , \m -> Expect.equal (0,2) (Buffer.nowCursorPos m)
                                     ]
         , test "selection extend (previos, BOF)" <|
               \_ ->
                   Buffer.init "ABC\nDE\nGHIJ\nK\n"
-                      |> Buffer.moveNext
-                      |> Buffer.moveNext
+                      |> Buffer.moveNextLine
+                      |> Buffer.moveNextLine
                       |> Buffer.moveForward
-                      |> Buffer.selectPrevios
-                      |> Buffer.selectPrevios
-                      |> Buffer.selectPrevios
-                      |> Buffer.selectPrevios
-                      |> Buffer.selectPrevios
-                      |> Buffer.selectPrevios
+                      |> Buffer.selectPreviosLine
+                      |> Buffer.selectPreviosLine
+                      |> Buffer.selectPreviosLine
+                      |> Buffer.selectPreviosLine
+                      |> Buffer.selectPreviosLine
+                      |> Buffer.selectPreviosLine
                       |> Expect.all [ \m -> Expect.equal (Buffer.Range (2,1) (0,1) |> Just) m.selection
                                     , \m -> Expect.equal (0,1) (Buffer.nowCursorPos m)
                                     ]
         , test "selection extend (previos, BOF, shorterline)" <|
               \_ ->
                   Buffer.init "A\nDE\nGHIJ\nK\n"
-                      |> Buffer.moveNext
-                      |> Buffer.moveNext
+                      |> Buffer.moveNextLine
+                      |> Buffer.moveNextLine
                       |> Buffer.moveForward
                       |> Buffer.moveForward
                       |> Buffer.moveForward
-                      |> Buffer.selectPrevios
-                      |> Buffer.selectPrevios
-                      |> Buffer.selectPrevios
-                      |> Buffer.selectPrevios
-                      |> Buffer.selectPrevios
-                      |> Buffer.selectPrevios
+                      |> Buffer.selectPreviosLine
+                      |> Buffer.selectPreviosLine
+                      |> Buffer.selectPreviosLine
+                      |> Buffer.selectPreviosLine
+                      |> Buffer.selectPreviosLine
+                      |> Buffer.selectPreviosLine
                       |> Expect.all [ \m -> Expect.equal (Buffer.Range (2,3) (0,1) |> Just) m.selection
                                     , \m -> Expect.equal (0,1) (Buffer.nowCursorPos m)
                                     ]

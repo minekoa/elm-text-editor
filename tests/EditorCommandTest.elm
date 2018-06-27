@@ -120,7 +120,7 @@ suite =
         , test "indent (indented prev-line)" <|
               \_ ->
                   Editor.init "id_string" [] "    ABC\nDEFG\nHIJK\nLMN\nOPQ\n"
-                      |> andThen (Editor.execCommand <| EditorCmds.moveNext)
+                      |> andThen (Editor.execCommand <| EditorCmds.moveNextLine)
                       |> andThen (Editor.execCommand <| EditorCmds.indent)
                       |> Expect.all [ \(m, c) -> Expect.equal "    ABC\n    DEFG\nHIJK\nLMN\nOPQ\n" (m.core.buffer.contents |> String.join "\n")
                                     , \(m, c) -> Expect.equal (1, 4) (m.core.buffer |> Buffer.nowCursorPos)
@@ -129,7 +129,7 @@ suite =
         , test "indent-indent (indented prev-line)" <|
               \_ ->
                   Editor.init "id_string" [] "    ABC\nDEFG\nHIJK\nLMN\nOPQ\n"
-                      |> andThen (Editor.execCommand <| EditorCmds.moveNext)
+                      |> andThen (Editor.execCommand <| EditorCmds.moveNextLine)
                       |> andThen (Editor.execCommand <| EditorCmds.indent)
                       |> andThen (Editor.execCommand <| EditorCmds.indent)
                       |> Expect.all [ \(m, c) -> Expect.equal "    ABC\n        DEFG\nHIJK\nLMN\nOPQ\n" (m.core.buffer.contents |> String.join "\n")
@@ -139,7 +139,7 @@ suite =
         , test "indent-indent-indent (indented prev-line)" <|
               \_ ->
                   Editor.init "id_string" [] "    ABC\nDEFG\nHIJK\nLMN\nOPQ\n"
-                      |> andThen (Editor.execCommand <| EditorCmds.moveNext)
+                      |> andThen (Editor.execCommand <| EditorCmds.moveNextLine)
                       |> andThen (Editor.execCommand <| EditorCmds.indent)
                       |> andThen (Editor.execCommand <| EditorCmds.indent)
                       |> andThen (Editor.execCommand <| EditorCmds.indent)
@@ -150,7 +150,7 @@ suite =
         , test "indent (indented prev-line, cursor is not line head)" <|
               \_ ->
                   Editor.init "id_string" [] "    ABC\nDEFG\nHIJK\nLMN\nOPQ\n"
-                      |> andThen (Editor.execCommand <| EditorCmds.moveNext)
+                      |> andThen (Editor.execCommand <| EditorCmds.moveNextLine)
                       |> andThen (Editor.execCommand <| EditorCmds.moveForward)
                       |> andThen (Editor.execCommand <| EditorCmds.indent)
                       |> Expect.all [ \(m, c) -> Expect.equal "    ABC\n    DEFG\nHIJK\nLMN\nOPQ\n" (m.core.buffer.contents |> String.join "\n")
@@ -160,7 +160,7 @@ suite =
         , test "indent-indent (indented prev-line, cursor is not line head)" <|
               \_ ->
                   Editor.init "id_string" [] "    ABC\nDEFG\nHIJK\nLMN\nOPQ\n"
-                      |> andThen (Editor.execCommand <| EditorCmds.moveNext)
+                      |> andThen (Editor.execCommand <| EditorCmds.moveNextLine)
                       |> andThen (Editor.execCommand <| EditorCmds.moveForward)
                       |> andThen (Editor.execCommand <| EditorCmds.indent)
                       |> andThen (Editor.execCommand <| EditorCmds.indent)
@@ -171,7 +171,7 @@ suite =
         , test "indent (myline is indenting than prev-line)" <|
               \_ ->
                   Editor.init "id_string" [] "    ABC\n            DEFG\nHIJK\nLMN\nOPQ\n"
-                      |> andThen (Editor.execCommand <| EditorCmds.moveNext)
+                      |> andThen (Editor.execCommand <| EditorCmds.moveNextLine)
                       |> andThen (Editor.execCommand <| EditorCmds.indent)
                       |> Expect.all [ \(m, c) -> Expect.equal "    ABC\n    DEFG\nHIJK\nLMN\nOPQ\n" (m.core.buffer.contents |> String.join "\n")
                                     , \(m, c) -> Expect.equal (1, 0) (m.core.buffer |> Buffer.nowCursorPos)
@@ -180,7 +180,7 @@ suite =
         , test "indent-indent (myline is indenting than prev-line)" <|
               \_ ->
                   Editor.init "id_string" [] "    ABC\n            DEFG\nHIJK\nLMN\nOPQ\n"
-                      |> andThen (Editor.execCommand <| EditorCmds.moveNext)
+                      |> andThen (Editor.execCommand <| EditorCmds.moveNextLine)
                       |> andThen (Editor.execCommand <| EditorCmds.indent)
                       |> andThen (Editor.execCommand <| EditorCmds.indent)
                       |> Expect.all [ \(m, c) -> Expect.equal "    ABC\n        DEFG\nHIJK\nLMN\nOPQ\n" (m.core.buffer.contents |> String.join "\n")
@@ -190,7 +190,7 @@ suite =
         , test "indent (myline is indenting than prev-line, col (1, 13) )" <|
               \_ ->
                   Editor.init "id_string" [] "    ABC\n            DEFG\nHIJK\nLMN\nOPQ\n"
-                      |> andThen (Editor.execCommand <| EditorCmds.moveNext)
+                      |> andThen (Editor.execCommand <| EditorCmds.moveNextLine)
                       |> andThen (Editor.execCommand <| EditorCmds.moveForward) -- 1 ' '
                       |> andThen (Editor.execCommand <| EditorCmds.moveForward) -- 2 ' '
                       |> andThen (Editor.execCommand <| EditorCmds.moveForward) -- 3 ' '
@@ -212,7 +212,7 @@ suite =
         , test "indent-indent (myline is indenting than prev-line, col (1, 13) )" <|
               \_ ->
                   Editor.init "id_string" [] "    ABC\n            DEFG\nHIJK\nLMN\nOPQ\n"
-                      |> andThen (Editor.execCommand <| EditorCmds.moveNext)
+                      |> andThen (Editor.execCommand <| EditorCmds.moveNextLine)
                       |> andThen (Editor.execCommand <| EditorCmds.moveForward) -- 1 ' '
                       |> andThen (Editor.execCommand <| EditorCmds.moveForward) -- 2 ' '
                       |> andThen (Editor.execCommand <| EditorCmds.moveForward) -- 3 ' '

@@ -15,17 +15,19 @@ module TextEditor.Buffer exposing ( Model
                                   -- cursor move
                                   , moveForward
                                   , moveBackward
-                                  , movePrevios
-                                  , moveNext
-                                  , moveAt
+                                  , movePreviosLine
+                                  , moveNextLine
                                   , moveNextWord
                                   , movePreviosWord
+                                  , moveAt
 
                                   -- selection
                                   , selectBackward
                                   , selectForward
-                                  , selectPrevios
-                                  , selectNext
+                                  , selectPreviosLine
+                                  , selectNextLine
+                                  , selectPreviosWord
+                                  , selectNextWord
                                   , selectAt
                                   , selectionClear
 
@@ -313,17 +315,17 @@ moveBackward model =
         True  -> selectWithMove moveBackwardProc model
         False -> model |> moveBackwardProc |> selectionClear
 
-movePrevios : Model -> Model
-movePrevios model =
+movePreviosLine : Model -> Model
+movePreviosLine model =
     case isMarkActive model of
-        True  -> selectWithMove movePreviosProc model
-        False -> model |> movePreviosProc |> selectionClear
+        True  -> selectWithMove movePreviosLineProc model
+        False -> model |> movePreviosLineProc |> selectionClear
 
-moveNext : Model -> Model
-moveNext model =
+moveNextLine : Model -> Model
+moveNextLine model =
     case isMarkActive model of
-        True  -> selectWithMove moveNextProc model
-        False -> model |>  moveNextProc |> selectionClear
+        True  -> selectWithMove moveNextLineProc model
+        False -> model |>  moveNextLineProc |> selectionClear
 
 moveAt : (Int, Int) -> Model -> Model
 moveAt (row, col) model =
@@ -367,8 +369,8 @@ moveBackwardProc model =
         |> Maybe.withDefault (defaultCursor model.contents)
         |> (λ c -> {model | cursor = c})
 
-movePreviosProc : Model -> Model
-movePreviosProc model =
+movePreviosLineProc : Model -> Model
+movePreviosLineProc model =
     let
         cur = model.cursor
     in
@@ -382,8 +384,8 @@ movePreviosProc model =
         |> Maybe.withDefault cur
         |> (λ c -> {model | cursor = c})
 
-moveNextProc : Model -> Model
-moveNextProc model =
+moveNextLineProc : Model -> Model
+moveNextLineProc model =
     let
         cur = model.cursor
     in
@@ -467,13 +469,22 @@ selectForward = selectWithMove moveForwardProc
                  << \m -> if isMarkActive m then markClear m else m
 
 
-selectPrevios: Model -> Model
-selectPrevios = selectWithMove movePreviosProc
+selectPreviosLine: Model -> Model
+selectPreviosLine = selectWithMove movePreviosLineProc
                  << \m -> if isMarkActive m then markClear m else m
 
-selectNext: Model -> Model
-selectNext = selectWithMove moveNextProc
+selectNextLine: Model -> Model
+selectNextLine = selectWithMove moveNextLineProc
                  << \m -> if isMarkActive m then markClear m else m
+
+selectPreviosWord: Model -> Model
+selectPreviosWord = selectWithMove (\m -> movePreviosWordProc m.cursor m)
+                 << \m -> if isMarkActive m then markClear m else m
+
+selectNextWord: Model -> Model
+selectNextWord = selectWithMove (\m -> moveNextWordProc m.cursor m)
+                 << \m -> if isMarkActive m then markClear m else m
+
 
 selectAt: (Int, Int) -> Model -> Model
 selectAt pos = selectWithMove (moveAtProc pos)

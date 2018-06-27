@@ -33,8 +33,8 @@ type Msg
     = ChangeMode KeyboardMode
     | MoveForward
     | MoveBackword
-    | MovePrevios
-    | MoveNext
+    | MovePreviosLine
+    | MoveNextLine
     | Insert String
     | Backspace
     | Delete
@@ -59,13 +59,13 @@ update msg model editor =
             ( ( model, Cmd.none)
             , Editor.execCommand Commands.moveBackward editor
             )
-        MovePrevios ->
+        MovePreviosLine ->
             ( ( model, Cmd.none)
-            , Editor.execCommand Commands.movePrevios editor
+            , Editor.execCommand Commands.movePreviosLine editor
             )
-        MoveNext ->
+        MoveNextLine ->
             ( ( model, Cmd.none)
-            , Editor.execCommand Commands.moveNext editor
+            , Editor.execCommand Commands.moveNextLine editor
             )
         Insert s ->
             ( ( model, Cmd.none)
@@ -151,10 +151,10 @@ capitalKeys model =
         , div [class "kbd_mainkey_row"] [ pad 8
                                         , spaceKey
                                         , pad 2
-                                        , div [ class "kbd_key", onClick MoveBackword, style [ ("width", "1.5em") ] ] [ text "←" ]
-                                        , div [ class "kbd_key", onClick MovePrevios , style [ ("width", "1.5em") ] ] [ text "↑" ]
-                                        , div [ class "kbd_key", onClick MoveNext    , style [ ("width", "1.5em") ] ] [ text "↓" ]
-                                        , div [ class "kbd_key", onClick MoveForward , style [ ("width", "1.5em") ] ] [ text "→" ]
+                                        , div [ class "kbd_key", onClick MoveBackword   , style [ ("width", "1.5em") ] ] [ text "←" ]
+                                        , div [ class "kbd_key", onClick MovePreviosLine, style [ ("width", "1.5em") ] ] [ text "↑" ]
+                                        , div [ class "kbd_key", onClick MoveNextLine   , style [ ("width", "1.5em") ] ] [ text "↓" ]
+                                        , div [ class "kbd_key", onClick MoveForward    , style [ ("width", "1.5em") ] ] [ text "→" ]
                                         ]
         ]
 
@@ -168,10 +168,10 @@ smallKeys model =
         , div [class "kbd_mainkey_row"] [ pad 8
                                         , spaceKey
                                         , pad 2
-                                        , div [ class "kbd_key", onClick MoveBackword, style [ ("width", "1.5em") ] ] [ text "←" ]
-                                        , div [ class "kbd_key", onClick MovePrevios , style [ ("width", "1.5em") ] ] [ text "↑" ]
-                                        , div [ class "kbd_key", onClick MoveNext    , style [ ("width", "1.5em") ] ] [ text "↓" ]
-                                        , div [ class "kbd_key", onClick MoveForward , style [ ("width", "1.5em") ] ] [ text "→" ]
+                                        , div [ class "kbd_key", onClick MoveBackword   , style [ ("width", "1.5em") ] ] [ text "←" ]
+                                        , div [ class "kbd_key", onClick MovePreviosLine, style [ ("width", "1.5em") ] ] [ text "↑" ]
+                                        , div [ class "kbd_key", onClick MoveNextLine   , style [ ("width", "1.5em") ] ] [ text "↓" ]
+                                        , div [ class "kbd_key", onClick MoveForward    , style [ ("width", "1.5em") ] ] [ text "→" ]
                                         ]
         ]
 
@@ -185,10 +185,10 @@ hiraganaKeys model =
         , div [class "kbd_mainkey_row"] [ pad 8
                                         , zenkakuSpaceKey
                                         , pad 2
-                                        , div [ class "kbd_key", onClick MoveBackword, style [ ("width", "1.5em") ] ] [ text "←" ]
-                                        , div [ class "kbd_key", onClick MovePrevios , style [ ("width", "1.5em") ] ] [ text "↑" ]
-                                        , div [ class "kbd_key", onClick MoveNext    , style [ ("width", "1.5em") ] ] [ text "↓" ]
-                                        , div [ class "kbd_key", onClick MoveForward , style [ ("width", "1.5em") ] ] [ text "→" ]
+                                        , div [ class "kbd_key", onClick MoveBackword   , style [ ("width", "1.5em") ] ] [ text "←" ]
+                                        , div [ class "kbd_key", onClick MovePreviosLine, style [ ("width", "1.5em") ] ] [ text "↑" ]
+                                        , div [ class "kbd_key", onClick MoveNextLine   , style [ ("width", "1.5em") ] ] [ text "↓" ]
+                                        , div [ class "kbd_key", onClick MoveForward    , style [ ("width", "1.5em") ] ] [ text "→" ]
                                         ]
         ]
 
@@ -202,10 +202,10 @@ katakanaKeys model =
         , div [class "kbd_mainkey_row"] [ pad 8
                                         , zenkakuSpaceKey
                                         , pad 2
-                                        , div [ class "kbd_key", onClick MoveBackword, style [ ("width", "1.5em") ] ] [ text "←" ]
-                                        , div [ class "kbd_key", onClick MovePrevios , style [ ("width", "1.5em") ] ] [ text "↑" ]
-                                        , div [ class "kbd_key", onClick MoveNext    , style [ ("width", "1.5em") ] ] [ text "↓" ]
-                                        , div [ class "kbd_key", onClick MoveForward , style [ ("width", "1.5em") ] ] [ text "→" ]
+                                        , div [ class "kbd_key", onClick MoveBackword   , style [ ("width", "1.5em") ] ] [ text "←" ]
+                                        , div [ class "kbd_key", onClick MovePreviosLine, style [ ("width", "1.5em") ] ] [ text "↑" ]
+                                        , div [ class "kbd_key", onClick MoveNextLine   , style [ ("width", "1.5em") ] ] [ text "↓" ]
+                                        , div [ class "kbd_key", onClick MoveForward    , style [ ("width", "1.5em") ] ] [ text "→" ]
                                         ]
         ]
 

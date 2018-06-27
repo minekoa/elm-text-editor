@@ -30,24 +30,28 @@ find (ctrl, alt, shift, keycode) keymap =
 
 basic: List KeyBind
 basic =
-    [ {ctrl=False, alt=False, shift=False, code= 37, f=EditorCmds.moveBackward } -- '←'
-    , {ctrl=False, alt=False, shift=False, code= 38, f=EditorCmds.movePrevios }  -- '↑',
-    , {ctrl=False, alt=False, shift=False, code= 39, f=EditorCmds.moveForward }  -- '→'
-    , {ctrl=False, alt=False, shift=False, code= 40, f=EditorCmds.moveNext }     -- '↓'
-    , {ctrl=False, alt=False, shift=False, code= 36, f=EditorCmds.moveBOL }      -- Home
-    , {ctrl=False, alt=False, shift=False, code= 35, f=EditorCmds.moveEOL }      -- End
-    , {ctrl=False, alt=False, shift=False, code=  8, f=EditorCmds.backspace }    -- BS
-    , {ctrl=False, alt=False, shift=False, code= 46, f=EditorCmds.delete }       -- DEL
-    , {ctrl=False, alt=False, shift=False, code=  9, f=EditorCmds.insert "\t" }  -- tab
-    , {ctrl=False, alt=False, shift=True , code=  9, f=EditorCmds.unindent }     -- S-tab
+    [ {ctrl=False, alt=False, shift=False, code= 37, f=EditorCmds.moveBackward }    -- '←'
+    , {ctrl=False, alt=False, shift=False, code= 39, f=EditorCmds.moveForward }     -- '→'
+    , {ctrl=False, alt=False, shift=False, code= 38, f=EditorCmds.movePreviosLine } -- '↑',
+    , {ctrl=False, alt=False, shift=False, code= 40, f=EditorCmds.moveNextLine }    -- '↓'
+    , {ctrl=False, alt=False, shift=False, code= 36, f=EditorCmds.moveBOL }         -- Home
+    , {ctrl=False, alt=False, shift=False, code= 35, f=EditorCmds.moveEOL }         -- End
+    , {ctrl=False, alt=False, shift=False, code=  8, f=EditorCmds.backspace }       -- BS
+    , {ctrl=False, alt=False, shift=False, code= 46, f=EditorCmds.delete }          -- DEL
+    , {ctrl=False, alt=False, shift=False, code=  9, f=EditorCmds.insert "\t" }     -- tab
+    , {ctrl=False, alt=False, shift=True , code=  9, f=EditorCmds.unindent }        -- S-tab
     ]
 
 gates: List KeyBind
 gates =
-    [ {ctrl=False, alt=False, shift=True , code= 37, f=EditorCmds.selectBackward } -- 'S-←'
-    , {ctrl=False, alt=False, shift=True , code= 38, f=EditorCmds.selectPrevios }  -- 'S-↑'
-    , {ctrl=False, alt=False, shift=True , code= 39, f=EditorCmds.selectForward }  -- 'S-→'
-    , {ctrl=False, alt=False, shift=True , code= 40, f=EditorCmds.selectNext }     -- 'S-↓' 
+    [ {ctrl=False, alt=False, shift=True , code= 37, f=EditorCmds.selectBackward }    -- 'S-←'
+    , {ctrl=False, alt=False, shift=True , code= 39, f=EditorCmds.selectForward }     -- 'S-→'
+    , {ctrl=False, alt=False, shift=True , code= 38, f=EditorCmds.selectPreviosLine } -- 'S-↑'
+    , {ctrl=False, alt=False, shift=True , code= 40, f=EditorCmds.selectNextLine }    -- 'S-↓' 
+    , {ctrl=False, alt=True , shift=False, code= 37, f=EditorCmds.movePreviosWord }   -- 'M-←'
+    , {ctrl=False, alt=True , shift=False, code= 39, f=EditorCmds.moveNextWord }      -- 'M-→'
+    , {ctrl=False, alt=True , shift=True , code= 37, f=EditorCmds.selectPreviosWord } -- 'S-M-←'
+    , {ctrl=False, alt=True , shift=True , code= 39, f=EditorCmds.selectNextWord }    -- 'S-M-→'
 
     -- note: C-c, C-x, C-v は、システムのクリップボードと連携したいので、
     --       ブラウザの ClipboardEvent (copy, cut, paste)を発火させるため、ここでは何もしない
@@ -59,8 +63,8 @@ emacsLike: List KeyBind
 emacsLike =
     [ {ctrl=True , alt=False, shift=False, code= 70, f=EditorCmds.moveForward }     -- 'C-f'
     , {ctrl=True , alt=False, shift=False, code= 66, f=EditorCmds.moveBackward }    -- 'C-b'
-    , {ctrl=True , alt=False, shift=False, code= 78, f=EditorCmds.moveNext }        -- 'C-n'
-    , {ctrl=True , alt=False, shift=False, code= 80, f=EditorCmds.movePrevios }     -- 'C-p'
+    , {ctrl=True , alt=False, shift=False, code= 78, f=EditorCmds.moveNextLine }    -- 'C-n'
+    , {ctrl=True , alt=False, shift=False, code= 80, f=EditorCmds.movePreviosLine } -- 'C-p'
     , {ctrl=False, alt=True , shift=False, code= 70, f=EditorCmds.moveNextWord }    -- 'M-f'
     , {ctrl=False, alt=True , shift=False, code= 66, f=EditorCmds.movePreviosWord } -- 'M-b'
     , {ctrl=True , alt=False, shift=False, code= 65, f=EditorCmds.moveBOL }         -- 'C-a'

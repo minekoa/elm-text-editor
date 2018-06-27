@@ -1,8 +1,8 @@
 module TextEditor.Core.Commands exposing
     ( moveForward
     , moveBackward
-    , movePrevios
-    , moveNext
+    , movePreviosLine
+    , moveNextLine
     , moveBOL
     , moveEOL
     , moveAt
@@ -10,8 +10,10 @@ module TextEditor.Core.Commands exposing
     , movePreviosWord
     , selectForward
     , selectBackward
-    , selectPrevios
-    , selectNext
+    , selectPreviosLine
+    , selectNextLine
+    , selectPreviosWord
+    , selectNextWord
     , selectAt
     , markSet
     , markClear
@@ -65,11 +67,11 @@ moveForward = editF Buffer.moveForward
 moveBackward : Model -> (Model, Cmd Msg)
 moveBackward = editF Buffer.moveBackward
 
-movePrevios : Model -> (Model, Cmd Msg)
-movePrevios = editF Buffer.movePrevios
+movePreviosLine : Model -> (Model, Cmd Msg)
+movePreviosLine = editF Buffer.movePreviosLine
 
-moveNext : Model -> (Model, Cmd Msg)
-moveNext = editF Buffer.moveNext
+moveNextLine : Model -> (Model, Cmd Msg)
+moveNextLine = editF Buffer.moveNextLine
 
 moveBOL : Model -> (Model, Cmd Msg)
 moveBOL model = editF (Buffer.moveAt (model.buffer.cursor.row, 0)) model
@@ -103,11 +105,18 @@ selectBackward = editF Buffer.selectBackward
 selectForward: Model -> (Model, Cmd Msg)
 selectForward = editF Buffer.selectForward
 
-selectPrevios: Model -> (Model, Cmd Msg)
-selectPrevios = editF Buffer.selectPrevios
+selectPreviosLine: Model -> (Model, Cmd Msg)
+selectPreviosLine = editF Buffer.selectPreviosLine
 
-selectNext: Model -> (Model, Cmd Msg)
-selectNext = editF Buffer.selectNext
+selectNextLine: Model -> (Model, Cmd Msg)
+selectNextLine = editF Buffer.selectNextLine
+
+selectPreviosWord: Model -> (Model, Cmd Msg)
+selectPreviosWord = editF Buffer.selectPreviosWord
+
+selectNextWord: Model -> (Model, Cmd Msg)
+selectNextWord = editF Buffer.selectNextWord
+
 
 selectAt: (Int, Int) -> Model -> (Model, Cmd Msg)
 selectAt pos = editF (Buffer.selectAt pos)

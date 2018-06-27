@@ -69,7 +69,7 @@ suite =
         , test "move-next(momark)" <|
               \_ ->
                   Buffer.init "ABC\nDE\nGHIJ\nK\n"
-                      |> Buffer.moveNext
+                      |> Buffer.moveNextLine
                       |> (.selection)
                       |> Expect.equal Nothing
 
@@ -77,7 +77,7 @@ suite =
               \_ ->
                   Buffer.init "ABC\nDE\nGHIJ\nK\n"
                       |> \b -> {b| cursor = Buffer.Cursor 1 0 }
-                      |> Buffer.movePrevios
+                      |> Buffer.movePreviosLine
                       |> (.selection)
                       |> Expect.equal Nothing
 
@@ -114,7 +114,7 @@ suite =
                   Buffer.init "ABC\nDE\nGHIJ\nK\n"
                       |> Buffer.moveForward
                       |> Buffer.markSet
-                      |> Buffer.moveNext
+                      |> Buffer.moveNextLine
                       |> Expect.all [ \m -> Expect.equal (Buffer.Mark (0,1) True  |> Just) m.mark
                                     , \m -> Expect.equal (Buffer.Range (0,1) (1,1) |> Just) m.selection
                                     ]
@@ -122,9 +122,9 @@ suite =
         , test "move-previos(mark: line)" <|
               \_ ->
                   Buffer.init "ABC\nDE\nGHIJ\nK\n"
-                      |> Buffer.moveNext
+                      |> Buffer.moveNextLine
                       |> Buffer.markSet
-                      |> Buffer.movePrevios
+                      |> Buffer.movePreviosLine
                       |> Expect.all [ \m -> Expect.equal (Buffer.Mark (1,0) True  |> Just) m.mark
                                     , \m -> Expect.equal (Buffer.Range (1,0) (0,0) |> Just) m.selection
                                     ]
@@ -164,10 +164,10 @@ suite =
         , test "mark-clear by select-next" <|
               \_ ->
                   Buffer.init "ABC\nDE\nGHIJ\nK\n"
-                      |> Buffer.moveNext
+                      |> Buffer.moveNextLine
                       |> Buffer.markSet
-                      |> Buffer.moveNext
-                      |> Buffer.selectNext
+                      |> Buffer.moveNextLine
+                      |> Buffer.selectNextLine
                       |> Expect.all [ \m -> Expect.equal (Buffer.Mark (1,0) False  |> Just) m.mark
                                     , \m -> Expect.equal (Buffer.Range (2,0) (3,0) |> Just) m.selection
                                     ]
@@ -175,10 +175,10 @@ suite =
         , test "mark-clear by select-previos" <|
               \_ ->
                   Buffer.init "ABC\nDE\nGHIJ\nK\n"
-                      |> ntimesdo 3 Buffer.moveNext
+                      |> ntimesdo 3 Buffer.moveNextLine
                       |> Buffer.markSet
-                      |> Buffer.movePrevios
-                      |> Buffer.selectPrevios
+                      |> Buffer.movePreviosLine
+                      |> Buffer.selectPreviosLine
                       |> Expect.all [ \m -> Expect.equal (Buffer.Mark (3,0) False  |> Just) m.mark
                                     , \m -> Expect.equal (Buffer.Range (2,0) (1,0) |> Just) m.selection
                                     ]

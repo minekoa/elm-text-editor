@@ -1020,16 +1020,18 @@ editorCommandList =
     -- moveAt, selectAt は、引数を取り扱えないため、対象外とした
     [ EditorCmds.moveForward
     , EditorCmds.moveBackward
-    , EditorCmds.movePrevios
-    , EditorCmds.moveNext
-    , EditorCmds.moveBOL
-    , EditorCmds.moveEOL
+    , EditorCmds.movePreviosLine
+    , EditorCmds.moveNextLine
     , EditorCmds.moveNextWord
     , EditorCmds.movePreviosWord
+    , EditorCmds.moveBOL
+    , EditorCmds.moveEOL
     , EditorCmds.selectForward
     , EditorCmds.selectBackward
-    , EditorCmds.selectPrevios
-    , EditorCmds.selectNext
+    , EditorCmds.selectPreviosLine
+    , EditorCmds.selectNextLine
+    , EditorCmds.selectPreviosWord
+    , EditorCmds.selectNextWord
     , EditorCmds.markSet
     , EditorCmds.markClear
     , EditorCmds.markFlip
