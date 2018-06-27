@@ -256,11 +256,14 @@ killWord : Model -> (Model, Cmd Msg)
 killWord model =
     let
         bm  = (Buffer.selectionClear >> Buffer.selectNextWord) model.buffer
+        delete_str = bm.selection
+                     |> Maybe.andThen (\sel -> Buffer.readRange sel bm |> Just)
+                     |> Maybe.withDefault ""
     in
         case bm.selection of
             Just sel ->
                 { model
-                    | copyStore = Buffer.readRange sel bm
+                    | copyStore = if model.lastCommand == Just "killWord" then model.copyStore ++ delete_str else delete_str
                     , buffer = bm |> Buffer.deleteRange sel |> Buffer.selectionClear
                 }
                      |> Core.blinkBlock
@@ -268,7 +271,6 @@ killWord model =
 
             Nothing ->
                 (model, Cmd.none)
-
 
 
 indent : Model -> (Model, Cmd Msg)
