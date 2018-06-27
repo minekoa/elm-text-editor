@@ -11,6 +11,26 @@ module TextEditor exposing ( Model
                            , execCommand
                            )
 
+{-| This module is simple text editor.
+
+# Definition
+
+@docs Model, Msg, EventInfo
+
+# Buffer
+
+@docs buffer, setBuffer
+
+# Editor Commands
+
+@docs execCommand
+
+# Component entry points (Determine a next model, subscriptions, create view)
+
+@docs init, update, subscriptions, view
+-}
+
+
 import Html exposing (..)
 import Html.Attributes exposing (..)
 import Html.Events exposing (..)
@@ -33,10 +53,17 @@ import TextEditor.KeyBind as KeyBind
 
 import Native.Mice
 
-{-| This module is simple texteditor.
 
+{-| The `core` member is an essential model of the text editor and is subject to change with` TextEditor.Command`.
+You shoud change this by use `execCommand` function.
+
+The `keymap` member defines the editor command to be enforced for the keydown event. 
+If an event is caught here, this `keydown` event handler return with `preventDefault=true`.
+
+When the `event_log` menber is not `Nothing`, keyboard events and mouse events are logged here.
+
+Other members (`enableComposer` and `drag`) are state variables for internal processing, you should not change directly.
 -}
-
 type alias Model =
     { core : Core.Model
 
@@ -51,12 +78,21 @@ type alias Model =
     , event_log : Maybe (List EventInfo)
     }
 
+{-| Recode for the `event_log`
+-}
 type alias EventInfo =
     { date : Date.Date
     , name : String
     , data : String
     }
 
+{-| Generate new `Model`.
+
+The `id` argument is a unique id for TextEditor's Dom Elements used by JavaScript(Native).
+The `keymap` argument is set as is in `Model.keymap`. (`Model.keymap` is dynamically changeable)
+
+The `text` argument is a string for generating a buffer, which is processed into a list of charactors separated by `\n` and stored in `TextEditor.Buffer.contents`.
+-}
 init : String -> List KeyBind.KeyBind -> String -> (Model, Cmd Msg)
 init id keymap text =
     let
@@ -71,10 +107,15 @@ init id keymap text =
     , Cmd.map CoreMsg coreC
     )
 
+
+{-| Get the buffer.
+-}
 buffer : Model -> Buffer.Model
 buffer model =
     model.core.buffer
 
+{-| Set a buffer.
+-}
 setBuffer : Buffer.Model -> Model -> Model
 setBuffer newbuf model =
     let
@@ -84,6 +125,8 @@ setBuffer newbuf model =
             | core = { cm | buffer= newbuf }
         }
 
+{-| Execute the Editor command. If you want to manipulate the Editor's model in the program, use here.
+-}
 execCommand : TextEditor.Commands.Command -> Model -> (Model, Cmd Msg)
 execCommand cmd model =
     exec_command_proc cmd model
@@ -115,6 +158,15 @@ setLastCommand id (model, cmdmsg) =
 -- update
 ------------------------------------------------------------
 
+{-| Update events of TextEditor.
+
+Processing can be separated according to message type, 
+but it is not recommended because events occurring are not intuitive due to the convenience of browser implementation
+(For example, `KeyDown` only occurs with keys defined in` Model.keymap`).
+
+`Input s` is different from that of Html.textarea, s is not the full text of the buffer, it is only updated characters. 
+Input does not occur with IME input confirmation (IME confirmation input is CompositionEnd).
+-}
 type Msg
     = CoreMsg Core.Msg
     | Pasted String
@@ -135,6 +187,8 @@ type Msg
     | DragEnd Mouse.Position
     | Logging String String Date.Date
 
+{-| Update model 
+-}
 update : Msg -> Model -> (Model, Cmd Msg)
 update msg model =
     case msg of
@@ -462,6 +516,8 @@ updateMap model (em, ec) =
 -- View
 ------------------------------------------------------------
 
+{-| View of the text editor 
+-}
 view : Model -> Html Msg
 view model =
     div [ id <| frameID model.core
@@ -837,6 +893,8 @@ cursorView model =
 -- Subscriptions
 ------------------------------------------------------------
 
+{-| Subscriptions
+-}
 subscriptions : Model -> Sub Msg
 subscriptions model =
     Sub.batch <| [ Sub.map CoreMsg  (Core.subscriptions model.core) ]
