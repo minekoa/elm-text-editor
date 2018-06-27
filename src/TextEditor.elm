@@ -426,7 +426,7 @@ geoPosToCharPos model xy =
     let
         rect = getBoundingClientRect (codeAreaID model)
         row  = yToRow model (xy.y - rect.top)
-        line = Buffer.line row model.buffer.contents |> Maybe.withDefault ""
+        line = Buffer.line row model.buffer |> Maybe.withDefault ""
         col = xToColumn model line (xy.x - rect.left)
     in
         Buffer.Position row col
@@ -745,7 +745,7 @@ selectedTouchPad model =
                                               , ("white-space", "pre")
                                               ]
                                       ]
-                                      [ Buffer.line row model.buffer.contents |> Maybe.withDefault "" |> text ]
+                                      [ Buffer.line row model.buffer |> Maybe.withDefault "" |> text ]
                                )
 
 
@@ -763,8 +763,8 @@ markerLayer model =
 
                 rect = getBoundingClientRect (codeAreaID model)
                 calc_w  = calcTextWidth (rulerID model)
-                bpix = calc_w (Buffer.line bpos.row model.buffer.contents |> Maybe.withDefault "" |> String.left bpos.column |> TextMarker.markupChank model.option.showControlCharactor model.option.tabOrder |> TextMarker.toString )
-                epix = calc_w (Buffer.line epos.row model.buffer.contents |> Maybe.withDefault "" |> String.left epos.column |> TextMarker.markupChank model.option.showControlCharactor model.option.tabOrder |> TextMarker.toString )
+                bpix = calc_w (Buffer.line bpos.row model.buffer |> Maybe.withDefault "" |> String.left bpos.column |> TextMarker.markupChank model.option.showControlCharactor model.option.tabOrder |> TextMarker.toString )
+                epix = calc_w (Buffer.line epos.row model.buffer |> Maybe.withDefault "" |> String.left epos.column |> TextMarker.markupChank model.option.showControlCharactor model.option.tabOrder |> TextMarker.toString )
 
                 ms = List.range bpos.row epos.row
                    |> List.map (\ r ->
@@ -781,7 +781,7 @@ markerLayer model =
                                              else 0
                                         ce = if r == epos.row
                                              then epos.column
-                                             else String.length <| (Buffer.line r model.buffer.contents |> Maybe.withDefault "")
+                                             else String.length <| (Buffer.line r model.buffer |> Maybe.withDefault "")
                                     in
                                         {row =r, begin_col = cb, end_col = ce, begin_px = pb, end_px = pe}
                                )
@@ -804,10 +804,10 @@ markerLayer model =
                                               , ("white-space", "pre")
                                               ]
                                       ]
-                                      ( Buffer.line m.row model.buffer.contents |> Maybe.withDefault ""
+                                      ( Buffer.line m.row model.buffer |> Maybe.withDefault ""
                                             |> String.dropLeft m.begin_col
                                             |> String.left (m.end_col - m.begin_col)
-                                            |> (\ln -> if (Buffer.line m.row model.buffer.contents |> Maybe.withDefault "" |> String.length) == m.end_col
+                                            |> (\ln -> if (Buffer.line m.row model.buffer |> Maybe.withDefault "" |> String.length) == m.end_col
                                                        then TextMarker.markupLine  model.option.showControlCharactor model.option.tabOrder ln
                                                        else TextMarker.markupChank model.option.showControlCharactor model.option.tabOrder ln
                                                )
@@ -819,7 +819,6 @@ pad : Core.Model -> Html msg
 pad model =
     let
         cur      = model.buffer.cursor
-        contents = model.buffer.contents
     in
     span [ class "pad"
          , style [ ("position", "relative")
@@ -828,8 +827,7 @@ pad model =
                  , ("pointer-events", "none") -- マウスイベントの対象外にする
                  ]
          ]
-         ( Buffer.line cur.row contents
-               |> Maybe.withDefault ""
+         ( Buffer.currentLine model.buffer
                |> String.left cur.column
                |> TextMarker.markupChank model.option.showControlCharactor model.option.tabOrder
                |> TextMarker.toHtml

@@ -9621,10 +9621,11 @@ var _minekoa$elm_text_editor$TextEditor_Buffer$maxRow = function (contents) {
 var _minekoa$elm_text_editor$TextEditor_Buffer$maxColumn = function (line) {
 	return _elm_lang$core$String$length(line) - 1;
 };
-var _minekoa$elm_text_editor$TextEditor_Buffer$line = F2(
-	function (n, lines) {
+var _minekoa$elm_text_editor$TextEditor_Buffer_ops = _minekoa$elm_text_editor$TextEditor_Buffer_ops || {};
+_minekoa$elm_text_editor$TextEditor_Buffer_ops['!!'] = F2(
+	function (lst, n) {
 		return (_elm_lang$core$Native_Utils.cmp(n, 0) < 0) ? _elm_lang$core$Maybe$Nothing : _elm_lang$core$List$head(
-			A2(_elm_lang$core$List$drop, n, lines));
+			A2(_elm_lang$core$List$drop, n, lst));
 	});
 var _minekoa$elm_text_editor$TextEditor_Buffer$movePreviosLineProc = function (model) {
 	var cur = model.cursor;
@@ -9657,7 +9658,7 @@ var _minekoa$elm_text_editor$TextEditor_Buffer$movePreviosLineProc = function (m
 								}));
 					}
 				},
-				A2(_minekoa$elm_text_editor$TextEditor_Buffer$line, cur.row - 1, model.contents))));
+				A2(_minekoa$elm_text_editor$TextEditor_Buffer_ops['!!'], model.contents, cur.row - 1))));
 };
 var _minekoa$elm_text_editor$TextEditor_Buffer$moveNextLineProc = function (model) {
 	var cur = model.cursor;
@@ -9690,7 +9691,17 @@ var _minekoa$elm_text_editor$TextEditor_Buffer$moveNextLineProc = function (mode
 								}));
 					}
 				},
-				A2(_minekoa$elm_text_editor$TextEditor_Buffer$line, cur.row + 1, model.contents))));
+				A2(_minekoa$elm_text_editor$TextEditor_Buffer_ops['!!'], model.contents, cur.row + 1))));
+};
+var _minekoa$elm_text_editor$TextEditor_Buffer$line = F2(
+	function (n, buf) {
+		return A2(_minekoa$elm_text_editor$TextEditor_Buffer_ops['!!'], buf.contents, n);
+	});
+var _minekoa$elm_text_editor$TextEditor_Buffer$currentLine = function (buf) {
+	return A2(
+		_elm_lang$core$Maybe$withDefault,
+		'',
+		A2(_minekoa$elm_text_editor$TextEditor_Buffer$line, buf.cursor.row, buf));
 };
 var _minekoa$elm_text_editor$TextEditor_Buffer$isPreviosPos = F2(
 	function (p, q) {
@@ -9706,7 +9717,7 @@ var _minekoa$elm_text_editor$TextEditor_Buffer$readRange = F2(
 			var l = A2(
 				_elm_lang$core$Maybe$withDefault,
 				'',
-				A2(_minekoa$elm_text_editor$TextEditor_Buffer$line, bpos.row, model.contents));
+				A2(_minekoa$elm_text_editor$TextEditor_Buffer_ops['!!'], model.contents, bpos.row));
 			return A2(
 				_elm_lang$core$String$left,
 				epos.column - bpos.column,
@@ -9722,14 +9733,14 @@ var _minekoa$elm_text_editor$TextEditor_Buffer$readRange = F2(
 				A2(
 					_elm_lang$core$Maybe$withDefault,
 					'',
-					A2(_minekoa$elm_text_editor$TextEditor_Buffer$line, epos.row, model.contents)));
+					A2(_minekoa$elm_text_editor$TextEditor_Buffer_ops['!!'], model.contents, epos.row)));
 			var bl = A2(
 				_elm_lang$core$String$dropLeft,
 				bpos.column,
 				A2(
 					_elm_lang$core$Maybe$withDefault,
 					'',
-					A2(_minekoa$elm_text_editor$TextEditor_Buffer$line, bpos.row, model.contents)));
+					A2(_minekoa$elm_text_editor$TextEditor_Buffer_ops['!!'], model.contents, bpos.row)));
 			return A2(
 				_elm_lang$core$String$join,
 				'\n',
@@ -9764,7 +9775,7 @@ var _minekoa$elm_text_editor$TextEditor_Buffer$delete_range_proc = F2(
 			var ln = A2(
 				_elm_lang$core$Maybe$withDefault,
 				'',
-				A2(_minekoa$elm_text_editor$TextEditor_Buffer$line, bpos.row, model.contents));
+				A2(_minekoa$elm_text_editor$TextEditor_Buffer_ops['!!'], model.contents, bpos.row));
 			var current = A2(
 				_elm_lang$core$Basics_ops['++'],
 				A2(_elm_lang$core$String$left, bpos.column, ln),
@@ -9787,14 +9798,14 @@ var _minekoa$elm_text_editor$TextEditor_Buffer$delete_range_proc = F2(
 				A2(
 					_elm_lang$core$Maybe$withDefault,
 					'',
-					A2(_minekoa$elm_text_editor$TextEditor_Buffer$line, epos.row, model.contents)));
+					A2(_minekoa$elm_text_editor$TextEditor_Buffer_ops['!!'], model.contents, epos.row)));
 			var bln = A2(
 				_elm_lang$core$String$left,
 				bpos.column,
 				A2(
 					_elm_lang$core$Maybe$withDefault,
 					'',
-					A2(_minekoa$elm_text_editor$TextEditor_Buffer$line, bpos.row, model.contents)));
+					A2(_minekoa$elm_text_editor$TextEditor_Buffer_ops['!!'], model.contents, bpos.row)));
 			return _elm_lang$core$Native_Utils.update(
 				model,
 				{
@@ -9988,14 +9999,14 @@ var _minekoa$elm_text_editor$TextEditor_Buffer$moveForwardProc = function (model
 						}
 					}
 				},
-				A2(_minekoa$elm_text_editor$TextEditor_Buffer$line, cur.row, model.contents))));
+				A2(_minekoa$elm_text_editor$TextEditor_Buffer_ops['!!'], model.contents, cur.row))));
 };
 var _minekoa$elm_text_editor$TextEditor_Buffer$moveBackwardProc = function (model) {
 	var cur = model.cursor;
 	var pln = A2(
 		_elm_lang$core$Maybe$withDefault,
 		'',
-		A2(_minekoa$elm_text_editor$TextEditor_Buffer$line, cur.row - 1, model.contents));
+		A2(_minekoa$elm_text_editor$TextEditor_Buffer_ops['!!'], model.contents, cur.row - 1));
 	return function (c) {
 		return _elm_lang$core$Native_Utils.update(
 			model,
@@ -10031,7 +10042,7 @@ var _minekoa$elm_text_editor$TextEditor_Buffer$moveBackwardProc = function (mode
 						}
 					}
 				},
-				A2(_minekoa$elm_text_editor$TextEditor_Buffer$line, cur.row, model.contents))));
+				A2(_minekoa$elm_text_editor$TextEditor_Buffer_ops['!!'], model.contents, cur.row))));
 };
 var _minekoa$elm_text_editor$TextEditor_Buffer$moveNextWordProc = F2(
 	function (cur, model) {
@@ -10042,7 +10053,7 @@ var _minekoa$elm_text_editor$TextEditor_Buffer$moveNextWordProc = F2(
 				A2(
 					_elm_lang$core$Maybe$withDefault,
 					'',
-					A2(_minekoa$elm_text_editor$TextEditor_Buffer$line, cur.row, model.contents)),
+					A2(_minekoa$elm_text_editor$TextEditor_Buffer_ops['!!'], model.contents, cur.row)),
 				cur.column);
 			var last_row = _elm_lang$core$List$length(model.contents) - 1;
 			var _p21 = col;
@@ -10062,7 +10073,7 @@ var _minekoa$elm_text_editor$TextEditor_Buffer$moveNextWordProc = F2(
 								A2(
 									_elm_lang$core$Maybe$withDefault,
 									'',
-									A2(_minekoa$elm_text_editor$TextEditor_Buffer$line, last_row, model.contents)))),
+									A2(_minekoa$elm_text_editor$TextEditor_Buffer_ops['!!'], model.contents, last_row)))),
 						model);
 				} else {
 					var _v12 = A2(_minekoa$elm_text_editor$TextEditor_Buffer$Position, cur.row + 1, 0),
@@ -10083,7 +10094,7 @@ var _minekoa$elm_text_editor$TextEditor_Buffer$movePreviosWordProc = F2(
 				A2(
 					_elm_lang$core$Maybe$withDefault,
 					'',
-					A2(_minekoa$elm_text_editor$TextEditor_Buffer$line, cur.row, model.contents)),
+					A2(_minekoa$elm_text_editor$TextEditor_Buffer_ops['!!'], model.contents, cur.row)),
 				cur.column);
 			var _p22 = col;
 			if (_p22.ctor === 'Just') {
@@ -10105,7 +10116,7 @@ var _minekoa$elm_text_editor$TextEditor_Buffer$movePreviosWordProc = F2(
 							A2(
 								_elm_lang$core$Maybe$withDefault,
 								'',
-								A2(_minekoa$elm_text_editor$TextEditor_Buffer$line, cur.row - 1, model.contents)))),
+								A2(_minekoa$elm_text_editor$TextEditor_Buffer_ops['!!'], model.contents, cur.row - 1)))),
 						_v16 = model;
 					cur = _v15;
 					model = _v16;
@@ -10131,7 +10142,7 @@ var _minekoa$elm_text_editor$TextEditor_Buffer$insert_proc = F3(
 		var crow = A2(
 			_elm_lang$core$Maybe$withDefault,
 			'',
-			A2(_minekoa$elm_text_editor$TextEditor_Buffer$line, row, model.contents));
+			A2(_minekoa$elm_text_editor$TextEditor_Buffer_ops['!!'], model.contents, row));
 		var nrows = A2(_elm_lang$core$List$drop, row + 1, contents);
 		var left = A2(_elm_lang$core$String$left, col, crow);
 		var right = A2(_elm_lang$core$String$dropLeft, col, crow);
@@ -10280,7 +10291,7 @@ var _minekoa$elm_text_editor$TextEditor_Buffer$backspace_proc = F2(
 			var crow = A2(
 				_elm_lang$core$Maybe$withDefault,
 				'',
-				A2(_minekoa$elm_text_editor$TextEditor_Buffer$line, _p30, model.contents));
+				A2(_minekoa$elm_text_editor$TextEditor_Buffer_ops['!!'], model.contents, _p30));
 			var left = A2(_elm_lang$core$String$left, _p29 - 1, crow);
 			var right = A2(_elm_lang$core$String$dropLeft, _p29, crow);
 			var prows = A2(_elm_lang$core$List$take, _p30, model.contents);
@@ -10316,7 +10327,7 @@ var _minekoa$elm_text_editor$TextEditor_Buffer$delete_proc = F2(
 		var ln = A2(
 			_elm_lang$core$Maybe$withDefault,
 			'',
-			A2(_minekoa$elm_text_editor$TextEditor_Buffer$line, row, model.contents));
+			A2(_minekoa$elm_text_editor$TextEditor_Buffer_ops['!!'], model.contents, row));
 		var max_col = _minekoa$elm_text_editor$TextEditor_Buffer$maxColumn(ln);
 		var _p32 = {
 			ctor: '_Tuple2',
@@ -10355,7 +10366,7 @@ var _minekoa$elm_text_editor$TextEditor_Buffer$delete_proc = F2(
 				var nxt = A2(
 					_elm_lang$core$Maybe$withDefault,
 					'',
-					A2(_minekoa$elm_text_editor$TextEditor_Buffer$line, row + 1, model.contents));
+					A2(_minekoa$elm_text_editor$TextEditor_Buffer_ops['!!'], model.contents, row + 1));
 				var current = A2(_elm_lang$core$Basics_ops['++'], ln, nxt);
 				var prows = A2(_elm_lang$core$List$take, row, model.contents);
 				return {
@@ -11093,19 +11104,16 @@ var _minekoa$elm_text_editor$TextEditor_Core_Commands$unindent = function (model
 			_elm_lang$core$Native_Utils.chr(' '),
 			'');
 	};
+	var curline = _minekoa$elm_text_editor$TextEditor_Buffer$currentLine(model.buffer);
+	var cur_indent = _minekoa$elm_text_editor$TextEditor_StringExtra$indentString(curline);
+	var cur_level = A2(_minekoa$elm_text_editor$TextEditor_StringExtra$indentLevel, model.option.tabOrder, cur_indent);
 	var _p0 = {ctor: '_Tuple2', _0: model.buffer.cursor.row, _1: model.buffer.cursor.column};
 	var row = _p0._0;
 	var col = _p0._1;
-	var curline = A2(
-		_elm_lang$core$Maybe$withDefault,
-		'',
-		A2(_minekoa$elm_text_editor$TextEditor_Buffer$line, row, model.buffer.contents));
-	var cur_indent = _minekoa$elm_text_editor$TextEditor_StringExtra$indentString(curline);
-	var cur_level = A2(_minekoa$elm_text_editor$TextEditor_StringExtra$indentLevel, model.option.tabOrder, cur_indent);
 	var prevline = A2(
 		_elm_lang$core$Maybe$withDefault,
 		'',
-		A2(_minekoa$elm_text_editor$TextEditor_Buffer$line, row - 1, model.buffer.contents));
+		A2(_minekoa$elm_text_editor$TextEditor_Buffer$line, row - 1, model.buffer));
 	var prev_indent = _minekoa$elm_text_editor$TextEditor_StringExtra$indentString(prevline);
 	var prev_level = A2(_minekoa$elm_text_editor$TextEditor_StringExtra$indentLevel, model.option.tabOrder, prev_indent);
 	return _minekoa$elm_text_editor$TextEditor_Core$withEnsureVisibleCmd(
@@ -11173,19 +11181,16 @@ var _minekoa$elm_text_editor$TextEditor_Core_Commands$indent = function (model) 
 		model.option.tabOrder,
 		_elm_lang$core$Native_Utils.chr(' '),
 		'');
+	var curline = _minekoa$elm_text_editor$TextEditor_Buffer$currentLine(model.buffer);
+	var cur_indent = _minekoa$elm_text_editor$TextEditor_StringExtra$indentString(curline);
+	var cur_level = A2(_minekoa$elm_text_editor$TextEditor_StringExtra$indentLevel, model.option.tabOrder, cur_indent);
 	var _p1 = {ctor: '_Tuple2', _0: model.buffer.cursor.row, _1: model.buffer.cursor.column};
 	var row = _p1._0;
 	var col = _p1._1;
-	var curline = A2(
-		_elm_lang$core$Maybe$withDefault,
-		'',
-		A2(_minekoa$elm_text_editor$TextEditor_Buffer$line, row, model.buffer.contents));
-	var cur_indent = _minekoa$elm_text_editor$TextEditor_StringExtra$indentString(curline);
-	var cur_level = A2(_minekoa$elm_text_editor$TextEditor_StringExtra$indentLevel, model.option.tabOrder, cur_indent);
 	var prevline = A2(
 		_elm_lang$core$Maybe$withDefault,
 		'',
-		A2(_minekoa$elm_text_editor$TextEditor_Buffer$line, row - 1, model.buffer.contents));
+		A2(_minekoa$elm_text_editor$TextEditor_Buffer$line, row - 1, model.buffer));
 	var prev_indent = _minekoa$elm_text_editor$TextEditor_StringExtra$indentString(prevline);
 	var prev_level = A2(_minekoa$elm_text_editor$TextEditor_StringExtra$indentLevel, model.option.tabOrder, prev_indent);
 	return _minekoa$elm_text_editor$TextEditor_Core$withEnsureVisibleCmd(
@@ -11269,11 +11274,8 @@ var _minekoa$elm_text_editor$TextEditor_Core_Commands$killLine = function (model
 			r + 1,
 			_elm_lang$core$List$length(model.buffer.contents)) > -1;
 	};
+	var line = _minekoa$elm_text_editor$TextEditor_Buffer$currentLine(model.buffer);
 	var cur = model.buffer.cursor;
-	var line = A2(
-		_elm_lang$core$Maybe$withDefault,
-		'',
-		A2(_minekoa$elm_text_editor$TextEditor_Buffer$line, cur.row, model.buffer.contents));
 	var delete_str = function (l) {
 		return (_elm_lang$core$Native_Utils.eq(l, '') && (!isEOFLine(cur.row))) ? '\n' : l;
 	}(
@@ -11403,10 +11405,7 @@ var _minekoa$elm_text_editor$TextEditor_Core_Commands$moveAt = function (pos) {
 };
 var _minekoa$elm_text_editor$TextEditor_Core_Commands$moveEOL = function (model) {
 	var col = _elm_lang$core$String$length(
-		A2(
-			_elm_lang$core$Maybe$withDefault,
-			'',
-			A2(_minekoa$elm_text_editor$TextEditor_Buffer$line, model.buffer.cursor.row, model.buffer.contents)));
+		_minekoa$elm_text_editor$TextEditor_Buffer$currentLine(model.buffer));
 	return A2(
 		_minekoa$elm_text_editor$TextEditor_Core_Commands$editF,
 		_minekoa$elm_text_editor$TextEditor_Buffer$moveAt(
@@ -12613,7 +12612,6 @@ var _minekoa$elm_text_editor$TextEditor$ruler = function (model) {
 		});
 };
 var _minekoa$elm_text_editor$TextEditor$pad = function (model) {
-	var contents = model.buffer.contents;
 	var cur = model.buffer.cursor;
 	return A2(
 		_elm_lang$html$Html$span,
@@ -12651,10 +12649,7 @@ var _minekoa$elm_text_editor$TextEditor$pad = function (model) {
 				A2(
 					_elm_lang$core$String$left,
 					cur.column,
-					A2(
-						_elm_lang$core$Maybe$withDefault,
-						'',
-						A2(_minekoa$elm_text_editor$TextEditor_Buffer$line, cur.row, contents))))));
+					_minekoa$elm_text_editor$TextEditor_Buffer$currentLine(model.buffer)))));
 };
 var _minekoa$elm_text_editor$TextEditor$markerLayer = function (model) {
 	var _p8 = model.buffer.selection;
@@ -12679,7 +12674,7 @@ var _minekoa$elm_text_editor$TextEditor$markerLayer = function (model) {
 						A2(
 							_elm_lang$core$Maybe$withDefault,
 							'',
-							A2(_minekoa$elm_text_editor$TextEditor_Buffer$line, epos.row, model.buffer.contents))))));
+							A2(_minekoa$elm_text_editor$TextEditor_Buffer$line, epos.row, model.buffer))))));
 		var bpos = A2(_minekoa$elm_text_editor$TextEditor_Buffer$isPreviosPos, _p9.begin, _p9.end) ? _p9.begin : _p9.end;
 		var bpix = calc_w(
 			_minekoa$elm_text_editor$TextEditor_TextMarker$toString(
@@ -12693,7 +12688,7 @@ var _minekoa$elm_text_editor$TextEditor$markerLayer = function (model) {
 						A2(
 							_elm_lang$core$Maybe$withDefault,
 							'',
-							A2(_minekoa$elm_text_editor$TextEditor_Buffer$line, bpos.row, model.buffer.contents))))));
+							A2(_minekoa$elm_text_editor$TextEditor_Buffer$line, bpos.row, model.buffer))))));
 		var ms = A2(
 			_elm_lang$core$List$map,
 			function (r) {
@@ -12701,7 +12696,7 @@ var _minekoa$elm_text_editor$TextEditor$markerLayer = function (model) {
 					A2(
 						_elm_lang$core$Maybe$withDefault,
 						'',
-						A2(_minekoa$elm_text_editor$TextEditor_Buffer$line, r, model.buffer.contents)));
+						A2(_minekoa$elm_text_editor$TextEditor_Buffer$line, r, model.buffer)));
 				var cb = _elm_lang$core$Native_Utils.eq(r, bpos.row) ? bpos.column : 0;
 				var pe = _elm_lang$core$Native_Utils.eq(r, epos.row) ? epix : (rect.right - rect.left);
 				var pb = _elm_lang$core$Native_Utils.eq(r, bpos.row) ? bpix : 0;
@@ -12798,7 +12793,7 @@ var _minekoa$elm_text_editor$TextEditor$markerLayer = function (model) {
 										A2(
 											_elm_lang$core$Maybe$withDefault,
 											'',
-											A2(_minekoa$elm_text_editor$TextEditor_Buffer$line, m.row, model.buffer.contents))),
+											A2(_minekoa$elm_text_editor$TextEditor_Buffer$line, m.row, model.buffer))),
 									m.end_col) ? A3(_minekoa$elm_text_editor$TextEditor_TextMarker$markupLine, model.option.showControlCharactor, model.option.tabOrder, ln) : A3(_minekoa$elm_text_editor$TextEditor_TextMarker$markupChank, model.option.showControlCharactor, model.option.tabOrder, ln);
 							}(
 								A2(
@@ -12810,7 +12805,7 @@ var _minekoa$elm_text_editor$TextEditor$markerLayer = function (model) {
 										A2(
 											_elm_lang$core$Maybe$withDefault,
 											'',
-											A2(_minekoa$elm_text_editor$TextEditor_Buffer$line, m.row, model.buffer.contents)))))));
+											A2(_minekoa$elm_text_editor$TextEditor_Buffer$line, m.row, model.buffer)))))));
 				},
 				ms));
 	}
@@ -12876,7 +12871,7 @@ var _minekoa$elm_text_editor$TextEditor$selectedTouchPad = function (model) {
 							A2(
 								_elm_lang$core$Maybe$withDefault,
 								'',
-								A2(_minekoa$elm_text_editor$TextEditor_Buffer$line, row, model.buffer.contents))),
+								A2(_minekoa$elm_text_editor$TextEditor_Buffer$line, row, model.buffer))),
 						_1: {ctor: '[]'}
 					});
 			},
@@ -13191,7 +13186,7 @@ var _minekoa$elm_text_editor$TextEditor$geoPosToCharPos = F2(
 		var line = A2(
 			_elm_lang$core$Maybe$withDefault,
 			'',
-			A2(_minekoa$elm_text_editor$TextEditor_Buffer$line, row, model.buffer.contents));
+			A2(_minekoa$elm_text_editor$TextEditor_Buffer$line, row, model.buffer));
 		var col = A3(_minekoa$elm_text_editor$TextEditor$xToColumn, model, line, xy.x - rect.left);
 		return A2(_minekoa$elm_text_editor$TextEditor_Buffer$Position, row, col);
 	});

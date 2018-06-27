@@ -82,9 +82,7 @@ moveBOL model = editF (Buffer.moveAt (Position model.buffer.cursor.row 0)) model
 moveEOL : Model -> (Model, Cmd Msg)
 moveEOL model =
     let
-        col = Buffer.line model.buffer.cursor.row model.buffer.contents
-                |> Maybe.withDefault ""
-                |> String.length
+        col = Buffer.currentLine model.buffer |> String.length
     in
         editF (Buffer.moveAt (Position model.buffer.cursor.row col)) model
 
@@ -231,10 +229,7 @@ killLine model =
     -- note: ブラウザのセキュリティ制約により、sytem の clipboard  にはコピーされません
     let
         cur = model.buffer.cursor
-        line = model.buffer.contents
-                 |> Buffer.line cur.row
-                 |> Maybe.withDefault ""
-
+        line = Buffer.currentLine model.buffer
         isEOFLine = \r -> (r + 1) >= List.length model.buffer.contents
 
         delete_str = line
@@ -280,8 +275,8 @@ indent model =
     let
         (row, col) = (model.buffer.cursor.row, model.buffer.cursor.column)
 
-        curline  = model.buffer.contents |> Buffer.line row |> Maybe.withDefault ""
-        prevline = model.buffer.contents |> Buffer.line (row - 1) |> Maybe.withDefault ""
+        curline  = model.buffer |> Buffer.currentLine
+        prevline = model.buffer |> Buffer.line (row - 1) |> Maybe.withDefault ""
 
         cur_indent  = indentString curline
         prev_indent = indentString prevline
@@ -318,8 +313,8 @@ unindent model =
     let
         (row, col) = (model.buffer.cursor.row, model.buffer.cursor.column)
 
-        curline  = model.buffer.contents |> Buffer.line row |> Maybe.withDefault ""
-        prevline = model.buffer.contents |> Buffer.line (row - 1) |> Maybe.withDefault ""
+        curline  = model.buffer |> Buffer.currentLine
+        prevline = model.buffer |> Buffer.line (row - 1) |> Maybe.withDefault ""
 
         cur_indent  = indentString curline
         prev_indent = indentString prevline

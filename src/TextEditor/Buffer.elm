@@ -9,6 +9,7 @@ module TextEditor.Buffer exposing
     , init
 
     , line
+    , currentLine
     , readRange
     , selectedString
 
@@ -67,7 +68,7 @@ module TextEditor.Buffer exposing
 
 ## Model Helpler
 @docs init
-@docs line, readRange, selectedString
+@docs line, currentLine, readRange, selectedString
 
 # Move cursor and move cursor while selecting
 @docs moveForward, moveBackward, movePreviosLine, moveNextLine, moveNextWord, movePreviosWord, moveAt
@@ -169,13 +170,23 @@ isPreviosPos p q =
 
 -- buffer > contents
 
-{-| Get aline by line number
+{-| Get a line by line number
 -}
-line : Int -> List String -> Maybe String
-line n lines =
+line : Int -> Model -> Maybe String
+line n buf =
+    buf.contents !! n
+
+{-| Get current line
+-}
+currentLine : Model -> String
+currentLine buf =
+    line buf.cursor.row buf |> Maybe.withDefault ""
+
+(!!) : List a -> Int -> Maybe a
+(!!) lst n =
     if n < 0
     then Nothing
-    else List.head (List.drop n lines)
+    else List.head (List.drop n lst)
 
 maxColumn: String -> Int
 maxColumn line =
@@ -200,13 +211,13 @@ readRange sel model =
         case lcnt of
             0 ->
                 let 
-                    l = line bpos.row model.contents |> Maybe.withDefault ""
+                    l = model.contents !! bpos.row  |> Maybe.withDefault ""
                 in
                     l |> String.dropLeft bpos.column |> String.left (epos.column - bpos.column)
             _ ->
                 let
-                    bl = model.contents |> line bpos.row |> Maybe.withDefault "" |> String.dropLeft bpos.column
-                    el = model.contents |> line epos.row |> Maybe.withDefault "" |> String.left epos.column
+                    bl = model.contents !! bpos.row |> Maybe.withDefault "" |> String.dropLeft bpos.column
+                    el = model.contents !! epos.row |> Maybe.withDefault "" |> String.left epos.column
 
                     ls = model.contents |> List.drop (bpos.row + 1) |> List.take (lcnt - 1)
                 in
@@ -450,7 +461,7 @@ moveForwardProc model =
     let
         cur = model.cursor
     in
-        line cur.row model.contents 
+        model.contents !! cur.row
         |> Maybe.andThen
             ( λ ln -> 
                 case (cur.column < (maxColumn ln) + 1, cur.row < maxRow model.contents) of
@@ -466,9 +477,9 @@ moveBackwardProc : Model -> Model
 moveBackwardProc model =
     let
         cur = model.cursor
-        pln = line (cur.row - 1) model.contents |> Maybe.withDefault ""
+        pln = model.contents !! (cur.row - 1) |> Maybe.withDefault ""
     in
-        line cur.row model.contents 
+        model.contents !! cur.row 
         |> Maybe.andThen
             ( λ ln -> 
                 case (cur.column > 0, cur.row > 0 ) of
@@ -485,7 +496,7 @@ movePreviosLineProc model =
     let
         cur = model.cursor
     in
-        line (cur.row - 1) model.contents 
+        model.contents !! (cur.row - 1)
         |> Maybe.andThen
             ( λ ln -> 
                 case cur.column < (maxColumn ln) + 1 of
@@ -500,7 +511,7 @@ moveNextLineProc model =
     let
         cur = model.cursor
     in
-        line (cur.row + 1) model.contents 
+        model.contents !! (cur.row + 1)
         |> Maybe.andThen
             ( λ ln -> 
                 case cur.column < (maxColumn ln) + 1 of
@@ -520,14 +531,14 @@ moveNextWordProc cur model =
     let
         last_row = (List.length model.contents) - 1
 
-        col = StringExtra.nextWordPos (line cur.row model.contents |> Maybe.withDefault "") cur.column
+        col = StringExtra.nextWordPos ( model.contents !! cur.row |> Maybe.withDefault "") cur.column
     in
         case col of
             Just nchar ->
                 moveAtProc (Position cur.row nchar) model
             Nothing ->
                 if cur.row + 1 > last_row then
-                    moveAtProc (Position last_row (line last_row model.contents
+                    moveAtProc (Position last_row (model.contents !! last_row
                                               |> Maybe.withDefault ""
                                               |> String.length
                                           )
@@ -539,7 +550,7 @@ moveNextWordProc cur model =
 movePreviosWordProc : Position -> Model -> Model
 movePreviosWordProc cur model =
     let
-        col = StringExtra.previosWordPos (line cur.row model.contents |> Maybe.withDefault "") cur.column
+        col = StringExtra.previosWordPos (model.contents !! cur.row|> Maybe.withDefault "") cur.column
     in
         case col of
             Just nchar ->
@@ -550,7 +561,7 @@ movePreviosWordProc cur model =
                 else
                     movePreviosWordProc (Position
                                              (cur.row - 1)
-                                             (line (cur.row - 1) model.contents |> Maybe.withDefault "" |> String.length)
+                                             (model.contents !! (cur.row - 1) |> Maybe.withDefault "" |> String.length)
                                         ) model
 
 
@@ -796,7 +807,7 @@ insert_proc pos text model =
 
         contents = model.contents
         prows = List.take row contents
-        crow  = line row model.contents |> Maybe.withDefault ""
+        crow  = model.contents !! row |> Maybe.withDefault ""
         nrows = List.drop (row + 1) contents
 
         texts = (String.lines text)
@@ -857,7 +868,7 @@ backspace_proc pos model =
         (row, col) ->
             let
                 prows = List.take row model.contents
-                crow  = line row model.contents |> Maybe.withDefault ""
+                crow  = model.contents !! row |> Maybe.withDefault ""
                 nrows = List.drop (row + 1) model.contents
 
                 left  = (String.left (col - 1) crow)
@@ -875,7 +886,7 @@ delete_proc pos model =
     let
         (row, col) = position_toTuple pos
 
-        ln      = line row model.contents |> Maybe.withDefault ""
+        ln      = model.contents !! row |> Maybe.withDefault ""
         max_row = maxRow model.contents
         max_col = maxColumn ln
     in
@@ -899,7 +910,7 @@ delete_proc pos model =
              (_   , True) ->
                  let
                      prows  = List.take row model.contents
-                     nxt    = line (row + 1) model.contents |> Maybe.withDefault ""
+                     nxt    = model.contents !! (row + 1) |> Maybe.withDefault ""
                      nrows  = List.drop (row + 2) model.contents
 
                      current = ln ++ nxt
@@ -922,7 +933,7 @@ delete_range_proc sel model =
         case lcnt of
             0 ->
                 let 
-                    ln  = line bpos.row model.contents |> Maybe.withDefault ""
+                    ln  = model.contents !! bpos.row  |> Maybe.withDefault ""
                     current = (String.left bpos.column ln) ++ (String.dropLeft epos.column ln)
 
                     pls = List.take (bpos.row    ) model.contents
@@ -934,8 +945,8 @@ delete_range_proc sel model =
                     }
             _ ->
                 let
-                    bln  = line bpos.row model.contents |> Maybe.withDefault "" |> String.left bpos.column
-                    eln  = line epos.row model.contents |> Maybe.withDefault "" |> String.dropLeft epos.column
+                    bln  = model.contents !! bpos.row |> Maybe.withDefault "" |> String.left bpos.column
+                    eln  = model.contents !! epos.row |> Maybe.withDefault "" |> String.dropLeft epos.column
                     pls = List.take (bpos.row    ) model.contents
                     nls = List.drop (epos.row + 1) model.contents
                 in
