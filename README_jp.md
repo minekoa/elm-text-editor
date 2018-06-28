@@ -23,7 +23,7 @@ textareaに対して以下の利点があります。
 
 ## インストール方法
 
-このパッケージは、IMEの制御やカーソル位置の計算、スクロール制御に Native モジュール(≒JavaScript ffi) を含むため使用しています。
+このパッケージは、IMEの制御やクリップボードへのアクセス、カーソル位置の計算、スクロール制御に Native モジュール(≒JavaScript ffi) を含むため使用しています。
 そのため、`elm-package install` は使えません。
 
 代わりに `elm-github-install` を使用してください。

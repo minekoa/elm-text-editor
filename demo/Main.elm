@@ -7,7 +7,6 @@ import Task
 import FileReader
 
 import TextEditor as Editor
-import TextEditor.Core as Core
 import TextEditor.Commands as Commands
 import TextEditor.Buffer
 import TextEditor.KeyBind as KeyBind
@@ -74,7 +73,7 @@ init =
         (bm, bc) = Editor.init "editor-sample1" (KeyBind.basic ++ KeyBind.gates ++ KeyBind.emacsLike) content
         (smm, smc) = StyleMenu.init
         (kmm, kmc) = KeyBindMenu.init
-        (stm, stc) = SettingMenu.init bm.core.option
+        (stm, stc) = SettingMenu.init (Editor.options bm)
     in
         ( Model bm
               [ buf ]
@@ -250,18 +249,9 @@ update msg model =
         SettingMenuMsg smsg ->
             let
                 (sm, sc) = SettingMenu.update smsg model.settingMenu
-
-                updateCoreOpts = (\ em opts ->
-                                      let
-                                          core = em.core
-                                      in
-                                          { em
-                                              | core = { core | option = opts }
-                                          }
-                                 )
             in
                 ( { model
-                      | editor = updateCoreOpts model.editor sm.options
+                      | editor = Editor.setOptions sm.options model.editor
                       , settingMenu = sm
                   }
                 , Cmd.map SettingMenuMsg sc

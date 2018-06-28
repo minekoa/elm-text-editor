@@ -7,6 +7,9 @@ module TextEditor exposing ( Model
 
                            , buffer
                            , setBuffer
+                           , options
+                           , setOptions
+
                            , EventInfo
                            , execCommand
                            )
@@ -25,6 +28,10 @@ We will incorporate these into the HTML application you want to use a text edito
 # Buffer
 
 @docs buffer, setBuffer
+
+# Editor Options
+
+@docs options, setOptions
 
 # Editor Commands
 
@@ -53,6 +60,7 @@ import TextEditor.KeyboardEvent exposing (..)
 import TextEditor.TextMarker as TextMarker
 
 import TextEditor.Commands
+import TextEditor.Option
 import TextEditor.KeyBind as KeyBind
 
 
@@ -129,6 +137,20 @@ setBuffer newbuf model =
         { model
             | core = { cm | buffer= newbuf }
         }
+
+{-| Get now editor options -}
+options : Model -> TextEditor.Option.Option
+options model =
+    model.core.option
+
+{-|
+-}        
+setOptions : TextEditor.Option.Option -> Model -> Model
+setOptions opts model =
+    let
+        cm = model.core
+    in
+        { model | core = { cm | option = opts } }
 
 {-| Execute the Editor command. If you want to manipulate the Editor's model in the program, use here.
 -}

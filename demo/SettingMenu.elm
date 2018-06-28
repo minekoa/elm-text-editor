@@ -13,19 +13,19 @@ import Html.Events exposing (..)
 import Json.Encode
 import Json.Decode
 
-import TextEditor.Core
+import TextEditor.Option
 import Ports.WebStrage as WebStrage
 
 
 type alias Model =
-    { options : TextEditor.Core.Option
+    { options : TextEditor.Option.Option
     , selectedSubMenu : SubMenu
     }
 
 type SubMenu
     = RenderingOptionMenu
 
-init : TextEditor.Core.Option -> (Model, Cmd Msg)
+init : TextEditor.Option.Option -> (Model, Cmd Msg)
 init core_opts =
     ( { options         = core_opts
       , selectedSubMenu = RenderingOptionMenu
@@ -53,7 +53,7 @@ update msg model =
             LoadSetting ("core.option", maybe_value) ->
                 ( maybe_value
                     |> Result.fromMaybe "value is nothing"
-                    |> Result.andThen (Json.Decode.decodeString decodeCoreOption)
+                    |> Result.andThen (Json.Decode.decodeString decodeEditorOptions)
                     |> Result.withDefault core_opts
                     |> (\new_opts -> { model | options = new_opts })
                 , Cmd.none
@@ -74,7 +74,7 @@ update msg model =
                 in
                     ( { model | options = new_opts }
                     , WebStrage.localStrage_setItem ("core.option"
-                                                    , new_opts |> encodeCoreOption |> Json.Encode.encode 0
+                                                    , new_opts |> encodeEditorOptions |> Json.Encode.encode 0
                                                     )
                     )
 
@@ -84,7 +84,7 @@ update msg model =
                 in
                     ( { model | options = new_opts }
                     , WebStrage.localStrage_setItem ("core.option"
-                                                    , new_opts  |> encodeCoreOption |> Json.Encode.encode 0
+                                                    , new_opts  |> encodeEditorOptions |> Json.Encode.encode 0
                                                     )
                     )
 
@@ -94,7 +94,7 @@ update msg model =
                 in
                     ( { model | options = new_opts }
                     , WebStrage.localStrage_setItem ("core.option"
-                                                    , new_opts |> encodeCoreOption |> Json.Encode.encode 0
+                                                    , new_opts |> encodeEditorOptions |> Json.Encode.encode 0
                                                     )
                     )
 
@@ -139,7 +139,7 @@ menuPalette model =
             div [class "menu-palette"] [ renderingOptionView model.options ]
 
 
-renderingOptionView : TextEditor.Core.Option -> Html Msg
+renderingOptionView : TextEditor.Option.Option -> Html Msg
 renderingOptionView core_opts =
     div []
         [ boolSettingControl "show ctrl charactor" ChangeShowCtrlChar core_opts.showControlCharactor
@@ -181,18 +181,18 @@ intOptionSettingControl label tagger opts value =
 -- encode / decode for save local strage
 ------------------------------------------------------------
 
-encodeCoreOption : TextEditor.Core.Option -> Json.Encode.Value
-encodeCoreOption core_opts =
+encodeEditorOptions : TextEditor.Option.Option -> Json.Encode.Value
+encodeEditorOptions core_opts =
     Json.Encode.object 
         [ ("tabOrder"            , core_opts.tabOrder |> Json.Encode.int)
         , ("indentTabsMode"      , core_opts.indentTabsMode  |> Json.Encode.bool)
         , ("showControlCharactor", core_opts.showControlCharactor |> Json.Encode.bool)
         ]
 
-decodeCoreOption : Json.Decode.Decoder TextEditor.Core.Option
-decodeCoreOption =
+decodeEditorOptions : Json.Decode.Decoder TextEditor.Option.Option
+decodeEditorOptions =
     Json.Decode.map3
-        TextEditor.Core.Option
+        TextEditor.Option.Option
             (Json.Decode.field "tabOrder"             Json.Decode.int)
             (Json.Decode.field "indentTabsMode"       Json.Decode.bool)
             (Json.Decode.field "showControlCharactor" Json.Decode.bool)

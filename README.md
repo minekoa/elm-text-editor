@@ -25,7 +25,8 @@ We use the following API, so it will not work on browsers that do not support it
 ## Installation
 
 
-This package is used because it contains `Native` module (≒ JavaScript ffi) for IME control, cursor position calculation, scroll control. Therefore, `elm-package install` can not be used.
+This package is used because it contains `Native` module (≒ JavaScript ffi) for IME control, clipboard access, cursor position calculation, scroll control.
+Therefore, `elm-package install` can not be used.
 
 Please use `elm-github-install` instead.
 

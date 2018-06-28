@@ -16,8 +16,6 @@ import Dom
 import Task
 
 import TextEditor.KeyBind as KeyBind
-import TextEditor.Core as Core
-import TextEditor.Core.Commands as CoreCommands
 import TextEditor.Commands as EditorCmds
 
 import TextEditor.KeyboardEvent exposing (..)

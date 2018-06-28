@@ -10862,6 +10862,12 @@ var _minekoa$elm_text_editor$TextEditor_Buffer$insert = F2(
 		}
 	});
 
+var _minekoa$elm_text_editor$TextEditor_Option$defaulOptions = {tabOrder: 4, indentTabsMode: false, showControlCharactor: false};
+var _minekoa$elm_text_editor$TextEditor_Option$Option = F3(
+	function (a, b, c) {
+		return {tabOrder: a, indentTabsMode: b, showControlCharactor: c};
+	});
+
 var _minekoa$elm_text_editor$TextEditor_Core$getBoundingClientRect = function (id) {
 	return _minekoa$elm_text_editor$Native_Mice.getBoundingClientRect(id);
 };
@@ -10917,14 +10923,9 @@ var _minekoa$elm_text_editor$TextEditor_Core$sceneID = function (model) {
 var _minekoa$elm_text_editor$TextEditor_Core$frameID = function (model) {
 	return A2(_elm_lang$core$Basics_ops['++'], model.id, '-editor-frame');
 };
-var _minekoa$elm_text_editor$TextEditor_Core$initOption = {tabOrder: 4, indentTabsMode: false, showControlCharactor: false};
 var _minekoa$elm_text_editor$TextEditor_Core$Model = F8(
 	function (a, b, c, d, e, f, g, h) {
 		return {id: a, buffer: b, option: c, copyStore: d, lastCommand: e, compositionPreview: f, focus: g, blink: h};
-	});
-var _minekoa$elm_text_editor$TextEditor_Core$Option = F3(
-	function (a, b, c) {
-		return {tabOrder: a, indentTabsMode: b, showControlCharactor: c};
 	});
 var _minekoa$elm_text_editor$TextEditor_Core$Rect = F8(
 	function (a, b, c, d, e, f, g, h) {
@@ -11002,7 +11003,7 @@ var _minekoa$elm_text_editor$TextEditor_Core$init = F2(
 				_minekoa$elm_text_editor$TextEditor_Core$Model,
 				id,
 				_minekoa$elm_text_editor$TextEditor_Buffer$init(text),
-				_minekoa$elm_text_editor$TextEditor_Core$initOption,
+				_minekoa$elm_text_editor$TextEditor_Option$defaulOptions,
 				'',
 				_elm_lang$core$Maybe$Nothing,
 				_elm_lang$core$Maybe$Nothing,
@@ -13209,6 +13210,20 @@ var _minekoa$elm_text_editor$TextEditor$setLastCommand = F2(
 			_1: _p13._1
 		};
 	});
+var _minekoa$elm_text_editor$TextEditor$setOptions = F2(
+	function (opts, model) {
+		var cm = model.core;
+		return _elm_lang$core$Native_Utils.update(
+			model,
+			{
+				core: _elm_lang$core$Native_Utils.update(
+					cm,
+					{option: opts})
+			});
+	});
+var _minekoa$elm_text_editor$TextEditor$options = function (model) {
+	return model.core.option;
+};
 var _minekoa$elm_text_editor$TextEditor$setBuffer = F2(
 	function (newbuf, model) {
 		var cm = model.core;
@@ -23378,13 +23393,13 @@ var _minekoa$elm_text_editor$StyleMenu$update = F2(
 		}
 	});
 
-var _minekoa$elm_text_editor$SettingMenu$decodeCoreOption = A4(
+var _minekoa$elm_text_editor$SettingMenu$decodeEditorOptions = A4(
 	_elm_lang$core$Json_Decode$map3,
-	_minekoa$elm_text_editor$TextEditor_Core$Option,
+	_minekoa$elm_text_editor$TextEditor_Option$Option,
 	A2(_elm_lang$core$Json_Decode$field, 'tabOrder', _elm_lang$core$Json_Decode$int),
 	A2(_elm_lang$core$Json_Decode$field, 'indentTabsMode', _elm_lang$core$Json_Decode$bool),
 	A2(_elm_lang$core$Json_Decode$field, 'showControlCharactor', _elm_lang$core$Json_Decode$bool));
-var _minekoa$elm_text_editor$SettingMenu$encodeCoreOption = function (core_opts) {
+var _minekoa$elm_text_editor$SettingMenu$encodeEditorOptions = function (core_opts) {
 	return _elm_lang$core$Json_Encode$object(
 		{
 			ctor: '::',
@@ -23550,7 +23565,7 @@ var _minekoa$elm_text_editor$SettingMenu$update = F2(
 								core_opts,
 								A2(
 									_elm_lang$core$Result$andThen,
-									_elm_lang$core$Json_Decode$decodeString(_minekoa$elm_text_editor$SettingMenu$decodeCoreOption),
+									_elm_lang$core$Json_Decode$decodeString(_minekoa$elm_text_editor$SettingMenu$decodeEditorOptions),
 									A2(_elm_lang$core$Result$fromMaybe, 'value is nothing', _p0._0._1)))),
 						_1: _elm_lang$core$Platform_Cmd$none
 					};
@@ -23581,7 +23596,7 @@ var _minekoa$elm_text_editor$SettingMenu$update = F2(
 							_1: A2(
 								_elm_lang$core$Json_Encode$encode,
 								0,
-								_minekoa$elm_text_editor$SettingMenu$encodeCoreOption(new_opts))
+								_minekoa$elm_text_editor$SettingMenu$encodeEditorOptions(new_opts))
 						})
 				};
 			case 'ChangeTabOrder':
@@ -23600,7 +23615,7 @@ var _minekoa$elm_text_editor$SettingMenu$update = F2(
 							_1: A2(
 								_elm_lang$core$Json_Encode$encode,
 								0,
-								_minekoa$elm_text_editor$SettingMenu$encodeCoreOption(new_opts))
+								_minekoa$elm_text_editor$SettingMenu$encodeEditorOptions(new_opts))
 						})
 				};
 			default:
@@ -23619,7 +23634,7 @@ var _minekoa$elm_text_editor$SettingMenu$update = F2(
 							_1: A2(
 								_elm_lang$core$Json_Encode$encode,
 								0,
-								_minekoa$elm_text_editor$SettingMenu$encodeCoreOption(new_opts))
+								_minekoa$elm_text_editor$SettingMenu$encodeEditorOptions(new_opts))
 						})
 				};
 		}
@@ -24418,7 +24433,8 @@ var _minekoa$elm_text_editor$Main$init = function () {
 		content);
 	var bm = _p7._0;
 	var bc = _p7._1;
-	var _p8 = _minekoa$elm_text_editor$SettingMenu$init(bm.core.option);
+	var _p8 = _minekoa$elm_text_editor$SettingMenu$init(
+		_minekoa$elm_text_editor$TextEditor$options(bm));
 	var stm = _p8._0;
 	var stc = _p8._1;
 	return {
@@ -24670,17 +24686,6 @@ var _minekoa$elm_text_editor$Main$update = F2(
 					_1: A2(_elm_lang$core$Platform_Cmd$map, _minekoa$elm_text_editor$Main$KeyBindMenuMsg, kc)
 				};
 			case 'SettingMenuMsg':
-				var updateCoreOpts = F2(
-					function (em, opts) {
-						var core = em.core;
-						return _elm_lang$core$Native_Utils.update(
-							em,
-							{
-								core: _elm_lang$core$Native_Utils.update(
-									core,
-									{option: opts})
-							});
-					});
 				var _p23 = A2(_minekoa$elm_text_editor$SettingMenu$update, _p11._0, model.settingMenu);
 				var sm = _p23._0;
 				var sc = _p23._1;
@@ -24689,7 +24694,7 @@ var _minekoa$elm_text_editor$Main$update = F2(
 					_0: _elm_lang$core$Native_Utils.update(
 						model,
 						{
-							editor: A2(updateCoreOpts, model.editor, sm.options),
+							editor: A2(_minekoa$elm_text_editor$TextEditor$setOptions, sm.options, model.editor),
 							settingMenu: sm
 						}),
 					_1: A2(_elm_lang$core$Platform_Cmd$map, _minekoa$elm_text_editor$Main$SettingMenuMsg, sc)
