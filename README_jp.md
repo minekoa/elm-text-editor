@@ -26,12 +26,12 @@ textareaに対して以下の利点があります。
 このパッケージは、IMEの制御やカーソル位置の計算、スクロール制御に Native モジュール(≒JavaScript ffi) を含むため使用しています。
 そのため、`elm-package install` は使えません。
 
-代わりに `elm-github-installer` を使用してください。
+代わりに `elm-github-install` を使用してください。
 
-[elm-github-installer](https://github.com/gdotdesign/elm-github-install)
+[elm-github-install](https://github.com/gdotdesign/elm-github-install)
 
 
-`elm-github-installer` をインストールしたら、あなたの `elm-package.json` を以下のように修正してください。
+`elm-github-install` をインストールしたら、あなたの `elm-package.json` を以下のように修正してください。
 
 ```json
     "dependencies": {

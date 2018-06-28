@@ -27,11 +27,11 @@ We use the following API, so it will not work on browsers that do not support it
 
 This package is used because it contains `Native` module (≒ JavaScript ffi) for IME control, cursor position calculation, scroll control. Therefore, `elm-package install` can not be used.
 
-Please use `elm-github-installer` instead.
+Please use `elm-github-install` instead.
 
-[elm-github-installer](https://github.com/gdotdesign/elm-github-install)
+[elm-github-install](https://github.com/gdotdesign/elm-github-install)
 
-After installing `elm-github-installer`, please modify your` elm-package.json` as follows.
+After installing `elm-github-install`, please modify your` elm-package.json` as follows.
 
 ```json
     "dependencies": {
