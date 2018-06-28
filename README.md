@@ -53,7 +53,7 @@ init =
                      (TextEditor.KeyBind.basic ++ TextEditor.KeyBind.gates ++ TextEditor.KeyBind.emacsLike)
                      "foobar hogehoge"
     in
-        ( Model m
+        ( FooModel m
         , Cmd.map EditorMsg c
         )
 
