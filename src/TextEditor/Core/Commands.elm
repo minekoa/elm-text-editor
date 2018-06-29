@@ -145,7 +145,7 @@ gotoMark = editF Buffer.gotoMark
 
 -- Tools
 
-editF : (Buffer.Model -> Buffer.Model) -> Model -> (Model, Cmd Msg)
+editF : (Buffer.Buffer -> Buffer.Buffer) -> Model -> (Model, Cmd Msg)
 editF f model =
     { model | buffer = f model.buffer }
         |> Core.blinkBlock

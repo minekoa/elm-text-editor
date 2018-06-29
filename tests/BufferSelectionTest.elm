@@ -6,7 +6,7 @@ import Test exposing (..)
 
 import TextEditor.Buffer as Buffer exposing ((@))
 
-curWithTuple : Buffer.Model -> (Int, Int)
+curWithTuple : Buffer.Buffer -> (Int, Int)
 curWithTuple m =
     (m.cursor.row, m.cursor.column)
 

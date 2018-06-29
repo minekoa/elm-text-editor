@@ -123,13 +123,13 @@ init id keymap text =
 
 {-| Get the buffer.
 -}
-buffer : Model -> Buffer.Model
+buffer : Model -> Buffer.Buffer
 buffer model =
     model.core.buffer
 
 {-| Set a buffer.
 -}
-setBuffer : Buffer.Model -> Model -> Model
+setBuffer : Buffer.Buffer -> Model -> Model
 setBuffer newbuf model =
     let
         cm = model.core

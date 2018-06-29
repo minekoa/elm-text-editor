@@ -10630,13 +10630,13 @@ var _minekoa$elm_text_editor$TextEditor_Buffer$undo = function (model) {
 			}());
 	}
 };
-var _minekoa$elm_text_editor$TextEditor_Buffer$Model = F5(
+var _minekoa$elm_text_editor$TextEditor_Buffer$Buffer = F5(
 	function (a, b, c, d, e) {
 		return {cursor: a, selection: b, mark: c, contents: d, history: e};
 	});
 var _minekoa$elm_text_editor$TextEditor_Buffer$init = function (text) {
 	return A5(
-		_minekoa$elm_text_editor$TextEditor_Buffer$Model,
+		_minekoa$elm_text_editor$TextEditor_Buffer$Buffer,
 		A2(_minekoa$elm_text_editor$TextEditor_Buffer$Position, 0, 0),
 		_elm_lang$core$Maybe$Nothing,
 		_elm_lang$core$Maybe$Nothing,

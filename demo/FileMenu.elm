@@ -45,7 +45,7 @@ init =
     , newFileName = ""
     }
 
-update : Msg -> (String, Buffer.Model) -> Model -> (Model, Cmd Msg)
+update : Msg -> (String, Buffer.Buffer) -> Model -> (Model, Cmd Msg)
 update msg (fname, buf) model =
     case msg of
         TouchSubMenuSelect submenu ->

@@ -5,7 +5,7 @@ module TextEditor.Buffer exposing
     , isPreviosPos
     , makeRange
 
-    , Model
+    , Buffer
     , init
 
     , line
@@ -57,7 +57,7 @@ module TextEditor.Buffer exposing
 {-|
 
 # Definition
-@docs Position, Range, Mark, EditCommand, Model
+@docs Buffer, Position, Range, Mark, EditCommand
 
 # Position and Range helpers
 @docs (@), isPreviosPos
@@ -131,7 +131,7 @@ makeRange (br, bc) (er, ec) =
 * `contents`  .. Line separated text.
 * `history`   .. Operating history for `undo`/`redo`
 -}
-type alias Model =
+type alias Buffer =
     { cursor : Position
     , selection : Maybe Range
     , mark : Maybe Mark
@@ -141,9 +141,9 @@ type alias Model =
 
 {-| Create buffer.
 -}
-init : String -> Model
+init : String -> Buffer
 init text =
-    Model (Position 0 0)         -- cursor
+    Buffer (Position 0 0)         -- cursor
           Nothing                -- selection
           Nothing                -- mark
           (String.lines text)    -- contents
@@ -172,13 +172,13 @@ isPreviosPos p q =
 
 {-| Get a line by line number
 -}
-line : Int -> Model -> Maybe String
+line : Int -> Buffer -> Maybe String
 line n buf =
     buf.contents !! n
 
 {-| Get current line
 -}
-currentLine : Model -> String
+currentLine : Buffer -> String
 currentLine buf =
     line buf.cursor.row buf |> Maybe.withDefault ""
 
@@ -200,7 +200,7 @@ maxRow contents =
 
 {-| Retrieve the character string in the specified range
 -}
-readRange : Range -> Model -> String
+readRange : Range -> Buffer -> String
 readRange sel model =
     let
         bpos = if (isPreviosPos sel.begin sel.end) then sel.begin else sel.end
@@ -225,7 +225,7 @@ readRange sel model =
 
 {-| Retrieve the selected character string
 -}
-selectedString : Model -> Maybe String
+selectedString : Buffer -> Maybe String
 selectedString model =
     Maybe.andThen (\sel-> readRange sel model |> Just ) model.selection 
 
@@ -240,7 +240,7 @@ type alias Mark =
 
 {-| Set Mark to Position and make it active
 -}
-markSet : Model -> Model
+markSet : Buffer -> Buffer
 markSet model =
     let
         pos = model.cursor
@@ -255,7 +255,7 @@ markSet model =
 
 {-| Deactivate mark
 -}
-markClear : Model -> Model
+markClear : Buffer -> Buffer
 markClear model =
     case model.mark of
         Just mk ->
@@ -268,7 +268,7 @@ markClear model =
 
 {-| (It is inactive at the time of Nothing)
 -}
-isMarkActive : Model -> Bool
+isMarkActive : Buffer -> Bool
 isMarkActive model =
     case model.mark of
         Just mk -> mk.actived
@@ -276,7 +276,7 @@ isMarkActive model =
 
 {-| Move to the position where the cursor is marked and memorize the original cursor position in the mark.
 -}
-gotoMark : Model -> Model 
+gotoMark : Buffer -> Buffer 
 gotoMark model =
     case model.mark of
         Just mk ->
@@ -289,7 +289,7 @@ gotoMark model =
 {- 編集に際して動いてしまったマーク位置の辻褄を合わせる
    (たとえば、マークの前の文字を削除すればその分マークは一つ前に動く)
  -}                
-updateMark : EditCommand -> Model -> Model
+updateMark : EditCommand -> Buffer -> Buffer
 updateMark cmd model =
     case model.mark of
         Just mk ->
@@ -374,7 +374,7 @@ type EditCommand
     | Cmd_Delete Position Position String (Maybe Mark)    -- befor-cur after-cur deleted_str
 --    | Cmd_Undo EditCommand
 
-appendHistory: EditCommand -> Model -> Model
+appendHistory: EditCommand -> Buffer -> Buffer
 appendHistory cmd model =
     case (cmd, List.head model.history) of
         ( (Cmd_Insert befor after s mk), Just (Cmd_Insert old_befor old_after old_s old_mk) ) ->
@@ -401,7 +401,7 @@ appendHistory cmd model =
 
 {-|
 -}
-moveForward : Model -> Model
+moveForward : Buffer -> Buffer
 moveForward model =
     case isMarkActive model of
         True  -> selectWithMove moveForwardProc model
@@ -409,7 +409,7 @@ moveForward model =
 
 {-|
 -}
-moveBackward : Model -> Model
+moveBackward : Buffer -> Buffer
 moveBackward model =
     case isMarkActive model of
         True  -> selectWithMove moveBackwardProc model
@@ -417,7 +417,7 @@ moveBackward model =
 
 {-|
 -}
-movePreviosLine : Model -> Model
+movePreviosLine : Buffer -> Buffer
 movePreviosLine model =
     case isMarkActive model of
         True  -> selectWithMove movePreviosLineProc model
@@ -425,7 +425,7 @@ movePreviosLine model =
 
 {-|
 -}
-moveNextLine : Model -> Model
+moveNextLine : Buffer -> Buffer
 moveNextLine model =
     case isMarkActive model of
         True  -> selectWithMove moveNextLineProc model
@@ -433,7 +433,7 @@ moveNextLine model =
 
 {-|
 -}
-moveAt : Position -> Model -> Model
+moveAt : Position -> Buffer -> Buffer
 moveAt pos model =
     case isMarkActive model of
         True  -> selectWithMove (moveAtProc pos) model
@@ -441,14 +441,14 @@ moveAt pos model =
 
 {-|
 -}
-moveNextWord : Model -> Model
+moveNextWord : Buffer -> Buffer
 moveNextWord model =
     case isMarkActive model of
         True  -> selectWithMove (moveNextWordProc model.cursor) model
         False -> model |> moveNextWordProc model.cursor |> selectionClear
 {-|
 -}
-movePreviosWord : Model -> Model
+movePreviosWord : Buffer -> Buffer
 movePreviosWord model =
     case isMarkActive model of
         True  -> selectWithMove (movePreviosWordProc model.cursor) model
@@ -456,7 +456,7 @@ movePreviosWord model =
 
 
 
-moveForwardProc : Model -> Model
+moveForwardProc : Buffer -> Buffer
 moveForwardProc model =
     let
         cur = model.cursor
@@ -473,7 +473,7 @@ moveForwardProc model =
         |> Maybe.withDefault (defaultCursor model.contents)
         |> (λ c -> {model | cursor = c})
 
-moveBackwardProc : Model -> Model
+moveBackwardProc : Buffer -> Buffer
 moveBackwardProc model =
     let
         cur = model.cursor
@@ -491,7 +491,7 @@ moveBackwardProc model =
         |> Maybe.withDefault (defaultCursor model.contents)
         |> (λ c -> {model | cursor = c})
 
-movePreviosLineProc : Model -> Model
+movePreviosLineProc : Buffer -> Buffer
 movePreviosLineProc model =
     let
         cur = model.cursor
@@ -506,7 +506,7 @@ movePreviosLineProc model =
         |> Maybe.withDefault cur
         |> (λ c -> {model | cursor = c})
 
-moveNextLineProc : Model -> Model
+moveNextLineProc : Buffer -> Buffer
 moveNextLineProc model =
     let
         cur = model.cursor
@@ -521,12 +521,12 @@ moveNextLineProc model =
         |> Maybe.withDefault cur
         |> (λ c -> {model | cursor = c})
 
-moveAtProc : Position -> Model -> Model
+moveAtProc : Position -> Buffer -> Buffer
 moveAtProc pos model =
     { model | cursor = pos }
 
 
-moveNextWordProc : Position -> Model -> Model
+moveNextWordProc : Position -> Buffer -> Buffer
 moveNextWordProc cur model =
     let
         last_row = (List.length model.contents) - 1
@@ -547,7 +547,7 @@ moveNextWordProc cur model =
                     moveNextWordProc (Position (cur.row + 1) 0) model
 
 
-movePreviosWordProc : Position -> Model -> Model
+movePreviosWordProc : Position -> Buffer -> Buffer
 movePreviosWordProc cur model =
     let
         col = StringExtra.previosWordPos (model.contents !! cur.row|> Maybe.withDefault "") cur.column
@@ -572,52 +572,52 @@ movePreviosWordProc cur model =
 
 {-|
 -}
-selectBackward: Model -> Model
+selectBackward: Buffer -> Buffer
 selectBackward = selectWithMove moveBackwardProc
                  << \m -> if isMarkActive m then markClear m else m
 
 {-|
 -}
-selectForward: Model -> Model
+selectForward: Buffer -> Buffer
 selectForward = selectWithMove moveForwardProc
                  << \m -> if isMarkActive m then markClear m else m
 
 
 {-|
 -}
-selectPreviosLine: Model -> Model
+selectPreviosLine: Buffer -> Buffer
 selectPreviosLine = selectWithMove movePreviosLineProc
                  << \m -> if isMarkActive m then markClear m else m
 
 {-|
 -}
-selectNextLine: Model -> Model
+selectNextLine: Buffer -> Buffer
 selectNextLine = selectWithMove moveNextLineProc
                  << \m -> if isMarkActive m then markClear m else m
 
 {-|
 -}
-selectPreviosWord: Model -> Model
+selectPreviosWord: Buffer -> Buffer
 selectPreviosWord = selectWithMove (\m -> movePreviosWordProc m.cursor m)
                  << \m -> if isMarkActive m then markClear m else m
 
 {-|
 -}
-selectNextWord: Model -> Model
+selectNextWord: Buffer -> Buffer
 selectNextWord = selectWithMove (\m -> moveNextWordProc m.cursor m)
                  << \m -> if isMarkActive m then markClear m else m
 
 
 {-|
 -}
-selectAt: Position -> Model -> Model
+selectAt: Position -> Buffer -> Buffer
 selectAt pos = selectWithMove (moveAtProc pos)
                  << \m -> if isMarkActive m then markClear m else m
 
 
 {-|
 -}
-selectionClear: Model -> Model
+selectionClear: Buffer -> Buffer
 selectionClear model =
     { model
         | selection = Nothing
@@ -629,7 +629,7 @@ selectionClear model =
 
 -- Tool
 
-selectWithMove : (Model -> Model) -> Model -> Model
+selectWithMove : (Buffer -> Buffer) -> Buffer -> Buffer
 selectWithMove move_f model =
     model
         |> \m -> { m | selection = m.selection |> Maybe.withDefault (Range m.cursor m.cursor) |> Just }
@@ -643,7 +643,7 @@ selectWithMove move_f model =
 
 {-| Insert character at current cursor position.
 -}
-insert : String -> Model -> Model
+insert : String -> Buffer -> Buffer
 insert text model=
     case model.selection of
         Nothing ->
@@ -656,7 +656,7 @@ insert text model=
 
 {-| Insert character at specified position
 -}
-insertAt: Position -> String -> Model -> Model
+insertAt: Position -> String -> Buffer -> Buffer
 insertAt pos text model =
     model
     |> insert_proc pos text
@@ -670,7 +670,7 @@ insertAt pos text model =
 
 {-| Delete charactor before current cursor position, and cursor back to deleted char(s) before.
 -}
-backspace : Model -> Model
+backspace : Buffer -> Buffer
 backspace model =
     case model.selection of
         Nothing ->
@@ -682,7 +682,7 @@ backspace model =
 
 {-| Delete charactor(s) before specified position, and cursor back to deleted char(s) before.
 -}
-backspaceAt: Position -> Model -> Model
+backspaceAt: Position -> Buffer -> Buffer
 backspaceAt pos model =
     let
         (m, deleted) = backspace_proc pos model 
@@ -702,7 +702,7 @@ backspaceAt pos model =
 
 {-| Delete charactor at current cursor positon.
 -}
-delete : Model -> Model
+delete : Buffer -> Buffer
 delete model =
     case model.selection of
         Nothing ->
@@ -714,7 +714,7 @@ delete model =
 
 {-| Delete charactor at specified positon.
 -}
-deleteAt: Position -> Model -> Model
+deleteAt: Position -> Buffer -> Buffer
 deleteAt pos model =
     let
         (m, deleted) = delete_proc pos model
@@ -734,7 +734,7 @@ deleteAt pos model =
 
 {-| Delete charactor at specified positions range.
 -}
-deleteRange: Range -> Model -> Model
+deleteRange: Range -> Buffer -> Buffer
 deleteRange range model =
     let
         deleted  = readRange range model
@@ -757,7 +757,7 @@ deleteRange range model =
 
 {-| Delete charactor at current selection range.
 -}
-deleteSelection: Model -> Model
+deleteSelection: Buffer -> Buffer
 deleteSelection model =
     case model.selection of
         Nothing ->
@@ -770,7 +770,7 @@ deleteSelection model =
 
 {-| undo editing
 -}
-undo : Model -> Model
+undo : Buffer -> Buffer
 undo model =
     case List.head model.history of
         Nothing -> model
@@ -800,7 +800,7 @@ undo model =
 -- (private) edit
 ------------------------------------------------------------
 
-insert_proc: Position -> String -> Model -> Model
+insert_proc: Position -> String -> Buffer -> Buffer
 insert_proc pos text model =
     let
         (row, col) = position_toTuple pos
@@ -845,7 +845,7 @@ insert_proc pos text model =
                         , cursor = Position (row + n - 1) (String.length lst_ln)
                     }
 
-backspace_proc: Position -> Model -> (Model, Maybe String)
+backspace_proc: Position -> Buffer -> (Buffer, Maybe String)
 backspace_proc pos model =
     case (position_toTuple pos) of
         (0, 0) ->
@@ -881,7 +881,7 @@ backspace_proc pos model =
                 , Just (crow |> String.dropLeft (col - 1) |> String.left 1) )
 
 
-delete_proc: Position -> Model -> (Model, Maybe String)
+delete_proc: Position -> Buffer -> (Buffer, Maybe String)
 delete_proc pos model =
     let
         (row, col) = position_toTuple pos
@@ -922,7 +922,7 @@ delete_proc pos model =
                      , Just "\n" )
 
 
-delete_range_proc : Range -> Model -> Model
+delete_range_proc : Range -> Buffer -> Buffer
 delete_range_proc sel model =
     let
         bpos = if (isPreviosPos sel.begin sel.end) then sel.begin else sel.end
@@ -956,15 +956,15 @@ delete_range_proc sel model =
                     }
 
     
-undo_insert_proc : Position -> Position -> String -> Model -> Model
+undo_insert_proc : Position -> Position -> String -> Buffer -> Buffer
 undo_insert_proc bf_pos af_pos str model =
     delete_range_proc (Range bf_pos af_pos) model
 
-undo_backspace_proc : Position -> Position -> String -> Model ->Model
+undo_backspace_proc : Position -> Position -> String -> Buffer ->Buffer
 undo_backspace_proc bf_pos af_pos str model =
     insert_proc af_pos str model 
 
-undo_delete_proc : Position -> Position -> String -> Model ->Model
+undo_delete_proc : Position -> Position -> String -> Buffer ->Buffer
 undo_delete_proc bf_pos af_pos str model =
     insert_proc bf_pos str model
         |> (\m -> { m | cursor = bf_pos })

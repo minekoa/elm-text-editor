@@ -56,7 +56,7 @@ type MenuPane
 
 type alias Buffer =
     { name : String
-    , buffer : TextEditor.Buffer.Model
+    , buffer : TextEditor.Buffer.Buffer
     }
 
 makeBuffer: String -> String -> Buffer
@@ -263,7 +263,7 @@ update msg model =
             , Ports.WebStrage.localStrage_clear ()
             )
 
-updateBufferContent : Int -> TextEditor.Buffer.Model -> Model -> Model
+updateBufferContent : Int -> TextEditor.Buffer.Buffer -> Model -> Model
 updateBufferContent i content model =
     case model.buffers |> List.drop i |> List.head of
         Just buf ->

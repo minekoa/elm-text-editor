@@ -41,7 +41,7 @@ import TextEditor.Option as Option
 
 type alias Model =
     { id : String -- frame id
-    , buffer : Buffer.Model
+    , buffer : Buffer.Buffer
 
     , option : Option.Option
 
