@@ -135,7 +135,10 @@ setBuffer newbuf model =
         cm = model.core
     in
         { model
-            | core = { cm | buffer= newbuf }
+            | core = { cm
+                         | buffer= newbuf
+                         , lastCommand = Just "setBuffer"
+                     }
         }
 
 {-| Get now editor options -}

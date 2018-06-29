@@ -13232,7 +13232,10 @@ var _minekoa$elm_text_editor$TextEditor$setBuffer = F2(
 			{
 				core: _elm_lang$core$Native_Utils.update(
 					cm,
-					{buffer: newbuf})
+					{
+						buffer: newbuf,
+						lastCommand: _elm_lang$core$Maybe$Just('setBuffer')
+					})
 			});
 	});
 var _minekoa$elm_text_editor$TextEditor$buffer = function (model) {
