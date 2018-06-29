@@ -61,6 +61,7 @@ import TextEditor.TextMarker as TextMarker
 
 import TextEditor.Commands
 import TextEditor.Option
+import TextEditor.Style
 import TextEditor.KeyBind as KeyBind
 
 
@@ -86,6 +87,7 @@ type alias Model =
 
     -- options
     , keymap : List KeyBind.KeyBind
+    , style : TextEditor.Style.Style
 
     -- for debug
     , event_log : Maybe (List EventInfo)
@@ -116,6 +118,7 @@ init id keymap text =
           False
           False
           keymap
+          TextEditor.Style.defaultStyle
           Nothing
     , Cmd.map CoreMsg coreC
     )
@@ -560,8 +563,9 @@ view model =
                 ]
         , onClick ClickScreen
         ]
-        [ div [ id <| sceneID model.core
-              , class "editor-scene"
+        [ stylesheet model.style (frameID model.core)
+        , div [ id <| sceneID model.core
+              , class "elm-text-editor-scene"
               , style [ ("position", "relative") ]
               ]
               [ presentation model
@@ -588,7 +592,7 @@ lineNumArea model =
         contents = model.buffer.contents
     in
         div [ id <| lineNumAreaID model
-            , class "line-num-area"
+            , class "elm-text-editor-linenum"
             , style [ ("text-align", "right")
                     , ("padding-right", "0.8em")
                     ]
@@ -823,14 +827,13 @@ markerLayer model =
                             ]
                     ]
                     ( List.map (\ m ->
-                                  div [ style [ ("position", "absolute")
+                                  div [ class "elm-text-editor-selection"
+                                      , style [ ("position", "absolute")
                                               , ("top" , m.row |> emToPxString model )
                                               , ("left" , m.begin_px |> toPxString)
                                               , ("width", m.end_px - m.begin_px |> toPxString)
                                               , ("height", 1 |> emToPxString model )
 
-                                              , ("background-color", "blue")
-                                              , ("color","white")
                                               , ("white-space", "pre")
                                               ]
                                       ]
@@ -890,9 +893,8 @@ compositionPreview : Maybe String -> Html msg
 compositionPreview compositionData =
     case compositionData of
         Just s ->
-            span [ class "composition_data"
-                 , style [ ("color", "blue")
-                         , ("text-decoration", "underline")
+            span [ class "elm-text-editor-composing"
+                 , style [ ("text-decoration", "underline")
                          ]
                  ] [ text s ]
         Nothing ->
@@ -906,16 +908,72 @@ cursorView model =
                                 BlinkBlocked -> True
                     ) >> not
     in
-    span [style [ ("background-color", if model.focus then "blue" else "gray" )
-                , ("opacity", if model.focus && (blink_off model.blink) then "0.0" else "0.5")
-                , ("height", 1 |> emToPxString model )
-                , ("width", "3px")
-                , ("z-index", "5")
-                ]
+    span [ class "elm-text-editor-cursor"
+         , style <|
+             [ ("height", 1 |> emToPxString model )
+             , ("width", "3px")
+             , ("z-index", "5")
+             ]
+               ++ ( if model.focus then [] else [ ("background-color", "gray") ] )
+               ++ ( if model.focus && (blink_off model.blink) then [ ("opacity", "0.0") ] else [])
          , id <| cursorID model
          ]
     []
 
+
+stylesheet : TextEditor.Style.Style -> String -> Html msg
+stylesheet sty frameID =
+    let
+        tagstring = \ tag val -> if val == "" then "" else [ tag, ":", val, "; " ] |> String.concat
+
+        codesty2str = \s ->
+                      [ tagstring "color" s.color
+                      , tagstring "background-color" s.backgroundColor
+                      , tagstring "font-family" s.fontFamily
+                      , tagstring "font-size" s.fontSize
+                      , tagstring "opacity" s.opacity
+                      ] |> String.concat
+
+        lnumsty2str = \s ->
+                      [ tagstring "color" s.color
+                      , tagstring "background-color" s.backgroundColor
+                      , tagstring "opacity" s.opacity
+                      , tagstring "border-right" s.borderRight
+                      , tagstring "margin-right" s.marginRight
+                      ] |> String.concat
+
+        ffacesty2str = \s ->
+                       [ tagstring "color" s.color
+                       , tagstring "background-color" s.backgroundColor
+                       , tagstring "opacity" s.opacity
+                       ] |> String.concat
+
+        cursty2str = \s ->
+                     [ tagstring "background-color" s.color
+                     , tagstring "opacity" s.opacity
+                     ] |> String.concat
+
+        csscls = \clsname s ->
+                 [ "#", frameID, " ", ".", clsname, " { ", s, " }\n"] |> String.concat
+
+    in
+        node "style" [ type_ "text/css" ]
+            [ ( [ sty.common     |> Maybe.andThen (\s -> codesty2str  s |> csscls "elm-text-editor-scene"     |> Just) |> Maybe.withDefault ""
+                , sty.numberLine |> Maybe.andThen (\s -> lnumsty2str  s |> csscls "elm-text-editor-linenum"   |> Just) |> Maybe.withDefault ""
+                , sty.cursor     |> Maybe.andThen (\s -> cursty2str   s |> csscls "elm-text-editor-cursor"    |> Just) |> Maybe.withDefault ""
+                , sty.selection  |> Maybe.andThen (\s -> ffacesty2str s |> csscls "elm-text-editor-selection" |> Just) |> Maybe.withDefault ""
+                , sty.composing  |> Maybe.andThen (\s -> ffacesty2str s |> csscls "elm-text-editor-composing" |> Just) |> Maybe.withDefault ""
+                ]
+                  ++ ( List.map (\ s ->
+                                     let
+                                         cls = Tuple.first s
+                                         val = Tuple.second s
+                                     in
+                                         csscls cls (ffacesty2str val)
+                                ) sty.fontFaces
+                     )
+              ) |> String.concat |> text
+            ]
 
 ------------------------------------------------------------
 -- Subscriptions

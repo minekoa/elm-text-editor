@@ -11794,6 +11794,62 @@ var _minekoa$elm_text_editor$TextEditor_Commands$Command = F2(
 		return {id: a, f: b};
 	});
 
+var _minekoa$elm_text_editor$TextEditor_Style$defaultStyle = {
+	common: _elm_lang$core$Maybe$Nothing,
+	numberLine: _elm_lang$core$Maybe$Nothing,
+	cursor: _elm_lang$core$Maybe$Just(
+		{color: 'blue', opacity: '0.5'}),
+	selection: _elm_lang$core$Maybe$Just(
+		{color: 'white', backgroundColor: 'blue', opacity: ''}),
+	composing: _elm_lang$core$Maybe$Just(
+		{color: 'blue', backgroundColor: '', opacity: ''}),
+	fontFaces: {
+		ctor: '::',
+		_0: {
+			ctor: '_Tuple2',
+			_0: 'tab-face',
+			_1: {color: '', backgroundColor: '', opacity: '0.2'}
+		},
+		_1: {
+			ctor: '::',
+			_0: {
+				ctor: '_Tuple2',
+				_0: 'eol-face',
+				_1: {color: '', backgroundColor: '', opacity: '0.2'}
+			},
+			_1: {
+				ctor: '::',
+				_0: {
+					ctor: '_Tuple2',
+					_0: 'jaspace-face',
+					_1: {color: '', backgroundColor: '', opacity: '0.2'}
+				},
+				_1: {ctor: '[]'}
+			}
+		}
+	}
+};
+var _minekoa$elm_text_editor$TextEditor_Style$Style = F6(
+	function (a, b, c, d, e, f) {
+		return {common: a, numberLine: b, cursor: c, selection: d, composing: e, fontFaces: f};
+	});
+var _minekoa$elm_text_editor$TextEditor_Style$CodeStyle = F5(
+	function (a, b, c, d, e) {
+		return {color: a, backgroundColor: b, opacity: c, fontFamily: d, fontSize: e};
+	});
+var _minekoa$elm_text_editor$TextEditor_Style$LineNumberStyle = F5(
+	function (a, b, c, d, e) {
+		return {color: a, backgroundColor: b, opacity: c, borderRight: d, marginRight: e};
+	});
+var _minekoa$elm_text_editor$TextEditor_Style$FontFaceStyle = F3(
+	function (a, b, c) {
+		return {color: a, backgroundColor: b, opacity: c};
+	});
+var _minekoa$elm_text_editor$TextEditor_Style$ColorStyle = F2(
+	function (a, b) {
+		return {color: a, opacity: b};
+	});
+
 var _minekoa$elm_text_editor$TextEditor_KeyBind$emacsLike = {
 	ctor: '::',
 	_0: {ctrl: true, alt: false, shift: false, code: 70, f: _minekoa$elm_text_editor$TextEditor_Commands$moveForward},
@@ -12441,6 +12497,251 @@ var _minekoa$elm_text_editor$TextEditor$keyboarEvent_toString = function (e) {
 			}
 		});
 };
+var _minekoa$elm_text_editor$TextEditor$stylesheet = F2(
+	function (sty, frameID) {
+		var csscls = F2(
+			function (clsname, s) {
+				return _elm_lang$core$String$concat(
+					{
+						ctor: '::',
+						_0: '#',
+						_1: {
+							ctor: '::',
+							_0: frameID,
+							_1: {
+								ctor: '::',
+								_0: ' ',
+								_1: {
+									ctor: '::',
+									_0: '.',
+									_1: {
+										ctor: '::',
+										_0: clsname,
+										_1: {
+											ctor: '::',
+											_0: ' { ',
+											_1: {
+												ctor: '::',
+												_0: s,
+												_1: {
+													ctor: '::',
+													_0: ' }\n',
+													_1: {ctor: '[]'}
+												}
+											}
+										}
+									}
+								}
+							}
+						}
+					});
+			});
+		var tagstring = F2(
+			function (tag, val) {
+				return _elm_lang$core$Native_Utils.eq(val, '') ? '' : _elm_lang$core$String$concat(
+					{
+						ctor: '::',
+						_0: tag,
+						_1: {
+							ctor: '::',
+							_0: ':',
+							_1: {
+								ctor: '::',
+								_0: val,
+								_1: {
+									ctor: '::',
+									_0: '; ',
+									_1: {ctor: '[]'}
+								}
+							}
+						}
+					});
+			});
+		var codesty2str = function (s) {
+			return _elm_lang$core$String$concat(
+				{
+					ctor: '::',
+					_0: A2(tagstring, 'color', s.color),
+					_1: {
+						ctor: '::',
+						_0: A2(tagstring, 'background-color', s.backgroundColor),
+						_1: {
+							ctor: '::',
+							_0: A2(tagstring, 'font-family', s.fontFamily),
+							_1: {
+								ctor: '::',
+								_0: A2(tagstring, 'font-size', s.fontSize),
+								_1: {
+									ctor: '::',
+									_0: A2(tagstring, 'opacity', s.opacity),
+									_1: {ctor: '[]'}
+								}
+							}
+						}
+					}
+				});
+		};
+		var lnumsty2str = function (s) {
+			return _elm_lang$core$String$concat(
+				{
+					ctor: '::',
+					_0: A2(tagstring, 'color', s.color),
+					_1: {
+						ctor: '::',
+						_0: A2(tagstring, 'background-color', s.backgroundColor),
+						_1: {
+							ctor: '::',
+							_0: A2(tagstring, 'opacity', s.opacity),
+							_1: {
+								ctor: '::',
+								_0: A2(tagstring, 'border-right', s.borderRight),
+								_1: {
+									ctor: '::',
+									_0: A2(tagstring, 'margin-right', s.marginRight),
+									_1: {ctor: '[]'}
+								}
+							}
+						}
+					}
+				});
+		};
+		var ffacesty2str = function (s) {
+			return _elm_lang$core$String$concat(
+				{
+					ctor: '::',
+					_0: A2(tagstring, 'color', s.color),
+					_1: {
+						ctor: '::',
+						_0: A2(tagstring, 'background-color', s.backgroundColor),
+						_1: {
+							ctor: '::',
+							_0: A2(tagstring, 'opacity', s.opacity),
+							_1: {ctor: '[]'}
+						}
+					}
+				});
+		};
+		var cursty2str = function (s) {
+			return _elm_lang$core$String$concat(
+				{
+					ctor: '::',
+					_0: A2(tagstring, 'background-color', s.color),
+					_1: {
+						ctor: '::',
+						_0: A2(tagstring, 'opacity', s.opacity),
+						_1: {ctor: '[]'}
+					}
+				});
+		};
+		return A3(
+			_elm_lang$html$Html$node,
+			'style',
+			{
+				ctor: '::',
+				_0: _elm_lang$html$Html_Attributes$type_('text/css'),
+				_1: {ctor: '[]'}
+			},
+			{
+				ctor: '::',
+				_0: _elm_lang$html$Html$text(
+					_elm_lang$core$String$concat(
+						A2(
+							_elm_lang$core$Basics_ops['++'],
+							{
+								ctor: '::',
+								_0: A2(
+									_elm_lang$core$Maybe$withDefault,
+									'',
+									A2(
+										_elm_lang$core$Maybe$andThen,
+										function (s) {
+											return _elm_lang$core$Maybe$Just(
+												A2(
+													csscls,
+													'elm-text-editor-scene',
+													codesty2str(s)));
+										},
+										sty.common)),
+								_1: {
+									ctor: '::',
+									_0: A2(
+										_elm_lang$core$Maybe$withDefault,
+										'',
+										A2(
+											_elm_lang$core$Maybe$andThen,
+											function (s) {
+												return _elm_lang$core$Maybe$Just(
+													A2(
+														csscls,
+														'elm-text-editor-linenum',
+														lnumsty2str(s)));
+											},
+											sty.numberLine)),
+									_1: {
+										ctor: '::',
+										_0: A2(
+											_elm_lang$core$Maybe$withDefault,
+											'',
+											A2(
+												_elm_lang$core$Maybe$andThen,
+												function (s) {
+													return _elm_lang$core$Maybe$Just(
+														A2(
+															csscls,
+															'elm-text-editor-cursor',
+															cursty2str(s)));
+												},
+												sty.cursor)),
+										_1: {
+											ctor: '::',
+											_0: A2(
+												_elm_lang$core$Maybe$withDefault,
+												'',
+												A2(
+													_elm_lang$core$Maybe$andThen,
+													function (s) {
+														return _elm_lang$core$Maybe$Just(
+															A2(
+																csscls,
+																'elm-text-editor-selection',
+																ffacesty2str(s)));
+													},
+													sty.selection)),
+											_1: {
+												ctor: '::',
+												_0: A2(
+													_elm_lang$core$Maybe$withDefault,
+													'',
+													A2(
+														_elm_lang$core$Maybe$andThen,
+														function (s) {
+															return _elm_lang$core$Maybe$Just(
+																A2(
+																	csscls,
+																	'elm-text-editor-composing',
+																	ffacesty2str(s)));
+														},
+														sty.composing)),
+												_1: {ctor: '[]'}
+											}
+										}
+									}
+								}
+							},
+							A2(
+								_elm_lang$core$List$map,
+								function (s) {
+									var val = _elm_lang$core$Tuple$second(s);
+									var cls = _elm_lang$core$Tuple$first(s);
+									return A2(
+										csscls,
+										cls,
+										ffacesty2str(val));
+								},
+								sty.fontFaces)))),
+				_1: {ctor: '[]'}
+			});
+	});
 var _minekoa$elm_text_editor$TextEditor$cursorView = function (model) {
 	var blink_off = function (_p5) {
 		return !function (blnk) {
@@ -12456,22 +12757,13 @@ var _minekoa$elm_text_editor$TextEditor$cursorView = function (model) {
 		_elm_lang$html$Html$span,
 		{
 			ctor: '::',
-			_0: _elm_lang$html$Html_Attributes$style(
-				{
-					ctor: '::',
-					_0: {
-						ctor: '_Tuple2',
-						_0: 'background-color',
-						_1: model.focus ? 'blue' : 'gray'
-					},
-					_1: {
-						ctor: '::',
-						_0: {
-							ctor: '_Tuple2',
-							_0: 'opacity',
-							_1: (model.focus && blink_off(model.blink)) ? '0.0' : '0.5'
-						},
-						_1: {
+			_0: _elm_lang$html$Html_Attributes$class('elm-text-editor-cursor'),
+			_1: {
+				ctor: '::',
+				_0: _elm_lang$html$Html_Attributes$style(
+					A2(
+						_elm_lang$core$Basics_ops['++'],
+						{
 							ctor: '::',
 							_0: {
 								ctor: '_Tuple2',
@@ -12487,14 +12779,25 @@ var _minekoa$elm_text_editor$TextEditor$cursorView = function (model) {
 									_1: {ctor: '[]'}
 								}
 							}
-						}
-					}
-				}),
-			_1: {
-				ctor: '::',
-				_0: _elm_lang$html$Html_Attributes$id(
-					_minekoa$elm_text_editor$TextEditor_Core$cursorID(model)),
-				_1: {ctor: '[]'}
+						},
+						A2(
+							_elm_lang$core$Basics_ops['++'],
+							model.focus ? {ctor: '[]'} : {
+								ctor: '::',
+								_0: {ctor: '_Tuple2', _0: 'background-color', _1: 'gray'},
+								_1: {ctor: '[]'}
+							},
+							(model.focus && blink_off(model.blink)) ? {
+								ctor: '::',
+								_0: {ctor: '_Tuple2', _0: 'opacity', _1: '0.0'},
+								_1: {ctor: '[]'}
+							} : {ctor: '[]'}))),
+				_1: {
+					ctor: '::',
+					_0: _elm_lang$html$Html_Attributes$id(
+						_minekoa$elm_text_editor$TextEditor_Core$cursorID(model)),
+					_1: {ctor: '[]'}
+				}
 			}
 		},
 		{ctor: '[]'});
@@ -12506,18 +12809,14 @@ var _minekoa$elm_text_editor$TextEditor$compositionPreview = function (compositi
 			_elm_lang$html$Html$span,
 			{
 				ctor: '::',
-				_0: _elm_lang$html$Html_Attributes$class('composition_data'),
+				_0: _elm_lang$html$Html_Attributes$class('elm-text-editor-composing'),
 				_1: {
 					ctor: '::',
 					_0: _elm_lang$html$Html_Attributes$style(
 						{
 							ctor: '::',
-							_0: {ctor: '_Tuple2', _0: 'color', _1: 'blue'},
-							_1: {
-								ctor: '::',
-								_0: {ctor: '_Tuple2', _0: 'text-decoration', _1: 'underline'},
-								_1: {ctor: '[]'}
-							}
+							_0: {ctor: '_Tuple2', _0: 'text-decoration', _1: 'underline'},
+							_1: {ctor: '[]'}
 						}),
 					_1: {ctor: '[]'}
 				}
@@ -12735,57 +13034,53 @@ var _minekoa$elm_text_editor$TextEditor$markerLayer = function (model) {
 						_elm_lang$html$Html$div,
 						{
 							ctor: '::',
-							_0: _elm_lang$html$Html_Attributes$style(
-								{
-									ctor: '::',
-									_0: {ctor: '_Tuple2', _0: 'position', _1: 'absolute'},
-									_1: {
+							_0: _elm_lang$html$Html_Attributes$class('elm-text-editor-selection'),
+							_1: {
+								ctor: '::',
+								_0: _elm_lang$html$Html_Attributes$style(
+									{
 										ctor: '::',
-										_0: {
-											ctor: '_Tuple2',
-											_0: 'top',
-											_1: A2(_minekoa$elm_text_editor$TextEditor$emToPxString, model, m.row)
-										},
+										_0: {ctor: '_Tuple2', _0: 'position', _1: 'absolute'},
 										_1: {
 											ctor: '::',
 											_0: {
 												ctor: '_Tuple2',
-												_0: 'left',
-												_1: _minekoa$elm_text_editor$TextEditor$toPxString(m.begin_px)
+												_0: 'top',
+												_1: A2(_minekoa$elm_text_editor$TextEditor$emToPxString, model, m.row)
 											},
 											_1: {
 												ctor: '::',
 												_0: {
 													ctor: '_Tuple2',
-													_0: 'width',
-													_1: _minekoa$elm_text_editor$TextEditor$toPxString(m.end_px - m.begin_px)
+													_0: 'left',
+													_1: _minekoa$elm_text_editor$TextEditor$toPxString(m.begin_px)
 												},
 												_1: {
 													ctor: '::',
 													_0: {
 														ctor: '_Tuple2',
-														_0: 'height',
-														_1: A2(_minekoa$elm_text_editor$TextEditor$emToPxString, model, 1)
+														_0: 'width',
+														_1: _minekoa$elm_text_editor$TextEditor$toPxString(m.end_px - m.begin_px)
 													},
 													_1: {
 														ctor: '::',
-														_0: {ctor: '_Tuple2', _0: 'background-color', _1: 'blue'},
+														_0: {
+															ctor: '_Tuple2',
+															_0: 'height',
+															_1: A2(_minekoa$elm_text_editor$TextEditor$emToPxString, model, 1)
+														},
 														_1: {
 															ctor: '::',
-															_0: {ctor: '_Tuple2', _0: 'color', _1: 'white'},
-															_1: {
-																ctor: '::',
-																_0: {ctor: '_Tuple2', _0: 'white-space', _1: 'pre'},
-																_1: {ctor: '[]'}
-															}
+															_0: {ctor: '_Tuple2', _0: 'white-space', _1: 'pre'},
+															_1: {ctor: '[]'}
 														}
 													}
 												}
 											}
 										}
-									}
-								}),
-							_1: {ctor: '[]'}
+									}),
+								_1: {ctor: '[]'}
+							}
 						},
 						_minekoa$elm_text_editor$TextEditor_TextMarker$toHtml(
 							function (ln) {
@@ -13027,7 +13322,7 @@ var _minekoa$elm_text_editor$TextEditor$lineNumArea = function (model) {
 				_minekoa$elm_text_editor$TextEditor_Core$lineNumAreaID(model)),
 			_1: {
 				ctor: '::',
-				_0: _elm_lang$html$Html_Attributes$class('line-num-area'),
+				_0: _elm_lang$html$Html_Attributes$class('elm-text-editor-linenum'),
 				_1: {
 					ctor: '::',
 					_0: _elm_lang$html$Html_Attributes$style(
@@ -13241,9 +13536,9 @@ var _minekoa$elm_text_editor$TextEditor$setBuffer = F2(
 var _minekoa$elm_text_editor$TextEditor$buffer = function (model) {
 	return model.core.buffer;
 };
-var _minekoa$elm_text_editor$TextEditor$Model = F5(
-	function (a, b, c, d, e) {
-		return {core: a, enableComposer: b, drag: c, keymap: d, event_log: e};
+var _minekoa$elm_text_editor$TextEditor$Model = F6(
+	function (a, b, c, d, e, f) {
+		return {core: a, enableComposer: b, drag: c, keymap: d, style: e, event_log: f};
 	});
 var _minekoa$elm_text_editor$TextEditor$EventInfo = F3(
 	function (a, b, c) {
@@ -13665,7 +13960,7 @@ var _minekoa$elm_text_editor$TextEditor$init = F3(
 		var coreC = _p20._1;
 		return {
 			ctor: '_Tuple2',
-			_0: A5(_minekoa$elm_text_editor$TextEditor$Model, coreM, false, false, keymap, _elm_lang$core$Maybe$Nothing),
+			_0: A6(_minekoa$elm_text_editor$TextEditor$Model, coreM, false, false, keymap, _minekoa$elm_text_editor$TextEditor_Style$defaultStyle, _elm_lang$core$Maybe$Nothing),
 			_1: A2(_elm_lang$core$Platform_Cmd$map, _minekoa$elm_text_editor$TextEditor$CoreMsg, coreC)
 		};
 	});
@@ -14465,32 +14760,39 @@ var _minekoa$elm_text_editor$TextEditor$view = function (model) {
 		{
 			ctor: '::',
 			_0: A2(
-				_elm_lang$html$Html$div,
-				{
-					ctor: '::',
-					_0: _elm_lang$html$Html_Attributes$id(
-						_minekoa$elm_text_editor$TextEditor_Core$sceneID(model.core)),
-					_1: {
+				_minekoa$elm_text_editor$TextEditor$stylesheet,
+				model.style,
+				_minekoa$elm_text_editor$TextEditor_Core$frameID(model.core)),
+			_1: {
+				ctor: '::',
+				_0: A2(
+					_elm_lang$html$Html$div,
+					{
 						ctor: '::',
-						_0: _elm_lang$html$Html_Attributes$class('editor-scene'),
+						_0: _elm_lang$html$Html_Attributes$id(
+							_minekoa$elm_text_editor$TextEditor_Core$sceneID(model.core)),
 						_1: {
 							ctor: '::',
-							_0: _elm_lang$html$Html_Attributes$style(
-								{
-									ctor: '::',
-									_0: {ctor: '_Tuple2', _0: 'position', _1: 'relative'},
-									_1: {ctor: '[]'}
-								}),
-							_1: {ctor: '[]'}
+							_0: _elm_lang$html$Html_Attributes$class('elm-text-editor-scene'),
+							_1: {
+								ctor: '::',
+								_0: _elm_lang$html$Html_Attributes$style(
+									{
+										ctor: '::',
+										_0: {ctor: '_Tuple2', _0: 'position', _1: 'relative'},
+										_1: {ctor: '[]'}
+									}),
+								_1: {ctor: '[]'}
+							}
 						}
-					}
-				},
-				{
-					ctor: '::',
-					_0: _minekoa$elm_text_editor$TextEditor$presentation(model),
-					_1: {ctor: '[]'}
-				}),
-			_1: {ctor: '[]'}
+					},
+					{
+						ctor: '::',
+						_0: _minekoa$elm_text_editor$TextEditor$presentation(model),
+						_1: {ctor: '[]'}
+					}),
+				_1: {ctor: '[]'}
+			}
 		});
 };
 

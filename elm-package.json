@@ -12,6 +12,7 @@
         "TextEditor.Buffer",
         "TextEditor.Commands",
         "TextEditor.Option",
+        "TextEditor.Style",
         "TextEditor.KeyBind"
     ],
     "dependencies": {
