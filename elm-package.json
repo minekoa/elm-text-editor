@@ -1,6 +1,6 @@
 {
     "version": "1.0.0",
-    "summary": "helpful summary of your project, less than 80 characters",
+    "summary": "Simple text editor widget",
     "repository": "https://github.com/minekoa/elm-text-editor.git",
     "license": "BSD3",
     "native-modules": true,
