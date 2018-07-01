@@ -11002,7 +11002,7 @@ var _minekoa$elm_text_editor$TextEditor_Buffer$insert = F2(
 		}
 	});
 
-var _minekoa$elm_text_editor$TextEditor_Option$defaulOptions = {tabOrder: 4, indentTabsMode: false, showControlCharactor: false};
+var _minekoa$elm_text_editor$TextEditor_Option$defaultOptions = {tabOrder: 4, indentTabsMode: false, showControlCharactor: false};
 var _minekoa$elm_text_editor$TextEditor_Option$Option = F3(
 	function (a, b, c) {
 		return {tabOrder: a, indentTabsMode: b, showControlCharactor: c};
@@ -11173,7 +11173,7 @@ var _minekoa$elm_text_editor$TextEditor_Core$init = F2(
 		return {
 			ctor: '_Tuple2',
 			_0: _minekoa$elm_text_editor$TextEditor_Core$Model(id)(
-				_minekoa$elm_text_editor$TextEditor_Buffer$init(text))(_minekoa$elm_text_editor$TextEditor_Option$defaulOptions)('')(_elm_lang$core$Maybe$Nothing)(_elm_lang$core$Maybe$Nothing)(_elm_lang$core$Maybe$Nothing)(false)(_minekoa$elm_text_editor$TextEditor_Core$BlinkBlocked)(1),
+				_minekoa$elm_text_editor$TextEditor_Buffer$init(text))(_minekoa$elm_text_editor$TextEditor_Option$defaultOptions)('')(_elm_lang$core$Maybe$Nothing)(_elm_lang$core$Maybe$Nothing)(_elm_lang$core$Maybe$Nothing)(false)(_minekoa$elm_text_editor$TextEditor_Core$BlinkBlocked)(1),
 			_1: _elm_lang$core$Platform_Cmd$none
 		};
 	});
@@ -15082,6 +15082,7 @@ var _minekoa$elm_text_editor$TextEditor$view = function (model) {
 		});
 };
 
+var _minekoa$elm_text_editor$Main$defaultText = '# Markdown editor\n\n[Browse source](https://github.com/minekoa/elm-text-editor/tree/master/example/markdown)\n\n## Bullet\n\n* lv1\n* lv1\n    * lv2\n        * lv3\n\n\n1. lv1\n2. lv1\n   1. lv2\n\n## Paragraph\n\nabcd efg\nnhijk lmn\n\n    opqr stu\n\n> vw\nxyz\n\n```\ntoDiviaablePhrase = λ divi phr (n, s) ->\n    case n % divi of\n        0 -> (n, s |> Maybe.withDefault \"\" |> flip (++) phr)\n        _ -> (n, s)\n\ntoFizz = toDiviaablePhrase 3 \"Fizz\"\ntoBuzz = toDiviaablePhrase 5 \"Buzz\"\n\ntoFizzBuzz = List.map <|\n                 (λn -> (n, Nothing))\n                     >> toFizz >> toBuzz\n                     >> λ(n,s) -> Maybe.withDefault (toString n) s\n\nview : Model -> Html msg\nview model =\n    div [] [ List.range 1 100\n               |> toFizzBuzz\n               |> String.join \", \"\n               |> text\n           ]\n```\n\n## Table\n\n|果物   |個数|\n|-------|----|\n|りんご |1   |\n|ばなな!|∞  |\n\n';
 var _minekoa$elm_text_editor$Main$markdownOptions = {
 	githubFlavored: _elm_lang$core$Maybe$Just(
 		{tables: true, breaks: true}),
@@ -15089,20 +15090,21 @@ var _minekoa$elm_text_editor$Main$markdownOptions = {
 	sanitize: false,
 	smartypants: false
 };
-var _minekoa$elm_text_editor$Main$optionSetting = function (opt) {
+var _minekoa$elm_text_editor$Main$editorOptions = function () {
+	var opt = _minekoa$elm_text_editor$TextEditor_Option$defaultOptions;
 	return _elm_lang$core$Native_Utils.update(
 		opt,
 		{showControlCharactor: true});
-};
-var _minekoa$elm_text_editor$Main$styleSetting = function (sty) {
+}();
+var _minekoa$elm_text_editor$Main$editorStyle = function () {
+	var sty = _minekoa$elm_text_editor$TextEditor_Style$defaultStyle;
 	return _elm_lang$core$Native_Utils.update(
 		sty,
 		{
 			common: _elm_lang$core$Maybe$Just(
 				{color: 'snow', backgroundColor: 'dimgray', opacity: '', fontFamily: 'monospace', fontSize: '1.2em'})
 		});
-};
-var _minekoa$elm_text_editor$Main$defaultText = '# Markdown editor\n\n## Bullet\n\n* lv1\n* lv1\n    * lv2\n        * lv3\n\n\n1. lv1\n2. lv1\n   1. lv2\n\n## Paragraph\n\nabcd efg\nnhijk lmn\n\n    opqr stu\n\n> vw\nxyz\n\n```\ntoDiviaablePhrase = λ divi phr (n, s) ->\n    case n % divi of\n        0 -> (n, s |> Maybe.withDefault \"\" |> flip (++) phr)\n        _ -> (n, s)\n\ntoFizz = toDiviaablePhrase 3 \"Fizz\"\ntoBuzz = toDiviaablePhrase 5 \"Buzz\"\n\ntoFizzBuzz = List.map <|\n                 (λn -> (n, Nothing))\n                     >> toFizz >> toBuzz \n                     >> λ(n,s) -> Maybe.withDefault (toString n) s\n\nview : Model -> Html msg\nview model =\n    div [] [ List.range 1 100\n               |> toFizzBuzz\n               |> String.join \", \"\n               |> text\n           ]\n```\n\n## Table\n\n|果物   |個数|\n|-------|----|\n|りんご |1   |\n|ばなな!|∞  |\n\n';
+}();
 var _minekoa$elm_text_editor$Main$Model = F2(
 	function (a, b) {
 		return {editor: a, contents: b};
@@ -15111,34 +15113,25 @@ var _minekoa$elm_text_editor$Main$EditorMsg = function (a) {
 	return {ctor: 'EditorMsg', _0: a};
 };
 var _minekoa$elm_text_editor$Main$init = function () {
-	var _p0 = function (_p1) {
-		var _p2 = _p1;
-		var _p3 = _p2._0;
-		return {
-			ctor: '_Tuple2',
-			_0: function (m) {
-				return A2(
-					_minekoa$elm_text_editor$TextEditor$setOptions,
-					_minekoa$elm_text_editor$Main$optionSetting(
-						_minekoa$elm_text_editor$TextEditor$options(m)),
-					m);
-			}(
-				_elm_lang$core$Native_Utils.update(
-					_p3,
-					{
-						style: _minekoa$elm_text_editor$Main$styleSetting(_p3.style)
-					})),
-			_1: _p2._1
-		};
-	}(
-		A3(
-			_minekoa$elm_text_editor$TextEditor$init,
-			'editor-id1',
-			A2(
-				_elm_lang$core$Basics_ops['++'],
-				_minekoa$elm_text_editor$TextEditor_KeyBind$basic,
-				A2(_elm_lang$core$Basics_ops['++'], _minekoa$elm_text_editor$TextEditor_KeyBind$gates, _minekoa$elm_text_editor$TextEditor_KeyBind$emacsLike)),
-			_minekoa$elm_text_editor$Main$defaultText));
+	var setStyle = F2(
+		function (s, m) {
+			return _elm_lang$core$Native_Utils.update(
+				m,
+				{style: s});
+		});
+	var keybinds = A2(
+		_elm_lang$core$Basics_ops['++'],
+		_minekoa$elm_text_editor$TextEditor_KeyBind$basic,
+		A2(_elm_lang$core$Basics_ops['++'], _minekoa$elm_text_editor$TextEditor_KeyBind$gates, _minekoa$elm_text_editor$TextEditor_KeyBind$emacsLike));
+	var _p0 = A2(
+		_elm_lang$core$Tuple$mapFirst,
+		function (_p1) {
+			return A2(
+				_minekoa$elm_text_editor$TextEditor$setOptions,
+				_minekoa$elm_text_editor$Main$editorOptions,
+				A2(setStyle, _minekoa$elm_text_editor$Main$editorStyle, _p1));
+		},
+		A3(_minekoa$elm_text_editor$TextEditor$init, 'editor-id1', keybinds, _minekoa$elm_text_editor$Main$defaultText));
 	var m = _p0._0;
 	var c = _p0._1;
 	return {
@@ -15152,18 +15145,18 @@ var _minekoa$elm_text_editor$Main$init = function () {
 }();
 var _minekoa$elm_text_editor$Main$update = F2(
 	function (msg, model) {
-		var _p4 = msg;
-		var _p7 = _p4._0;
-		var _p5 = A2(_minekoa$elm_text_editor$TextEditor$update, _p7, model.editor);
-		var m = _p5._0;
-		var c = _p5._1;
-		var _p6 = _p7;
-		if (_p6.ctor === 'UpdateContents') {
+		var _p2 = msg;
+		var _p5 = _p2._0;
+		var _p3 = A2(_minekoa$elm_text_editor$TextEditor$update, _p5, model.editor);
+		var m = _p3._0;
+		var c = _p3._1;
+		var _p4 = _p5;
+		if (_p4.ctor === 'UpdateContents') {
 			return {
 				ctor: '_Tuple2',
 				_0: _elm_lang$core$Native_Utils.update(
 					model,
-					{editor: m, contents: _p6._0}),
+					{editor: m, contents: _p4._0}),
 				_1: A2(_elm_lang$core$Platform_Cmd$map, _minekoa$elm_text_editor$Main$EditorMsg, c)
 			};
 		} else {

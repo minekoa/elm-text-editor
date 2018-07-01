@@ -67,7 +67,7 @@ init id text =
     ( Model
           id                     -- id
           (Buffer.init text)
-          Option.defaulOptions
+          Option.defaultOptions
 
           ""                     -- copyStore
           Nothing                -- last_command

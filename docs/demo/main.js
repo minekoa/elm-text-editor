@@ -10862,7 +10862,7 @@ var _minekoa$elm_text_editor$TextEditor_Buffer$insert = F2(
 		}
 	});
 
-var _minekoa$elm_text_editor$TextEditor_Option$defaulOptions = {tabOrder: 4, indentTabsMode: false, showControlCharactor: false};
+var _minekoa$elm_text_editor$TextEditor_Option$defaultOptions = {tabOrder: 4, indentTabsMode: false, showControlCharactor: false};
 var _minekoa$elm_text_editor$TextEditor_Option$Option = F3(
 	function (a, b, c) {
 		return {tabOrder: a, indentTabsMode: b, showControlCharactor: c};
@@ -11033,7 +11033,7 @@ var _minekoa$elm_text_editor$TextEditor_Core$init = F2(
 		return {
 			ctor: '_Tuple2',
 			_0: _minekoa$elm_text_editor$TextEditor_Core$Model(id)(
-				_minekoa$elm_text_editor$TextEditor_Buffer$init(text))(_minekoa$elm_text_editor$TextEditor_Option$defaulOptions)('')(_elm_lang$core$Maybe$Nothing)(_elm_lang$core$Maybe$Nothing)(_elm_lang$core$Maybe$Nothing)(false)(_minekoa$elm_text_editor$TextEditor_Core$BlinkBlocked)(1),
+				_minekoa$elm_text_editor$TextEditor_Buffer$init(text))(_minekoa$elm_text_editor$TextEditor_Option$defaultOptions)('')(_elm_lang$core$Maybe$Nothing)(_elm_lang$core$Maybe$Nothing)(_elm_lang$core$Maybe$Nothing)(false)(_minekoa$elm_text_editor$TextEditor_Core$BlinkBlocked)(1),
 			_1: _elm_lang$core$Platform_Cmd$none
 		};
 	});

@@ -1,9 +1,9 @@
 module TextEditor.Option exposing
     ( Option
-    , defaulOptions
+    , defaultOptions
     )
 {-|
-@docs Option, defaulOptions
+@docs Option, defaultOptions
 -}
 
 
@@ -22,8 +22,8 @@ type alias Option =
 * indentTabsMode = False
 * showControlCharactor = False
 -}
-defaulOptions : Option
-defaulOptions =
+defaultOptions : Option
+defaultOptions =
     { tabOrder = 4
     , indentTabsMode = False
     , showControlCharactor = False
