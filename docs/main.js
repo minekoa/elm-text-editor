@@ -10936,10 +10936,27 @@ var _minekoa$elm_text_editor$TextEditor_Core$setEventRequest = F2(
 				eventRequest: _elm_lang$core$Maybe$Just(evnt)
 			});
 	});
-var _minekoa$elm_text_editor$TextEditor_Core$Model = F9(
-	function (a, b, c, d, e, f, g, h, i) {
-		return {id: a, buffer: b, option: c, copyStore: d, lastCommand: e, eventRequest: f, compositionPreview: g, focus: h, blink: i};
-	});
+var _minekoa$elm_text_editor$TextEditor_Core$Model = function (a) {
+	return function (b) {
+		return function (c) {
+			return function (d) {
+				return function (e) {
+					return function (f) {
+						return function (g) {
+							return function (h) {
+								return function (i) {
+									return function (j) {
+										return {id: a, buffer: b, option: c, copyStore: d, lastCommand: e, eventRequest: f, compositionPreview: g, focus: h, blink: i, blinkSpan: j};
+									};
+								};
+							};
+						};
+					};
+				};
+			};
+		};
+	};
+};
 var _minekoa$elm_text_editor$TextEditor_Core$Rect = F8(
 	function (a, b, c, d, e, f, g, h) {
 		return {left: a, top: b, right: c, bottom: d, x: e, y: f, width: g, height: h};
@@ -10954,7 +10971,7 @@ var _minekoa$elm_text_editor$TextEditor_Core$subscriptions = function (model) {
 	return _elm_lang$core$Platform_Sub$batch(
 		{
 			ctor: '::',
-			_0: A2(_elm_lang$core$Time$every, 0.5 * _elm_lang$core$Time$second, _minekoa$elm_text_editor$TextEditor_Core$Tick),
+			_0: A2(_elm_lang$core$Time$every, model.blinkSpan * _elm_lang$core$Time$millisecond, _minekoa$elm_text_editor$TextEditor_Core$Tick),
 			_1: {ctor: '[]'}
 		});
 };
@@ -11015,17 +11032,8 @@ var _minekoa$elm_text_editor$TextEditor_Core$init = F2(
 	function (id, text) {
 		return {
 			ctor: '_Tuple2',
-			_0: A9(
-				_minekoa$elm_text_editor$TextEditor_Core$Model,
-				id,
-				_minekoa$elm_text_editor$TextEditor_Buffer$init(text),
-				_minekoa$elm_text_editor$TextEditor_Option$defaulOptions,
-				'',
-				_elm_lang$core$Maybe$Nothing,
-				_elm_lang$core$Maybe$Nothing,
-				_elm_lang$core$Maybe$Nothing,
-				false,
-				_minekoa$elm_text_editor$TextEditor_Core$BlinkBlocked),
+			_0: _minekoa$elm_text_editor$TextEditor_Core$Model(id)(
+				_minekoa$elm_text_editor$TextEditor_Buffer$init(text))(_minekoa$elm_text_editor$TextEditor_Option$defaulOptions)('')(_elm_lang$core$Maybe$Nothing)(_elm_lang$core$Maybe$Nothing)(_elm_lang$core$Maybe$Nothing)(false)(_minekoa$elm_text_editor$TextEditor_Core$BlinkBlocked)(1),
 			_1: _elm_lang$core$Platform_Cmd$none
 		};
 	});
@@ -11102,7 +11110,8 @@ var _minekoa$elm_text_editor$TextEditor_Core$update = F2(
 					_0: _elm_lang$core$Native_Utils.update(
 						model,
 						{
-							blink: _minekoa$elm_text_editor$TextEditor_Core$blinkTransition(model.blink)
+							blink: _minekoa$elm_text_editor$TextEditor_Core$blinkTransition(model.blink),
+							blinkSpan: 500
 						}),
 					_1: _elm_lang$core$Platform_Cmd$none
 				};
@@ -14798,10 +14807,30 @@ var _minekoa$elm_text_editor$TextEditor$presentation = function (model) {
 		},
 		{
 			ctor: '::',
-			_0: _minekoa$elm_text_editor$TextEditor$lineNumArea(model.core),
+			_0: _minekoa$elm_text_editor$TextEditor$lineNumArea(
+				function (m) {
+					return (_elm_lang$core$Native_Utils.cmp(
+						A2(_minekoa$elm_text_editor$TextEditor$emToPx, m, 1),
+						0) < 1) ? _elm_lang$core$Native_Utils.update(
+						m,
+						{
+							buffer: _minekoa$elm_text_editor$TextEditor_Buffer$init('')
+						}) : m;
+				}(model.core)),
 			_1: {
 				ctor: '::',
-				_0: A2(_minekoa$elm_text_editor$TextEditor$codeArea, model.keymap, model.core),
+				_0: A2(
+					_minekoa$elm_text_editor$TextEditor$codeArea,
+					model.keymap,
+					function (m) {
+						return (_elm_lang$core$Native_Utils.cmp(
+							A2(_minekoa$elm_text_editor$TextEditor$emToPx, m, 1),
+							0) < 1) ? _elm_lang$core$Native_Utils.update(
+							m,
+							{
+								buffer: _minekoa$elm_text_editor$TextEditor_Buffer$init('')
+							}) : m;
+					}(model.core)),
 				_1: {ctor: '[]'}
 			}
 		});
@@ -14886,7 +14915,17 @@ var _minekoa$elm_text_editor$TextEditor$view = function (model) {
 										_1: {
 											ctor: '::',
 											_0: {ctor: '_Tuple2', _0: 'min-height', _1: '100%'},
-											_1: {ctor: '[]'}
+											_1: {
+												ctor: '::',
+												_0: {
+													ctor: '_Tuple2',
+													_0: 'visibility',
+													_1: (_elm_lang$core$Native_Utils.cmp(
+														A2(_minekoa$elm_text_editor$TextEditor$emToPx, model.core, 1),
+														0) < 1) ? 'hidden' : 'visible'
+												},
+												_1: {ctor: '[]'}
+											}
 										}
 									}),
 								_1: {ctor: '[]'}

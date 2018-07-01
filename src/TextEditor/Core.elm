@@ -32,7 +32,7 @@ module TextEditor.Core exposing
     , clearEventRequest
     )
 
-import Time exposing (Time, second)
+import Time exposing (Time, millisecond)
 import Task exposing (Task)
 import Dom
 
@@ -58,6 +58,7 @@ type alias Model =
 
     , focus : Bool
     , blink : BlinkState
+    , blinkSpan : Float
     }
 
 
@@ -76,6 +77,7 @@ init id text =
           Nothing                -- COMPOSER STATE
           False                  -- focus
           BlinkBlocked           -- blink
+          1                      -- blinkSpan
     , Cmd.none
     )
 
@@ -111,7 +113,9 @@ update msg model =
             )
 
         Tick new_time ->
-            ( {model | blink = blinkTransition model.blink }
+            ( { model | blink = blinkTransition model.blink
+              , blinkSpan=500 -- note: 初回更新だけとても早くしたい（描画結果のフィードバックがほしい）ので スパンが変更される
+              }
             , Cmd.none )
 
 
@@ -121,7 +125,7 @@ update msg model =
 
 subscriptions : Model -> Sub Msg
 subscriptions model = 
-    Sub.batch [ Time.every (0.5 * second) Tick ]
+    Sub.batch [ Time.every (model.blinkSpan * millisecond) Tick ]
 
 
 ------------------------------------------------------------

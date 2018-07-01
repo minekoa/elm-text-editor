@@ -596,6 +596,7 @@ view model =
               , class "elm-text-editor-scene"
               , style [ ("position", "relative") 
                       , ("min-height", "100%")
+                      , ("visibility", if (emToPx model.core 1) <= 0 then "hidden" else "visible")
                       ]
               ]
               [ presentation model
@@ -612,8 +613,8 @@ presentation model =
         , onFocusIn FocusIn
         , onFocusOut FocusOut
         ]
-        [ lineNumArea model.core
-        , codeArea model.keymap model.core
+        [ lineNumArea (model.core |>  \m -> if (emToPx m 1) <= 0 then {m| buffer= Buffer.init ""} else m)
+        , codeArea model.keymap (model.core |>  \m -> if (emToPx m 1) <= 0 then {m| buffer= Buffer.init ""} else m)
         ]
 
 lineNumArea : Core.Model -> Html Msg
@@ -1147,7 +1148,10 @@ toEmString : Int -> String
 toEmString = toString >> flip (++) "em"
 
 emToPxString : Core.Model -> Int -> String
-emToPxString model = emToPx model >> toPxString
+emToPxString model = emToPx model >> toPxString 
+
+-- note: 初回描画時に畳み込まれてしまう問題を軽減するサク
+--emToPxString model = emToPx model >> (\n-> if n == 0 then "1.25em" else toPxString n)
 
 
 
