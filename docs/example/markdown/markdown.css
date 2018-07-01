@@ -1,0 +1,171 @@
+.md {
+    padding: 0.5em 1.5em;
+}
+
+.md * {
+    box-sizing: border-box;
+}
+
+.md h1, .md h2, .md h3, .md h4, .md h5, .md h6 {
+    margin: 1.5em 0;
+    text-align: start;
+
+    font-family: inherit;
+    font-weight: 300;
+    line-height: 1.1;
+    color: inherit;
+}
+
+.md h1 {
+    font-size: 2.6em;
+    display: block;
+}
+
+.md h2 {
+    font-size: 2.15em;
+    display: block;
+}
+
+.md h3 {
+    font-size: 1.7em;
+}
+
+.md h4 {
+    font-size: 1.25em;
+}
+.md h5 {
+    font-size: 1em;
+}
+.md h6 {
+    font-size: .85em;
+}
+
+.md p, .md pre, .md blockquote {
+    margin: 0 0 1.1em;
+}
+
+.md p {
+    display: block;
+}
+
+
+.md a {
+    color: #4fa1db;
+    text-decoration: none;
+}
+.md a:hover, .md a:focus{
+    color: #216da3;
+    text-decoration: underline;
+}
+.md a:focus{
+    outline: thin dotted;
+    outline: 5px auto;
+}
+
+
+.md code, .md pre {
+    font-family: "Source Code Pro", monospace;
+    font-size: .9em;
+}
+
+.md code {
+    white-space: normal;
+    color: #3f3f3f;
+    background-color: rgba(128,128,128,0.075);
+    border-radius: 4px;
+}
+
+.md pre code {
+    word-break: break-word;
+    word-wrap: break-word;
+    white-space: pre-wrap;
+
+    background-color: rgba(128,128,128,0.05);
+    padding: .5em;
+    display: block;
+}
+
+.md pre {
+    text-align: start;
+    word-break: break-word;
+    word-wrap: break-word;
+    white-space: pre-wrap;
+    display: block;
+    
+    line-height: 1.45;
+    color: #333;
+    background-color: rgba(128,128,128,0.05);
+    border: rgba(128,128,128,0.075);
+    border-radius: 4px;
+}
+
+.md blockquote {
+    background-color: rgba(128,128,128,0.05);
+    border-left-width: 10px;
+    border-left-style: solid;
+    border-left-color: rgba(128,128,128,0.075);
+
+    border-top-right-radius: 5px;
+    border-bottom-right-radius: 5px;
+
+
+    padding: 15px 20px;
+}
+
+.md blockquote p {
+    font-size: 1em;
+    line-height: 1.45;
+}
+
+.md blockquote p:last-child {
+    margin-bottom: 0;
+}
+
+.md table {
+    border-collapse: collapse;
+}
+
+.md table th, .md table td {
+    padding: 8px;
+    line-height: 20px;
+    vartical-align: top;
+    border-top: 1px solid #ddd;
+}
+
+.md table th {
+    vertical-align: bottom;
+    text-align: left;
+
+    font-weight: bold;
+}
+
+.md ul {
+    list-style-type: disc;
+}
+
+.md ol {
+    display:block;
+    list-style-type: decimal;
+}
+
+.md li {
+    display: list-item;
+}
+
+
+
+.md dt, .md dd {
+    margin-top: 5px;
+    margin-bottom: 5px;
+
+    line-height: 1.45
+}
+
+.md dt {
+    font-weight: bold;
+    display: block;
+}
+
+.md dt {
+    margin-left:40px;
+}
