@@ -1,6 +1,6 @@
 # Elm TextEditor
 
-Elmで作られたシンプルなテキストエディタウィジェットです。[ここ](https://minekoa.github.io/elm-text-editor)で見てみることが出来ます。
+Elmで作られたシンプルなテキストエディタウィジェットです。[ここ](https://minekoa.github.io/elm-text-editor/demo)で見てみることが出来ます。
 
 textareaに対して以下の利点があります。
 

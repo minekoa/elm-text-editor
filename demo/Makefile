@@ -1,7 +1,7 @@
 ELM_MAKE=elm-make
 ELM_PACKAGE=elm-package
 
-OUT_DIR=../docs
+OUT_DIR=../docs/demo
 TARGET=main.js
 
 CSSes=$(wildcard ./*.css)

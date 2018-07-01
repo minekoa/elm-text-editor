@@ -1,6 +1,6 @@
 # Elm TextEditor
 
-It is a simple text editor widget made with Elm. You can see it [here](https://minekoa.github.io/elm-text-editor).
+It is a simple text editor widget made with Elm. You can see it [here](https://minekoa.github.io/elm-text-editor/demo).
 
 There are the following advantages for textarea.
 

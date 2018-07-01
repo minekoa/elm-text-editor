@@ -57,18 +57,18 @@ nhijk lmn
 xyz
 
 ```
-toDiviaablePhrase \\ divide phrase (n, s) ->
-    case n % divide of
-        0 -> (n, s ++ phrase)
+toDiviaablePhrase = λ divi phr (n, s) ->
+    case n % divi of
+        0 -> (n, s |> Maybe.withDefault "" |> flip (++) phr)
         _ -> (n, s)
 
 toFizz = toDiviaablePhrase 3 "Fizz"
 toBuzz = toDiviaablePhrase 5 "Buzz"
 
 toFizzBuzz = List.map <|
-                 (\\n -> (n, ""))
+                 (λn -> (n, Nothing))
                      >> toFizz >> toBuzz 
-                     >> \\ (n,s) -> if s == n then toString n else s
+                     >> λ(n,s) -> Maybe.withDefault (toString n) s
 
 view : Model -> Html msg
 view model =
