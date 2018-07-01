@@ -32,8 +32,61 @@ main =
 
 defaultText : String
 defaultText =
-    "# Realtime markdown editor (expampke)\n\n* lv1\n* lv1\n    * lv2\n\nabcd efg \nhijk lmn\n\n    opqr stu\n\n> vw\nxyz\n\n```\n01234 567\n```\n\n|果物|個数|\n|----|----|\n|りんご|1|\n|ばなな!|∞|\n"
+    """# Markdown editor
 
+## Bullet
+
+* lv1
+* lv1
+    * lv2
+        * lv3
+
+
+1. lv1
+2. lv1
+   1. lv2
+
+## Paragraph
+
+abcd efg
+nhijk lmn
+
+    opqr stu
+
+> vw
+xyz
+
+```
+toDiviaablePhrase \\ divide phrase (n, s) ->
+    case n % divide of
+        0 -> (n, s ++ phrase)
+        _ -> (n, s)
+
+toFizz = toDiviaablePhrase 3 "Fizz"
+toBuzz = toDiviaablePhrase 5 "Buzz"
+
+toFizzBuzz = List.map <|
+                 (\\n -> (n, ""))
+                     >> toFizz >> toBuzz 
+                     >> \\ (n,s) -> if s == n then toString n else s
+
+view : Model -> Html msg
+view model =
+    div [] [ List.range 1 100
+               |> toFizzBuzz
+               |> String.join ", "
+               |> text
+           ]
+```
+
+## Table
+
+|果物   |個数|
+|-------|----|
+|りんご |1   |
+|ばなな!|∞  |
+
+"""
 
 styleSetting : TextEditor.Style.Style -> TextEditor.Style.Style
 styleSetting sty =
@@ -108,7 +161,7 @@ view model =
             ]
         ]
         [ div [ style [ ( "height", "100%" ), ( "width", "50%" ) ] ] [ Html.map EditorMsg (TextEditor.view model.editor) ]
-        , div [ style [ ( "height", "100%" ), ( "width", "50%" ) ] ] [ Markdown.toHtmlWith markdownOptions [ class "md" ] (String.join "\n" model.contents) ]
+        , div [ style [ ( "height", "100%" ), ( "width", "50%" ), ("overflow","auto") ] ] [ Markdown.toHtmlWith markdownOptions [ class "md" ] (String.join "\n" model.contents) ]
         ]
 
 

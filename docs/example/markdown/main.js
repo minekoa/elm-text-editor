@@ -15102,7 +15102,7 @@ var _minekoa$elm_text_editor$Main$styleSetting = function (sty) {
 				{color: 'snow', backgroundColor: 'dimgray', opacity: '', fontFamily: 'monospace', fontSize: '1.2em'})
 		});
 };
-var _minekoa$elm_text_editor$Main$defaultText = '# Realtime markdown editor (expampke)\n\n* lv1\n* lv1\n    * lv2\n\nabcd efg \nhijk lmn\n\n    opqr stu\n\n> vw\nxyz\n\n```\n01234 567\n```\n\n|果物|個数|\n|----|----|\n|りんご|1|\n|ばなな!|∞|\n';
+var _minekoa$elm_text_editor$Main$defaultText = '# Markdown editor\n\n## Bullet\n\n* lv1\n* lv1\n    * lv2\n        * lv3\n\n\n1. lv1\n2. lv1\n   1. lv2\n\n## Paragraph\n\nabcd efg\nnhijk lmn\n\n    opqr stu\n\n> vw\nxyz\n\n```\ntoDiviaablePhrase \\ divide phrase (n, s) ->\n    case n % divide of\n        0 -> (n, s ++ phrase)\n        _ -> (n, s)\n\ntoFizz = toDiviaablePhrase 3 \"Fizz\"\ntoBuzz = toDiviaablePhrase 5 \"Buzz\"\n\ntoFizzBuzz = List.map <|\n                 (\\n -> (n, \"\"))\n                     >> toFizz >> toBuzz \n                     >> \\ (n,s) -> if s == n then toString n else s\n\nview : Model -> Html msg\nview model =\n    div [] [ List.range 1 100\n               |> toFizzBuzz\n               |> String.join \", \"\n               |> text\n           ]\n```\n\n## Table\n\n|果物   |個数|\n|-------|----|\n|りんご |1   |\n|ばなな!|∞  |\n\n';
 var _minekoa$elm_text_editor$Main$Model = F2(
 	function (a, b) {
 		return {editor: a, contents: b};
@@ -15242,7 +15242,11 @@ var _minekoa$elm_text_editor$Main$view = function (model) {
 								_1: {
 									ctor: '::',
 									_0: {ctor: '_Tuple2', _0: 'width', _1: '50%'},
-									_1: {ctor: '[]'}
+									_1: {
+										ctor: '::',
+										_0: {ctor: '_Tuple2', _0: 'overflow', _1: 'auto'},
+										_1: {ctor: '[]'}
+									}
 								}
 							}),
 						_1: {ctor: '[]'}
