@@ -10,16 +10,15 @@ module StyleMenu exposing
 import Html exposing (..)
 import Html.Attributes exposing (..)
 import Html.Events exposing (..)
-import Json.Decode as Json
+import Json.Encode
+import Json.Decode
 
 import Ports.WebStrage as WebStrage
+import TextEditor.Style as EditorStyle
+import Dict
 
 type alias Model =
-    { bgColor : SelectableList
-    , fgColor : SelectableList
-    , fontFamily : SelectableList
-    , fontSize : SelectableList
-
+    { style : EditorStyle.Style
     , editTarget : EditTarget
     }
 
@@ -40,33 +39,27 @@ targetName target =
         EditFontFamily s _ _ -> s
         EditFontSize s _ _ -> s
 
-init: (Model , Cmd Msg)
-init =
+init: EditorStyle.Style -> (Model , Cmd Msg)
+init sty =
     ( Model
-          initBgColor
-          initFgColor
-          initFontFamily
-          initFontColor
-          (EditColor "bg-color" ChangeBGColor initBgColor)
-    , Cmd.batch [ WebStrage.localStrage_getItem "bg-color"
-                , WebStrage.localStrage_getItem "fg-color"
-                , WebStrage.localStrage_getItem "font-family"
-                , WebStrage.localStrage_getItem "font-size"
+          sty
+          (EditColor "bg-color" Change_Common_BGColor (bgColorList "inherit"))
+    , Cmd.batch [ WebStrage.localStrage_getItem "style"
                 ]
     )
 
 
-initBgColor : SelectableList
-initBgColor = { value = "inherit", list = ["inherit", "black", "white", "linen", "dimgray", "whitesmoke", "midnightblue", "darkolivegreen", "aquamarine", "beige", "mediumvioletred", "darkslategray", "lavender"] }
+bgColorList : String -> SelectableList
+bgColorList v = { value = v, list = ["inherit", "black", "white", "linen", "dimgray", "whitesmoke", "midnightblue", "darkolivegreen", "aquamarine", "beige", "mediumvioletred", "darkslategray", "lavender"] }
 
-initFgColor : SelectableList
-initFgColor = { value = "inherit", list = ["inherit", "black", "white", "aqua", "coral", "midnightblue", "darkslategray", "ghostwhite", "lavender", "palevioletred", "darkmagenta", "moccasin", "rosybrown"] }
+fgColorList : String -> SelectableList
+fgColorList v = { value = v, list = ["inherit", "black", "white", "aqua", "coral", "midnightblue", "darkslategray", "ghostwhite", "lavender", "palevioletred", "darkmagenta", "moccasin", "rosybrown"] }
 
-initFontFamily : SelectableList
-initFontFamily = { value = "inherit", list = ["inherit", "cursive", "fantasy", "monospace", "sans-serif", "serif"] }
+fontFamilyList : String -> SelectableList
+fontFamilyList v = { value = v, list = ["inherit", "cursive", "fantasy", "monospace", "sans-serif", "serif"] }
 
-initFontColor : SelectableList
-initFontColor = { value = "inherit", list = ["inherit", "0.5em", "1em", "1.2em", "1.5em", "2em", "3em", "5em", "7em", "10em"] }
+fontSizeList : String-> SelectableList
+fontSizeList v = { value = v, list = ["inherit", "0.5em", "1em", "1.2em", "1.5em", "2em", "3em", "5em", "7em", "10em"] }
 
 
 selectValue : String -> SelectableList -> SelectableList
@@ -74,10 +67,10 @@ selectValue s m =
     { m | value = s }
 
 type Msg
-    = ChangeBGColor String
-    | ChangeFGColor String
-    | ChangeFontFamily String
-    | ChangeFontSize String
+    = Change_Common_BGColor String
+    | Change_Common_FGColor String
+    | Change_Common_FontFamily String
+    | Change_Common_FontSize String
     | TouchBackgroundColor
     | TouchForegroundColor
     | TouchFontSize
@@ -85,85 +78,115 @@ type Msg
     | LoadSetting (String, Maybe String)
 
 
+defaultCommonStyle : EditorStyle.CodeStyle
+defaultCommonStyle =
+    { color = "inherit"
+    , backgroundColor = "inherit"
+    , opacity = "inherit"
+    , fontFamily = "inherit"
+    , fontSize = "inherit"
+    }
+
+
 update : Msg -> Model -> (Model, Cmd Msg)
 update msg model =
     case msg of
-        LoadSetting (key, maybe_value) ->
-            ( case maybe_value of
-                  Just v ->
-                      (case key of
-                          "bg-color"    -> { model | bgColor    = selectValue v model.bgColor }
-                          "fg-color"    -> { model | fgColor    = selectValue v model.fgColor }
-                          "font-family" -> { model | fontFamily = selectValue v model.fontFamily }
-                          "font-size"   -> { model | fontSize   = selectValue v model.fontSize }
-                          _ -> model
-                      )
-                  Nothing -> model
+        LoadSetting ("style", maybe_value) ->
+            ( maybe_value
+                |> Result.fromMaybe "value is nothing"
+                |> Result.andThen (Json.Decode.decodeString decodeStyle)
+                |> Debug.log "loadstyle-parse-msg"
+                |> Result.withDefault model.style
+                |> (\newstyle -> { model | style = newstyle })
             , Cmd.none
             )
+        LoadSetting _ ->
+            ( model, Cmd.none )
 
-        ChangeBGColor s ->
+        Change_Common_BGColor s ->
             let
-                bgColor = model.bgColor
+                updateCommonBgColor = \s edstyle ->
+                                      let
+                                          common = edstyle.common |> Maybe.withDefault defaultCommonStyle
+                                      in
+                                          { edstyle | common = Just { common | backgroundColor = s } }
+                newstyle = updateCommonBgColor s model.style 
             in
                 ( { model
-                      | bgColor    = { bgColor | value = s }
-                      , editTarget = EditColor "bg-color" ChangeBGColor { bgColor | value = s }
+                      | style      = newstyle
+                      , editTarget = EditColor "bg-color" Change_Common_BGColor (bgColorList s)
                   }
-                , WebStrage.localStrage_setItem ("bg-color", s)
+                , WebStrage.localStrage_setItem ("style", encodeStyle newstyle |> Json.Encode.encode 0 )
                 )
-        ChangeFGColor s ->
+
+        Change_Common_FGColor s ->
             let
-                fgColor = model.fgColor
+                updateCommonFgColor = \s edstyle ->
+                                      let
+                                          common = edstyle.common |> Maybe.withDefault defaultCommonStyle
+                                      in
+                                          { edstyle | common = Just { common | color = s } }
+                newstyle      = updateCommonFgColor s model.style
             in
                 ( { model
-                      | fgColor    = { fgColor | value = s }
-                      , editTarget = EditColor "fg-color" ChangeFGColor { fgColor | value = s }
+                      | style      = newstyle
+                      , editTarget = EditColor "fg-color" Change_Common_FGColor (fgColorList s)
                   }
-                , WebStrage.localStrage_setItem ("fg-color", s)
+                , WebStrage.localStrage_setItem ("style", encodeStyle newstyle |> Json.Encode.encode 0 )
                 )
-        ChangeFontFamily s ->
+
+        Change_Common_FontFamily s ->
             let
-                fontFamily = model.fontFamily
+                updateCommonFtFamily = \s edstyle ->
+                                      let
+                                          common = edstyle.common |> Maybe.withDefault defaultCommonStyle
+                                      in
+                                          { edstyle | common = Just { common | fontFamily = s } }
+                newstyle = updateCommonFtFamily s model.style
             in
                 ( { model
-                      | fontFamily = { fontFamily | value = s }
-                      , editTarget = EditFontFamily "font-family" ChangeFontFamily { fontFamily | value = s }
+                      | style      = newstyle
+                      , editTarget = EditFontFamily "font-family" Change_Common_FontFamily (fontFamilyList s)
                   }
-                , WebStrage.localStrage_setItem ("font-family", s)
+                , WebStrage.localStrage_setItem ("style", encodeStyle newstyle |> Json.Encode.encode 0)
                 )
-        ChangeFontSize s ->
+        Change_Common_FontSize s ->
             let
-                fontSize = model.fontSize
+                updateCommonFtSize = \s edstyle ->
+                                      let
+                                          common = edstyle.common |> Maybe.withDefault defaultCommonStyle
+                                      in
+                                          { edstyle | common = Just { common | fontSize = s } }
+                newstyle = updateCommonFtSize s model.style
             in
                 ( { model
-                      | fontSize = { fontSize | value = s }
-                      , editTarget = EditFontSize "font-size" ChangeFontSize { fontSize | value = s }
+                      | style      = newstyle
+                      , editTarget = EditFontSize "font-size" Change_Common_FontSize (fontSizeList s)
                   }
-                , WebStrage.localStrage_setItem ("font-size", s)
+                , WebStrage.localStrage_setItem ("style", encodeStyle newstyle |> Json.Encode.encode 0)
                 )
 
         TouchBackgroundColor ->
             ( { model
-                  | editTarget = EditColor "bg-color" ChangeBGColor model.bgColor
+                  | editTarget = EditColor "bg-color" Change_Common_BGColor (model.style.common |> Maybe.andThen (\m -> Just m.backgroundColor) |> Maybe.withDefault "inherit" |> bgColorList)
               }
             , Cmd.none
             )
         TouchForegroundColor ->
             ( { model
-                  | editTarget = EditColor "fg-color" ChangeFGColor model.fgColor
+                  | editTarget = EditColor "fg-color" Change_Common_FGColor (model.style.common |> Maybe.andThen (\m -> Just m.color) |>Maybe.withDefault "inherit" |> fgColorList)
               }
             , Cmd.none
             )
         TouchFontFalily ->
             ( { model
-                  | editTarget = EditFontFamily "font-family" ChangeFontFamily model.fontFamily
+                  | editTarget = EditFontFamily "font-family" Change_Common_FontFamily (model.style.common |> Maybe.andThen (\m -> Just m.fontFamily) |> Maybe.withDefault "inherit" |> fontFamilyList)
               }
             , Cmd.none
             )
         TouchFontSize ->
             ( { model
-                  | editTarget = EditFontSize "font-size" ChangeFontSize model.fontSize
+                  | editTarget = EditFontSize "font-size" Change_Common_FontSize (model.style.common |> Maybe.andThen (\m -> Just m.fontSize) |> Maybe.withDefault "inherit" |> fontSizeList)
               }
             , Cmd.none
             )
@@ -198,25 +221,25 @@ view model =
                     , class <| if targetName model.editTarget == "bg-color" then "menu-item-active" else "menu-item"
                     ]
                     [ span [] [text "background-color: "]
-                    , span [] [text model.bgColor.value ]
+                    , span [] [model.style.common |> Maybe.andThen (\m -> Just m.backgroundColor) |> Maybe.withDefault "" |> text ]
                     ]
               , div [ onClick TouchForegroundColor
                     , class <| if targetName model.editTarget == "fg-color" then "menu-item-active" else "menu-item"
                     ]
                     [ span [] [text "color: "]
-                    , span [] [text model.fgColor.value ]
+                    , span [] [model.style.common |> Maybe.andThen (\m -> Just m.color) |> Maybe.withDefault "" |> text ]
                     ]
               , div [ onClick TouchFontFalily
                     , class <| if targetName model.editTarget == "font-family" then "menu-item-active" else "menu-item"
                     ]
                     [ span [] [text "font-family: "]
-                    , span [] [text model.fontFamily.value ]
+                    , span [] [model.style.common |> Maybe.andThen (\m -> Just m.fontFamily) |> Maybe.withDefault "" |> text ]
                     ]
               , div [ onClick TouchFontSize
                     , class <| if targetName model.editTarget == "font-size" then "menu-item-active" else "menu-item"
                     ]
                     [ span [] [text "font-size: "]
-                    , span [] [text model.fontSize.value ]
+                    , span [] [model.style.common |> Maybe.andThen (\m -> Just m.fontSize) |> Maybe.withDefault "" |> text ]
                    ]
               ]
         , case model.editTarget of
@@ -290,14 +313,102 @@ fontSizeSelector tagger fontsizeList =
 
 
 
-        
-selectList: String -> List String -> (String -> msg) -> Html msg
-selectList idx values tagger =
-    select [on "change" (Json.map tagger (Json.at ["target","value"] Json.string))]
-        ( List.map
-              (\ v -> option
-                   [ value v , selected (idx == v)]
-                   [ text v ]
-              ) values
-        )
+
+------------------------------------------------------------
+-- encode / decode for save local strage
+------------------------------------------------------------
+
+encodeStyle : EditorStyle.Style -> Json.Encode.Value
+encodeStyle sty =
+    Json.Encode.object 
+        [ ("common"     , sty.common     |> Maybe.andThen (\s -> encodeCodeStyle s |> Just)       |> Maybe.withDefault Json.Encode.null)
+        , ("numberLine" , sty.numberLine |> Maybe.andThen (\s -> encodeLineNumberStyle s |> Just) |> Maybe.withDefault Json.Encode.null)
+        , ("cursor"     , sty.cursor     |> Maybe.andThen (\s -> encodeColorStyle s |> Just)      |> Maybe.withDefault Json.Encode.null)
+        , ("selection"  , sty.selection  |> Maybe.andThen (\s -> encodeFontFaceStyle s |> Just)   |> Maybe.withDefault Json.Encode.null)
+        , ("composing"  , sty.composing  |> Maybe.andThen (\s -> encodeFontFaceStyle s |> Just)   |> Maybe.withDefault Json.Encode.null)
+        , ("fontFaces"  , sty.fontFaces  |> List.map (\ (k,v) -> (k, encodeFontFaceStyle v)) |> Json.Encode.object )
+        ]
+
+encodeCodeStyle : EditorStyle.CodeStyle -> Json.Encode.Value
+encodeCodeStyle sty =
+    Json.Encode.object
+        [ ("color"          , sty.color |> Json.Encode.string)
+        , ("backgroundColor", sty.backgroundColor |> Json.Encode.string)
+        , ("opacity"        , sty.opacity |> Json.Encode.string)
+        , ("fontFamily"     , sty.fontFamily |> Json.Encode.string)
+        , ("fontSize"       , sty.fontSize |> Json.Encode.string)
+        ]
+
+encodeLineNumberStyle : EditorStyle.LineNumberStyle -> Json.Encode.Value
+encodeLineNumberStyle sty =
+    Json.Encode.object
+        [ ("color"          , sty.color |> Json.Encode.string)
+        , ("backgroundColor", sty.backgroundColor |> Json.Encode.string)
+        , ("opacity"        , sty.opacity |> Json.Encode.string)
+        , ("borderRight"    , sty.borderRight |> Json.Encode.string)
+        , ("marginRight"    , sty.marginRight |> Json.Encode.string)
+        ]
+
+encodeFontFaceStyle : EditorStyle.FontFaceStyle -> Json.Encode.Value
+encodeFontFaceStyle sty =
+    Json.Encode.object
+        [ ("color"          , sty.color |> Json.Encode.string)
+        , ("backgroundColor", sty.backgroundColor |> Json.Encode.string)
+        , ("opacity"        , sty.opacity |> Json.Encode.string)
+        ]
+
+encodeColorStyle : EditorStyle.ColorStyle -> Json.Encode.Value
+encodeColorStyle sty =
+    Json.Encode.object
+        [ ("color"          , sty.color |> Json.Encode.string)
+        , ("opacity"        , sty.opacity |> Json.Encode.string)
+        ]
+
+
+decodeStyle: Json.Decode.Decoder EditorStyle.Style
+decodeStyle =
+    Json.Decode.map6
+        EditorStyle.Style
+            (Json.Decode.field "common"     (Json.Decode.nullable decodeCodeStyle) )
+            (Json.Decode.field "numberLine" (Json.Decode.nullable decodeLineNumberStyle))
+            (Json.Decode.field "cursor"     (Json.Decode.nullable decodeColorStyle))
+            (Json.Decode.field "selection"  (Json.Decode.nullable decodeFontFaceStyle))
+            (Json.Decode.field "composing"  (Json.Decode.nullable decodeFontFaceStyle))
+            (Json.Decode.field "fontFaces"  (Json.Decode.keyValuePairs decodeFontFaceStyle))
+
+decodeCodeStyle : Json.Decode.Decoder EditorStyle.CodeStyle
+decodeCodeStyle =
+    Json.Decode.map5
+        EditorStyle.CodeStyle
+            (Json.Decode.field "color"             Json.Decode.string)
+            (Json.Decode.field "backgroundColor"   Json.Decode.string)
+            (Json.Decode.field "opacity"           Json.Decode.string)
+            (Json.Decode.field "fontFamily"        Json.Decode.string)
+            (Json.Decode.field "fontSize"          Json.Decode.string)
+
+decodeLineNumberStyle : Json.Decode.Decoder EditorStyle.LineNumberStyle
+decodeLineNumberStyle =
+    Json.Decode.map5
+        EditorStyle.LineNumberStyle
+            (Json.Decode.field "color"             Json.Decode.string)
+            (Json.Decode.field "backgroundColor"   Json.Decode.string)
+            (Json.Decode.field "opacity"           Json.Decode.string)
+            (Json.Decode.field "borderRight"       Json.Decode.string)
+            (Json.Decode.field "marginRight"       Json.Decode.string)
+
+
+decodeFontFaceStyle : Json.Decode.Decoder EditorStyle.FontFaceStyle
+decodeFontFaceStyle =
+    Json.Decode.map3
+        EditorStyle.FontFaceStyle
+            (Json.Decode.field "color"             Json.Decode.string)
+            (Json.Decode.field "backgroundColor"   Json.Decode.string)
+            (Json.Decode.field "opacity"           Json.Decode.string)
+
+decodeColorStyle : Json.Decode.Decoder EditorStyle.ColorStyle
+decodeColorStyle =
+    Json.Decode.map2
+        EditorStyle.ColorStyle
+            (Json.Decode.field "color"             Json.Decode.string)
+            (Json.Decode.field "opacity"           Json.Decode.string)
 

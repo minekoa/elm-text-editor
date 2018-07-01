@@ -71,7 +71,7 @@ init =
         content = ""
         buf = makeBuffer "*scratch*" content
         (bm, bc) = Editor.init "editor-sample1" (KeyBind.basic ++ KeyBind.gates ++ KeyBind.emacsLike) content
-        (smm, smc) = StyleMenu.init
+        (smm, smc) = StyleMenu.init (bm.style)
         (kmm, kmc) = KeyBindMenu.init
         (stm, stc) = SettingMenu.init (Editor.options bm)
     in
@@ -182,9 +182,11 @@ update msg model =
         StyleMenuMsg smsg ->
             let
                 (m, c) = StyleMenu.update smsg model.style
+                setStyle = \sty mdl -> { mdl | style = sty }
             in
                 ( { model
-                      | style = m
+                      | editor = setStyle m.style  model.editor
+                      , style = m
                   }
                 , Cmd.map StyleMenuMsg c
                 )
@@ -346,10 +348,6 @@ view model =
         , div [ style [ ("margin", "0"), ("padding", "0"), ("width", "100%"), ("height", "100%")
                       , ("overflow","hidden")
                       , ("flex-grow", "8")
-                      , ("color", model.style.fgColor.value)
-                      , ("background-color", model.style.bgColor.value)
-                      , ("font-family", model.style.fontFamily.value)
-                      , ("font-size", model.style.fontSize.value)
                       ]
               ]
               [ Html.map EditorMsg (Editor.view model.editor) ]

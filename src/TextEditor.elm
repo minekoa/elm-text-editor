@@ -566,7 +566,9 @@ view model =
         [ stylesheet model.style (frameID model.core)
         , div [ id <| sceneID model.core
               , class "elm-text-editor-scene"
-              , style [ ("position", "relative") ]
+              , style [ ("position", "relative") 
+                      , ("min-height", "100%")
+                      ]
               ]
               [ presentation model
               ]

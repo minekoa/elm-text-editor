@@ -4,7 +4,6 @@ module TextEditor.Option exposing
     )
 {-|
 @docs Option, defaulOptions
-
 -}
 
 
@@ -15,6 +14,7 @@ type alias Option =
     , indentTabsMode : Bool
     , showControlCharactor : Bool
     }
+
 
 {-| Create Editor Options by default.
 
@@ -29,4 +29,3 @@ defaulOptions =
     , showControlCharactor = False
     }
 
-    
