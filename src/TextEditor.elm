@@ -1,7 +1,7 @@
 module TextEditor exposing ( Model
                            , init
                            , update
-                           , Msg(..)
+                           , Msg(UpdateContents)
                            , subscriptions
                            , view
 
@@ -163,6 +163,7 @@ setOptions opts model =
 execCommand : TextEditor.Commands.Command -> Model -> (Model, Cmd Msg)
 execCommand cmd model =
     exec_command_proc cmd model
+        |> invokeEvent
         |> logging "exec-comd" cmd.id
 
 exec_command_proc : TextEditor.Commands.Command -> Model -> (Model, Cmd Msg)
@@ -202,6 +203,7 @@ Input does not occur with IME input confirmation (IME confirmation input is Comp
 -}
 type Msg
     = CoreMsg Core.Msg
+    | UpdateContents (List String)
     | Pasted String
     | Copied String
     | Cutted String
@@ -220,15 +222,36 @@ type Msg
     | DragEnd Mouse.Position
     | Logging String String Date.Date
 
+
+invokeEvent : (Model, Cmd Msg) -> (Model, Cmd Msg)
+invokeEvent (model, cmdmsg) =
+    case model.core.eventRequest of
+        Just (Core.EventInput contents) ->
+            ( { model | core = Core.clearEventRequest model.core }
+            , Cmd.batch [ cmdmsg
+                        , Task.perform (\_ -> UpdateContents contents) (Task.succeed True)
+                        ]
+            )
+        Nothing ->
+            (model, cmdmsg)
+
 {-| Update model 
 -}
 update : Msg -> Model -> (Model, Cmd Msg)
 update msg model =
     case msg of
         CoreMsg cmsg ->
-            Core.update cmsg model.core
-                |> Tuple.mapFirst (\cm -> { model | core = cm } )
-                |> Tuple.mapSecond (Cmd.map CoreMsg)
+            let
+                (cm, cc) = Core.update cmsg model.core
+            in
+                ( { model | core = cm  }
+                , Cmd.map CoreMsg cc
+                )
+                |> invokeEvent
+
+        -- invoke されるやつ
+        UpdateContents contents ->
+            ( model, Cmd.none )
 
         -- System-Clipboard's Action Notification (Do Fitting Elm's Model State)
 
@@ -238,13 +261,14 @@ update msg model =
                 |> setLastCommand "clipboard_pasete"
                 |> logging "pasted" s
                 |> Tuple.mapSecond (\c -> Cmd.batch [c, Cmd.map CoreMsg (Core.doFocus model.core)] )
+                |> invokeEvent
 
         Copied s ->
             updateMap model (Commands.copy model.core)
                 |> Tuple.mapFirst (\m -> {m|drag=False})
                 |> setLastCommand "clipboard_copy"
                 |> logging "copied" s
-                |> Tuple.mapSecond (\c -> Cmd.batch [c, Cmd.map CoreMsg (Core.doFocus model.core)] )
+                |> invokeEvent
 
         Cutted s ->
             updateMap model (Commands.cut model.core)
@@ -252,14 +276,17 @@ update msg model =
                 |> setLastCommand "clipboard_cut"
                 |> logging "cutted" s
                 |> Tuple.mapSecond (\c -> Cmd.batch [c, Cmd.map CoreMsg (Core.doFocus model.core)] )
+                |> invokeEvent
 
         -- View Operation Event
 
         Input s ->
             input s model
+                |> invokeEvent
 
         KeyDown keyevent ->
             keyDown keyevent model
+                |> invokeEvent
  
         KeyPress code ->
             keyPress code model
@@ -275,6 +302,7 @@ update msg model =
 
         CompositionEnd data ->
             compositionEnd data model
+                |> invokeEvent
 
         FocusIn _ ->
             let

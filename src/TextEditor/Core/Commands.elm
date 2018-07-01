@@ -65,35 +65,35 @@ batch commands =
 ------------------------------------------------------------
 
 moveForward : Model -> (Model, Cmd Msg)
-moveForward = editF Buffer.moveForward
+moveForward = moveF Buffer.moveForward
 
 moveBackward : Model -> (Model, Cmd Msg)
-moveBackward = editF Buffer.moveBackward
+moveBackward = moveF Buffer.moveBackward
 
 movePreviosLine : Model -> (Model, Cmd Msg)
-movePreviosLine = editF Buffer.movePreviosLine
+movePreviosLine = moveF Buffer.movePreviosLine
 
 moveNextLine : Model -> (Model, Cmd Msg)
-moveNextLine = editF Buffer.moveNextLine
+moveNextLine = moveF Buffer.moveNextLine
 
 moveBOL : Model -> (Model, Cmd Msg)
-moveBOL model = editF (Buffer.moveAt (Position model.buffer.cursor.row 0)) model
+moveBOL model = moveF (Buffer.moveAt (Position model.buffer.cursor.row 0)) model
 
 moveEOL : Model -> (Model, Cmd Msg)
 moveEOL model =
     let
         col = Buffer.currentLine model.buffer |> String.length
     in
-        editF (Buffer.moveAt (Position model.buffer.cursor.row col)) model
+        moveF (Buffer.moveAt (Position model.buffer.cursor.row col)) model
 
 moveAt : Buffer.Position -> Model -> (Model, Cmd Msg)
-moveAt pos =  editF (Buffer.moveAt pos)
+moveAt pos =  moveF (Buffer.moveAt pos)
 
 moveNextWord : Model -> (Model, Cmd Msg)
-moveNextWord = editF Buffer.moveNextWord
+moveNextWord = moveF Buffer.moveNextWord
 
 movePreviosWord : Model -> (Model, Cmd Msg)
-movePreviosWord = editF Buffer.movePreviosWord
+movePreviosWord = moveF Buffer.movePreviosWord
 
 
 ------------------------------------------------------------
@@ -101,42 +101,42 @@ movePreviosWord = editF Buffer.movePreviosWord
 ------------------------------------------------------------
 
 selectBackward: Model -> (Model, Cmd Msg)
-selectBackward = editF Buffer.selectBackward
+selectBackward = moveF Buffer.selectBackward
 
 selectForward: Model -> (Model, Cmd Msg)
-selectForward = editF Buffer.selectForward
+selectForward = moveF Buffer.selectForward
 
 selectPreviosLine: Model -> (Model, Cmd Msg)
-selectPreviosLine = editF Buffer.selectPreviosLine
+selectPreviosLine = moveF Buffer.selectPreviosLine
 
 selectNextLine: Model -> (Model, Cmd Msg)
-selectNextLine = editF Buffer.selectNextLine
+selectNextLine = moveF Buffer.selectNextLine
 
 selectPreviosWord: Model -> (Model, Cmd Msg)
-selectPreviosWord = editF Buffer.selectPreviosWord
+selectPreviosWord = moveF Buffer.selectPreviosWord
 
 selectNextWord: Model -> (Model, Cmd Msg)
-selectNextWord = editF Buffer.selectNextWord
+selectNextWord = moveF Buffer.selectNextWord
 
 
 selectAt: Buffer.Position -> Model -> (Model, Cmd Msg)
-selectAt pos = editF (Buffer.selectAt pos)
+selectAt pos = moveF (Buffer.selectAt pos)
 
 ------------------------------------------------------------
 -- mark
 ------------------------------------------------------------
 
 markSet : Model -> (Model, Cmd Msg)
-markSet = editF Buffer.markSet
+markSet = moveF Buffer.markSet
 
 markClear : Model -> (Model, Cmd Msg)
-markClear = editF Buffer.markClear
+markClear = moveF Buffer.markClear
 
 markFlip : Model -> (Model, Cmd Msg)
-markFlip = editF (\m -> if Buffer.isMarkActive m then Buffer.markClear m else Buffer.markSet m)
+markFlip = moveF (\m -> if Buffer.isMarkActive m then Buffer.markClear m else Buffer.markSet m)
 
 gotoMark : Model -> (Model, Cmd Msg)
-gotoMark = editF Buffer.gotoMark
+gotoMark = moveF Buffer.gotoMark
 
 
 ------------------------------------------------------------
@@ -149,7 +149,15 @@ editF : (Buffer.Buffer -> Buffer.Buffer) -> Model -> (Model, Cmd Msg)
 editF f model =
     { model | buffer = f model.buffer }
         |> Core.blinkBlock
+        |> \m -> Core.setEventRequest (Core.EventInput m.buffer.contents) m
         |> Core.withEnsureVisibleCmd
+
+moveF : (Buffer.Buffer -> Buffer.Buffer) -> Model -> (Model, Cmd Msg)
+moveF f model =
+    { model | buffer = f model.buffer }
+        |> Core.blinkBlock
+        |> Core.withEnsureVisibleCmd
+
 
 
 -- API
@@ -174,6 +182,7 @@ undo : Model -> (Model, Cmd Msg)
 undo model =
     { model | buffer = (Buffer.undo >> Buffer.selectionClear) model.buffer }
         |> Core.blinkBlock
+        |> \m -> Core.setEventRequest (Core.EventInput m.buffer.contents) m
         |> Core.withEnsureVisibleCmd
 
 
@@ -210,6 +219,7 @@ cut model =
           }
     )
         |> Core.blinkBlock
+        |> \m -> Core.setEventRequest (Core.EventInput m.buffer.contents) m
         |> Core.withEnsureVisibleCmd
 
 paste : String -> Model -> (Model, Cmd Msg)
@@ -221,6 +231,7 @@ paste text model =
         , copyStore = text  -- clipboard経由のペーストもあるので、copyStoreを更新しておく
     }
         |> Core.blinkBlock
+        |> \m -> Core.setEventRequest (Core.EventInput m.buffer.contents) m
         |> Core.withEnsureVisibleCmd
 
 
@@ -246,6 +257,7 @@ killLine model =
                            |> Buffer.selectionClear
           }
         |> Core.blinkBlock
+        |> \m -> Core.setEventRequest (Core.EventInput m.buffer.contents) m
         |> Core.withEnsureVisibleCmd
 
 
@@ -306,6 +318,7 @@ indent model =
                                                 )
         }
             |> Core.blinkBlock
+            |> \m -> Core.setEventRequest (Core.EventInput m.buffer.contents) m
             |> Core.withEnsureVisibleCmd
 
 unindent : Model -> (Model, Cmd Msg)
@@ -349,6 +362,7 @@ unindent model =
                                                 )
         }
             |> Core.blinkBlock
+            |> \m -> Core.setEventRequest (Core.EventInput m.buffer.contents) m
             |> Core.withEnsureVisibleCmd
 
 

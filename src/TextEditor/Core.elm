@@ -1,6 +1,6 @@
 module TextEditor.Core exposing
     ( Model
-    , Msg(IgnoreResult)
+    , Msg
     , init
     , update
     , subscriptions
@@ -26,6 +26,10 @@ module TextEditor.Core exposing
     , doFocus
     , elaborateInputArea
     , elaborateTapArea
+
+    , EventType(..)
+    , setEventRequest
+    , clearEventRequest
     )
 
 import Time exposing (Time, second)
@@ -47,6 +51,7 @@ type alias Model =
 
     , copyStore : String
     , lastCommand : Maybe String
+    , eventRequest : Maybe EventType
 
     -- frame
     , compositionPreview : Maybe String --IMEで返還中の未確定文字
@@ -54,6 +59,7 @@ type alias Model =
     , focus : Bool
     , blink : BlinkState
     }
+
 
 init : String -> String -> (Model, Cmd Msg)
 init id text =
@@ -64,6 +70,7 @@ init id text =
 
           ""                     -- copyStore
           Nothing                -- last_command
+          Nothing
 
           -- frame states
           Nothing                -- COMPOSER STATE
@@ -71,6 +78,17 @@ init id text =
           BlinkBlocked           -- blink
     , Cmd.none
     )
+
+type EventType
+    = EventInput (List String)
+
+setEventRequest : EventType -> Model -> Model
+setEventRequest evnt model =
+    { model | eventRequest = Just evnt }
+
+clearEventRequest: Model -> Model
+clearEventRequest model =
+    { model | eventRequest = Nothing }
 
 ------------------------------------------------------------
 -- update
@@ -198,8 +216,8 @@ compositionEnd data model =
         , compositionPreview = Nothing
     }
     |> blinkBlock
+    |> \m -> setEventRequest (EventInput m.buffer.contents) m
     |> withEnsureVisibleCmd
-
 
 
 -- Scroll (by Cursor)
@@ -214,6 +232,7 @@ withEnsureVisibleCmd model =
     --       
     --       カーソルが画面外にいるときの、画面タップでのカーソル移動にて、
     --       こうしないと妙な挙動をした
+
 
 ------------------------------------------------------------
 -- Cmd
@@ -235,6 +254,7 @@ elaborateTapArea model =
 ensureVisible: Model -> Cmd Msg
 ensureVisible model =
     Task.perform (\_ -> IgnoreResult) (ensureVisibleTask (frameID model) (cursorID model))
+
 
 ------------------------------------------------------------
 -- Native
