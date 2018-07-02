@@ -94,6 +94,7 @@ var _minekoa$elm_text_editor$Native_Mice = function() {
             return true;
         }
         input_area.input_controll_handlers_registerd = true;
+        input_area.isComposing = false;
         console.log("regist inpt-ctrl event handlers");
 
 
@@ -108,9 +109,13 @@ var _minekoa$elm_text_editor$Native_Mice = function() {
          */
 
         input_area.addEventListener( "input", e => {
-            if (!e.isComposing) {
+            if (!input_area.isComposing) {
                 input_area.value = "";
             }
+        });
+
+        input_area.addEventListener( "compositionstart", e => {
+            input_area.isComposing = true; /* EdgeがKeyboardEvent.isComposingに対応したら自前でフラグ管理するのやめたい...*/
         });
 
         input_area.addEventListener( "compositionend", e => {
@@ -124,6 +129,7 @@ var _minekoa$elm_text_editor$Native_Mice = function() {
              */
 
             input_area.value = "";
+            input_area.isComposing = false;
         });
 
 

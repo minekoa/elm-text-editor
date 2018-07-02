@@ -12372,6 +12372,7 @@ var _minekoa$elm_text_editor$Native_Mice = function() {
             return true;
         }
         input_area.input_controll_handlers_registerd = true;
+        input_area.isComposing = false;
         console.log("regist inpt-ctrl event handlers");
 
 
@@ -12386,9 +12387,13 @@ var _minekoa$elm_text_editor$Native_Mice = function() {
          */
 
         input_area.addEventListener( "input", e => {
-            if (!e.isComposing) {
+            if (!input_area.isComposing) {
                 input_area.value = "";
             }
+        });
+
+        input_area.addEventListener( "compositionstart", e => {
+            input_area.isComposing = true; /* EdgeがKeyboardEvent.isComposingに対応したら自前でフラグ管理するのやめたい...*/
         });
 
         input_area.addEventListener( "compositionend", e => {
@@ -12402,6 +12407,7 @@ var _minekoa$elm_text_editor$Native_Mice = function() {
              */
 
             input_area.value = "";
+            input_area.isComposing = false;
         });
 
 
@@ -15082,7 +15088,7 @@ var _minekoa$elm_text_editor$TextEditor$view = function (model) {
 		});
 };
 
-var _minekoa$elm_text_editor$Main$defaultText = '# Markdown editor\n\n[Browse source](https://github.com/minekoa/elm-text-editor/tree/master/example/markdown)\n\n## Bullet\n\n* lv1\n* lv1\n    * lv2\n        * lv3\n\n\n1. lv1\n2. lv1\n   1. lv2\n\n## Paragraph\n\nabcd efg\nnhijk lmn\n\n    opqr stu\n\n> vw\nxyz\n\n```\ntoDiviaablePhrase = λ divi phr (n, s) ->\n    case n % divi of\n        0 -> (n, s |> Maybe.withDefault \"\" |> flip (++) phr)\n        _ -> (n, s)\n\ntoFizz = toDiviaablePhrase 3 \"Fizz\"\ntoBuzz = toDiviaablePhrase 5 \"Buzz\"\n\ntoFizzBuzz = List.map <|\n                 (λn -> (n, Nothing))\n                     >> toFizz >> toBuzz\n                     >> λ(n,s) -> Maybe.withDefault (toString n) s\n\nview : Model -> Html msg\nview model =\n    div [] [ List.range 1 100\n               |> toFizzBuzz\n               |> String.join \", \"\n               |> text\n           ]\n```\n\n## Table\n\n|果物   |個数|\n|-------|----|\n|りんご |1   |\n|ばなな!|∞  |\n\n';
+var _minekoa$elm_text_editor$Main$defaultText = '# Markdown editor\n\n[Browse source](https://github.com/minekoa/elm-text-editor/tree/master/example/markdown)\n\n## Bullet\n\n* lv1\n* lv1\n    * lv2\n        * lv3\n\n\n1. lv1\n2. lv1\n   1. lv2\n\n## Paragraph\n\nabcd efg\nnhijk lmn\n\n    opqr stu\n\n> vw\nxyz\n\n```\ntoDivisiblePhrase = λ divi phr (n, s) ->\n    case n % divi of\n        0 -> (n, s |> Maybe.withDefault \"\" |> flip (++) phr)\n        _ -> (n, s)\n\ntoFizz = toDivisiblePhrase 3 \"Fizz\"\ntoBuzz = toDivisiblePhrase 5 \"Buzz\"\n\ntoFizzBuzz = List.map <|\n                 (λn -> (n, Nothing))\n                     >> toFizz >> toBuzz\n                     >> λ(n,s) -> Maybe.withDefault (toString n) s\n\nview : Model -> Html msg\nview model =\n    div [] [ List.range 1 100\n               |> toFizzBuzz\n               |> String.join \", \"\n               |> text\n           ]\n```\n\n## Table\n\n|果物   |個数|\n|-------|----|\n|りんご |1   |\n|ばなな!|∞  |\n\n';
 var _minekoa$elm_text_editor$Main$markdownOptions = {
 	githubFlavored: _elm_lang$core$Maybe$Just(
 		{tables: true, breaks: true}),

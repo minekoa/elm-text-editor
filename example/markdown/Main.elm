@@ -154,13 +154,13 @@ nhijk lmn
 xyz
 
 ```
-toDiviaablePhrase = λ divi phr (n, s) ->
+toDivisiblePhrase = λ divi phr (n, s) ->
     case n % divi of
         0 -> (n, s |> Maybe.withDefault "" |> flip (++) phr)
         _ -> (n, s)
 
-toFizz = toDiviaablePhrase 3 "Fizz"
-toBuzz = toDiviaablePhrase 5 "Buzz"
+toFizz = toDivisiblePhrase 3 "Fizz"
+toBuzz = toDivisiblePhrase 5 "Buzz"
 
 toFizzBuzz = List.map <|
                  (λn -> (n, Nothing))
