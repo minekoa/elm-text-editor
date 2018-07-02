@@ -1,5 +1,8 @@
 module TextEditor exposing ( Model
                            , init
+                           , initByEditorLikeStyle
+                           , initByNotepadLikeStyle
+                           , initByModernEditorLikeStyle
                            , update
                            , Msg(UpdateContents)
                            , subscriptions
@@ -39,7 +42,8 @@ We will incorporate these into the HTML application you want to use a text edito
 
 # Component entry points (Determine a next model, subscriptions, create view)
 
-@docs init, update, subscriptions, view
+@docs init, initByEditorLikeStyle, initByNotepadLikeStyle, initByModernEditorLikeStyle
+@docs update, subscriptions, view
 -}
 
 
@@ -108,20 +112,54 @@ The `keymap` argument is set as is in `Model.keymap`. (`Model.keymap` is dynamic
 
 The `text` argument is a string for generating a buffer, which is processed into a list of charactors separated by `\n` and stored in `TextEditor.Buffer.contents`.
 -}
-init : String -> List KeyBind.KeyBind -> String -> (Model, Cmd Msg)
-init id keymap text =
+init : String -> TextEditor.Option.Option -> TextEditor.Style.Style -> List KeyBind.KeyBind -> String -> (Model, Cmd Msg)
+init id opts style keymap text =
     let
-        (coreM, coreC) = Core.init id text
+        (coreM, coreC) = Core.init id opts text
     in
     ( Model
           coreM
           False
           False
           keymap
-          TextEditor.Style.defaultStyle
+          style
           Nothing
     , Cmd.map CoreMsg coreC
     )
+
+{-|
+-}
+initByEditorLikeStyle : String -> String -> (Model, Cmd Msg)
+initByEditorLikeStyle id text =
+    init
+        id
+        TextEditor.Option.editorLikeOptions
+        TextEditor.Style.editorLikeStyle
+        (KeyBind.basic ++ KeyBind.gates ++ KeyBind.emacsLike)        
+        text
+
+{-|
+-}
+initByNotepadLikeStyle : String -> String -> (Model, Cmd Msg)
+initByNotepadLikeStyle id text =
+    init
+        id
+        TextEditor.Option.notepadLikeOptions
+        TextEditor.Style.notepadLikeStyle
+        (KeyBind.basic ++ KeyBind.gates)        
+        text
+
+{-|
+-}
+initByModernEditorLikeStyle : String -> String -> (Model, Cmd Msg)
+initByModernEditorLikeStyle id text =
+    init
+        id
+        TextEditor.Option.editorLikeOptions
+        TextEditor.Style.minchoStyle
+        (KeyBind.basic ++ KeyBind.gates ++ KeyBind.emacsLike)        
+        text
+
 
 
 {-| Get the buffer.

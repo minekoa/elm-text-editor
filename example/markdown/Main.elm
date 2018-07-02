@@ -1,9 +1,6 @@
 module Main exposing (..)
 
 import TextEditor
-import TextEditor.KeyBind
-import TextEditor.Style
-import TextEditor.Option
 import Html exposing (..)
 import Html.Attributes exposing (..)
 import Html.Events exposing (..)
@@ -33,19 +30,7 @@ main =
 init : ( Model, Cmd Msg )
 init =
     let
-        keybinds =
-            TextEditor.KeyBind.basic ++ TextEditor.KeyBind.gates ++ TextEditor.KeyBind.emacsLike
-
-        setStyle =
-            \s m -> { m | style = s }
-
-        ( m, c ) =
-            (TextEditor.init
-                "editor-id1"
-                keybinds
-                defaultText
-            )
-                |> Tuple.mapFirst ((setStyle editorStyle) >> (TextEditor.setOptions editorOptions))
+        ( m, c ) = TextEditor.initByEditorLikeStyle "editor-id1" defaultText
     in
         ( Model m (TextEditor.buffer m).contents
         , Cmd.map EditorMsg c
@@ -85,36 +70,6 @@ view model =
         [ div [ style [ ( "height", "100%" ), ( "width", "50%" ) ] ] [ Html.map EditorMsg (TextEditor.view model.editor) ]
         , div [ style [ ( "height", "100%" ), ( "width", "50%" ), ( "overflow", "auto" ) ] ] [ Markdown.toHtmlWith markdownOptions [ class "md" ] (String.join "\n" model.contents) ]
         ]
-
-
-editorStyle : TextEditor.Style.Style
-editorStyle =
-    let
-        sty =
-            TextEditor.Style.defaultStyle
-    in
-        { sty
-            | common =
-                Just
-                    { color = "snow"
-                    , backgroundColor = "dimgray"
-                    , opacity = ""
-                    , fontFamily = "monospace"
-                    , fontSize = "1.2em"
-                    }
-        }
-
-
-editorOptions : TextEditor.Option.Option
-editorOptions =
-    let
-        opt =
-            TextEditor.Option.defaultOptions
-    in
-        { opt
-            | showControlCharactor = True
-        }
-
 
 markdownOptions : Markdown.Options
 markdownOptions =

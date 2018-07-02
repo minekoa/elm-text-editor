@@ -10,6 +10,8 @@ import TextEditor as Editor
 import TextEditor.Commands as Commands
 import TextEditor.Buffer
 import TextEditor.KeyBind as KeyBind
+import TextEditor.Option
+import TextEditor.Style
 
 import DebugMenu
 import SoftwareKeyboard
@@ -69,8 +71,21 @@ init : (Model, Cmd Msg)
 init =
     let
         content = ""
+        keybinds = KeyBind.basic ++ KeyBind.gates ++ KeyBind.emacsLike
         buf = makeBuffer "*scratch*" content
-        (bm, bc) = Editor.init "editor-sample1" (KeyBind.basic ++ KeyBind.gates ++ KeyBind.emacsLike) content
+        editorStyle = TextEditor.Style.editorLikeStyle
+                    |> \sty -> { sty
+                                   | common =
+                                       Just
+                                       { color = "lavender"
+                                       , backgroundColor = "dimgray"
+                                       , opacity = "inherit"
+                                       , fontFamily = "sans-serif"
+                                       , fontSize = "1em"
+                                       }
+                               }
+
+        (bm, bc) = Editor.init "editor-sample1" TextEditor.Option.editorLikeOptions editorStyle keybinds content
         (smm, smc) = StyleMenu.init (bm.style)
         (kmm, kmc) = KeyBindMenu.init
         (stm, stc) = SettingMenu.init (Editor.options bm)

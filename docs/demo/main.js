@@ -10862,7 +10862,8 @@ var _minekoa$elm_text_editor$TextEditor_Buffer$insert = F2(
 		}
 	});
 
-var _minekoa$elm_text_editor$TextEditor_Option$defaultOptions = {tabOrder: 4, indentTabsMode: false, showControlCharactor: false};
+var _minekoa$elm_text_editor$TextEditor_Option$editorLikeOptions = {tabOrder: 4, indentTabsMode: false, showControlCharactor: true};
+var _minekoa$elm_text_editor$TextEditor_Option$notepadLikeOptions = {tabOrder: 8, indentTabsMode: true, showControlCharactor: false};
 var _minekoa$elm_text_editor$TextEditor_Option$Option = F3(
 	function (a, b, c) {
 		return {tabOrder: a, indentTabsMode: b, showControlCharactor: c};
@@ -11028,12 +11029,12 @@ var _minekoa$elm_text_editor$TextEditor_Core$ensureVisible = function (model) {
 			_minekoa$elm_text_editor$TextEditor_Core$cursorID(model)));
 };
 var _minekoa$elm_text_editor$TextEditor_Core$BlinkBlocked = {ctor: 'BlinkBlocked'};
-var _minekoa$elm_text_editor$TextEditor_Core$init = F2(
-	function (id, text) {
+var _minekoa$elm_text_editor$TextEditor_Core$init = F3(
+	function (id, opts, text) {
 		return {
 			ctor: '_Tuple2',
 			_0: _minekoa$elm_text_editor$TextEditor_Core$Model(id)(
-				_minekoa$elm_text_editor$TextEditor_Buffer$init(text))(_minekoa$elm_text_editor$TextEditor_Option$defaultOptions)('')(_elm_lang$core$Maybe$Nothing)(_elm_lang$core$Maybe$Nothing)(_elm_lang$core$Maybe$Nothing)(false)(_minekoa$elm_text_editor$TextEditor_Core$BlinkBlocked)(1),
+				_minekoa$elm_text_editor$TextEditor_Buffer$init(text))(opts)('')(_elm_lang$core$Maybe$Nothing)(_elm_lang$core$Maybe$Nothing)(_elm_lang$core$Maybe$Nothing)(false)(_minekoa$elm_text_editor$TextEditor_Core$BlinkBlocked)(1),
 			_1: _elm_lang$core$Platform_Cmd$none
 		};
 	});
@@ -11878,8 +11879,118 @@ var _minekoa$elm_text_editor$TextEditor_Commands$Command = F2(
 		return {id: a, f: b};
 	});
 
-var _minekoa$elm_text_editor$TextEditor_Style$defaultStyle = {
-	common: _elm_lang$core$Maybe$Nothing,
+var _minekoa$elm_text_editor$TextEditor_Style$minchoStyle = {
+	common: _elm_lang$core$Maybe$Just(
+		{color: '', backgroundColor: '', opacity: '', fontFamily: 'YuMincho, \'Hiragino Mincho ProN\', \'ms pmincho\', serif', fontSize: ''}),
+	numberLine: _elm_lang$core$Maybe$Nothing,
+	cursor: _elm_lang$core$Maybe$Just(
+		{color: 'blue', opacity: '0.5'}),
+	selection: _elm_lang$core$Maybe$Just(
+		{color: 'white', backgroundColor: 'blue', opacity: ''}),
+	composing: _elm_lang$core$Maybe$Just(
+		{color: 'blue', backgroundColor: '', opacity: ''}),
+	fontFaces: {
+		ctor: '::',
+		_0: {
+			ctor: '_Tuple2',
+			_0: 'tab-face',
+			_1: {color: '', backgroundColor: '', opacity: '0.2'}
+		},
+		_1: {
+			ctor: '::',
+			_0: {
+				ctor: '_Tuple2',
+				_0: 'eol-face',
+				_1: {color: '', backgroundColor: '', opacity: '0.2'}
+			},
+			_1: {
+				ctor: '::',
+				_0: {
+					ctor: '_Tuple2',
+					_0: 'jaspace-face',
+					_1: {color: '', backgroundColor: '', opacity: '0.2'}
+				},
+				_1: {ctor: '[]'}
+			}
+		}
+	}
+};
+var _minekoa$elm_text_editor$TextEditor_Style$goticStyle = {
+	common: _elm_lang$core$Maybe$Just(
+		{color: '', backgroundColor: '', opacity: '', fontFamily: 'helvetica, arial, \'hiragino kaku gothic pro\', meiryo, \'ms pgothic\', sans-serif', fontSize: ''}),
+	numberLine: _elm_lang$core$Maybe$Nothing,
+	cursor: _elm_lang$core$Maybe$Just(
+		{color: 'blue', opacity: '0.5'}),
+	selection: _elm_lang$core$Maybe$Just(
+		{color: 'white', backgroundColor: 'blue', opacity: ''}),
+	composing: _elm_lang$core$Maybe$Just(
+		{color: 'blue', backgroundColor: '', opacity: ''}),
+	fontFaces: {
+		ctor: '::',
+		_0: {
+			ctor: '_Tuple2',
+			_0: 'tab-face',
+			_1: {color: '', backgroundColor: '', opacity: '0.2'}
+		},
+		_1: {
+			ctor: '::',
+			_0: {
+				ctor: '_Tuple2',
+				_0: 'eol-face',
+				_1: {color: '', backgroundColor: '', opacity: '0.2'}
+			},
+			_1: {
+				ctor: '::',
+				_0: {
+					ctor: '_Tuple2',
+					_0: 'jaspace-face',
+					_1: {color: '', backgroundColor: '', opacity: '0.2'}
+				},
+				_1: {ctor: '[]'}
+			}
+		}
+	}
+};
+var _minekoa$elm_text_editor$TextEditor_Style$editorLikeStyle = {
+	common: _elm_lang$core$Maybe$Just(
+		{color: '#d4d4d4', backgroundColor: '#1e1e1e', opacity: '', fontFamily: '\'Ricty Diminished\', \'Source Han Code JP\', \'Noto Sans Mono CJK JP\', \'IPA Gothic\', \'takao gothic\', \'VL Gothic\', \'ms gothic\', Consolas, \'Courier New\', Courier, Monaco, monospace', fontSize: ''}),
+	numberLine: _elm_lang$core$Maybe$Just(
+		{color: '', backgroundColor: '#303030', opacity: '', borderRight: '0.2em', marginRight: '0.2em'}),
+	cursor: _elm_lang$core$Maybe$Just(
+		{color: '#007acc', opacity: '1.0'}),
+	selection: _elm_lang$core$Maybe$Just(
+		{color: 'white', backgroundColor: '#264f78', opacity: ''}),
+	composing: _elm_lang$core$Maybe$Just(
+		{color: 'blue', backgroundColor: '', opacity: ''}),
+	fontFaces: {
+		ctor: '::',
+		_0: {
+			ctor: '_Tuple2',
+			_0: 'tab-face',
+			_1: {color: '', backgroundColor: '', opacity: '0.2'}
+		},
+		_1: {
+			ctor: '::',
+			_0: {
+				ctor: '_Tuple2',
+				_0: 'eol-face',
+				_1: {color: '', backgroundColor: '', opacity: '0.2'}
+			},
+			_1: {
+				ctor: '::',
+				_0: {
+					ctor: '_Tuple2',
+					_0: 'jaspace-face',
+					_1: {color: '', backgroundColor: '', opacity: '0.2'}
+				},
+				_1: {ctor: '[]'}
+			}
+		}
+	}
+};
+var _minekoa$elm_text_editor$TextEditor_Style$notepadLikeStyle = {
+	common: _elm_lang$core$Maybe$Just(
+		{color: '', backgroundColor: '', opacity: '', fontFamily: 'Consolas, \'Courier New\', Courier, Monaco, monospace', fontSize: ''}),
 	numberLine: _elm_lang$core$Maybe$Nothing,
 	cursor: _elm_lang$core$Maybe$Just(
 		{color: 'blue', opacity: '0.5'}),
@@ -14079,16 +14190,52 @@ var _minekoa$elm_text_editor$TextEditor$invokeEvent = function (_p20) {
 var _minekoa$elm_text_editor$TextEditor$CoreMsg = function (a) {
 	return {ctor: 'CoreMsg', _0: a};
 };
-var _minekoa$elm_text_editor$TextEditor$init = F3(
-	function (id, keymap, text) {
-		var _p26 = A2(_minekoa$elm_text_editor$TextEditor_Core$init, id, text);
+var _minekoa$elm_text_editor$TextEditor$init = F5(
+	function (id, opts, style, keymap, text) {
+		var _p26 = A3(_minekoa$elm_text_editor$TextEditor_Core$init, id, opts, text);
 		var coreM = _p26._0;
 		var coreC = _p26._1;
 		return {
 			ctor: '_Tuple2',
-			_0: A6(_minekoa$elm_text_editor$TextEditor$Model, coreM, false, false, keymap, _minekoa$elm_text_editor$TextEditor_Style$defaultStyle, _elm_lang$core$Maybe$Nothing),
+			_0: A6(_minekoa$elm_text_editor$TextEditor$Model, coreM, false, false, keymap, style, _elm_lang$core$Maybe$Nothing),
 			_1: A2(_elm_lang$core$Platform_Cmd$map, _minekoa$elm_text_editor$TextEditor$CoreMsg, coreC)
 		};
+	});
+var _minekoa$elm_text_editor$TextEditor$initByEditorLikeStyle = F2(
+	function (id, text) {
+		return A5(
+			_minekoa$elm_text_editor$TextEditor$init,
+			id,
+			_minekoa$elm_text_editor$TextEditor_Option$editorLikeOptions,
+			_minekoa$elm_text_editor$TextEditor_Style$editorLikeStyle,
+			A2(
+				_elm_lang$core$Basics_ops['++'],
+				_minekoa$elm_text_editor$TextEditor_KeyBind$basic,
+				A2(_elm_lang$core$Basics_ops['++'], _minekoa$elm_text_editor$TextEditor_KeyBind$gates, _minekoa$elm_text_editor$TextEditor_KeyBind$emacsLike)),
+			text);
+	});
+var _minekoa$elm_text_editor$TextEditor$initByNotepadLikeStyle = F2(
+	function (id, text) {
+		return A5(
+			_minekoa$elm_text_editor$TextEditor$init,
+			id,
+			_minekoa$elm_text_editor$TextEditor_Option$notepadLikeOptions,
+			_minekoa$elm_text_editor$TextEditor_Style$notepadLikeStyle,
+			A2(_elm_lang$core$Basics_ops['++'], _minekoa$elm_text_editor$TextEditor_KeyBind$basic, _minekoa$elm_text_editor$TextEditor_KeyBind$gates),
+			text);
+	});
+var _minekoa$elm_text_editor$TextEditor$initByModernEditorLikeStyle = F2(
+	function (id, text) {
+		return A5(
+			_minekoa$elm_text_editor$TextEditor$init,
+			id,
+			_minekoa$elm_text_editor$TextEditor_Option$editorLikeOptions,
+			_minekoa$elm_text_editor$TextEditor_Style$minchoStyle,
+			A2(
+				_elm_lang$core$Basics_ops['++'],
+				_minekoa$elm_text_editor$TextEditor_KeyBind$basic,
+				A2(_elm_lang$core$Basics_ops['++'], _minekoa$elm_text_editor$TextEditor_KeyBind$gates, _minekoa$elm_text_editor$TextEditor_KeyBind$emacsLike)),
+			text);
 	});
 var _minekoa$elm_text_editor$TextEditor$exec_command_proc = F2(
 	function (cmd, model) {
@@ -25254,16 +25401,21 @@ var _minekoa$elm_text_editor$Main$init = function () {
 	var _p5 = _minekoa$elm_text_editor$KeyBindMenu$init;
 	var kmm = _p5._0;
 	var kmc = _p5._1;
+	var editorStyle = function (sty) {
+		return _elm_lang$core$Native_Utils.update(
+			sty,
+			{
+				common: _elm_lang$core$Maybe$Just(
+					{color: 'lavender', backgroundColor: 'dimgray', opacity: 'inherit', fontFamily: 'sans-serif', fontSize: '1em'})
+			});
+	}(_minekoa$elm_text_editor$TextEditor_Style$editorLikeStyle);
+	var keybinds = A2(
+		_elm_lang$core$Basics_ops['++'],
+		_minekoa$elm_text_editor$TextEditor_KeyBind$basic,
+		A2(_elm_lang$core$Basics_ops['++'], _minekoa$elm_text_editor$TextEditor_KeyBind$gates, _minekoa$elm_text_editor$TextEditor_KeyBind$emacsLike));
 	var content = '';
 	var buf = A2(_minekoa$elm_text_editor$Main$makeBuffer, '*scratch*', content);
-	var _p6 = A3(
-		_minekoa$elm_text_editor$TextEditor$init,
-		'editor-sample1',
-		A2(
-			_elm_lang$core$Basics_ops['++'],
-			_minekoa$elm_text_editor$TextEditor_KeyBind$basic,
-			A2(_elm_lang$core$Basics_ops['++'], _minekoa$elm_text_editor$TextEditor_KeyBind$gates, _minekoa$elm_text_editor$TextEditor_KeyBind$emacsLike)),
-		content);
+	var _p6 = A5(_minekoa$elm_text_editor$TextEditor$init, 'editor-sample1', _minekoa$elm_text_editor$TextEditor_Option$editorLikeOptions, editorStyle, keybinds, content);
 	var bm = _p6._0;
 	var bc = _p6._1;
 	var _p7 = _minekoa$elm_text_editor$StyleMenu$init(bm.style);

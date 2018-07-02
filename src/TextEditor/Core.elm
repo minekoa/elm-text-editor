@@ -62,12 +62,12 @@ type alias Model =
     }
 
 
-init : String -> String -> (Model, Cmd Msg)
-init id text =
+init : String -> Option.Option -> String -> (Model, Cmd Msg)
+init id opts text =
     ( Model
           id                     -- id
           (Buffer.init text)
-          Option.defaultOptions
+          opts
 
           ""                     -- copyStore
           Nothing                -- last_command

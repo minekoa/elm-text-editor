@@ -1,9 +1,12 @@
 module TextEditor.Option exposing
     ( Option
-    , defaultOptions
+    , editorLikeOptions
+    , notepadLikeOptions
     )
 {-|
-@docs Option, defaultOptions
+@docs Option
+
+@docs notepadLikeOptions, editorLikeOptions
 -}
 
 
@@ -16,16 +19,31 @@ type alias Option =
     }
 
 
-{-| Create Editor Options by default.
+{-| Create Editor Options (notepad like style)
+
+* tabOrder = 8
+* indentTabsMode = True
+* showControlCharactor = False
+-}
+notepadLikeOptions : Option
+notepadLikeOptions =
+    { tabOrder = 8
+    , indentTabsMode = True
+    , showControlCharactor = False
+    }
+
+{-| Create Editor Options (text editor like)
 
 * tabOrder = 4
 * indentTabsMode = False
 * showControlCharactor = False
 -}
-defaultOptions : Option
-defaultOptions =
+editorLikeOptions : Option
+editorLikeOptions =
     { tabOrder = 4
     , indentTabsMode = False
-    , showControlCharactor = False
+    , showControlCharactor = True
     }
+
+
 
