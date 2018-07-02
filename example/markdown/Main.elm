@@ -84,7 +84,7 @@ defaultText : String
 defaultText =
     """# Markdown editor
 
-[Browse source](https://github.com/minekoa/elm-text-editor/tree/master/example/markdown)
+[Browse source](https://github.com/minekoa/elm-text-editor/tree/master/example/markdown) | [More examples](../index.html)
 
 ## Bullet
 

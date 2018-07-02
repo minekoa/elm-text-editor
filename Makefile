@@ -5,7 +5,7 @@ MAKE=make
 
 SRC_DIR=src
 TARGET=main.js
-subdirs=demo example/markdown
+subdirs=demo example/markdown example/defaultStyles
 
 .PHONY: all env clean package $(subdirs)
 
