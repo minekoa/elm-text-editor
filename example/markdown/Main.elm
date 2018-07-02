@@ -30,7 +30,7 @@ main =
 init : ( Model, Cmd Msg )
 init =
     let
-        ( m, c ) = TextEditor.initByEditorLikeStyle "editor-id1" defaultText
+        ( m, c ) = TextEditor.initLikeCodeEditor "editor-id1" defaultText
     in
         ( Model m (TextEditor.buffer m).contents
         , Cmd.map EditorMsg c

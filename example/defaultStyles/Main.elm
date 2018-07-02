@@ -51,13 +51,13 @@ init : ( Model, Cmd Msg )
 init =
     let
         ( m1, c1 ) =
-            TextEditor.initByNotepadLikeStyle "id_notepad" defaultText
+            TextEditor.initLikeNotepad "id_notepad" defaultText
 
         ( m2, c2 ) =
-            TextEditor.initByEditorLikeStyle "id_editor" defaultText
+            TextEditor.initLikeCodeEditor "id_editor" defaultText
 
         ( m3, c3 ) =
-            TextEditor.initByModernEditorLikeStyle "id_modern" defaultText
+            TextEditor.initLikeModernEditor "id_modern" defaultText
     in
         ( Model m1 m2 m3
         , Cmd.batch
@@ -111,17 +111,17 @@ view model =
         , text " | "
         , a [ href "../index.html" ] [ text "More examples" ]
 
-        , h2 [] [ code [] [ text "TextEditor.initByNotepadLikeStyle" ] ]
+        , h2 [] [ code [] [ text "TextEditor.initLikeNotepad" ] ]
         , div
             [ style [ ( "height", "12em" ), ( "border", "1px solid black" ), ( "margin", "0.5em 1em" ) ] ]
             [ Html.map NotepadMsg (TextEditor.view model.notepad) ]
 
-        , h2 [] [ code [] [ text "TextEditor.initByEditorLikeStyle" ] ]
+        , h2 [] [ code [] [ text "TextEditor.initLikeCodeEditor" ] ]
         , div
             [ style [ ( "height", "12em" ), ( "border", "1px solid black" ), ( "margin", "0.5em 1em" ) ] ]
             [ Html.map EditorMsg (TextEditor.view model.editor) ]
 
-        , h2 [] [ code [] [ text "TextEditor.initByModernEditorLikeStyle" ] ]
+        , h2 [] [ code [] [ text "TextEditor.initLikeModernEditor" ] ]
         , div
             [ style [ ( "height", "12em" ), ( "border", "1px solid black" ), ( "margin", "0.5em 1em" ) ] ]
             [ Html.map ModernMsg (TextEditor.view model.modern) ]

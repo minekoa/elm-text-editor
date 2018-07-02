@@ -1,8 +1,8 @@
 module TextEditor exposing ( Model
                            , init
-                           , initByEditorLikeStyle
-                           , initByNotepadLikeStyle
-                           , initByModernEditorLikeStyle
+                           , initLikeNotepad
+                           , initLikeCodeEditor
+                           , initLikeModernEditor
                            , update
                            , Msg(UpdateContents)
                            , subscriptions
@@ -42,7 +42,7 @@ We will incorporate these into the HTML application you want to use a text edito
 
 # Component entry points (Determine a next model, subscriptions, create view)
 
-@docs init, initByEditorLikeStyle, initByNotepadLikeStyle, initByModernEditorLikeStyle
+@docs init, initLikeNotepad, initLikeCodeEditor, initLikeModernEditor
 @docs update, subscriptions, view
 -}
 
@@ -129,19 +129,19 @@ init id opts style keymap text =
 
 {-|
 -}
-initByEditorLikeStyle : String -> String -> (Model, Cmd Msg)
-initByEditorLikeStyle id text =
+initLikeCodeEditor : String -> String -> (Model, Cmd Msg)
+initLikeCodeEditor id text =
     init
         id
         TextEditor.Option.editorLikeOptions
-        TextEditor.Style.editorLikeStyle
+        TextEditor.Style.editorLikeDarkStyle
         (KeyBind.basic ++ KeyBind.gates ++ KeyBind.emacsLike)        
         text
 
 {-|
 -}
-initByNotepadLikeStyle : String -> String -> (Model, Cmd Msg)
-initByNotepadLikeStyle id text =
+initLikeNotepad : String -> String -> (Model, Cmd Msg)
+initLikeNotepad id text =
     init
         id
         TextEditor.Option.notepadLikeOptions
@@ -151,8 +151,8 @@ initByNotepadLikeStyle id text =
 
 {-|
 -}
-initByModernEditorLikeStyle : String -> String -> (Model, Cmd Msg)
-initByModernEditorLikeStyle id text =
+initLikeModernEditor : String -> String -> (Model, Cmd Msg)
+initLikeModernEditor id text =
     init
         id
         TextEditor.Option.editorLikeOptions

@@ -5,14 +5,14 @@ module TextEditor.Style exposing
     , FontFaceStyle
     , ColorStyle
     , notepadLikeStyle
-    , editorLikeStyle
+    , editorLikeDarkStyle
     , modernGoticStyle
     , modernMinchoStyle
     )
 
 {-|
 @docs Style, CodeStyle, LineNumberStyle, FontFaceStyle, ColorStyle
-@docs notepadLikeStyle, editorLikeStyle, modernGoticStyle, modernMinchoStyle
+@docs notepadLikeStyle, editorLikeDarkStyle, modernGoticStyle, modernMinchoStyle
 -}
 
 {-| TextEditor's style
@@ -92,7 +92,9 @@ notepadLikeStyle =
     { common = Just { color="", backgroundColor="", opacity=""
                     , fontFamily="Consolas, 'Courier New', Courier, Monaco, monospace", fontSize=""
                     }
-    , numberLine = Nothing
+    , numberLine = Just { color="", backgroundColor="", opacity="0.5"
+                        , borderRight="1px solid silver",marginRight="0.25em"
+                        }
     , cursor= Just { color="blue", opacity="0.5"}
     , selection = Just { color="white", backgroundColor="blue", opacity=""}
     , composing = Just { color="blue", backgroundColor="", opacity="" }
@@ -104,8 +106,8 @@ notepadLikeStyle =
 
 {-|
 -}
-editorLikeStyle : Style
-editorLikeStyle =
+editorLikeDarkStyle : Style
+editorLikeDarkStyle =
     { common = Just { color="#d4d4d4", backgroundColor="#1e1e1e", opacity=""
                     , fontFamily="'Ricty Diminished', 'Source Han Code JP', 'Noto Sans Mono CJK JP', 'IPA Gothic', 'takao gothic', 'VL Gothic', 'ms gothic', Consolas, 'Courier New', Courier, Monaco, monospace", fontSize=""
                     }

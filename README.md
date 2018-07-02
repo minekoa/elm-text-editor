@@ -106,7 +106,7 @@ init : ( Model, Cmd Msg )
 init =
     let
         ( m, c ) =
-            TextEditor.initByNotepadLikeStyle
+            TextEditor.initLikeNotepad
                 "editor-id1"
                 "foobar hogehoge"
     in

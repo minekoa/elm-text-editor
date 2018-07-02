@@ -73,7 +73,7 @@ init =
         content = ""
         keybinds = KeyBind.basic ++ KeyBind.gates ++ KeyBind.emacsLike
         buf = makeBuffer "*scratch*" content
-        editorStyle = TextEditor.Style.editorLikeStyle
+        editorStyle = TextEditor.Style.editorLikeDarkStyle
                     |> \sty -> { sty
                                    | common =
                                        Just

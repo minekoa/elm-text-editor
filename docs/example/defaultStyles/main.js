@@ -11953,7 +11953,7 @@ var _minekoa$elm_text_editor$TextEditor_Style$modernGoticStyle = {
 		}
 	}
 };
-var _minekoa$elm_text_editor$TextEditor_Style$editorLikeStyle = {
+var _minekoa$elm_text_editor$TextEditor_Style$editorLikeDarkStyle = {
 	common: _elm_lang$core$Maybe$Just(
 		{color: '#d4d4d4', backgroundColor: '#1e1e1e', opacity: '', fontFamily: '\'Ricty Diminished\', \'Source Han Code JP\', \'Noto Sans Mono CJK JP\', \'IPA Gothic\', \'takao gothic\', \'VL Gothic\', \'ms gothic\', Consolas, \'Courier New\', Courier, Monaco, monospace', fontSize: ''}),
 	numberLine: _elm_lang$core$Maybe$Just(
@@ -11993,7 +11993,8 @@ var _minekoa$elm_text_editor$TextEditor_Style$editorLikeStyle = {
 var _minekoa$elm_text_editor$TextEditor_Style$notepadLikeStyle = {
 	common: _elm_lang$core$Maybe$Just(
 		{color: '', backgroundColor: '', opacity: '', fontFamily: 'Consolas, \'Courier New\', Courier, Monaco, monospace', fontSize: ''}),
-	numberLine: _elm_lang$core$Maybe$Nothing,
+	numberLine: _elm_lang$core$Maybe$Just(
+		{color: '', backgroundColor: '', opacity: '0.5', borderRight: '1px solid silver', marginRight: '0.25em'}),
 	cursor: _elm_lang$core$Maybe$Just(
 		{color: 'blue', opacity: '0.5'}),
 	selection: _elm_lang$core$Maybe$Just(
@@ -14203,20 +14204,20 @@ var _minekoa$elm_text_editor$TextEditor$init = F5(
 			_1: A2(_elm_lang$core$Platform_Cmd$map, _minekoa$elm_text_editor$TextEditor$CoreMsg, coreC)
 		};
 	});
-var _minekoa$elm_text_editor$TextEditor$initByEditorLikeStyle = F2(
+var _minekoa$elm_text_editor$TextEditor$initLikeCodeEditor = F2(
 	function (id, text) {
 		return A5(
 			_minekoa$elm_text_editor$TextEditor$init,
 			id,
 			_minekoa$elm_text_editor$TextEditor_Option$editorLikeOptions,
-			_minekoa$elm_text_editor$TextEditor_Style$editorLikeStyle,
+			_minekoa$elm_text_editor$TextEditor_Style$editorLikeDarkStyle,
 			A2(
 				_elm_lang$core$Basics_ops['++'],
 				_minekoa$elm_text_editor$TextEditor_KeyBind$basic,
 				A2(_elm_lang$core$Basics_ops['++'], _minekoa$elm_text_editor$TextEditor_KeyBind$gates, _minekoa$elm_text_editor$TextEditor_KeyBind$emacsLike)),
 			text);
 	});
-var _minekoa$elm_text_editor$TextEditor$initByNotepadLikeStyle = F2(
+var _minekoa$elm_text_editor$TextEditor$initLikeNotepad = F2(
 	function (id, text) {
 		return A5(
 			_minekoa$elm_text_editor$TextEditor$init,
@@ -14226,7 +14227,7 @@ var _minekoa$elm_text_editor$TextEditor$initByNotepadLikeStyle = F2(
 			A2(_elm_lang$core$Basics_ops['++'], _minekoa$elm_text_editor$TextEditor_KeyBind$basic, _minekoa$elm_text_editor$TextEditor_KeyBind$gates),
 			text);
 	});
-var _minekoa$elm_text_editor$TextEditor$initByModernEditorLikeStyle = F2(
+var _minekoa$elm_text_editor$TextEditor$initLikeModernEditor = F2(
 	function (id, text) {
 		return A5(
 			_minekoa$elm_text_editor$TextEditor$init,
@@ -15109,13 +15110,13 @@ var _minekoa$elm_text_editor$Main$EditorMsg = function (a) {
 	return {ctor: 'EditorMsg', _0: a};
 };
 var _minekoa$elm_text_editor$Main$init = function () {
-	var _p0 = A2(_minekoa$elm_text_editor$TextEditor$initByModernEditorLikeStyle, 'id_modern', _minekoa$elm_text_editor$Main$defaultText);
+	var _p0 = A2(_minekoa$elm_text_editor$TextEditor$initLikeModernEditor, 'id_modern', _minekoa$elm_text_editor$Main$defaultText);
 	var m3 = _p0._0;
 	var c3 = _p0._1;
-	var _p1 = A2(_minekoa$elm_text_editor$TextEditor$initByEditorLikeStyle, 'id_editor', _minekoa$elm_text_editor$Main$defaultText);
+	var _p1 = A2(_minekoa$elm_text_editor$TextEditor$initLikeCodeEditor, 'id_editor', _minekoa$elm_text_editor$Main$defaultText);
 	var m2 = _p1._0;
 	var c2 = _p1._1;
-	var _p2 = A2(_minekoa$elm_text_editor$TextEditor$initByNotepadLikeStyle, 'id_notepad', _minekoa$elm_text_editor$Main$defaultText);
+	var _p2 = A2(_minekoa$elm_text_editor$TextEditor$initLikeNotepad, 'id_notepad', _minekoa$elm_text_editor$Main$defaultText);
 	var m1 = _p2._0;
 	var c1 = _p2._1;
 	return {
@@ -15261,7 +15262,7 @@ var _minekoa$elm_text_editor$Main$view = function (model) {
 										{ctor: '[]'},
 										{
 											ctor: '::',
-											_0: _elm_lang$html$Html$text('TextEditor.initByNotepadLikeStyle'),
+											_0: _elm_lang$html$Html$text('TextEditor.initLikeNotepad'),
 											_1: {ctor: '[]'}
 										}),
 									_1: {ctor: '[]'}
@@ -15308,7 +15309,7 @@ var _minekoa$elm_text_editor$Main$view = function (model) {
 												{ctor: '[]'},
 												{
 													ctor: '::',
-													_0: _elm_lang$html$Html$text('TextEditor.initByEditorLikeStyle'),
+													_0: _elm_lang$html$Html$text('TextEditor.initLikeCodeEditor'),
 													_1: {ctor: '[]'}
 												}),
 											_1: {ctor: '[]'}
@@ -15355,7 +15356,7 @@ var _minekoa$elm_text_editor$Main$view = function (model) {
 														{ctor: '[]'},
 														{
 															ctor: '::',
-															_0: _elm_lang$html$Html$text('TextEditor.initByModernEditorLikeStyle'),
+															_0: _elm_lang$html$Html$text('TextEditor.initLikeModernEditor'),
 															_1: {ctor: '[]'}
 														}),
 													_1: {ctor: '[]'}

@@ -38,7 +38,7 @@ suite =
     describe "EditorCommands"
         [ test "killline (line-top)" <|
               \_ ->
-                  Editor.initByEditorLikeStyle "id_string" "ABC\nDEFG\nHIJK\nLMN\nOPQ\n"
+                  Editor.initLikeCodeEditor "id_string" "ABC\nDEFG\nHIJK\nLMN\nOPQ\n"
                       |> andThen (Editor.execCommand <| (EditorCmds.moveAt << toPos) (1, 0))
                       |> andThen (Editor.execCommand <| EditorCmds.killLine )
                       |> Expect.all [ \(m, c) -> Expect.equal "ABC\n\nHIJK\nLMN\nOPQ\n" (m.core.buffer.contents |> String.join "\n")
@@ -48,7 +48,7 @@ suite =
                                     ]
         , test "killline (\\n)" <|
               \_ ->
-                  Editor.initByEditorLikeStyle "id_string" "ABC\nDEFG\nHIJK\nLMN\nOPQ\n"
+                  Editor.initLikeCodeEditor "id_string" "ABC\nDEFG\nHIJK\nLMN\nOPQ\n"
                       |> andThen (Editor.execCommand <| (EditorCmds.moveAt << toPos) (1, 0))
                       |> andThen (Editor.execCommand <| EditorCmds.killLine )
                       |> andThen (Editor.execCommand <| EditorCmds.killLine )
@@ -59,7 +59,7 @@ suite =
                                     ]
         , test "killline (line middle)" <|
               \_ ->
-                  Editor.initByEditorLikeStyle "id_string" "ABC\nDEFG\nHIJK\nLMN\nOPQ\n"
+                  Editor.initLikeCodeEditor "id_string" "ABC\nDEFG\nHIJK\nLMN\nOPQ\n"
                       |> andThen (Editor.execCommand <| (EditorCmds.moveAt << toPos) (1, 1))
                       |> andThen (Editor.execCommand <| EditorCmds.killLine )
                       |> Expect.all [ \(m, c) -> Expect.equal "ABC\nD\nHIJK\nLMN\nOPQ\n" (m.core.buffer.contents |> String.join "\n")
@@ -69,7 +69,7 @@ suite =
                                     ]
         , test "killline (EOF - 1)" <|
               \_ ->
-                  Editor.initByEditorLikeStyle "id_string" "ABC\nDEFG\nHIJK\nLMN\nOPQ\n"
+                  Editor.initLikeCodeEditor "id_string" "ABC\nDEFG\nHIJK\nLMN\nOPQ\n"
                       |> andThen (Editor.execCommand <| (EditorCmds.moveAt << toPos) (4, 3))
                       |> andThen (Editor.execCommand <| EditorCmds.killLine )
                       |> Expect.all [ \(m, c) -> Expect.equal "ABC\nDEFG\nHIJK\nLMN\nOPQ" (m.core.buffer.contents |> String.join "\n")
@@ -79,7 +79,7 @@ suite =
                                     ]
         , test "killline (EOF)" <|
               \_ ->
-                  Editor.initByEditorLikeStyle "id_string" "ABC\nDEFG\nHIJK\nLMN\nOPQ\n"
+                  Editor.initLikeCodeEditor "id_string" "ABC\nDEFG\nHIJK\nLMN\nOPQ\n"
                       |> andThen (Editor.execCommand <| (EditorCmds.moveAt << toPos) (5, 0))
                       |> andThen (Editor.execCommand <| EditorCmds.killLine )
                       |> Expect.all [ \(m, c) -> Expect.equal "ABC\nDEFG\nHIJK\nLMN\nOPQ\n" (m.core.buffer.contents |> String.join "\n")
@@ -89,7 +89,7 @@ suite =
                                     ]
         , test "killline (clipboard (clear -> set \"JK\" -> set(append \"\\n\"))" <|
               \_ ->
-                  Editor.initByEditorLikeStyle "id_string" "ABC\nDEFG\nHIJK\nLMN\nOPQ\n"
+                  Editor.initLikeCodeEditor "id_string" "ABC\nDEFG\nHIJK\nLMN\nOPQ\n"
                       |> andThen (Editor.execCommand <| (EditorCmds.moveAt << toPos) (2, 1))
                       |> andThen (Editor.execCommand <| EditorCmds.selectForward)
                       |> andThen (Editor.execCommand <| EditorCmds.copy)
@@ -104,7 +104,7 @@ suite =
         -- indent
         , test "indent (BOF)" <|
               \_ ->
-                  Editor.initByEditorLikeStyle "id_string" "ABC\nDEFG\nHIJK\nLMN\nOPQ\n"
+                  Editor.initLikeCodeEditor "id_string" "ABC\nDEFG\nHIJK\nLMN\nOPQ\n"
                       |> andThen (Editor.execCommand <| EditorCmds.indent)
                       |> Expect.all [ \(m, c) -> Expect.equal "    ABC\nDEFG\nHIJK\nLMN\nOPQ\n" (m.core.buffer.contents |> String.join "\n")
                                     , \(m, c) -> Expect.equal (0, 4) (m |> nowCursorPos)
@@ -112,7 +112,7 @@ suite =
                                     ]
         , test "indent-indent (BOF)" <|
               \_ ->
-                  Editor.initByEditorLikeStyle "id_string" "ABC\nDEFG\nHIJK\nLMN\nOPQ\n"
+                  Editor.initLikeCodeEditor "id_string" "ABC\nDEFG\nHIJK\nLMN\nOPQ\n"
                       |> andThen (Editor.execCommand <| EditorCmds.indent)
                       |> andThen (Editor.execCommand <| EditorCmds.indent)
                       |> Expect.all [ \(m, c) -> Expect.equal "ABC\nDEFG\nHIJK\nLMN\nOPQ\n" (m.core.buffer.contents |> String.join "\n")
@@ -121,7 +121,7 @@ suite =
                                     ]
         , test "indent-indent-indent (BOF)" <|
               \_ ->
-                  Editor.initByEditorLikeStyle "id_string" "ABC\nDEFG\nHIJK\nLMN\nOPQ\n"
+                  Editor.initLikeCodeEditor "id_string" "ABC\nDEFG\nHIJK\nLMN\nOPQ\n"
                       |> andThen (Editor.execCommand <| EditorCmds.indent)
                       |> andThen (Editor.execCommand <| EditorCmds.indent)
                       |> andThen (Editor.execCommand <| EditorCmds.indent)
@@ -131,7 +131,7 @@ suite =
                                     ]
         , test "indent (indented prev-line)" <|
               \_ ->
-                  Editor.initByEditorLikeStyle "id_string" "    ABC\nDEFG\nHIJK\nLMN\nOPQ\n"
+                  Editor.initLikeCodeEditor "id_string" "    ABC\nDEFG\nHIJK\nLMN\nOPQ\n"
                       |> andThen (Editor.execCommand <| EditorCmds.moveNextLine)
                       |> andThen (Editor.execCommand <| EditorCmds.indent)
                       |> Expect.all [ \(m, c) -> Expect.equal "    ABC\n    DEFG\nHIJK\nLMN\nOPQ\n" (m.core.buffer.contents |> String.join "\n")
@@ -140,7 +140,7 @@ suite =
                                     ]
         , test "indent-indent (indented prev-line)" <|
               \_ ->
-                  Editor.initByEditorLikeStyle "id_string" "    ABC\nDEFG\nHIJK\nLMN\nOPQ\n"
+                  Editor.initLikeCodeEditor "id_string" "    ABC\nDEFG\nHIJK\nLMN\nOPQ\n"
                       |> andThen (Editor.execCommand <| EditorCmds.moveNextLine)
                       |> andThen (Editor.execCommand <| EditorCmds.indent)
                       |> andThen (Editor.execCommand <| EditorCmds.indent)
@@ -150,7 +150,7 @@ suite =
                                     ]
         , test "indent-indent-indent (indented prev-line)" <|
               \_ ->
-                  Editor.initByEditorLikeStyle "id_string" "    ABC\nDEFG\nHIJK\nLMN\nOPQ\n"
+                  Editor.initLikeCodeEditor "id_string" "    ABC\nDEFG\nHIJK\nLMN\nOPQ\n"
                       |> andThen (Editor.execCommand <| EditorCmds.moveNextLine)
                       |> andThen (Editor.execCommand <| EditorCmds.indent)
                       |> andThen (Editor.execCommand <| EditorCmds.indent)
@@ -161,7 +161,7 @@ suite =
                                     ]
         , test "indent (indented prev-line, cursor is not line head)" <|
               \_ ->
-                  Editor.initByEditorLikeStyle "id_string" "    ABC\nDEFG\nHIJK\nLMN\nOPQ\n"
+                  Editor.initLikeCodeEditor "id_string" "    ABC\nDEFG\nHIJK\nLMN\nOPQ\n"
                       |> andThen (Editor.execCommand <| EditorCmds.moveNextLine)
                       |> andThen (Editor.execCommand <| EditorCmds.moveForward)
                       |> andThen (Editor.execCommand <| EditorCmds.indent)
@@ -171,7 +171,7 @@ suite =
                                     ]
         , test "indent-indent (indented prev-line, cursor is not line head)" <|
               \_ ->
-                  Editor.initByEditorLikeStyle "id_string" "    ABC\nDEFG\nHIJK\nLMN\nOPQ\n"
+                  Editor.initLikeCodeEditor "id_string" "    ABC\nDEFG\nHIJK\nLMN\nOPQ\n"
                       |> andThen (Editor.execCommand <| EditorCmds.moveNextLine)
                       |> andThen (Editor.execCommand <| EditorCmds.moveForward)
                       |> andThen (Editor.execCommand <| EditorCmds.indent)
@@ -182,7 +182,7 @@ suite =
                                     ]
         , test "indent (myline is indenting than prev-line)" <|
               \_ ->
-                  Editor.initByEditorLikeStyle "id_string" "    ABC\n            DEFG\nHIJK\nLMN\nOPQ\n"
+                  Editor.initLikeCodeEditor "id_string" "    ABC\n            DEFG\nHIJK\nLMN\nOPQ\n"
                       |> andThen (Editor.execCommand <| EditorCmds.moveNextLine)
                       |> andThen (Editor.execCommand <| EditorCmds.indent)
                       |> Expect.all [ \(m, c) -> Expect.equal "    ABC\n    DEFG\nHIJK\nLMN\nOPQ\n" (m.core.buffer.contents |> String.join "\n")
@@ -191,7 +191,7 @@ suite =
                                     ]
         , test "indent-indent (myline is indenting than prev-line)" <|
               \_ ->
-                  Editor.initByEditorLikeStyle "id_string" "    ABC\n            DEFG\nHIJK\nLMN\nOPQ\n"
+                  Editor.initLikeCodeEditor "id_string" "    ABC\n            DEFG\nHIJK\nLMN\nOPQ\n"
                       |> andThen (Editor.execCommand <| EditorCmds.moveNextLine)
                       |> andThen (Editor.execCommand <| EditorCmds.indent)
                       |> andThen (Editor.execCommand <| EditorCmds.indent)
@@ -201,7 +201,7 @@ suite =
                                     ]
         , test "indent (myline is indenting than prev-line, col (1, 13) )" <|
               \_ ->
-                  Editor.initByEditorLikeStyle "id_string" "    ABC\n            DEFG\nHIJK\nLMN\nOPQ\n"
+                  Editor.initLikeCodeEditor "id_string" "    ABC\n            DEFG\nHIJK\nLMN\nOPQ\n"
                       |> andThen (Editor.execCommand <| EditorCmds.moveNextLine)
                       |> andThen (Editor.execCommand <| EditorCmds.moveForward) -- 1 ' '
                       |> andThen (Editor.execCommand <| EditorCmds.moveForward) -- 2 ' '
@@ -223,7 +223,7 @@ suite =
                                     ]
         , test "indent-indent (myline is indenting than prev-line, col (1, 13) )" <|
               \_ ->
-                  Editor.initByEditorLikeStyle "id_string" "    ABC\n            DEFG\nHIJK\nLMN\nOPQ\n"
+                  Editor.initLikeCodeEditor "id_string" "    ABC\n            DEFG\nHIJK\nLMN\nOPQ\n"
                       |> andThen (Editor.execCommand <| EditorCmds.moveNextLine)
                       |> andThen (Editor.execCommand <| EditorCmds.moveForward) -- 1 ' '
                       |> andThen (Editor.execCommand <| EditorCmds.moveForward) -- 2 ' '
