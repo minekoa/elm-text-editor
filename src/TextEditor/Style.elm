@@ -6,13 +6,13 @@ module TextEditor.Style exposing
     , ColorStyle
     , notepadLikeStyle
     , editorLikeStyle
-    , goticStyle
-    , minchoStyle
+    , modernGoticStyle
+    , modernMinchoStyle
     )
 
 {-|
 @docs Style, CodeStyle, LineNumberStyle, FontFaceStyle, ColorStyle
-@docs notepadLikeStyle, editorLikeStyle, goticStyle, minchoStyle
+@docs notepadLikeStyle, editorLikeStyle, modernGoticStyle, modernMinchoStyle
 -}
 
 {-| TextEditor's style
@@ -110,11 +110,11 @@ editorLikeStyle =
                     , fontFamily="'Ricty Diminished', 'Source Han Code JP', 'Noto Sans Mono CJK JP', 'IPA Gothic', 'takao gothic', 'VL Gothic', 'ms gothic', Consolas, 'Courier New', Courier, Monaco, monospace", fontSize=""
                     }
     , numberLine = Just { color="", backgroundColor="#303030", opacity=""
-                        , borderRight="0.2em", marginRight="0.2em"
+                        , borderRight="",marginRight="0.2em"
                         }
     , cursor= Just { color="#007acc", opacity="1.0"}
     , selection = Just { color="white", backgroundColor="#264f78", opacity=""}
-    , composing = Just { color="blue", backgroundColor="", opacity="" }
+    , composing = Just { color="lavender", backgroundColor="dimgray", opacity="" }
     , fontFaces = [ ( "tab-face"    , {color="", backgroundColor="", opacity="0.2"} )
                   , ( "eol-face"    , {color="", backgroundColor="", opacity="0.2"} )
                   , ( "jaspace-face", {color="", backgroundColor="", opacity="0.2"} )
@@ -123,15 +123,17 @@ editorLikeStyle =
 
 {-|
 -}
-goticStyle : Style
-goticStyle =
+modernGoticStyle : Style
+modernGoticStyle =
     { common = Just { color="", backgroundColor="", opacity=""
                     , fontFamily="helvetica, arial, 'hiragino kaku gothic pro', meiryo, 'ms pgothic', sans-serif", fontSize=""
                     }
-    , numberLine = Nothing
+    , numberLine = Just { color="dimgray", backgroundColor="whitesmoke", opacity=""
+                        , borderRight="1px solid lightgray", marginRight="0.2em"
+                        }
     , cursor= Just { color="blue", opacity="0.5"}
-    , selection = Just { color="white", backgroundColor="blue", opacity=""}
-    , composing = Just { color="blue", backgroundColor="", opacity="" }
+    , selection = Just { color="black", backgroundColor="lavender", opacity=""}
+    , composing = Just { color="black", backgroundColor="lightpink", opacity="" }
     , fontFaces = [ ( "tab-face"    , {color="", backgroundColor="", opacity="0.2"} )
                   , ( "eol-face"    , {color="", backgroundColor="", opacity="0.2"} )
                   , ( "jaspace-face", {color="", backgroundColor="", opacity="0.2"} )
@@ -140,15 +142,17 @@ goticStyle =
 
 {-|
 -}
-minchoStyle : Style
-minchoStyle =
+modernMinchoStyle : Style
+modernMinchoStyle =
     { common = Just { color="", backgroundColor="", opacity=""
                     , fontFamily="YuMincho, 'Hiragino Mincho ProN', 'ms pmincho', serif", fontSize=""
                     }
-    , numberLine = Nothing
+    , numberLine = Just { color="dimgray", backgroundColor="whitesmoke", opacity=""
+                        , borderRight="1px solid lightgray", marginRight="0.2em"
+                        }
     , cursor= Just { color="blue", opacity="0.5"}
-    , selection = Just { color="white", backgroundColor="blue", opacity=""}
-    , composing = Just { color="blue", backgroundColor="", opacity="" }
+    , selection = Just { color="black", backgroundColor="lavender", opacity=""}
+    , composing = Just { color="black", backgroundColor="lightpink", opacity="" }
     , fontFaces = [ ( "tab-face"    , {color="", backgroundColor="", opacity="0.2"} )
                   , ( "eol-face"    , {color="", backgroundColor="", opacity="0.2"} )
                   , ( "jaspace-face", {color="", backgroundColor="", opacity="0.2"} )

@@ -11879,16 +11879,17 @@ var _minekoa$elm_text_editor$TextEditor_Commands$Command = F2(
 		return {id: a, f: b};
 	});
 
-var _minekoa$elm_text_editor$TextEditor_Style$minchoStyle = {
+var _minekoa$elm_text_editor$TextEditor_Style$modernMinchoStyle = {
 	common: _elm_lang$core$Maybe$Just(
 		{color: '', backgroundColor: '', opacity: '', fontFamily: 'YuMincho, \'Hiragino Mincho ProN\', \'ms pmincho\', serif', fontSize: ''}),
-	numberLine: _elm_lang$core$Maybe$Nothing,
+	numberLine: _elm_lang$core$Maybe$Just(
+		{color: 'dimgray', backgroundColor: 'whitesmoke', opacity: '', borderRight: '1px solid lightgray', marginRight: '0.2em'}),
 	cursor: _elm_lang$core$Maybe$Just(
 		{color: 'blue', opacity: '0.5'}),
 	selection: _elm_lang$core$Maybe$Just(
-		{color: 'white', backgroundColor: 'blue', opacity: ''}),
+		{color: 'black', backgroundColor: 'lavender', opacity: ''}),
 	composing: _elm_lang$core$Maybe$Just(
-		{color: 'blue', backgroundColor: '', opacity: ''}),
+		{color: 'black', backgroundColor: 'lightpink', opacity: ''}),
 	fontFaces: {
 		ctor: '::',
 		_0: {
@@ -11915,16 +11916,17 @@ var _minekoa$elm_text_editor$TextEditor_Style$minchoStyle = {
 		}
 	}
 };
-var _minekoa$elm_text_editor$TextEditor_Style$goticStyle = {
+var _minekoa$elm_text_editor$TextEditor_Style$modernGoticStyle = {
 	common: _elm_lang$core$Maybe$Just(
 		{color: '', backgroundColor: '', opacity: '', fontFamily: 'helvetica, arial, \'hiragino kaku gothic pro\', meiryo, \'ms pgothic\', sans-serif', fontSize: ''}),
-	numberLine: _elm_lang$core$Maybe$Nothing,
+	numberLine: _elm_lang$core$Maybe$Just(
+		{color: 'dimgray', backgroundColor: 'whitesmoke', opacity: '', borderRight: '1px solid lightgray', marginRight: '0.2em'}),
 	cursor: _elm_lang$core$Maybe$Just(
 		{color: 'blue', opacity: '0.5'}),
 	selection: _elm_lang$core$Maybe$Just(
-		{color: 'white', backgroundColor: 'blue', opacity: ''}),
+		{color: 'black', backgroundColor: 'lavender', opacity: ''}),
 	composing: _elm_lang$core$Maybe$Just(
-		{color: 'blue', backgroundColor: '', opacity: ''}),
+		{color: 'black', backgroundColor: 'lightpink', opacity: ''}),
 	fontFaces: {
 		ctor: '::',
 		_0: {
@@ -11955,13 +11957,13 @@ var _minekoa$elm_text_editor$TextEditor_Style$editorLikeStyle = {
 	common: _elm_lang$core$Maybe$Just(
 		{color: '#d4d4d4', backgroundColor: '#1e1e1e', opacity: '', fontFamily: '\'Ricty Diminished\', \'Source Han Code JP\', \'Noto Sans Mono CJK JP\', \'IPA Gothic\', \'takao gothic\', \'VL Gothic\', \'ms gothic\', Consolas, \'Courier New\', Courier, Monaco, monospace', fontSize: ''}),
 	numberLine: _elm_lang$core$Maybe$Just(
-		{color: '', backgroundColor: '#303030', opacity: '', borderRight: '0.2em', marginRight: '0.2em'}),
+		{color: '', backgroundColor: '#303030', opacity: '', borderRight: '', marginRight: '0.2em'}),
 	cursor: _elm_lang$core$Maybe$Just(
 		{color: '#007acc', opacity: '1.0'}),
 	selection: _elm_lang$core$Maybe$Just(
 		{color: 'white', backgroundColor: '#264f78', opacity: ''}),
 	composing: _elm_lang$core$Maybe$Just(
-		{color: 'blue', backgroundColor: '', opacity: ''}),
+		{color: 'lavender', backgroundColor: 'dimgray', opacity: ''}),
 	fontFaces: {
 		ctor: '::',
 		_0: {
@@ -14230,7 +14232,7 @@ var _minekoa$elm_text_editor$TextEditor$initByModernEditorLikeStyle = F2(
 			_minekoa$elm_text_editor$TextEditor$init,
 			id,
 			_minekoa$elm_text_editor$TextEditor_Option$editorLikeOptions,
-			_minekoa$elm_text_editor$TextEditor_Style$minchoStyle,
+			_minekoa$elm_text_editor$TextEditor_Style$modernMinchoStyle,
 			A2(
 				_elm_lang$core$Basics_ops['++'],
 				_minekoa$elm_text_editor$TextEditor_KeyBind$basic,

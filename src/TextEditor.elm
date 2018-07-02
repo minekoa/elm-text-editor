@@ -156,7 +156,7 @@ initByModernEditorLikeStyle id text =
     init
         id
         TextEditor.Option.editorLikeOptions
-        TextEditor.Style.minchoStyle
+        TextEditor.Style.modernMinchoStyle
         (KeyBind.basic ++ KeyBind.gates ++ KeyBind.emacsLike)        
         text
 
