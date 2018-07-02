@@ -1,6 +1,7 @@
 # Elm TextEditor
 
 Elmで作られたシンプルなテキストエディタウィジェットです。[ここ](https://minekoa.github.io/elm-text-editor/demo/)で見てみることが出来ます。
+(Exampleは[こちら](https://minekoa.github.io/elm-text-editor/example/))
 
 textareaに対して以下の利点があります。
 
@@ -105,9 +106,8 @@ init : ( Model, Cmd Msg )
 init =
     let
         ( m, c ) =
-            TextEditor.init
+            TextEditor.initByNotepadLikeStyle
                 "editor-id1"
-                (TextEditor.KeyBind.basic ++ TextEditor.KeyBind.gates ++ TextEditor.KeyBind.emacsLike)
                 "foobar hogehoge"
     in
         ( Model m
