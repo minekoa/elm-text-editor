@@ -25406,7 +25406,8 @@ var _minekoa$elm_text_editor$Main$init = function () {
 			sty,
 			{
 				common: _elm_lang$core$Maybe$Just(
-					{color: 'lavender', backgroundColor: 'dimgray', opacity: 'inherit', fontFamily: 'sans-serif', fontSize: '1em'})
+					{color: 'lavender', backgroundColor: 'dimgray', opacity: 'inherit', fontFamily: 'sans-serif', fontSize: '1em'}),
+				numberLine: _elm_lang$core$Maybe$Nothing
 			});
 	}(_minekoa$elm_text_editor$TextEditor_Style$editorLikeStyle);
 	var keybinds = A2(

@@ -83,6 +83,7 @@ init =
                                        , fontFamily = "sans-serif"
                                        , fontSize = "1em"
                                        }
+                                   , numberLine = Nothing
                                }
 
         (bm, bc) = Editor.init "editor-sample1" TextEditor.Option.editorLikeOptions editorStyle keybinds content
