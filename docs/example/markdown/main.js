@@ -13248,7 +13248,7 @@ var _minekoa$elm_text_editor$TextEditor$ruler = function (model) {
 					},
 					{
 						ctor: '::',
-						_0: _elm_lang$html$Html$text('箱'),
+						_0: _elm_lang$html$Html$text('箱|□↵├'),
 						_1: {ctor: '[]'}
 					}),
 				_1: {ctor: '[]'}
@@ -15082,7 +15082,15 @@ var _minekoa$elm_text_editor$TextEditor$presentation = function (model) {
 											_1: {
 												ctor: '::',
 												_0: {ctor: '_Tuple2', _0: 'position', _1: 'relative'},
-												_1: {ctor: '[]'}
+												_1: {
+													ctor: '::',
+													_0: {
+														ctor: '_Tuple2',
+														_0: 'line-height',
+														_1: A2(_minekoa$elm_text_editor$TextEditor$emToPxString, model.core, 1)
+													},
+													_1: {ctor: '[]'}
+												}
 											}
 										}
 									}

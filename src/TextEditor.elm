@@ -647,6 +647,7 @@ presentation model =
     div [ style [ ("display", "flex"), ("flex-direction", "row"), ("flex-wrap", "nowrap")
                 , ("margin", "0"), ("padding", "0"), ("width", "100%"), ("height", "100%")
                 , ("position", "relative")
+                , ("line-height", emToPxString model.core 1)
                 ]
         , onFocusIn FocusIn
         , onFocusOut FocusOut
@@ -955,7 +956,7 @@ ruler model =
                , style [ ("white-space", "pre")
                        ]
                ]
-               [ text "箱"]
+               [ text "箱|□↵├"]
         ]
 
 compositionPreview : Maybe String -> Html msg
