@@ -543,8 +543,9 @@ xToColumn : Core.Model -> String -> Int -> Int
 xToColumn model line pos_x =
     let
         calc_w  = calcTextWidth (rulerID model)
+        markup_ln = TextMarker.markupChank model.option.showControlCharactor model.option.tabOrder >> TextMarker.toString
         calc_col = (\ ln c x ->
-                        if (calc_w (String.left c ln)) > x || String.length ln < c  then c - 1
+                        if (calc_w (String.left c ln |> markup_ln)) > x || String.length ln < c  then c - 1
                         else calc_col ln (c + 1)  x
                    )
     in
