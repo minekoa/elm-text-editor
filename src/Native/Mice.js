@@ -84,6 +84,27 @@ var _minekoa$elm_text_editor$Native_Mice = function() {
         return rect;
     }
 
+    function getBoundingPageRect(_id) {
+        const element = document.getElementById(_id); 
+        if (element == null) {
+            return {"left":0, "top":0, "right":0, "bottom":0, "x":0, "y":0, "width":0, "height":0};
+        }
+        const rect = element.getBoundingClientRect();
+        const scrollX = window.pageXOffset;
+        const scrollY = window.pageYOffset;
+
+        return { "left": rect.left + scrollX,
+                 "top" : rect.top  + scrollY,
+                 "right": rect.right + scrollX,
+                 "bottom": rect.bottom + scrollY,
+                 "x"     : (rect.x ? rect.x : rect.left) + scrollX,
+                 "y"     : (rect.y ? rect.y : rect.reft) + scrollY,
+                 "width" : rect.width,
+                 "height": rect.height,
+               }
+    }
+
+
     function elaborateInputArea(id_input_area) {
         const input_area = document.getElementById(id_input_area);
         if (input_area == null) {
@@ -239,6 +260,7 @@ var _minekoa$elm_text_editor$Native_Mice = function() {
       ensureVisible: F2(ensureVisible),
       calcTextWidth: F2(calcTextWidth),
       getBoundingClientRect: getBoundingClientRect,
+      getBoundingPageRect : getBoundingPageRect,
       elaborateInputArea : elaborateInputArea,
       elaborateTapArea : elaborateTapArea,
   }

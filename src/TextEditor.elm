@@ -368,7 +368,7 @@ update msg model =
 
         DragStart mouseEvent  ->
             let
-                xy = { x = mouseEvent.x, y = mouseEvent.y }
+                xy = { x = mouseEvent.pageX, y = mouseEvent.pageY }
                 chpos = geoPosToCharPos model.core xy
 
                 (cm, cc) =  model.core
@@ -521,12 +521,15 @@ compositionEnd data model =
 
 
 geoPosToCharPos : Core.Model -> {x : Int, y : Int } -> Buffer.Position
-geoPosToCharPos model xy =
+geoPosToCharPos model pageXy =
+    -- note: Mouse.move や Mouse.ups が返すxy は
+    --       clientXY(スクリーンに対する座標）ではなく pageXY (ドキュメントに対する座標)
+    --       なので、余計な手間(see. Nateve/Mice.js) だが PageXY座標系にて計算を行う
     let
-        rect = getBoundingClientRect (codeAreaID model)
-        row  = yToRow model (xy.y - rect.top)
+        rect = getBoundingPageRect (codeAreaID model)
+        row  = yToRow model (pageXy.y - rect.top)
         line = Buffer.line row model.buffer |> Maybe.withDefault ""
-        col = xToColumn model line (xy.x - rect.left)
+        col = xToColumn model line (pageXy.x - rect.left)
     in
         Buffer.Position row col
 
@@ -1199,8 +1202,10 @@ emToPxString model = emToPx model >> toPxString
 ------------------------------------------------------------
 
 type alias MouseEvent =
-  { x : Int
-  , y : Int
+  { clientX : Int
+  , clientY : Int
+  , pageX : Int
+  , pageY : Int
   , button : MouseButton
   }
 
@@ -1226,7 +1231,9 @@ mouseButton =
 
 mouseEvent : Json.Decoder MouseEvent
 mouseEvent =
-  Json.map3 MouseEvent
+  Json.map5 MouseEvent
+    (Json.field "clientX" Json.int)
+    (Json.field "clientY" Json.int)
     (Json.field "pageX" Json.int)
     (Json.field "pageY" Json.int)
     (Json.field "button" mouseButton)
@@ -1257,5 +1264,9 @@ type alias Rect =
 
 getBoundingClientRect: String -> Rect
 getBoundingClientRect id = Native.Mice.getBoundingClientRect id
+
+getBoundingPageRect: String -> Rect
+getBoundingPageRect id = Native.Mice.getBoundingPageRect id
+
 
 

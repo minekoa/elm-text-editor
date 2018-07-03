@@ -12336,6 +12336,27 @@ var _minekoa$elm_text_editor$Native_Mice = function() {
         return rect;
     }
 
+    function getBoundingPageRect(_id) {
+        const element = document.getElementById(_id); 
+        if (element == null) {
+            return {"left":0, "top":0, "right":0, "bottom":0, "x":0, "y":0, "width":0, "height":0};
+        }
+        const rect = element.getBoundingClientRect();
+        const scrollX = window.pageXOffset;
+        const scrollY = window.pageYOffset;
+
+        return { "left": rect.left + scrollX,
+                 "top" : rect.top  + scrollY,
+                 "right": rect.right + scrollX,
+                 "bottom": rect.bottom + scrollY,
+                 "x"     : (rect.x ? rect.x : rect.left) + scrollX,
+                 "y"     : (rect.y ? rect.y : rect.reft) + scrollY,
+                 "width" : rect.width,
+                 "height": rect.height,
+               }
+    }
+
+
     function elaborateInputArea(id_input_area) {
         const input_area = document.getElementById(id_input_area);
         if (input_area == null) {
@@ -12491,12 +12512,16 @@ var _minekoa$elm_text_editor$Native_Mice = function() {
       ensureVisible: F2(ensureVisible),
       calcTextWidth: F2(calcTextWidth),
       getBoundingClientRect: getBoundingClientRect,
+      getBoundingPageRect : getBoundingPageRect,
       elaborateInputArea : elaborateInputArea,
       elaborateTapArea : elaborateTapArea,
   }
 }();
 
 
+var _minekoa$elm_text_editor$TextEditor$getBoundingPageRect = function (id) {
+	return _minekoa$elm_text_editor$Native_Mice.getBoundingPageRect(id);
+};
 var _minekoa$elm_text_editor$TextEditor$getBoundingClientRect = function (id) {
 	return _minekoa$elm_text_editor$Native_Mice.getBoundingClientRect(id);
 };
@@ -13679,15 +13704,15 @@ var _minekoa$elm_text_editor$TextEditor$yToRow = F2(
 				_elm_lang$core$List$length(model.buffer.contents)));
 	});
 var _minekoa$elm_text_editor$TextEditor$geoPosToCharPos = F2(
-	function (model, xy) {
-		var rect = _minekoa$elm_text_editor$TextEditor$getBoundingClientRect(
+	function (model, pageXy) {
+		var rect = _minekoa$elm_text_editor$TextEditor$getBoundingPageRect(
 			_minekoa$elm_text_editor$TextEditor_Core$codeAreaID(model));
-		var row = A2(_minekoa$elm_text_editor$TextEditor$yToRow, model, xy.y - rect.top);
+		var row = A2(_minekoa$elm_text_editor$TextEditor$yToRow, model, pageXy.y - rect.top);
 		var line = A2(
 			_elm_lang$core$Maybe$withDefault,
 			'',
 			A2(_minekoa$elm_text_editor$TextEditor_Buffer$line, row, model.buffer));
-		var col = A3(_minekoa$elm_text_editor$TextEditor$xToColumn, model, line, xy.x - rect.left);
+		var col = A3(_minekoa$elm_text_editor$TextEditor$xToColumn, model, line, pageXy.x - rect.left);
 		return A2(_minekoa$elm_text_editor$TextEditor_Buffer$Position, row, col);
 	});
 var _minekoa$elm_text_editor$TextEditor$setLastCommand = F2(
@@ -13748,9 +13773,9 @@ var _minekoa$elm_text_editor$TextEditor$EventInfo = F3(
 	function (a, b, c) {
 		return {date: a, name: b, data: c};
 	});
-var _minekoa$elm_text_editor$TextEditor$MouseEvent = F3(
-	function (a, b, c) {
-		return {x: a, y: b, button: c};
+var _minekoa$elm_text_editor$TextEditor$MouseEvent = F5(
+	function (a, b, c, d, e) {
+		return {clientX: a, clientY: b, pageX: c, pageY: d, button: e};
 	});
 var _minekoa$elm_text_editor$TextEditor$Rect = F8(
 	function (a, b, c, d, e, f, g, h) {
@@ -14554,7 +14579,7 @@ var _minekoa$elm_text_editor$TextEditor$update = F2(
 					});
 			case 'DragStart':
 				var _p39 = _p34._0;
-				var xy = {x: _p39.x, y: _p39.y};
+				var xy = {x: _p39.pageX, y: _p39.pageY};
 				var chpos = A2(_minekoa$elm_text_editor$TextEditor$geoPosToCharPos, model.core, xy);
 				var _p37 = A2(
 					_minekoa$elm_text_editor$TextEditor_Core_Commands$batch,
@@ -14774,9 +14799,11 @@ var _minekoa$elm_text_editor$TextEditor$mouseButton = A2(
 		}
 	},
 	_elm_lang$core$Json_Decode$int);
-var _minekoa$elm_text_editor$TextEditor$mouseEvent = A4(
-	_elm_lang$core$Json_Decode$map3,
+var _minekoa$elm_text_editor$TextEditor$mouseEvent = A6(
+	_elm_lang$core$Json_Decode$map5,
 	_minekoa$elm_text_editor$TextEditor$MouseEvent,
+	A2(_elm_lang$core$Json_Decode$field, 'clientX', _elm_lang$core$Json_Decode$int),
+	A2(_elm_lang$core$Json_Decode$field, 'clientY', _elm_lang$core$Json_Decode$int),
 	A2(_elm_lang$core$Json_Decode$field, 'pageX', _elm_lang$core$Json_Decode$int),
 	A2(_elm_lang$core$Json_Decode$field, 'pageY', _elm_lang$core$Json_Decode$int),
 	A2(_elm_lang$core$Json_Decode$field, 'button', _minekoa$elm_text_editor$TextEditor$mouseButton));
