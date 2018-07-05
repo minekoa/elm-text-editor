@@ -14,6 +14,7 @@ import Date
 import TextEditor as Editor
 import TextEditor.Buffer as Buffer
 import TextEditor.Core as Core
+import Native.Mice
 
 import StringTools exposing (..)
 
@@ -27,6 +28,7 @@ type SubMenu
     | Clipboard
     | EventLog
     | Inspector
+    | Geometory
 
 type Msg
     = SelectSubMenu SubMenu
@@ -91,6 +93,11 @@ menuItemsView model =
           ]
           [ span [] [text "Event log"]
           ]
+    , div [ onClick <| SelectSubMenu Geometory
+          , class <| if model.selectedSubMenu == Geometory then "menu-item-active" else "menu-item"
+          ]
+          [ span [] [text "Geometries"]
+          ]
     ]
 
 
@@ -105,7 +112,8 @@ menuPalette editorModel model =
             div [class "menu-palette"] [ eventlogView editorModel ]
         Inspector ->
             div [class "menu-palette"] [ inspectorView editorModel ]
-
+        Geometory ->
+            div [class "menu-palette"] [ geometoryView editorModel ]
 
 historyView : Editor.Model -> Html Msg
 historyView editorModel =
@@ -274,6 +282,64 @@ markToString maybe_mark =
                  |> String.concat
         Nothing ->
             "Nothing"
+
+
+
+geometoryView : Editor.Model -> Html Msg
+geometoryView editorModel =
+    div [ id "debug-pane-eventlog"
+        , class "debugger-vbox"
+        ]
+        [ table 
+              [ class "debuger-table" ]
+              [ tr [] [ th [] [text "--"], th [] [text "left"], th [] [text "top"], th [] [text "right"], th [] [text "bottom"], th [] [text "width"], th [] [text "height"] ]
+              , tr [] <| (th [] [ text "frame"            ]) :: (Core.frameID       editorModel.core |> getBoundingClientRect |> rectToTableColumn )
+              , tr [] <| (th [] [ text "scene"            ]) :: (Core.sceneID       editorModel.core |> getBoundingClientRect |> rectToTableColumn )
+              , tr [] <| (th [] [ text "code area"        ]) :: (Core.codeAreaID    editorModel.core |> getBoundingClientRect |> rectToTableColumn )
+              , tr [] <| (th [] [ text "line number area" ]) :: (Core.lineNumAreaID editorModel.core |> getBoundingClientRect |> rectToTableColumn )
+              , tr [] <| (th [] [ text "cursor"           ]) :: (Core.cursorID      editorModel.core |> getBoundingClientRect |> rectToTableColumn )
+              , tr [] <| (th [] [ text "input area"       ]) :: (Core.inputAreaID   editorModel.core |> getBoundingClientRect |> rectToTableColumn )
+              , tr [] <| (th [] [ text "tap area"         ]) :: (Core.tapAreaID     editorModel.core |> getBoundingClientRect |> rectToTableColumn )
+              ]
+        ]
+
+rectToTableColumn: Rect -> List (Html msg)
+rectToTableColumn rct =
+    [ td [] [ rct.left  |> toString |> text ]
+    , td [] [ rct.top   |> toString |> text ]
+    , td [] [ rct.right |> toString |> text ]
+    , td [] [ rct.bottom |> toString |> text ]
+    , td [] [ rct.width |> toString |> text ]
+    , td [] [ rct.height |> toString |> text ]
+    ]
+
+-- TODO: Core とコピペになってるのどうにかする
+type alias Rect =
+    { left :Int
+    , top : Int
+    , right: Int
+    , bottom : Int
+    , x : Int
+    , y : Int
+    , width :Int
+    , height : Int
+    }
+
+getBoundingClientRect: String -> Rect
+getBoundingClientRect id = Native.Mice.getBoundingClientRect id
+
+getBoundingPageRect: String -> Rect
+getBoundingPageRect id = Native.Mice.getBoundingPageRect id
+
+
+
+
+
+
+
+
+
+
 
 ------------------------------------------------------------
 -- date tools

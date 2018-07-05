@@ -526,8 +526,7 @@ geoPosToCharPos model pageXy =
     --       clientXY(スクリーンに対する座標）ではなく pageXY (ドキュメントに対する座標)
     --       なので、余計な手間(see. Nateve/Mice.js) だが PageXY座標系にて計算を行う
     let
-        rect = Debug.log "codaAreaRect(p)" (getBoundingPageRect (codeAreaID model))
-        crect = Debug.log "codaAreaRect(c)" (getBoundingClientRect (codeAreaID model))
+        rect = getBoundingPageRect (codeAreaID model)
         row  = yToRow model (pageXy.y - rect.top)
         line = Buffer.line row model.buffer |> Maybe.withDefault ""
         col = xToColumn model line (pageXy.x - rect.left)

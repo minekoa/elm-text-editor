@@ -13851,16 +13851,8 @@ var _minekoa$elm_text_editor$TextEditor$yToRow = F2(
 	});
 var _minekoa$elm_text_editor$TextEditor$geoPosToCharPos = F2(
 	function (model, pageXy) {
-		var crect = A2(
-			_elm_lang$core$Debug$log,
-			'codaAreaRect(c)',
-			_minekoa$elm_text_editor$TextEditor$getBoundingClientRect(
-				_minekoa$elm_text_editor$TextEditor_Core$codeAreaID(model)));
-		var rect = A2(
-			_elm_lang$core$Debug$log,
-			'codaAreaRect(p)',
-			_minekoa$elm_text_editor$TextEditor$getBoundingPageRect(
-				_minekoa$elm_text_editor$TextEditor_Core$codeAreaID(model)));
+		var rect = _minekoa$elm_text_editor$TextEditor$getBoundingPageRect(
+			_minekoa$elm_text_editor$TextEditor_Core$codeAreaID(model));
 		var row = A2(_minekoa$elm_text_editor$TextEditor$yToRow, model, pageXy.y - rect.top);
 		var line = A2(
 			_elm_lang$core$Maybe$withDefault,

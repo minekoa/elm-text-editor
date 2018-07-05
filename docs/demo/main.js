@@ -13711,16 +13711,8 @@ var _minekoa$elm_text_editor$TextEditor$yToRow = F2(
 	});
 var _minekoa$elm_text_editor$TextEditor$geoPosToCharPos = F2(
 	function (model, pageXy) {
-		var crect = A2(
-			_elm_lang$core$Debug$log,
-			'codaAreaRect(c)',
-			_minekoa$elm_text_editor$TextEditor$getBoundingClientRect(
-				_minekoa$elm_text_editor$TextEditor_Core$codeAreaID(model)));
-		var rect = A2(
-			_elm_lang$core$Debug$log,
-			'codaAreaRect(p)',
-			_minekoa$elm_text_editor$TextEditor$getBoundingPageRect(
-				_minekoa$elm_text_editor$TextEditor_Core$codeAreaID(model)));
+		var rect = _minekoa$elm_text_editor$TextEditor$getBoundingPageRect(
+			_minekoa$elm_text_editor$TextEditor_Core$codeAreaID(model));
 		var row = A2(_minekoa$elm_text_editor$TextEditor$yToRow, model, pageXy.y - rect.top);
 		var line = A2(
 			_elm_lang$core$Maybe$withDefault,
@@ -15511,6 +15503,336 @@ var _minekoa$elm_text_editor$DebugMenu$dateToString = function (date) {
 			}
 		});
 };
+var _minekoa$elm_text_editor$DebugMenu$getBoundingPageRect = function (id) {
+	return _minekoa$elm_text_editor$Native_Mice.getBoundingPageRect(id);
+};
+var _minekoa$elm_text_editor$DebugMenu$getBoundingClientRect = function (id) {
+	return _minekoa$elm_text_editor$Native_Mice.getBoundingClientRect(id);
+};
+var _minekoa$elm_text_editor$DebugMenu$rectToTableColumn = function (rct) {
+	return {
+		ctor: '::',
+		_0: A2(
+			_elm_lang$html$Html$td,
+			{ctor: '[]'},
+			{
+				ctor: '::',
+				_0: _elm_lang$html$Html$text(
+					_elm_lang$core$Basics$toString(rct.left)),
+				_1: {ctor: '[]'}
+			}),
+		_1: {
+			ctor: '::',
+			_0: A2(
+				_elm_lang$html$Html$td,
+				{ctor: '[]'},
+				{
+					ctor: '::',
+					_0: _elm_lang$html$Html$text(
+						_elm_lang$core$Basics$toString(rct.top)),
+					_1: {ctor: '[]'}
+				}),
+			_1: {
+				ctor: '::',
+				_0: A2(
+					_elm_lang$html$Html$td,
+					{ctor: '[]'},
+					{
+						ctor: '::',
+						_0: _elm_lang$html$Html$text(
+							_elm_lang$core$Basics$toString(rct.right)),
+						_1: {ctor: '[]'}
+					}),
+				_1: {
+					ctor: '::',
+					_0: A2(
+						_elm_lang$html$Html$td,
+						{ctor: '[]'},
+						{
+							ctor: '::',
+							_0: _elm_lang$html$Html$text(
+								_elm_lang$core$Basics$toString(rct.bottom)),
+							_1: {ctor: '[]'}
+						}),
+					_1: {
+						ctor: '::',
+						_0: A2(
+							_elm_lang$html$Html$td,
+							{ctor: '[]'},
+							{
+								ctor: '::',
+								_0: _elm_lang$html$Html$text(
+									_elm_lang$core$Basics$toString(rct.width)),
+								_1: {ctor: '[]'}
+							}),
+						_1: {
+							ctor: '::',
+							_0: A2(
+								_elm_lang$html$Html$td,
+								{ctor: '[]'},
+								{
+									ctor: '::',
+									_0: _elm_lang$html$Html$text(
+										_elm_lang$core$Basics$toString(rct.height)),
+									_1: {ctor: '[]'}
+								}),
+							_1: {ctor: '[]'}
+						}
+					}
+				}
+			}
+		}
+	};
+};
+var _minekoa$elm_text_editor$DebugMenu$geometoryView = function (editorModel) {
+	return A2(
+		_elm_lang$html$Html$div,
+		{
+			ctor: '::',
+			_0: _elm_lang$html$Html_Attributes$id('debug-pane-eventlog'),
+			_1: {
+				ctor: '::',
+				_0: _elm_lang$html$Html_Attributes$class('debugger-vbox'),
+				_1: {ctor: '[]'}
+			}
+		},
+		{
+			ctor: '::',
+			_0: A2(
+				_elm_lang$html$Html$table,
+				{
+					ctor: '::',
+					_0: _elm_lang$html$Html_Attributes$class('debuger-table'),
+					_1: {ctor: '[]'}
+				},
+				{
+					ctor: '::',
+					_0: A2(
+						_elm_lang$html$Html$tr,
+						{ctor: '[]'},
+						{
+							ctor: '::',
+							_0: A2(
+								_elm_lang$html$Html$th,
+								{ctor: '[]'},
+								{
+									ctor: '::',
+									_0: _elm_lang$html$Html$text('--'),
+									_1: {ctor: '[]'}
+								}),
+							_1: {
+								ctor: '::',
+								_0: A2(
+									_elm_lang$html$Html$th,
+									{ctor: '[]'},
+									{
+										ctor: '::',
+										_0: _elm_lang$html$Html$text('left'),
+										_1: {ctor: '[]'}
+									}),
+								_1: {
+									ctor: '::',
+									_0: A2(
+										_elm_lang$html$Html$th,
+										{ctor: '[]'},
+										{
+											ctor: '::',
+											_0: _elm_lang$html$Html$text('top'),
+											_1: {ctor: '[]'}
+										}),
+									_1: {
+										ctor: '::',
+										_0: A2(
+											_elm_lang$html$Html$th,
+											{ctor: '[]'},
+											{
+												ctor: '::',
+												_0: _elm_lang$html$Html$text('right'),
+												_1: {ctor: '[]'}
+											}),
+										_1: {
+											ctor: '::',
+											_0: A2(
+												_elm_lang$html$Html$th,
+												{ctor: '[]'},
+												{
+													ctor: '::',
+													_0: _elm_lang$html$Html$text('bottom'),
+													_1: {ctor: '[]'}
+												}),
+											_1: {
+												ctor: '::',
+												_0: A2(
+													_elm_lang$html$Html$th,
+													{ctor: '[]'},
+													{
+														ctor: '::',
+														_0: _elm_lang$html$Html$text('width'),
+														_1: {ctor: '[]'}
+													}),
+												_1: {
+													ctor: '::',
+													_0: A2(
+														_elm_lang$html$Html$th,
+														{ctor: '[]'},
+														{
+															ctor: '::',
+															_0: _elm_lang$html$Html$text('height'),
+															_1: {ctor: '[]'}
+														}),
+													_1: {ctor: '[]'}
+												}
+											}
+										}
+									}
+								}
+							}
+						}),
+					_1: {
+						ctor: '::',
+						_0: A2(
+							_elm_lang$html$Html$tr,
+							{ctor: '[]'},
+							{
+								ctor: '::',
+								_0: A2(
+									_elm_lang$html$Html$th,
+									{ctor: '[]'},
+									{
+										ctor: '::',
+										_0: _elm_lang$html$Html$text('frame'),
+										_1: {ctor: '[]'}
+									}),
+								_1: _minekoa$elm_text_editor$DebugMenu$rectToTableColumn(
+									_minekoa$elm_text_editor$DebugMenu$getBoundingClientRect(
+										_minekoa$elm_text_editor$TextEditor_Core$frameID(editorModel.core)))
+							}),
+						_1: {
+							ctor: '::',
+							_0: A2(
+								_elm_lang$html$Html$tr,
+								{ctor: '[]'},
+								{
+									ctor: '::',
+									_0: A2(
+										_elm_lang$html$Html$th,
+										{ctor: '[]'},
+										{
+											ctor: '::',
+											_0: _elm_lang$html$Html$text('scene'),
+											_1: {ctor: '[]'}
+										}),
+									_1: _minekoa$elm_text_editor$DebugMenu$rectToTableColumn(
+										_minekoa$elm_text_editor$DebugMenu$getBoundingClientRect(
+											_minekoa$elm_text_editor$TextEditor_Core$sceneID(editorModel.core)))
+								}),
+							_1: {
+								ctor: '::',
+								_0: A2(
+									_elm_lang$html$Html$tr,
+									{ctor: '[]'},
+									{
+										ctor: '::',
+										_0: A2(
+											_elm_lang$html$Html$th,
+											{ctor: '[]'},
+											{
+												ctor: '::',
+												_0: _elm_lang$html$Html$text('code area'),
+												_1: {ctor: '[]'}
+											}),
+										_1: _minekoa$elm_text_editor$DebugMenu$rectToTableColumn(
+											_minekoa$elm_text_editor$DebugMenu$getBoundingClientRect(
+												_minekoa$elm_text_editor$TextEditor_Core$codeAreaID(editorModel.core)))
+									}),
+								_1: {
+									ctor: '::',
+									_0: A2(
+										_elm_lang$html$Html$tr,
+										{ctor: '[]'},
+										{
+											ctor: '::',
+											_0: A2(
+												_elm_lang$html$Html$th,
+												{ctor: '[]'},
+												{
+													ctor: '::',
+													_0: _elm_lang$html$Html$text('line number area'),
+													_1: {ctor: '[]'}
+												}),
+											_1: _minekoa$elm_text_editor$DebugMenu$rectToTableColumn(
+												_minekoa$elm_text_editor$DebugMenu$getBoundingClientRect(
+													_minekoa$elm_text_editor$TextEditor_Core$lineNumAreaID(editorModel.core)))
+										}),
+									_1: {
+										ctor: '::',
+										_0: A2(
+											_elm_lang$html$Html$tr,
+											{ctor: '[]'},
+											{
+												ctor: '::',
+												_0: A2(
+													_elm_lang$html$Html$th,
+													{ctor: '[]'},
+													{
+														ctor: '::',
+														_0: _elm_lang$html$Html$text('cursor'),
+														_1: {ctor: '[]'}
+													}),
+												_1: _minekoa$elm_text_editor$DebugMenu$rectToTableColumn(
+													_minekoa$elm_text_editor$DebugMenu$getBoundingClientRect(
+														_minekoa$elm_text_editor$TextEditor_Core$cursorID(editorModel.core)))
+											}),
+										_1: {
+											ctor: '::',
+											_0: A2(
+												_elm_lang$html$Html$tr,
+												{ctor: '[]'},
+												{
+													ctor: '::',
+													_0: A2(
+														_elm_lang$html$Html$th,
+														{ctor: '[]'},
+														{
+															ctor: '::',
+															_0: _elm_lang$html$Html$text('input area'),
+															_1: {ctor: '[]'}
+														}),
+													_1: _minekoa$elm_text_editor$DebugMenu$rectToTableColumn(
+														_minekoa$elm_text_editor$DebugMenu$getBoundingClientRect(
+															_minekoa$elm_text_editor$TextEditor_Core$inputAreaID(editorModel.core)))
+												}),
+											_1: {
+												ctor: '::',
+												_0: A2(
+													_elm_lang$html$Html$tr,
+													{ctor: '[]'},
+													{
+														ctor: '::',
+														_0: A2(
+															_elm_lang$html$Html$th,
+															{ctor: '[]'},
+															{
+																ctor: '::',
+																_0: _elm_lang$html$Html$text('tap area'),
+																_1: {ctor: '[]'}
+															}),
+														_1: _minekoa$elm_text_editor$DebugMenu$rectToTableColumn(
+															_minekoa$elm_text_editor$DebugMenu$getBoundingClientRect(
+																_minekoa$elm_text_editor$TextEditor_Core$tapAreaID(editorModel.core)))
+													}),
+												_1: {ctor: '[]'}
+											}
+										}
+									}
+								}
+							}
+						}
+					}
+				}),
+			_1: {ctor: '[]'}
+		});
+};
 var _minekoa$elm_text_editor$DebugMenu$markToString = function (maybe_mark) {
 	var _p1 = maybe_mark;
 	if (_p1.ctor === 'Just') {
@@ -16474,6 +16796,11 @@ var _minekoa$elm_text_editor$DebugMenu$update = F3(
 var _minekoa$elm_text_editor$DebugMenu$Model = function (a) {
 	return {selectedSubMenu: a};
 };
+var _minekoa$elm_text_editor$DebugMenu$Rect = F8(
+	function (a, b, c, d, e, f, g, h) {
+		return {left: a, top: b, right: c, bottom: d, x: e, y: f, width: g, height: h};
+	});
+var _minekoa$elm_text_editor$DebugMenu$Geometory = {ctor: 'Geometory'};
 var _minekoa$elm_text_editor$DebugMenu$Inspector = {ctor: 'Inspector'};
 var _minekoa$elm_text_editor$DebugMenu$init = {selectedSubMenu: _minekoa$elm_text_editor$DebugMenu$Inspector};
 var _minekoa$elm_text_editor$DebugMenu$EventLog = {ctor: 'EventLog'};
@@ -16681,7 +17008,7 @@ var _minekoa$elm_text_editor$DebugMenu$menuPalette = F2(
 						_0: _minekoa$elm_text_editor$DebugMenu$eventlogView(editorModel),
 						_1: {ctor: '[]'}
 					});
-			default:
+			case 'Inspector':
 				return A2(
 					_elm_lang$html$Html$div,
 					{
@@ -16692,6 +17019,19 @@ var _minekoa$elm_text_editor$DebugMenu$menuPalette = F2(
 					{
 						ctor: '::',
 						_0: _minekoa$elm_text_editor$DebugMenu$inspectorView(editorModel),
+						_1: {ctor: '[]'}
+					});
+			default:
+				return A2(
+					_elm_lang$html$Html$div,
+					{
+						ctor: '::',
+						_0: _elm_lang$html$Html_Attributes$class('menu-palette'),
+						_1: {ctor: '[]'}
+					},
+					{
+						ctor: '::',
+						_0: _minekoa$elm_text_editor$DebugMenu$geometoryView(editorModel),
 						_1: {ctor: '[]'}
 					});
 		}
@@ -16815,7 +17155,35 @@ var _minekoa$elm_text_editor$DebugMenu$menuItemsView = function (model) {
 									}),
 								_1: {ctor: '[]'}
 							}),
-						_1: {ctor: '[]'}
+						_1: {
+							ctor: '::',
+							_0: A2(
+								_elm_lang$html$Html$div,
+								{
+									ctor: '::',
+									_0: _elm_lang$html$Html_Events$onClick(
+										_minekoa$elm_text_editor$DebugMenu$SelectSubMenu(_minekoa$elm_text_editor$DebugMenu$Geometory)),
+									_1: {
+										ctor: '::',
+										_0: _elm_lang$html$Html_Attributes$class(
+											_elm_lang$core$Native_Utils.eq(model.selectedSubMenu, _minekoa$elm_text_editor$DebugMenu$Geometory) ? 'menu-item-active' : 'menu-item'),
+										_1: {ctor: '[]'}
+									}
+								},
+								{
+									ctor: '::',
+									_0: A2(
+										_elm_lang$html$Html$span,
+										{ctor: '[]'},
+										{
+											ctor: '::',
+											_0: _elm_lang$html$Html$text('Geometries'),
+											_1: {ctor: '[]'}
+										}),
+									_1: {ctor: '[]'}
+								}),
+							_1: {ctor: '[]'}
+						}
 					}
 				}
 			}
