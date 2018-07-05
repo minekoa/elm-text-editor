@@ -50,14 +50,13 @@ var _minekoa$elm_text_editor$Native_Mice = function() {
             }
 
             /* set scroll pos */
-/*
             if (new_scr_top  != null) {
                 frame.scrollTop  = new_scr_top;
             }
             if (new_scr_left != null) {
                 frame.scrollLeft = new_scr_left;
             }
-*/
+
             return (new_scr_top != null) || (new_scr_left != null);
         } );
 
