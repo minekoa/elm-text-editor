@@ -12491,7 +12491,7 @@ var _minekoa$elm_text_editor$Native_Mice = function() {
                  "right": rect.right + scrollX,
                  "bottom": rect.bottom + scrollY,
                  "x"     : (rect.x ? rect.x : rect.left) + scrollX,
-                 "y"     : (rect.y ? rect.y : rect.reft) + scrollY,
+                 "y"     : (rect.y ? rect.y : rect.top) + scrollY,
                  "width" : rect.width,
                  "height": rect.height,
                }
@@ -13851,9 +13851,14 @@ var _minekoa$elm_text_editor$TextEditor$yToRow = F2(
 	});
 var _minekoa$elm_text_editor$TextEditor$geoPosToCharPos = F2(
 	function (model, pageXy) {
+		var crect = A2(
+			_elm_lang$core$Debug$log,
+			'codaAreaRect(c)',
+			_minekoa$elm_text_editor$TextEditor$getBoundingClientRect(
+				_minekoa$elm_text_editor$TextEditor_Core$codeAreaID(model)));
 		var rect = A2(
 			_elm_lang$core$Debug$log,
-			'codaAreaRect',
+			'codaAreaRect(p)',
 			_minekoa$elm_text_editor$TextEditor$getBoundingPageRect(
 				_minekoa$elm_text_editor$TextEditor_Core$codeAreaID(model)));
 		var row = A2(_minekoa$elm_text_editor$TextEditor$yToRow, model, pageXy.y - rect.top);

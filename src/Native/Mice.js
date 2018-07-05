@@ -99,7 +99,7 @@ var _minekoa$elm_text_editor$Native_Mice = function() {
                  "right": rect.right + scrollX,
                  "bottom": rect.bottom + scrollY,
                  "x"     : (rect.x ? rect.x : rect.left) + scrollX,
-                 "y"     : (rect.y ? rect.y : rect.reft) + scrollY,
+                 "y"     : (rect.y ? rect.y : rect.top) + scrollY,
                  "width" : rect.width,
                  "height": rect.height,
                }
