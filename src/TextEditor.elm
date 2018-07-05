@@ -1143,7 +1143,7 @@ onFocusOut tagger =
 
 onMouseDown : (MouseEvent -> msg) -> Attribute msg
 onMouseDown tagger =
-    on "mousedown" (Json.map tagger mouseEvent)
+    onWithOptions "mousedown" { stopPropagation=False, preventDefault=True } (Json.map tagger mouseEvent)
 
 
 -- CustomEvent (clipboard)

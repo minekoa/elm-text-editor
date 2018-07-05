@@ -14955,9 +14955,10 @@ var _minekoa$elm_text_editor$TextEditor$mouseEvent = A6(
 	A2(_elm_lang$core$Json_Decode$field, 'pageY', _elm_lang$core$Json_Decode$int),
 	A2(_elm_lang$core$Json_Decode$field, 'button', _minekoa$elm_text_editor$TextEditor$mouseButton));
 var _minekoa$elm_text_editor$TextEditor$onMouseDown = function (tagger) {
-	return A2(
-		_elm_lang$html$Html_Events$on,
+	return A3(
+		_elm_lang$html$Html_Events$onWithOptions,
 		'mousedown',
+		{stopPropagation: false, preventDefault: true},
 		A2(_elm_lang$core$Json_Decode$map, tagger, _minekoa$elm_text_editor$TextEditor$mouseEvent));
 };
 var _minekoa$elm_text_editor$TextEditor$tapControlLayer = function (model) {
