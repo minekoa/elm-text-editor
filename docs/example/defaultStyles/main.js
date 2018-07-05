@@ -12729,6 +12729,30 @@ var _minekoa$elm_text_editor$TextEditor$keyboarEvent_toString = function (e) {
 };
 var _minekoa$elm_text_editor$TextEditor$stylesheet = F2(
 	function (sty, frameID) {
+		var cssid = function (s) {
+			return _elm_lang$core$String$concat(
+				{
+					ctor: '::',
+					_0: '#',
+					_1: {
+						ctor: '::',
+						_0: frameID,
+						_1: {
+							ctor: '::',
+							_0: ' { ',
+							_1: {
+								ctor: '::',
+								_0: s,
+								_1: {
+									ctor: '::',
+									_0: ' }\n',
+									_1: {ctor: '[]'}
+								}
+							}
+						}
+					}
+				});
+		};
 		var csscls = F2(
 			function (clsname, s) {
 				return _elm_lang$core$String$concat(
@@ -12886,9 +12910,7 @@ var _minekoa$elm_text_editor$TextEditor$stylesheet = F2(
 										_elm_lang$core$Maybe$andThen,
 										function (s) {
 											return _elm_lang$core$Maybe$Just(
-												A2(
-													csscls,
-													'elm-text-editor-scene',
+												cssid(
 													codesty2str(s)));
 										},
 										sty.common)),
@@ -15042,35 +15064,39 @@ var _minekoa$elm_text_editor$TextEditor$view = function (model) {
 				_minekoa$elm_text_editor$TextEditor_Core$frameID(model.core)),
 			_1: {
 				ctor: '::',
-				_0: _elm_lang$html$Html_Attributes$style(
-					{
-						ctor: '::',
-						_0: {ctor: '_Tuple2', _0: 'margin', _1: '0'},
-						_1: {
+				_0: _elm_lang$html$Html_Attributes$class('elm-text-editor-frame'),
+				_1: {
+					ctor: '::',
+					_0: _elm_lang$html$Html_Attributes$style(
+						{
 							ctor: '::',
-							_0: {ctor: '_Tuple2', _0: 'padding', _1: '0'},
+							_0: {ctor: '_Tuple2', _0: 'margin', _1: '0'},
 							_1: {
 								ctor: '::',
-								_0: {ctor: '_Tuple2', _0: 'width', _1: '100%'},
+								_0: {ctor: '_Tuple2', _0: 'padding', _1: '0'},
 								_1: {
 									ctor: '::',
-									_0: {ctor: '_Tuple2', _0: 'height', _1: '100%'},
+									_0: {ctor: '_Tuple2', _0: 'width', _1: '100%'},
 									_1: {
 										ctor: '::',
-										_0: {ctor: '_Tuple2', _0: 'overflow', _1: 'auto'},
+										_0: {ctor: '_Tuple2', _0: 'height', _1: '100%'},
 										_1: {
 											ctor: '::',
-											_0: {ctor: '_Tuple2', _0: 'position', _1: 'relative'},
+											_0: {ctor: '_Tuple2', _0: 'overflow', _1: 'auto'},
 											_1: {
 												ctor: '::',
-												_0: {ctor: '_Tuple2', _0: 'user-select', _1: 'none'},
+												_0: {ctor: '_Tuple2', _0: 'position', _1: 'relative'},
 												_1: {
 													ctor: '::',
-													_0: {ctor: '_Tuple2', _0: '-webkit-user-select', _1: 'none'},
+													_0: {ctor: '_Tuple2', _0: 'user-select', _1: 'none'},
 													_1: {
 														ctor: '::',
-														_0: {ctor: '_Tuple2', _0: '-moz-user-select', _1: 'none'},
-														_1: {ctor: '[]'}
+														_0: {ctor: '_Tuple2', _0: '-webkit-user-select', _1: 'none'},
+														_1: {
+															ctor: '::',
+															_0: {ctor: '_Tuple2', _0: '-moz-user-select', _1: 'none'},
+															_1: {ctor: '[]'}
+														}
 													}
 												}
 											}
@@ -15078,12 +15104,12 @@ var _minekoa$elm_text_editor$TextEditor$view = function (model) {
 									}
 								}
 							}
-						}
-					}),
-				_1: {
-					ctor: '::',
-					_0: _elm_lang$html$Html_Events$onClick(_minekoa$elm_text_editor$TextEditor$ClickScreen),
-					_1: {ctor: '[]'}
+						}),
+					_1: {
+						ctor: '::',
+						_0: _elm_lang$html$Html_Events$onClick(_minekoa$elm_text_editor$TextEditor$ClickScreen),
+						_1: {ctor: '[]'}
+					}
 				}
 			}
 		},

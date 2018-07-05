@@ -624,6 +624,7 @@ updateMap model (em, ec) =
 view : Model -> Html Msg
 view model =
     div [ id <| frameID model.core
+        , class "elm-text-editor-frame"
         , style [ ("margin", "0"), ("padding", "0"), ("width", "100%"), ("height", "100%")
                 , ("overflow","auto")
                 , ("position", "relative")
@@ -1029,10 +1030,12 @@ stylesheet sty frameID =
 
         csscls = \clsname s ->
                  [ "#", frameID, " ", ".", clsname, " { ", s, " }\n"] |> String.concat
+        cssid = \ s ->
+                 [ "#", frameID, " { ", s, " }\n"] |> String.concat
 
     in
         node "style" [ type_ "text/css" ]
-            [ ( [ sty.common     |> Maybe.andThen (\s -> codesty2str  s |> csscls "elm-text-editor-scene"     |> Just) |> Maybe.withDefault ""
+            [ ( [ sty.common     |> Maybe.andThen (\s -> codesty2str  s |> cssid                              |> Just) |> Maybe.withDefault ""
                 , sty.numberLine |> Maybe.andThen (\s -> lnumsty2str  s |> csscls "elm-text-editor-linenum"   |> Just) |> Maybe.withDefault ""
                 , sty.cursor     |> Maybe.andThen (\s -> cursty2str   s |> csscls "elm-text-editor-cursor"    |> Just) |> Maybe.withDefault ""
                 , sty.selection  |> Maybe.andThen (\s -> ffacesty2str s |> csscls "elm-text-editor-selection" |> Just) |> Maybe.withDefault ""
