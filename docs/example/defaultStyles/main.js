@@ -12279,9 +12279,10 @@ var _minekoa$elm_text_editor$Native_Mice = function() {
             const margin = target_rect.height * 2.1;
 
             /* dbg */
+/*
             console.log( "B: frm: top=" + frame_rect.top.toString()  + " left=" + frame_rect.left.toString()  + " bottom=" + frame_rect.bottom.toString()  + " right=" + frame_rect.right.toString()  );
             console.log( "B: tgt: top=" + target_rect.top.toString() + " left=" + target_rect.left.toString() + " bottom=" + target_rect.bottom.toString() + " right=" + target_rect.right.toString() );
-
+*/
             /* vertincal */
             var new_scr_top = null;
             if      ( target_rect.top    - margin < frame_rect.top    ) {
@@ -13646,7 +13647,7 @@ var _minekoa$elm_text_editor$TextEditor$printDragInfo = F2(
 				_elm_lang$core$Basics$toString(xy.x),
 				A2(
 					_elm_lang$core$Basics_ops['++'],
-					',',
+					', ',
 					A2(
 						_elm_lang$core$Basics_ops['++'],
 						_elm_lang$core$Basics$toString(xy.y),
@@ -13658,7 +13659,7 @@ var _minekoa$elm_text_editor$TextEditor$printDragInfo = F2(
 								_elm_lang$core$Basics$toString(rowcol.row),
 								A2(
 									_elm_lang$core$Basics_ops['++'],
-									',',
+									', ',
 									_elm_lang$core$Basics$toString(rowcol.column))))))));
 	});
 var _minekoa$elm_text_editor$TextEditor$xToColumn = F3(
@@ -13710,8 +13711,11 @@ var _minekoa$elm_text_editor$TextEditor$yToRow = F2(
 	});
 var _minekoa$elm_text_editor$TextEditor$geoPosToCharPos = F2(
 	function (model, pageXy) {
-		var rect = _minekoa$elm_text_editor$TextEditor$getBoundingPageRect(
-			_minekoa$elm_text_editor$TextEditor_Core$codeAreaID(model));
+		var rect = A2(
+			_elm_lang$core$Debug$log,
+			'codaAreaRect',
+			_minekoa$elm_text_editor$TextEditor$getBoundingPageRect(
+				_minekoa$elm_text_editor$TextEditor_Core$codeAreaID(model)));
 		var row = A2(_minekoa$elm_text_editor$TextEditor$yToRow, model, pageXy.y - rect.top);
 		var line = A2(
 			_elm_lang$core$Maybe$withDefault,

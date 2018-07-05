@@ -27,9 +27,10 @@ var _minekoa$elm_text_editor$Native_Mice = function() {
             const margin = target_rect.height * 2.1;
 
             /* dbg */
+/*
             console.log( "B: frm: top=" + frame_rect.top.toString()  + " left=" + frame_rect.left.toString()  + " bottom=" + frame_rect.bottom.toString()  + " right=" + frame_rect.right.toString()  );
             console.log( "B: tgt: top=" + target_rect.top.toString() + " left=" + target_rect.left.toString() + " bottom=" + target_rect.bottom.toString() + " right=" + target_rect.right.toString() );
-
+*/
             /* vertincal */
             var new_scr_top = null;
             if      ( target_rect.top    - margin < frame_rect.top    ) {
