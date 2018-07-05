@@ -300,6 +300,8 @@ geometoryView editorModel =
               , tr [] <| (th [] [ text "cursor"           ]) :: (Core.cursorID      editorModel.core |> getBoundingClientRect |> rectToTableColumn )
               , tr [] <| (th [] [ text "input area"       ]) :: (Core.inputAreaID   editorModel.core |> getBoundingClientRect |> rectToTableColumn )
               , tr [] <| (th [] [ text "tap area"         ]) :: (Core.tapAreaID     editorModel.core |> getBoundingClientRect |> rectToTableColumn )
+              , tr [] <| (th [] [ text "frame (page)"            ]) :: (Core.frameID       editorModel.core |> getBoundingPageRect |> rectToTableColumn )
+              , tr [] <| (th [] [ text "code area (page)"        ]) :: (Core.codeAreaID    editorModel.core |> getBoundingPageRect |> rectToTableColumn )
               ]
         ]
 

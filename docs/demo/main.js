@@ -12302,13 +12302,14 @@ var _minekoa$elm_text_editor$Native_Mice = function() {
             }
 
             /* set scroll pos */
+/*
             if (new_scr_top  != null) {
                 frame.scrollTop  = new_scr_top;
             }
             if (new_scr_left != null) {
                 frame.scrollLeft = new_scr_left;
             }
-
+*/
             return (new_scr_top != null) || (new_scr_left != null);
         } );
 
@@ -15821,7 +15822,47 @@ var _minekoa$elm_text_editor$DebugMenu$geometoryView = function (editorModel) {
 															_minekoa$elm_text_editor$DebugMenu$getBoundingClientRect(
 																_minekoa$elm_text_editor$TextEditor_Core$tapAreaID(editorModel.core)))
 													}),
-												_1: {ctor: '[]'}
+												_1: {
+													ctor: '::',
+													_0: A2(
+														_elm_lang$html$Html$tr,
+														{ctor: '[]'},
+														{
+															ctor: '::',
+															_0: A2(
+																_elm_lang$html$Html$th,
+																{ctor: '[]'},
+																{
+																	ctor: '::',
+																	_0: _elm_lang$html$Html$text('frame (page)'),
+																	_1: {ctor: '[]'}
+																}),
+															_1: _minekoa$elm_text_editor$DebugMenu$rectToTableColumn(
+																_minekoa$elm_text_editor$DebugMenu$getBoundingPageRect(
+																	_minekoa$elm_text_editor$TextEditor_Core$frameID(editorModel.core)))
+														}),
+													_1: {
+														ctor: '::',
+														_0: A2(
+															_elm_lang$html$Html$tr,
+															{ctor: '[]'},
+															{
+																ctor: '::',
+																_0: A2(
+																	_elm_lang$html$Html$th,
+																	{ctor: '[]'},
+																	{
+																		ctor: '::',
+																		_0: _elm_lang$html$Html$text('code area (page)'),
+																		_1: {ctor: '[]'}
+																	}),
+																_1: _minekoa$elm_text_editor$DebugMenu$rectToTableColumn(
+																	_minekoa$elm_text_editor$DebugMenu$getBoundingPageRect(
+																		_minekoa$elm_text_editor$TextEditor_Core$codeAreaID(editorModel.core)))
+															}),
+														_1: {ctor: '[]'}
+													}
+												}
 											}
 										}
 									}
