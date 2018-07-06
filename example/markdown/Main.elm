@@ -86,7 +86,7 @@ defaultText =
 
 [Browse source](https://github.com/minekoa/elm-text-editor/tree/master/example/markdown) | [More examples](../index.html)
 
-## Bullet
+## Lists
 
 * lv1
 * lv1
@@ -98,15 +98,26 @@ defaultText =
 2. lv1
    1. lv2
 
-## Paragraph
+
+## Paragraph and Blockquote
 
 abcd efg
 nhijk lmn
 
-    opqr stu
+opqr stu
+vw
 
-> vw
-xyz
+> xyz
+>
+> [City Hunter | Wikipedia ](https://en.wikipedia.org/wiki/City_Hunter)
+
+## Pre
+
+
+    def main
+        hogehoge
+    end
+
 
 ```
 toDivisiblePhrase = λ divi phr (n, s) ->
@@ -131,11 +142,27 @@ view model =
            ]
 ```
 
+~~~
+(1 to: 15) collect: 
+    [:n | n fizz buzz]
+~~~
+
+
+
 ## Table
 
 |果物   |個数|
-|-------|----|
+|-------|---:|
 |りんご |1   |
 |ばなな!|∞  |
 
+## Text decorations
+
+ABC *DEF* G
+HIJ **KLM** N
+OPQ ***RST*** U
+V ~~WXY~~ Z
+
+abc `def` g
 """
+
