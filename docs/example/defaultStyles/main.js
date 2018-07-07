@@ -10862,12 +10862,46 @@ var _minekoa$elm_text_editor$TextEditor_Buffer$insert = F2(
 		}
 	});
 
+var _minekoa$elm_text_editor$TextEditor_Option$jsonEncode = function (opt) {
+	return _elm_lang$core$Json_Encode$object(
+		{
+			ctor: '::',
+			_0: {
+				ctor: '_Tuple2',
+				_0: 'tabOrder',
+				_1: _elm_lang$core$Json_Encode$int(opt.tabOrder)
+			},
+			_1: {
+				ctor: '::',
+				_0: {
+					ctor: '_Tuple2',
+					_0: 'indentTabsMode',
+					_1: _elm_lang$core$Json_Encode$bool(opt.indentTabsMode)
+				},
+				_1: {
+					ctor: '::',
+					_0: {
+						ctor: '_Tuple2',
+						_0: 'showControlCharactor',
+						_1: _elm_lang$core$Json_Encode$bool(opt.showControlCharactor)
+					},
+					_1: {ctor: '[]'}
+				}
+			}
+		});
+};
 var _minekoa$elm_text_editor$TextEditor_Option$editorLikeOptions = {tabOrder: 4, indentTabsMode: false, showControlCharactor: true};
 var _minekoa$elm_text_editor$TextEditor_Option$notepadLikeOptions = {tabOrder: 8, indentTabsMode: true, showControlCharactor: false};
 var _minekoa$elm_text_editor$TextEditor_Option$Option = F3(
 	function (a, b, c) {
 		return {tabOrder: a, indentTabsMode: b, showControlCharactor: c};
 	});
+var _minekoa$elm_text_editor$TextEditor_Option$jsonDecode = A4(
+	_elm_lang$core$Json_Decode$map3,
+	_minekoa$elm_text_editor$TextEditor_Option$Option,
+	A2(_elm_lang$core$Json_Decode$field, 'tabOrder', _elm_lang$core$Json_Decode$int),
+	A2(_elm_lang$core$Json_Decode$field, 'indentTabsMode', _elm_lang$core$Json_Decode$bool),
+	A2(_elm_lang$core$Json_Decode$field, 'showControlCharactor', _elm_lang$core$Json_Decode$bool));
 
 var _minekoa$elm_text_editor$TextEditor_Core$getBoundingClientRect = function (id) {
 	return _minekoa$elm_text_editor$Native_Mice.getBoundingClientRect(id);
@@ -11879,6 +11913,250 @@ var _minekoa$elm_text_editor$TextEditor_Commands$Command = F2(
 		return {id: a, f: b};
 	});
 
+var _minekoa$elm_text_editor$TextEditor_Style$encodeColorStyle = function (sty) {
+	return _elm_lang$core$Json_Encode$object(
+		{
+			ctor: '::',
+			_0: {
+				ctor: '_Tuple2',
+				_0: 'color',
+				_1: _elm_lang$core$Json_Encode$string(sty.color)
+			},
+			_1: {
+				ctor: '::',
+				_0: {
+					ctor: '_Tuple2',
+					_0: 'opacity',
+					_1: _elm_lang$core$Json_Encode$string(sty.opacity)
+				},
+				_1: {ctor: '[]'}
+			}
+		});
+};
+var _minekoa$elm_text_editor$TextEditor_Style$encodeFontFaceStyle = function (sty) {
+	return _elm_lang$core$Json_Encode$object(
+		{
+			ctor: '::',
+			_0: {
+				ctor: '_Tuple2',
+				_0: 'color',
+				_1: _elm_lang$core$Json_Encode$string(sty.color)
+			},
+			_1: {
+				ctor: '::',
+				_0: {
+					ctor: '_Tuple2',
+					_0: 'backgroundColor',
+					_1: _elm_lang$core$Json_Encode$string(sty.backgroundColor)
+				},
+				_1: {
+					ctor: '::',
+					_0: {
+						ctor: '_Tuple2',
+						_0: 'opacity',
+						_1: _elm_lang$core$Json_Encode$string(sty.opacity)
+					},
+					_1: {ctor: '[]'}
+				}
+			}
+		});
+};
+var _minekoa$elm_text_editor$TextEditor_Style$encodeLineNumberStyle = function (sty) {
+	return _elm_lang$core$Json_Encode$object(
+		{
+			ctor: '::',
+			_0: {
+				ctor: '_Tuple2',
+				_0: 'color',
+				_1: _elm_lang$core$Json_Encode$string(sty.color)
+			},
+			_1: {
+				ctor: '::',
+				_0: {
+					ctor: '_Tuple2',
+					_0: 'backgroundColor',
+					_1: _elm_lang$core$Json_Encode$string(sty.backgroundColor)
+				},
+				_1: {
+					ctor: '::',
+					_0: {
+						ctor: '_Tuple2',
+						_0: 'opacity',
+						_1: _elm_lang$core$Json_Encode$string(sty.opacity)
+					},
+					_1: {
+						ctor: '::',
+						_0: {
+							ctor: '_Tuple2',
+							_0: 'borderRight',
+							_1: _elm_lang$core$Json_Encode$string(sty.borderRight)
+						},
+						_1: {
+							ctor: '::',
+							_0: {
+								ctor: '_Tuple2',
+								_0: 'marginRight',
+								_1: _elm_lang$core$Json_Encode$string(sty.marginRight)
+							},
+							_1: {ctor: '[]'}
+						}
+					}
+				}
+			}
+		});
+};
+var _minekoa$elm_text_editor$TextEditor_Style$encodeCodeStyle = function (sty) {
+	return _elm_lang$core$Json_Encode$object(
+		{
+			ctor: '::',
+			_0: {
+				ctor: '_Tuple2',
+				_0: 'color',
+				_1: _elm_lang$core$Json_Encode$string(sty.color)
+			},
+			_1: {
+				ctor: '::',
+				_0: {
+					ctor: '_Tuple2',
+					_0: 'backgroundColor',
+					_1: _elm_lang$core$Json_Encode$string(sty.backgroundColor)
+				},
+				_1: {
+					ctor: '::',
+					_0: {
+						ctor: '_Tuple2',
+						_0: 'opacity',
+						_1: _elm_lang$core$Json_Encode$string(sty.opacity)
+					},
+					_1: {
+						ctor: '::',
+						_0: {
+							ctor: '_Tuple2',
+							_0: 'fontFamily',
+							_1: _elm_lang$core$Json_Encode$string(sty.fontFamily)
+						},
+						_1: {
+							ctor: '::',
+							_0: {
+								ctor: '_Tuple2',
+								_0: 'fontSize',
+								_1: _elm_lang$core$Json_Encode$string(sty.fontSize)
+							},
+							_1: {ctor: '[]'}
+						}
+					}
+				}
+			}
+		});
+};
+var _minekoa$elm_text_editor$TextEditor_Style$jsonEncode = function (sty) {
+	return _elm_lang$core$Json_Encode$object(
+		{
+			ctor: '::',
+			_0: {
+				ctor: '_Tuple2',
+				_0: 'common',
+				_1: A2(
+					_elm_lang$core$Maybe$withDefault,
+					_elm_lang$core$Json_Encode$null,
+					A2(
+						_elm_lang$core$Maybe$andThen,
+						function (s) {
+							return _elm_lang$core$Maybe$Just(
+								_minekoa$elm_text_editor$TextEditor_Style$encodeCodeStyle(s));
+						},
+						sty.common))
+			},
+			_1: {
+				ctor: '::',
+				_0: {
+					ctor: '_Tuple2',
+					_0: 'numberLine',
+					_1: A2(
+						_elm_lang$core$Maybe$withDefault,
+						_elm_lang$core$Json_Encode$null,
+						A2(
+							_elm_lang$core$Maybe$andThen,
+							function (s) {
+								return _elm_lang$core$Maybe$Just(
+									_minekoa$elm_text_editor$TextEditor_Style$encodeLineNumberStyle(s));
+							},
+							sty.numberLine))
+				},
+				_1: {
+					ctor: '::',
+					_0: {
+						ctor: '_Tuple2',
+						_0: 'cursor',
+						_1: A2(
+							_elm_lang$core$Maybe$withDefault,
+							_elm_lang$core$Json_Encode$null,
+							A2(
+								_elm_lang$core$Maybe$andThen,
+								function (s) {
+									return _elm_lang$core$Maybe$Just(
+										_minekoa$elm_text_editor$TextEditor_Style$encodeColorStyle(s));
+								},
+								sty.cursor))
+					},
+					_1: {
+						ctor: '::',
+						_0: {
+							ctor: '_Tuple2',
+							_0: 'selection',
+							_1: A2(
+								_elm_lang$core$Maybe$withDefault,
+								_elm_lang$core$Json_Encode$null,
+								A2(
+									_elm_lang$core$Maybe$andThen,
+									function (s) {
+										return _elm_lang$core$Maybe$Just(
+											_minekoa$elm_text_editor$TextEditor_Style$encodeFontFaceStyle(s));
+									},
+									sty.selection))
+						},
+						_1: {
+							ctor: '::',
+							_0: {
+								ctor: '_Tuple2',
+								_0: 'composing',
+								_1: A2(
+									_elm_lang$core$Maybe$withDefault,
+									_elm_lang$core$Json_Encode$null,
+									A2(
+										_elm_lang$core$Maybe$andThen,
+										function (s) {
+											return _elm_lang$core$Maybe$Just(
+												_minekoa$elm_text_editor$TextEditor_Style$encodeFontFaceStyle(s));
+										},
+										sty.composing))
+							},
+							_1: {
+								ctor: '::',
+								_0: {
+									ctor: '_Tuple2',
+									_0: 'fontFaces',
+									_1: _elm_lang$core$Json_Encode$object(
+										A2(
+											_elm_lang$core$List$map,
+											function (_p0) {
+												var _p1 = _p0;
+												return {
+													ctor: '_Tuple2',
+													_0: _p1._0,
+													_1: _minekoa$elm_text_editor$TextEditor_Style$encodeFontFaceStyle(_p1._1)
+												};
+											},
+											sty.fontFaces))
+								},
+								_1: {ctor: '[]'}
+							}
+						}
+					}
+				}
+			}
+		});
+};
 var _minekoa$elm_text_editor$TextEditor_Style$modernMinchoStyle = {
 	common: _elm_lang$core$Maybe$Just(
 		{color: '', backgroundColor: '', opacity: '', fontFamily: 'YuMincho, \'Hiragino Mincho ProN\', \'ms pmincho\', serif', fontSize: ''}),
@@ -12035,18 +12313,72 @@ var _minekoa$elm_text_editor$TextEditor_Style$CodeStyle = F5(
 	function (a, b, c, d, e) {
 		return {color: a, backgroundColor: b, opacity: c, fontFamily: d, fontSize: e};
 	});
+var _minekoa$elm_text_editor$TextEditor_Style$decodeCodeStyle = A6(
+	_elm_lang$core$Json_Decode$map5,
+	_minekoa$elm_text_editor$TextEditor_Style$CodeStyle,
+	A2(_elm_lang$core$Json_Decode$field, 'color', _elm_lang$core$Json_Decode$string),
+	A2(_elm_lang$core$Json_Decode$field, 'backgroundColor', _elm_lang$core$Json_Decode$string),
+	A2(_elm_lang$core$Json_Decode$field, 'opacity', _elm_lang$core$Json_Decode$string),
+	A2(_elm_lang$core$Json_Decode$field, 'fontFamily', _elm_lang$core$Json_Decode$string),
+	A2(_elm_lang$core$Json_Decode$field, 'fontSize', _elm_lang$core$Json_Decode$string));
 var _minekoa$elm_text_editor$TextEditor_Style$LineNumberStyle = F5(
 	function (a, b, c, d, e) {
 		return {color: a, backgroundColor: b, opacity: c, borderRight: d, marginRight: e};
 	});
+var _minekoa$elm_text_editor$TextEditor_Style$decodeLineNumberStyle = A6(
+	_elm_lang$core$Json_Decode$map5,
+	_minekoa$elm_text_editor$TextEditor_Style$LineNumberStyle,
+	A2(_elm_lang$core$Json_Decode$field, 'color', _elm_lang$core$Json_Decode$string),
+	A2(_elm_lang$core$Json_Decode$field, 'backgroundColor', _elm_lang$core$Json_Decode$string),
+	A2(_elm_lang$core$Json_Decode$field, 'opacity', _elm_lang$core$Json_Decode$string),
+	A2(_elm_lang$core$Json_Decode$field, 'borderRight', _elm_lang$core$Json_Decode$string),
+	A2(_elm_lang$core$Json_Decode$field, 'marginRight', _elm_lang$core$Json_Decode$string));
 var _minekoa$elm_text_editor$TextEditor_Style$FontFaceStyle = F3(
 	function (a, b, c) {
 		return {color: a, backgroundColor: b, opacity: c};
 	});
+var _minekoa$elm_text_editor$TextEditor_Style$decodeFontFaceStyle = A4(
+	_elm_lang$core$Json_Decode$map3,
+	_minekoa$elm_text_editor$TextEditor_Style$FontFaceStyle,
+	A2(_elm_lang$core$Json_Decode$field, 'color', _elm_lang$core$Json_Decode$string),
+	A2(_elm_lang$core$Json_Decode$field, 'backgroundColor', _elm_lang$core$Json_Decode$string),
+	A2(_elm_lang$core$Json_Decode$field, 'opacity', _elm_lang$core$Json_Decode$string));
 var _minekoa$elm_text_editor$TextEditor_Style$ColorStyle = F2(
 	function (a, b) {
 		return {color: a, opacity: b};
 	});
+var _minekoa$elm_text_editor$TextEditor_Style$decodeColorStyle = A3(
+	_elm_lang$core$Json_Decode$map2,
+	_minekoa$elm_text_editor$TextEditor_Style$ColorStyle,
+	A2(_elm_lang$core$Json_Decode$field, 'color', _elm_lang$core$Json_Decode$string),
+	A2(_elm_lang$core$Json_Decode$field, 'opacity', _elm_lang$core$Json_Decode$string));
+var _minekoa$elm_text_editor$TextEditor_Style$jsonDecode = A7(
+	_elm_lang$core$Json_Decode$map6,
+	_minekoa$elm_text_editor$TextEditor_Style$Style,
+	A2(
+		_elm_lang$core$Json_Decode$field,
+		'common',
+		_elm_lang$core$Json_Decode$nullable(_minekoa$elm_text_editor$TextEditor_Style$decodeCodeStyle)),
+	A2(
+		_elm_lang$core$Json_Decode$field,
+		'numberLine',
+		_elm_lang$core$Json_Decode$nullable(_minekoa$elm_text_editor$TextEditor_Style$decodeLineNumberStyle)),
+	A2(
+		_elm_lang$core$Json_Decode$field,
+		'cursor',
+		_elm_lang$core$Json_Decode$nullable(_minekoa$elm_text_editor$TextEditor_Style$decodeColorStyle)),
+	A2(
+		_elm_lang$core$Json_Decode$field,
+		'selection',
+		_elm_lang$core$Json_Decode$nullable(_minekoa$elm_text_editor$TextEditor_Style$decodeFontFaceStyle)),
+	A2(
+		_elm_lang$core$Json_Decode$field,
+		'composing',
+		_elm_lang$core$Json_Decode$nullable(_minekoa$elm_text_editor$TextEditor_Style$decodeFontFaceStyle)),
+	A2(
+		_elm_lang$core$Json_Decode$field,
+		'fontFaces',
+		_elm_lang$core$Json_Decode$keyValuePairs(_minekoa$elm_text_editor$TextEditor_Style$decodeFontFaceStyle)));
 
 var _minekoa$elm_text_editor$TextEditor_KeyBind$emacsLike = {
 	ctor: '::',

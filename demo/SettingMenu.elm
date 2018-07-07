@@ -10,12 +10,12 @@ module SettingMenu exposing
 import Html exposing (..)
 import Html.Attributes exposing (..)
 import Html.Events exposing (..)
-import Json.Encode
-import Json.Decode
 
 import TextEditor.Option
 import Ports.WebStrage as WebStrage
 
+import Json.Encode
+import Json.Decode
 
 type alias Model =
     { options : TextEditor.Option.Option
@@ -53,7 +53,7 @@ update msg model =
             LoadSetting ("core.option", maybe_value) ->
                 ( maybe_value
                     |> Result.fromMaybe "value is nothing"
-                    |> Result.andThen (Json.Decode.decodeString decodeEditorOptions)
+                    |> Result.andThen (Json.Decode.decodeString TextEditor.Option.jsonDecode)
                     |> Result.withDefault core_opts
                     |> (\new_opts -> { model | options = new_opts })
                 , Cmd.none
@@ -74,7 +74,7 @@ update msg model =
                 in
                     ( { model | options = new_opts }
                     , WebStrage.localStrage_setItem ("core.option"
-                                                    , new_opts |> encodeEditorOptions |> Json.Encode.encode 0
+                                                    , new_opts |> TextEditor.Option.jsonEncode |> Json.Encode.encode 0
                                                     )
                     )
 
@@ -84,7 +84,7 @@ update msg model =
                 in
                     ( { model | options = new_opts }
                     , WebStrage.localStrage_setItem ("core.option"
-                                                    , new_opts  |> encodeEditorOptions |> Json.Encode.encode 0
+                                                    , new_opts  |> TextEditor.Option.jsonEncode |> Json.Encode.encode 0
                                                     )
                     )
 
@@ -94,7 +94,7 @@ update msg model =
                 in
                     ( { model | options = new_opts }
                     , WebStrage.localStrage_setItem ("core.option"
-                                                    , new_opts |> encodeEditorOptions |> Json.Encode.encode 0
+                                                    , new_opts |> TextEditor.Option.jsonEncode |> Json.Encode.encode 0
                                                     )
                     )
 
@@ -175,25 +175,4 @@ intOptionSettingControl label tagger opts value =
                               )
               )
         ]
-
-
-------------------------------------------------------------
--- encode / decode for save local strage
-------------------------------------------------------------
-
-encodeEditorOptions : TextEditor.Option.Option -> Json.Encode.Value
-encodeEditorOptions core_opts =
-    Json.Encode.object 
-        [ ("tabOrder"            , core_opts.tabOrder |> Json.Encode.int)
-        , ("indentTabsMode"      , core_opts.indentTabsMode  |> Json.Encode.bool)
-        , ("showControlCharactor", core_opts.showControlCharactor |> Json.Encode.bool)
-        ]
-
-decodeEditorOptions : Json.Decode.Decoder TextEditor.Option.Option
-decodeEditorOptions =
-    Json.Decode.map3
-        TextEditor.Option.Option
-            (Json.Decode.field "tabOrder"             Json.Decode.int)
-            (Json.Decode.field "indentTabsMode"       Json.Decode.bool)
-            (Json.Decode.field "showControlCharactor" Json.Decode.bool)
 
