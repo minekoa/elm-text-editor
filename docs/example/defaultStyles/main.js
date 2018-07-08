@@ -15509,6 +15509,9 @@ var _minekoa$elm_text_editor$Main$ModernMsg = function (a) {
 var _minekoa$elm_text_editor$Main$EditorMsg = function (a) {
 	return {ctor: 'EditorMsg', _0: a};
 };
+var _minekoa$elm_text_editor$Main$NotepadMsg = function (a) {
+	return {ctor: 'NotepadMsg', _0: a};
+};
 var _minekoa$elm_text_editor$Main$init = function () {
 	var _p0 = A2(_minekoa$elm_text_editor$TextEditor$initLikeModernEditor, 'id_modern', _minekoa$elm_text_editor$Main$defaultText);
 	var m3 = _p0._0;
@@ -15525,22 +15528,19 @@ var _minekoa$elm_text_editor$Main$init = function () {
 		_1: _elm_lang$core$Platform_Cmd$batch(
 			{
 				ctor: '::',
-				_0: A2(_elm_lang$core$Platform_Cmd$map, _minekoa$elm_text_editor$Main$EditorMsg, c1),
+				_0: A2(_elm_lang$core$Platform_Cmd$map, _minekoa$elm_text_editor$Main$NotepadMsg, c1),
 				_1: {
 					ctor: '::',
 					_0: A2(_elm_lang$core$Platform_Cmd$map, _minekoa$elm_text_editor$Main$EditorMsg, c2),
 					_1: {
 						ctor: '::',
-						_0: A2(_elm_lang$core$Platform_Cmd$map, _minekoa$elm_text_editor$Main$EditorMsg, c3),
+						_0: A2(_elm_lang$core$Platform_Cmd$map, _minekoa$elm_text_editor$Main$ModernMsg, c3),
 						_1: {ctor: '[]'}
 					}
 				}
 			})
 	};
 }();
-var _minekoa$elm_text_editor$Main$NotepadMsg = function (a) {
-	return {ctor: 'NotepadMsg', _0: a};
-};
 var _minekoa$elm_text_editor$Main$update = F2(
 	function (msg, model) {
 		var _p3 = msg;

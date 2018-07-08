@@ -61,9 +61,9 @@ init =
     in
         ( Model m1 m2 m3
         , Cmd.batch
-            [ Cmd.map EditorMsg c1
+            [ Cmd.map NotepadMsg c1
             , Cmd.map EditorMsg c2
-            , Cmd.map EditorMsg c3
+            , Cmd.map ModernMsg c3
             ]
         )
 
