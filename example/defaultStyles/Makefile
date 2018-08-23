@@ -1,4 +1,4 @@
-ELM_MAKE=elm-make
+ELM_MAKE=elm make
 ELM_PACKAGE=elm-package
 
 OUT_DIR=../../docs/example/defaultStyles

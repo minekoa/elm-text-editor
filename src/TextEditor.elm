@@ -4,7 +4,7 @@ module TextEditor exposing ( Model
                            , initLikeCodeEditor
                            , initLikeModernEditor
                            , update
-                           , Msg(UpdateContents)
+                           , Msg(..) --, Msg(UpdateContents)
                            , subscriptions
                            , view
 
@@ -52,9 +52,9 @@ import Html.Attributes exposing (..)
 import Html.Events exposing (..)
 import Json.Decode as Json
 import Json.Encode
-import Mouse
+import Browser
 import Task exposing (Task)
-import Date
+import Time
 
 import TextEditor.Buffer as Buffer
 import TextEditor.Core as Core exposing (..)
@@ -69,7 +69,7 @@ import TextEditor.Style
 import TextEditor.KeyBind as KeyBind
 
 
-import Native.Mice
+--import Native.Mice
 
 
 {-| The `core` member is an essential model of the text editor and is subject to change with` TextEditor.Command`.
@@ -100,7 +100,7 @@ type alias Model =
 {-| Recode for the `event_log`
 -}
 type alias EventInfo =
-    { date : Date.Date
+    { date : Time.Posix
     , name : String
     , data : String
     }
@@ -256,9 +256,9 @@ type Msg
     | FocusOut Bool
     | ClickScreen
     | DragStart MouseEvent
-    | DragAt Mouse.Position
-    | DragEnd Mouse.Position
-    | Logging String String Date.Date
+--    | DragAt Mouse.Position
+--    | DragEnd Mouse.Position
+    | Logging String String Time.Posix
 
 
 invokeEvent : (Model, Cmd Msg) -> (Model, Cmd Msg)
@@ -400,7 +400,7 @@ update msg model =
                     _ ->
                         (model, Cmd.none)
 
-
+{- TODO: mouse関連
         DragAt xy ->
             let
                 chpos = geoPosToCharPos model.core xy
@@ -419,6 +419,7 @@ update msg model =
             , Cmd.none
             )
                 |> if model.drag then logging "dragend" "" else identity
+-}
 
         Logging name data date ->
             let
@@ -566,7 +567,7 @@ logging ev_name ev_data (model, cmd_msg) =
         Just log ->
             ( model
             , Cmd.batch [ cmd_msg
-                        , Task.perform (Logging ev_name ev_data) Date.now
+                        , Task.perform (Logging ev_name ev_data) Time.now
                         ]
             )
         Nothing ->
@@ -1061,10 +1062,11 @@ stylesheet sty frameID =
 subscriptions : Model -> Sub Msg
 subscriptions model =
     Sub.batch <| [ Sub.map CoreMsg  (Core.subscriptions model.core) ]
-        ++ [ Mouse.ups DragEnd ]
-        ++ case model.drag of
-               True -> [ Mouse.moves DragAt ]
-               False -> []
+-- todo: mouse関連
+--        ++ [ Mouse.ups DragEnd ]
+--        ++ case model.drag of
+--               True -> [ Mouse.moves DragAt ]
+--               False -> []
 
 ------------------------------------------------------------
 -- html events / attributes (extra)

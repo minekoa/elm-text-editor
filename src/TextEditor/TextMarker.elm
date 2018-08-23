@@ -64,60 +64,57 @@ markupChank showControlCharactor tabOrder line =
 
 markupControlChars : Int -> String -> List MarkedText
 markupControlChars tabOrder line =
-    let
-        f =
-            (\ str n outtxts ->
-                 case str of
-                     '\t' :: xs ->
-                         let
-                             sp_cnt  = tabOrder - (n % tabOrder)
-                             rpl_txt = String.padRight (sp_cnt) ' ' "»"
-                                           |> String.toList
-                                           |> List.reverse -- 後でdeepReverseでヒックリかえされるので
-                         in
-                             f xs (n + sp_cnt) ((Marked "tab-face" rpl_txt) :: outtxts)
-                     '\n' :: xs ->
-                         f xs (n + 1) ((Marked "eol-face" [ '↵' ]) :: outtxts)
-
-                     '　' :: xs ->
-                         f xs (n + 1) ((Marked "jaspace-face" [ '□' ]) :: outtxts)
-                                  
-                     x :: xs ->
-                         case outtxts of
-                             (Plane cs) :: css ->
-                                 f xs (n + 1) ((Plane (x :: cs)) :: css)
-                             _ ->
-                                 f xs (n + 1) ((Plane [x]) :: outtxts)
-                     [] ->
-                         outtxts
-            )
-    in
-        f (line |> String.toList) 0 []
+        markupControlChars_f (line |> String.toList) 0 [] tabOrder
             |> deepReverse
+
+markupControlChars_f : List Char -> Int -> List MarkedText -> Int -> List MarkedText
+markupControlChars_f str n outtxts tabOrder =
+    case str of
+        '\t' :: xs ->
+            let
+                sp_cnt  = tabOrder - (modBy tabOrder n)
+                rpl_txt = String.padRight (sp_cnt) ' ' "»"
+                              |> String.toList
+                              |> List.reverse -- 後でdeepReverseでヒックリかえされるので
+            in
+                markupControlChars_f xs (n + sp_cnt) ((Marked "tab-face" rpl_txt) :: outtxts) tabOrder
+        '\n' :: xs ->
+            markupControlChars_f xs (n + 1) ((Marked "eol-face" [ '↵' ]) :: outtxts) tabOrder
+
+        '　' :: xs ->
+            markupControlChars_f xs (n + 1) ((Marked "jaspace-face" [ '□' ]) :: outtxts) tabOrder
+                     
+        x :: xs ->
+            case outtxts of
+                (Plane cs) :: css ->
+                    markupControlChars_f xs (n + 1) ((Plane (x :: cs)) :: css) tabOrder
+                _ ->
+                    markupControlChars_f xs (n + 1) ((Plane [x]) :: outtxts) tabOrder
+        [] ->
+            outtxts
 
 
 replaceTab : Int -> String -> List MarkedText
 replaceTab tabOrder line =
-    let
-        f = 
-            (\ str n outchars ->
-                 case str of
-                     '\t' :: xs ->
-                         let
-                             sp_cnt  = tabOrder - (n % tabOrder)
-                             rpl_txt = String.padRight (sp_cnt) ' ' ""
-                                           |> String.toList
-                                           |> List.reverse -- 後でdeepReverseでヒックリかえされるので
-                         in
-                             f xs (n + sp_cnt) ((rpl_txt) ++ outchars)
-                     x :: xs ->
-                         f xs (n + 1) (x :: outchars)
-                     [] ->
-                         outchars
-            )
-    in
-        f (line |> String.toList) 0 []
+        replaceTabs_f (line |> String.toList) 0 [] tabOrder
             |> List.reverse
             |> (\cs -> [Plane cs])
+
+
+replaceTabs_f : List Char -> Int -> List Char -> Int -> List Char
+replaceTabs_f str n outchars tabOrder =
+    case str of
+        '\t' :: xs ->
+            let
+                sp_cnt  = tabOrder - (modBy tabOrder n)
+                rpl_txt = String.padRight (sp_cnt) ' ' ""
+                              |> String.toList
+                              |> List.reverse -- 後でdeepReverseでヒックリかえされるので
+            in
+                replaceTabs_f xs (n + sp_cnt) ((rpl_txt) ++ outchars) tabOrder
+        x :: xs ->
+            replaceTabs_f xs (n + 1) (x :: outchars) tabOrder
+        [] ->
+            outchars
 
 

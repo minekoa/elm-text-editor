@@ -32,9 +32,9 @@ module TextEditor.Core exposing
     , clearEventRequest
     )
 
-import Time exposing (Time, millisecond)
+import Time exposing (Posix, toMillis)
 import Task exposing (Task)
-import Dom
+import Browser.Dom as Dom
 
 import TextEditor.Buffer as Buffer
 import TextEditor.Option as Option
@@ -99,7 +99,7 @@ clearEventRequest model =
 type Msg
     = IgnoreResult
     | EnsureVisible
-    | Tick Time
+    | Tick Posix
 
 update : Msg -> Model -> (Model, Cmd Msg)
 update msg model =
@@ -125,7 +125,7 @@ update msg model =
 
 subscriptions : Model -> Sub Msg
 subscriptions model = 
-    Sub.batch [ Time.every (model.blinkSpan * millisecond) Tick ]
+    Sub.batch [ Time.every (model.blinkSpan * 1000) Tick ]
 
 
 ------------------------------------------------------------
@@ -244,7 +244,9 @@ withEnsureVisibleCmd model =
 
 doFocus: Model -> Cmd Msg
 doFocus model =
-    Task.attempt (\_ -> IgnoreResult) (Dom.focus <| inputAreaID model)
+--    Task.attempt (\_ -> IgnoreResult) (Dom.focus <| inputAreaID model)
+-- dummy code
+    Task.perform (\_ -> IgnoreResult) (Task.succeed True)
 
 elaborateInputArea: Model -> Cmd Msg
 elaborateInputArea model =
@@ -266,15 +268,21 @@ ensureVisible model =
 
 elaborateInputAreaTask: String  -> Task Never Bool
 elaborateInputAreaTask input_area_id =
-    Task.succeed (Native.Mice.elaborateInputArea input_area_id)
+--    Task.succeed (Native.Mice.elaborateInputArea input_area_id)
+-- dummy code
+    Task.succeed True
 
 elaborateTapAreaTask: String  -> Task Never Bool
 elaborateTapAreaTask input_area_id =
-    Task.succeed (Native.Mice.elaborateTapArea input_area_id)
+--    Task.succeed (Native.Mice.elaborateTapArea input_area_id)
+-- dummy code
+    Task.succeed True
 
 ensureVisibleTask : String -> String -> Task Never Bool
 ensureVisibleTask frame_id target_id =
-    Task.succeed (Native.Mice.ensureVisible frame_id target_id)
+--    Task.succeed (Native.Mice.ensureVisible frame_id target_id)
+-- dummy code
+    Task.succeed True
 
 
 
@@ -292,6 +300,17 @@ type alias Rect =
     }
 
 getBoundingClientRect: String -> Rect
-getBoundingClientRect id = Native.Mice.getBoundingClientRect id
+--getBoundingClientRect id = Native.Mice.getBoundingClientRect id
+getBoundingClientRect id =
+    -- dummy code
+    { left = 0
+    , top = 0
+    , right = 100
+    , bottom = 200
+    , x = 0
+    , y = 0
+    , width = 100
+    , height = 200
+    }
 
                      

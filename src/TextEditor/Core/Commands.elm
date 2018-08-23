@@ -45,19 +45,20 @@ import TextEditor.StringExtra exposing (..)
 
 batch : List (Model -> (Model, Cmd Msg)) -> (Model -> (Model, Cmd Msg))
 batch commands =
-    let
-        batch_proc = (\ cmdMsgs editorCmds model ->
-                          case editorCmds of
-                              x :: xs ->
-                                  let
-                                      (m1, c1) = x model
-                                  in
-                                      batch_proc (c1 :: cmdMsgs) xs m1
-                              [] ->
-                                  (model, Cmd.batch cmdMsgs)
-                     )
-    in
         batch_proc [] commands
+
+
+batch_proc cmdMsgs editorCmds model =
+    case editorCmds of
+        x :: xs ->
+            let
+                (m1, c1) = x model
+            in
+                batch_proc (c1 :: cmdMsgs) xs m1
+        [] ->
+            (model, Cmd.batch cmdMsgs)
+
+
 
 
 ------------------------------------------------------------
@@ -198,10 +199,10 @@ copy model =
     ( case model.buffer.selection of
           Nothing -> model
           Just sel ->
-          { model
-              | copyStore = Buffer.readRange sel model.buffer
-              , buffer = Buffer.selectionClear model.buffer
-          }
+              { model
+                  | copyStore = Buffer.readRange sel model.buffer
+                  , buffer = Buffer.selectionClear model.buffer
+              }
     )
         |> Core.blinkBlock
         |> (\m -> (m, Cmd.none))
@@ -213,10 +214,10 @@ cut model =
     ( case model.buffer.selection of
           Nothing -> model
           Just sel ->
-          { model
-              | copyStore = Buffer.readRange sel model.buffer
-              , buffer = model.buffer |> Buffer.deleteRange sel |> Buffer.selectionClear
-          }
+              { model
+                  | copyStore = Buffer.readRange sel model.buffer
+                  , buffer = model.buffer |> Buffer.deleteRange sel |> Buffer.selectionClear
+              }
     )
         |> Core.blinkBlock
         |> \m -> Core.setEventRequest (Core.EventInput m.buffer.contents) m
@@ -336,7 +337,7 @@ unindent model =
         prev_level = indentLevel model.option.tabOrder prev_indent
 
         indent_str = (\n -> if model.option.indentTabsMode
-                            then String.pad (n // model.option.tabOrder) '\t' (String.pad (n % model.option.tabOrder) ' ' "")
+                            then String.pad (n // model.option.tabOrder) '\t' (String.pad (modBy n  model.option.tabOrder) ' ' "")
                             else String.pad n ' ' ""
                      )
     in

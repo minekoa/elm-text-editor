@@ -87,35 +87,32 @@ previosWordPosProc fwd_char_t reversed_str n =
 
 indentString : String -> String
 indentString line =
-    let
-        getIndentStringProc = (\l indent_str->
-                                   case l of
-                                       [] ->
-                                           indent_str |> List.reverse
-                                       x :: xs ->
-                                           if (x == ' ') || (x == '\t') then
-                                               getIndentStringProc xs (x :: indent_str)
-                                           else
-                                               indent_str |> List.reverse
-                              )
-    in
         getIndentStringProc (line |> String.toList) []  |> String.fromList
+
+
+getIndentStringProc: List Char-> List Char -> List Char
+getIndentStringProc l indent_str =
+    case l of
+        [] ->
+            indent_str |> List.reverse
+        x :: xs ->
+            if (x == ' ') || (x == '\t') then
+                getIndentStringProc xs (x :: indent_str)
+            else
+                indent_str |> List.reverse
 
 
 indentLevel : Int -> String -> Int
 indentLevel tabOrder s =
-    let
-        calcIndentLevel = (\ str n ->
-                               case str of
-                                   ' '  :: xs -> calcIndentLevel xs (n + 1)
-                                   '\t' :: xs -> calcIndentLevel xs (((n // tabOrder) + 1) * tabOrder)
-                                   x :: xs -> n
-                                   [] -> n
-                          )
-    in
-        calcIndentLevel (s |> String.toList) 0
+        calcIndentLevel (s |> String.toList) 0 tabOrder
 
-
+calcIndentLevel: List Char -> Int -> Int -> Int
+calcIndentLevel str n tabOrder =
+    case str of
+        ' '  :: xs -> calcIndentLevel xs (n + 1) tabOrder
+        '\t' :: xs -> calcIndentLevel xs (((n // tabOrder) + 1) * tabOrder) tabOrder
+        x :: xs -> n
+        [] -> n
 
 
 ------------------------------------------------------------
@@ -157,7 +154,7 @@ isSpace c =
     isJustSpace c
         || case c of
                '\t' -> True
-               '\v' -> True
+--               '\v' -> True  -- todo: elm 0.19　さんは、 垂直タブなどしらないとおっしゃる
                '\n' -> True
                _    -> False
 

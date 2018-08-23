@@ -1,7 +1,7 @@
 module TextEditor.Buffer exposing
     ( Position
     , Range
-    , (@)
+--    , (@) --todo: ユーザ定義演算子なくなった対応
     , isPreviosPos
     , makeRange
 
@@ -14,7 +14,7 @@ module TextEditor.Buffer exposing
     , selectedString
 
     -- history
-    , EditCommand(Cmd_Insert, Cmd_Backspace, Cmd_Delete)
+    , EditCommand(..) --, EditCommand(Cmd_Insert, Cmd_Backspace, Cmd_Delete) -- todo: 隠蔽の再設計
 
     -- cursor move
     , moveForward
@@ -98,10 +98,10 @@ type alias Position =
 
 {-| Make position (Syntax Suger)
 
-Use like `row @ col`
--}
-(@) : Int -> Int -> Position
-(@) = Position
+--Use like `row @ col`
+---}
+--(@) : Int -> Int -> Position
+--(@) = Position
 
 
 position_toTuple : Position -> (Int, Int)
@@ -174,7 +174,7 @@ isPreviosPos p q =
 -}
 line : Int -> Buffer -> Maybe String
 line n buf =
-    buf.contents !! n
+    nth n buf.contents
 
 {-| Get current line
 -}
@@ -182,15 +182,21 @@ currentLine : Buffer -> String
 currentLine buf =
     line buf.cursor.row buf |> Maybe.withDefault ""
 
-(!!) : List a -> Int -> Maybe a
-(!!) lst n =
+nth : Int -> List a -> Maybe a
+nth n lst =
     if n < 0
     then Nothing
     else List.head (List.drop n lst)
 
+--(!!) : List a -> Int -> Maybe a
+--(!!) lst n =
+--    if n < 0
+--    then Nothing
+--    else List.head (List.drop n lst)
+
 maxColumn: String -> Int
-maxColumn line =
-    (String.length line) - 1
+maxColumn l =
+    (String.length l) - 1
 
 maxRow : List String -> Int
 maxRow contents =
@@ -211,13 +217,13 @@ readRange sel model =
         case lcnt of
             0 ->
                 let 
-                    l = model.contents !! bpos.row  |> Maybe.withDefault ""
+                    l = model.contents |> nth bpos.row  |> Maybe.withDefault ""
                 in
                     l |> String.dropLeft bpos.column |> String.left (epos.column - bpos.column)
             _ ->
                 let
-                    bl = model.contents !! bpos.row |> Maybe.withDefault "" |> String.dropLeft bpos.column
-                    el = model.contents !! epos.row |> Maybe.withDefault "" |> String.left epos.column
+                    bl = model.contents |> nth bpos.row |> Maybe.withDefault "" |> String.dropLeft bpos.column
+                    el = model.contents |> nth epos.row |> Maybe.withDefault "" |> String.left epos.column
 
                     ls = model.contents |> List.drop (bpos.row + 1) |> List.take (lcnt - 1)
                 in
@@ -294,20 +300,20 @@ updateMark cmd model =
     case model.mark of
         Just mk ->
             let
-                count_lf             = String.lines >> List.length >> flip (-) 1
+                count_lf             = String.lines >> List.length >> \n -> n - 1
                 count_last_line_char = String.lines >> List.reverse >> List.head >> Maybe.withDefault "" >> String.length
             in
                 case cmd of
                     Cmd_Insert bfr afr s _ ->
                         if mk.pos.row > bfr.row then
-                            { model | mark = Just { mk | pos = ((mk.pos.row + afr.row - bfr.row) @ mk.pos.column) } }
+                            { model | mark = Just { mk | pos = (Position (mk.pos.row + afr.row - bfr.row) mk.pos.column) } }
                         else if (mk.pos.row == bfr.row) && (bfr.column <= mk.pos.column) then
                             let
                                 add_line_cnt = count_lf s
                                 new_col = if add_line_cnt == 0 then mk.pos.column + (afr.column - bfr.column)
                                                                else (count_last_line_char s) + (mk.pos.column - bfr.column)
                             in
-                                { model | mark = Just { mk | pos = ((mk.pos.row + add_line_cnt) @ new_col) } }
+                                { model | mark = Just { mk | pos = (Position (mk.pos.row + add_line_cnt) new_col) } }
                         else
                            model
 
@@ -328,7 +334,7 @@ updateMark cmd model =
 updateMarkPos_byDelete : Position -> String -> Position -> Position
 updateMarkPos_byDelete bgn_pos s marked_pos =
     let
-        count_lf             = String.lines >> List.length >> flip (-) 1
+        count_lf             = String.lines >> List.length >> \n -> n - 1
         count_last_line_char = String.lines >> List.reverse >> List.head >> Maybe.withDefault "" >> String.length
 
         deleted_lf_cnt            = count_lf s
@@ -340,13 +346,13 @@ updateMarkPos_byDelete bgn_pos s marked_pos =
     in
         -- before mark
         if end_row < marked_pos.row then
-            ((marked_pos.row - deleted_lf_cnt) @ marked_pos.column)
+            (Position (marked_pos.row - deleted_lf_cnt) marked_pos.column)
 
         else if (marked_pos.row == end_row) && (end_col < marked_pos.column) then
             if ( end_row /= bgn_pos.row) then
-                ((marked_pos.row - deleted_lf_cnt) @ (marked_pos.column + bgn_pos.column))
+                (Position (marked_pos.row - deleted_lf_cnt) (marked_pos.column + bgn_pos.column))
             else
-                (marked_pos.row @ (marked_pos.column - deleted_lastline_char_cnt))
+                (Position marked_pos.row (marked_pos.column - deleted_lastline_char_cnt))
 
         -- contain mark
         else if    ( (bgn_pos.row < marked_pos.row) || (bgn_pos.row == marked_pos.row && bgn_pos.column <= marked_pos.column) )
@@ -461,9 +467,9 @@ moveForwardProc model =
     let
         cur = model.cursor
     in
-        model.contents !! cur.row
+        model.contents |> nth cur.row
         |> Maybe.andThen
-            ( λ ln -> 
+            (\ ln -> 
                 case (cur.column < (maxColumn ln) + 1, cur.row < maxRow model.contents) of
                     (True , _    ) -> Just {cur| column = cur.column + 1}
                     (False, True ) -> Just {cur| column = 0, row = cur.row +1}
@@ -471,17 +477,17 @@ moveForwardProc model =
 
             )
         |> Maybe.withDefault (defaultCursor model.contents)
-        |> (λ c -> {model | cursor = c})
+        |> (\ c -> {model | cursor = c})
 
 moveBackwardProc : Buffer -> Buffer
 moveBackwardProc model =
     let
         cur = model.cursor
-        pln = model.contents !! (cur.row - 1) |> Maybe.withDefault ""
+        pln = model.contents |> nth (cur.row - 1) |> Maybe.withDefault ""
     in
-        model.contents !! cur.row 
+        model.contents |> nth cur.row 
         |> Maybe.andThen
-            ( λ ln -> 
+            (\ ln -> 
                 case (cur.column > 0, cur.row > 0 ) of
                     (True , _    ) -> Just {cur| column = cur.column - 1}
                     (False, True ) -> Just {cur| column = (String.length pln), row = cur.row - 1}
@@ -489,37 +495,37 @@ moveBackwardProc model =
 
             )
         |> Maybe.withDefault (defaultCursor model.contents)
-        |> (λ c -> {model | cursor = c})
+        |> (\ c -> {model | cursor = c})
 
 movePreviosLineProc : Buffer -> Buffer
 movePreviosLineProc model =
     let
         cur = model.cursor
     in
-        model.contents !! (cur.row - 1)
+        model.contents |> nth (cur.row - 1)
         |> Maybe.andThen
-            ( λ ln -> 
+            (\ ln -> 
                 case cur.column < (maxColumn ln) + 1 of
                     True  -> Just {cur| row = cur.row - 1}
                     False -> Just {cur| row = cur.row - 1, column = (maxColumn ln) + 1}
             )
         |> Maybe.withDefault cur
-        |> (λ c -> {model | cursor = c})
+        |> (\ c -> {model | cursor = c})
 
 moveNextLineProc : Buffer -> Buffer
 moveNextLineProc model =
     let
         cur = model.cursor
     in
-        model.contents !! (cur.row + 1)
+        model.contents |> nth (cur.row + 1)
         |> Maybe.andThen
-            ( λ ln -> 
+            (\ ln -> 
                 case cur.column < (maxColumn ln) + 1 of
                     True  -> Just {cur| row = cur.row + 1}
                     False -> Just {cur| row = cur.row + 1, column = (maxColumn ln) + 1}
             )
         |> Maybe.withDefault cur
-        |> (λ c -> {model | cursor = c})
+        |> (\ c -> {model | cursor = c})
 
 moveAtProc : Position -> Buffer -> Buffer
 moveAtProc pos model =
@@ -531,14 +537,14 @@ moveNextWordProc cur model =
     let
         last_row = (List.length model.contents) - 1
 
-        col = StringExtra.nextWordPos ( model.contents !! cur.row |> Maybe.withDefault "") cur.column
+        col = StringExtra.nextWordPos ( model.contents |> nth cur.row |> Maybe.withDefault "") cur.column
     in
         case col of
             Just nchar ->
                 moveAtProc (Position cur.row nchar) model
             Nothing ->
                 if cur.row + 1 > last_row then
-                    moveAtProc (Position last_row (model.contents !! last_row
+                    moveAtProc (Position last_row (model.contents |> nth last_row
                                               |> Maybe.withDefault ""
                                               |> String.length
                                           )
@@ -550,7 +556,7 @@ moveNextWordProc cur model =
 movePreviosWordProc : Position -> Buffer -> Buffer
 movePreviosWordProc cur model =
     let
-        col = StringExtra.previosWordPos (model.contents !! cur.row|> Maybe.withDefault "") cur.column
+        col = StringExtra.previosWordPos (model.contents |> nth cur.row |> Maybe.withDefault "") cur.column
     in
         case col of
             Just nchar ->
@@ -561,7 +567,7 @@ movePreviosWordProc cur model =
                 else
                     movePreviosWordProc (Position
                                              (cur.row - 1)
-                                             (model.contents !! (cur.row - 1) |> Maybe.withDefault "" |> String.length)
+                                             (model.contents |> nth (cur.row - 1) |> Maybe.withDefault "" |> String.length)
                                         ) model
 
 
@@ -632,9 +638,9 @@ selectionClear model =
 selectWithMove : (Buffer -> Buffer) -> Buffer -> Buffer
 selectWithMove move_f model =
     model
-        |> \m -> { m | selection = m.selection |> Maybe.withDefault (Range m.cursor m.cursor) |> Just }
+        |> \m1 -> { m1 | selection = m1.selection |> Maybe.withDefault (Range m1.cursor m1.cursor) |> Just }
         |> move_f
-        |> \m -> { m | selection = m.selection |> Maybe.andThen (\s -> Just (Range s.begin m.cursor)) }
+        |> \m2 -> { m2 | selection = m2.selection |> Maybe.andThen (\s -> Just (Range s.begin m2.cursor)) }
 
 ------------------------------------------------------------
 -- edit
@@ -692,13 +698,13 @@ backspaceAt pos model =
                 m
             Just s ->
                 m
-                |> (\m ->
+                |> (\m2 ->
                         let
-                            edtcmd = Cmd_Backspace pos m.cursor s m.mark
+                            edtcmd = Cmd_Backspace pos m2.cursor s m2.mark
                         in
-                            m |> appendHistory edtcmd
-                              |> updateMark edtcmd
-       )
+                            m2 |> appendHistory edtcmd
+                               |> updateMark edtcmd
+                   )
 
 {-| Delete charactor at current cursor positon.
 -}
@@ -724,12 +730,12 @@ deleteAt pos model =
                 m
             Just s ->
                 m
-                |> (\m ->
+                |> (\m2 ->
                         let
-                            edtcmd = Cmd_Delete pos m.cursor s m.mark
+                            edtcmd = Cmd_Delete pos m2.cursor s m2.mark
                         in
-                            m |> appendHistory edtcmd
-                              |> updateMark edtcmd
+                            m2 |> appendHistory edtcmd
+                               |> updateMark edtcmd
                    )
 
 {-| Delete charactor at specified positions range.
@@ -807,7 +813,7 @@ insert_proc pos text model =
 
         contents = model.contents
         prows = List.take row contents
-        crow  = model.contents !! row |> Maybe.withDefault ""
+        crow  = model.contents |> nth row |> Maybe.withDefault ""
         nrows = List.drop (row + 1) contents
 
         texts = (String.lines text)
@@ -868,7 +874,7 @@ backspace_proc pos model =
         (row, col) ->
             let
                 prows = List.take row model.contents
-                crow  = model.contents !! row |> Maybe.withDefault ""
+                crow  = model.contents |> nth row |> Maybe.withDefault ""
                 nrows = List.drop (row + 1) model.contents
 
                 left  = (String.left (col - 1) crow)
@@ -886,7 +892,7 @@ delete_proc pos model =
     let
         (row, col) = position_toTuple pos
 
-        ln      = model.contents !! row |> Maybe.withDefault ""
+        ln      = model.contents |> nth row |> Maybe.withDefault ""
         max_row = maxRow model.contents
         max_col = maxColumn ln
     in
@@ -910,7 +916,7 @@ delete_proc pos model =
              (_   , True) ->
                  let
                      prows  = List.take row model.contents
-                     nxt    = model.contents !! (row + 1) |> Maybe.withDefault ""
+                     nxt    = model.contents |> nth (row + 1) |> Maybe.withDefault ""
                      nrows  = List.drop (row + 2) model.contents
 
                      current = ln ++ nxt
@@ -933,7 +939,7 @@ delete_range_proc sel model =
         case lcnt of
             0 ->
                 let 
-                    ln  = model.contents !! bpos.row  |> Maybe.withDefault ""
+                    ln  = model.contents |> nth bpos.row  |> Maybe.withDefault ""
                     current = (String.left bpos.column ln) ++ (String.dropLeft epos.column ln)
 
                     pls = List.take (bpos.row    ) model.contents
@@ -945,8 +951,8 @@ delete_range_proc sel model =
                     }
             _ ->
                 let
-                    bln  = model.contents !! bpos.row |> Maybe.withDefault "" |> String.left bpos.column
-                    eln  = model.contents !! epos.row |> Maybe.withDefault "" |> String.dropLeft epos.column
+                    bln  = model.contents |> nth bpos.row |> Maybe.withDefault "" |> String.left bpos.column
+                    eln  = model.contents |> nth epos.row |> Maybe.withDefault "" |> String.dropLeft epos.column
                     pls = List.take (bpos.row    ) model.contents
                     nls = List.drop (epos.row + 1) model.contents
                 in
