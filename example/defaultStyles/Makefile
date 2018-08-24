@@ -1,5 +1,5 @@
 ELM_MAKE=elm make
-ELM_PACKAGE=elm-package
+ELM_PACKAGE=elm
 
 OUT_DIR=../../docs/example/defaultStyles
 TARGET=main.js
