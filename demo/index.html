@@ -13,16 +13,20 @@
   <link rel="stylesheet" type="text/css" href="settingmenu.css">
   <title>elm-text-editor demo</title>
 </head>
-<body>
+<body id="elm">
 </body>
 <script type="text/javascript" src="./main.js"></script>
 <script type="text/javascript" src="./ports/filewriter_ports.js"></script>
 <script type="text/javascript" src="./ports/webstrage_ports.js"></script>
 <script type="text/javascript">
-  const app =  Elm.Main.fullscreen();
+  const app = Elm.Main.init({
+      node: document.getElementById('elm'),
+      flags: null
+  });
 
+/* todo: portをちゃんとする
   filewriter_ports.elaborate(app);
   webstrage_ports.elaborate(app);
-
+*/
 </script>
 </html>

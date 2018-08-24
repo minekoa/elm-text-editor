@@ -1,6 +1,7 @@
 module FileMenu exposing
     ( Model
-    , Msg(ReadFile, CreateNewBuffer, SaveFileAs)
+--    , Msg(ReadFile, CreateNewBuffer, SaveFileAs)
+    , Msg(..) -- todo: 隠蔽をどうするか
     , init
     , update
     , view
@@ -10,7 +11,7 @@ import Html exposing (..)
 import Html.Attributes exposing (..)
 import Html.Events exposing (..)
 import Task exposing (Task)
-import FileReader
+-- import FileReader --todo: elm-file-reader が 0.19対応したら有効にする
 
 import TextEditor.Buffer as Buffer
 import Ports.FileWriter exposing (..)
@@ -33,8 +34,8 @@ type Msg
     | CreateNewBuffer String
     | DropZoneEntered
     | DropZoneLeaved    
-    | FilesDropped (List FileReader.File)
-    | ReadFile FileReader.File
+--    | FilesDropped (List FileReader.File)
+--    | ReadFile FileReader.File
     | SaveFile
     | SaveFileAs String
 
@@ -77,16 +78,16 @@ update msg (fname, buf) model =
             ( { model | inDropZone = False }
             , Cmd.none
             )
-        FilesDropped filelist ->
-            case List.head filelist of
-                Just f ->
-                    ( { model | inDropZone = False }
-                    , Task.perform ReadFile (Task.succeed f)
-                    )
-                Nothing ->
-                    ( model, Cmd.none )
-        ReadFile _ ->
-            ( model, Cmd.none )
+        -- FilesDropped filelist ->
+        --     case List.head filelist of
+        --         Just f ->
+        --             ( { model | inDropZone = False }
+        --             , Task.perform ReadFile (Task.succeed f)
+        --             )
+        --         Nothing ->
+        --             ( model, Cmd.none )
+        -- ReadFile _ ->
+        --     ( model, Cmd.none )
 
         -- Save:
         SaveFile ->
@@ -103,9 +104,8 @@ update msg (fname, buf) model =
 view : Model -> Html Msg
 view model =
     div [ class "filer-menu", class "menu-root"
-        , style [ ("flex-grow", "2")
-                , ("min-height", "17em")
-                ]
+        , style "flex-grow" "2"
+        , style "min-height" "17em"
         ]
         [ menuItemsView model
         , menuPalette model
@@ -160,12 +160,11 @@ fileNewView model =
                             , placeholder "Please enter the file name here!"
                             , value model.newFileName
                             , onInput InputFileName
-                            , style [ ("width", "24em") ]
+                            , style "width" "24em"
                             ] []
                     ]
-              , div [ style [ ("display", "flex")
-                            , ("justify-content", "flex-end")
-                            ]
+              , div [ style "display" "flex"
+                    , style "justify-content" "flex-end"
                     ]
                     [ div ( if model.newFileName == ""
                             then [ class "menu_button_disabled" ]
@@ -182,17 +181,17 @@ fileNewView model =
 fileLoadView : Model -> Html Msg
 fileLoadView model =
     div ( [ class "filer-dropzone"
-          , style <|
-                if model.inDropZone
-                then [ ( "background", "lightblue" ) ]
-                else []
-          ] ++
-              FileReader.dropZone
-              { dataFormat = FileReader.Text "utf-8"
-              , enterMsg = DropZoneEntered
-              , leaveMsg = DropZoneLeaved
-              , filesMsg = FilesDropped
-              }
+          , if model.inDropZone
+            then  (style "background" "lightblue" )
+            else  (style "background" "inherit" )
+          ]
+          -- ] ++
+          --     FileReader.dropZone
+          --     { dataFormat = FileReader.Text "utf-8"
+          --     , enterMsg = DropZoneEntered
+          --     , leaveMsg = DropZoneLeaved
+          --     , filesMsg = FilesDropped
+          --     }
         )
         [ div [ class "filer-inner" ]
               [ Html.text "Drop a file here"
@@ -202,7 +201,8 @@ fileLoadView model =
               , Html.label
                   [ class "file_input_label" ]
                   [ Html.text "Select a file from PC"
-                  , Html.input (FileReader.fileInput (FileReader.Text "utf-8") ReadFile) []
+--                  , Html.input (FileReader.fileInput (FileReader.Text "utf-8") ReadFile) []
+                  , Html.input [] []
                   ]
               ]
         ]
@@ -226,12 +226,11 @@ fileSaveAsView model =
                             , placeholder "Please enter the file name here!"
                             , value model.newFileName
                             , onInput InputFileName
-                            , style [ ("width", "24em") ]
+                            , style "width" "24em"
                             ] []
                     ]
-              , div [ style [ ("display", "flex")
-                            , ("justify-content", "flex-end")
-                            ]
+              , div [ style "display" "flex"
+                    , style "justify-content" "flex-end"
                     ]
                     [ div ( if model.newFileName == ""
                             then [ class "menu_button_disabled" ]

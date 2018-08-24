@@ -2,9 +2,9 @@ import Html exposing (..)
 import Html.Attributes exposing (..)
 import Html.Events exposing (..)
 import Json.Encode as Encode
+import Browser
 
 import Task
-import FileReader
 
 import TextEditor as Editor
 import TextEditor.Commands as Commands
@@ -14,7 +14,7 @@ import TextEditor.Option
 import TextEditor.Style
 
 import DebugMenu
-import SoftwareKeyboard
+--import SoftwareKeyboard
 import StyleMenu
 import FileMenu
 import KeyBindMenu
@@ -22,9 +22,8 @@ import SettingMenu
 
 import Ports.WebStrage
 
-main : Program Never Model Msg
 main =
-    Html.program
+    Browser.element
         { init = init
         , view = view
         , subscriptions = subscriptions
@@ -39,7 +38,7 @@ type alias Model =
 
     , pane : MenuPane
     , debugger : DebugMenu.Model
-    , swkeyboard : SoftwareKeyboard.Model
+--    , swkeyboard : SoftwareKeyboard.Model
     , style : StyleMenu.Model
     , filer : FileMenu.Model
     , keybindMenu : KeyBindMenu.Model
@@ -49,7 +48,7 @@ type alias Model =
 type MenuPane
     = NoPane
     | DebugMenuPane
-    | KeyboardPane
+--    | KeyboardPane
     | StyleMenuPane
     | FileMenuPane
     | KeyBindMenuPane
@@ -67,8 +66,8 @@ makeBuffer name content =
     , buffer = TextEditor.Buffer.init content
     }
 
-init : (Model, Cmd Msg)
-init =
+init : Maybe Int -> ( Model, Cmd Msg )
+init flgs =
     let
         content = ""
         keybinds = KeyBind.basic ++ KeyBind.gates ++ KeyBind.emacsLike
@@ -97,7 +96,7 @@ init =
               buf.name
               NoPane
               DebugMenu.init
-              SoftwareKeyboard.init
+--              SoftwareKeyboard.init
               smm
               FileMenu.init
               kmm
@@ -121,7 +120,7 @@ type Msg
     | CloseBuffer Int
     | ChangePane MenuPane
     | DebugMenuMsg (DebugMenu.Msg)
-    | SWKeyboardMsg (SoftwareKeyboard.Msg)
+--    | SWKeyboardMsg (SoftwareKeyboard.Msg)
     | StyleMenuMsg (StyleMenu.Msg)
     | FileMenuMsg (FileMenu.Msg)
     | KeyBindMenuMsg (KeyBindMenu.Msg)
@@ -163,9 +162,9 @@ update msg model =
             )
 
         -- ScenarioPage >> List
-        EditorMsg msg ->
+        EditorMsg emsg ->
             let
-                (m, c) = Editor.update msg model.editor
+                (m, c) = Editor.update emsg model.editor
             in
                 ( { model | editor = m}
                 , Cmd.map EditorMsg c
@@ -182,18 +181,18 @@ update msg model =
                 , Cmd.map DebugMenuMsg dc
                 )
 
-        SWKeyboardMsg swmsg ->
-            let
-                (kbd, edt) = SoftwareKeyboard.update swmsg model.swkeyboard model.editor
-            in
-                ( { model
-                      | editor   = Tuple.first edt
-                      , swkeyboard = Tuple.first kbd
-                  }
-                , Cmd.batch [ Cmd.map EditorMsg (Tuple.second edt)
-                            , Cmd.map SWKeyboardMsg (Tuple.second kbd)
-                            ]
-                )
+        -- SWKeyboardMsg swmsg ->
+        --     let
+        --         (kbd, edt) = SoftwareKeyboard.update swmsg model.swkeyboard model.editor
+        --     in
+        --         ( { model
+        --               | editor   = Tuple.first edt
+        --               , swkeyboard = Tuple.first kbd
+        --           }
+        --         , Cmd.batch [ Cmd.map EditorMsg (Tuple.second edt)
+        --                     , Cmd.map SWKeyboardMsg (Tuple.second kbd)
+        --                     ]
+        --         )
 
         StyleMenuMsg smsg ->
             let
@@ -225,22 +224,22 @@ update msg model =
                         , Cmd.map FileMenuMsg c
                         )
 
-                    FileMenu.ReadFile file ->
-                        case file.data of
-                            Ok content ->
-                                let
-                                    newbuf = makeBuffer file.name content
-                                in
-                                    ( { model | filer = m }
-                                        |> updateBufferContent model.currentBufferIndex (Editor.buffer model.editor)
-                                        |> insertBuffer (model.currentBufferIndex + 1) newbuf
-                                        |> selectBuffer (model.currentBufferIndex + 1)
-                                    , Cmd.map FileMenuMsg c
-                                    )
-                            Err err ->
-                                ( { model | filer = m}
-                                , Cmd.map FileMenuMsg c
-                                )
+                    -- FileMenu.ReadFile file ->
+                    --     case file.data of
+                    --         Ok content ->
+                    --             let
+                    --                 newbuf = makeBuffer file.name content
+                    --             in
+                    --                 ( { model | filer = m }
+                    --                     |> updateBufferContent model.currentBufferIndex (Editor.buffer model.editor)
+                    --                     |> insertBuffer (model.currentBufferIndex + 1) newbuf
+                    --                     |> selectBuffer (model.currentBufferIndex + 1)
+                    --                 , Cmd.map FileMenuMsg c
+                    --                 )
+                    --         Err err ->
+                    --             ( { model | filer = m}
+                    --             , Cmd.map FileMenuMsg c
+                    --             )
                     FileMenu.SaveFileAs name ->
                         ( { model | filer = m  }
                               |> updateBufferName model.currentBufferIndex name
@@ -322,7 +321,7 @@ selectBuffer i model =
             if List.isEmpty model.buffers then
                 model
             else
-                selectBuffer (model.buffers |> List.length |> flip (-) 1) model
+                selectBuffer (model.buffers |> List.length |> ((-) 1)) model
 
 insertBuffer : Int -> Buffer -> Model -> Model
 insertBuffer i buf model =
@@ -356,15 +355,13 @@ subscriptions model =
 
 view : Model -> Html Msg
 view model =
-    div [ style [ ("margin", "0"), ("padding", "0"), ("width", "100%"), ("height", "100%")
-                , ("display", "flex"), ("flex-direction", "column")
-                ]
+    div [ style "margin" "0", style "padding" "0", style "width" "100%", style "height" "100%"
+        , style "display" "flex", style "flex-direction" "column"
         ]
         [ bufferTab model
-        , div [ style [ ("margin", "0"), ("padding", "0"), ("width", "100%"), ("height", "100%")
-                      , ("overflow","hidden")
-                      , ("flex-grow", "8")
-                      ]
+        , div [ style "margin" "0", style "padding" "0", style "width" "100%", style "height" "100%"
+              , style "overflow" "hidden"
+              , style "flex-grow" "8"
               ]
               [ Html.map EditorMsg (Editor.view model.editor) ]
         , modeline model
@@ -382,8 +379,8 @@ applicationMenu model =
                   text ""
               DebugMenuPane ->
                   Html.map DebugMenuMsg (DebugMenu.view model.editor model.debugger)
-              KeyboardPane ->
-                  Html.map SWKeyboardMsg (SoftwareKeyboard.view model.swkeyboard)
+--              KeyboardPane ->
+--                  Html.map SWKeyboardMsg (SoftwareKeyboard.view model.swkeyboard)
               StyleMenuPane ->
                   Html.map StyleMenuMsg (StyleMenu.view model.style)
               FileMenuPane ->
@@ -414,26 +411,24 @@ menuBar model =
         , tab StyleMenuPane "Style"
         , tab KeyBindMenuPane "Keybind"
         , tab SettingMenuPane "Setting"
-        , tab KeyboardPane "Keyboard"
+--        , tab KeyboardPane "Keyboard"
         , tab DebugMenuPane "Debug"
         , tab AboutPane "About"
         ]
 
 aboutPane : Model -> Html Msg
 aboutPane model =
-    div [ style [ ("flex-grow", "2")
-                , ("min-height", "13em")
-                , ("padding", "2em")
-                , ("background-color", "whitesmoke")
-                , ("color", "gray")
-                ]
+    div [ style "flex-grow" "2"
+        , style "min-height" "13em"
+        , style "padding" "2em"
+        , style "background-color" "whitesmoke"
+        , style "color" "gray"
         ]
         [ h1 [] [ text "elm-text-editor demo" ]
         , a [ href "https://github.com/minekoa/elm-text-editor"] [text "https://github.com/minekoa/elm-text-editor"]
-        , div [ style [ ("display", "flex")
-                      , ("flex-direction", "row-reverse")
-                      , ("padding", "1.5rem")
-                      ]
+        , div [ style "display" "flex"
+              , style "flex-direction" "row-reverse"
+              , style "padding" "1.5rem"
               ]
               [ div [ class "menu_button"
                     , onClick ClearSettings
@@ -463,7 +458,7 @@ bufferTab model =
 modeline : Model -> Html msg
 modeline model =
     let
-        toCursorString    = \c -> "(" ++ (toString c.row) ++ ", " ++ (toString c.column) ++ ")"
+        toCursorString    = \c -> "(" ++ (String.fromInt c.row) ++ ", " ++ (String.fromInt c.column) ++ ")"
         toIMEString       =
             \ compositionData -> compositionData
                           |> Maybe.andThen (\d -> Just <| "[IME] " ++ d )
@@ -474,7 +469,7 @@ modeline model =
                       |> Maybe.andThen (\mk -> Just <|
                                             if mk.actived then
                                                 " mark-set:("
-                                                ++ (mk.pos.row |> toString) ++ "," ++ (mk.pos.column |> toString)
+                                                ++ (mk.pos.row |> String.fromInt) ++ "," ++ (mk.pos.column |> String.fromInt)
                                                 ++ ")"
                                             else
                                                 ""
@@ -484,17 +479,16 @@ modeline model =
         toSelectionString =
             \ selection -> selection
                         |> Maybe.andThen (\s-> Just <|
-                                              " select:(" ++ (s.begin.row |> toString)
-                                              ++ "," ++ (s.begin.column |> toString) 
-                                              ++ ")-(" ++ (s.end.row |> toString)
-                                              ++ "," ++ (s.end.column |> toString) ++ ")"
+                                              " select:(" ++ (s.begin.row |> String.fromInt)
+                                              ++ "," ++ (s.begin.column |> String.fromInt) 
+                                              ++ ")-(" ++ (s.end.row |> String.fromInt)
+                                              ++ "," ++ (s.end.column |> String.fromInt) ++ ")"
                                          )
                         |> Maybe.withDefault ""
     in
         div [ id "modeline"
-            , style [ ("background-color","black")
-                    , ("color", "white")
-                    ]
+            , style "background-color" "black"
+            , style "color" "white"
             ]
             [ text <| toCursorString model.editor.core.buffer.cursor
             , text <| toIMEString model.editor.core.compositionPreview

@@ -12,7 +12,7 @@ import Html.Attributes exposing (..)
 import Html.Events exposing (..)
 import Json.Encode
 import Json.Decode
-import Dom
+import Browser.Dom
 import Task
 
 import TextEditor.KeyBind as KeyBind
@@ -71,7 +71,7 @@ initEditUpdate : KeyBind.KeyBind -> EditBuffer
 initEditUpdate kbind =
     let
         s = if (kbind.f.id |> String.left (String.length "insert")) == "insert"
-            then (kbind.f.id |> String.dropLeft (String.length "insert" |> flip (+) 1) |> Just)
+            then (kbind.f.id |> String.dropLeft (String.length "insert" |> ((+) 1)) |> Just)
             else Nothing
     in
         { keybind =  kbind
@@ -84,7 +84,7 @@ initEditDelete : KeyBind.KeyBind -> EditBuffer
 initEditDelete kbind =
     let
         s = if (kbind.f.id |> String.left (String.length "insert")) == "insert"
-            then (kbind.f.id |> String.dropLeft (String.length "insert" |> flip (+) 1) |> Just)
+            then (kbind.f.id |> String.dropLeft (String.length "insert" |> ((+) 1)) |> Just)
             else Nothing
     in
         { keybind =  kbind
@@ -158,10 +158,12 @@ update : Msg -> List KeyBind.KeyBind -> Model -> (List KeyBind.KeyBind, Model, C
 update msg keybinds model =
     case msg of
         LoadSetting ("keybinds", maybe_value) ->
-            ( maybe_value
-                  |> Result.fromMaybe "value is nothing"
-                  |> Result.andThen (Json.Decode.decodeString decodeKeyBinds)
-                  |> Result.withDefault keybinds
+            ( case maybe_value of
+                  Just value ->
+                      value |> Json.Decode.decodeString decodeKeyBinds
+                            |> Result.withDefault keybinds
+                  Nothing ->
+                      keybinds
             , model
             , Cmd.none
             )
@@ -378,7 +380,7 @@ update msg keybinds model =
                                                    kbind   = editbuf.keybind
                                                    newbind = { kbind | f = edtcmd }
                                                    sval    = if (edtcmd.id |> String.left (String.length "insert")) == "insert"
-                                                             then edtcmd.id |> String.dropLeft (String.length "insert" |> flip (+) 1) |> Just
+                                                             then edtcmd.id |> String.dropLeft (String.length "insert" |> ((+) 1)) |> Just
                                                              else Nothing
                                                in
                                                    { editbuf
@@ -444,7 +446,7 @@ subscriptions model =
 view : List KeyBind.KeyBind -> Model -> Html Msg
 view keybinds model =
     div [ class "keybind-menu", class "menu-root"
-        , style [("min-height", "17em")]
+        , style "min-height" "17em"
         ]
         [ menuItemsView model
         , menuPalette keybinds model
@@ -513,29 +515,27 @@ listPageView keybinds model =
 
         , div [ class "keybind-vbox" ]
               [ div [ class "keybind-next-button"
-                    , style [ ("flex-grow", "4") ]
+                    , style "flex-grow" "4"
                     , onClick <| EditStart model.currentIdx
                     ]
-                    [ div [style [("text-align","center")]]
+                    [ div [style "text-align""center"]
                           [ text ">"
                           , br [][]
-                          , span [ style [ ("font-size", "0.8em")
-                                         , ("color", "lightgray")
-                                         ]
+                          , span [ style "font-size" "0.8em"
+                                 , style "color" "lightgray"
                                  ]
                                 [text "edit"]
                           ]
                     ]
               , div [ class "keybind-next-button"
-                    , style [ ("flex-grow", "1") ]
+                    , style "flex-grow" "1"
                     , onClick AddKeyBind
                     ]
-                    [ div [style [("text-align","center")]]
+                    [ div [style "text-align" "center"]
                           [ text ">"
                           , br [][]
-                          , span [ style [ ("font-size", "0.8em")
-                                         , ("color", "lightgray")
-                                         ]
+                          , span [ style "font-size" "0.8em"
+                                 , style "color" "lightgray"
                                  ]
                                 [text "add"]
                           ]
@@ -547,16 +547,16 @@ listPageView keybinds model =
 keybindView : Int -> Int -> KeyBind.KeyBind -> Html Msg
 keybindView selected_idx idx keybind =
     div [ class <| if selected_idx == idx then "keybind-item-active" else "keybind-item"
-        , style [("display","flex")]
+        , style "display" "flex"
         , onClick (SelectKeyBind idx)
         ]
-        [ div [ style [("width","10rem")] ]
+        [ div [ style "width" "10rem" ]
               [ [ if keybind.ctrl  then "Ctrl-" else ""
                 , if keybind.alt   then "Alt-" else ""
                 , if keybind.shift then "Shift-" else ""
                 , keybind.code |> keyCodeToKeyName
                 , " ("
-                , keybind.code |> toString
+                , keybind.code |> String.fromInt
                 , ")"
                 ] |> String.concat |> text
               ]
@@ -577,26 +577,25 @@ editPageView edtbuf model =
             [ div [ class "keybind-prev-button"
                   , onClick <| BackToList
                   ]
-                  [ div [style [("text-align","center")]]
+                  [ div [style "text-align" "center"]
                         [ text "<"
                         , br [][]
-                        , span [ style [ ("font-size", "0.8em")
-                                       , ("color", "lightgray")
-                                       ]
+                        , span [ style "font-size" "0.8em"
+                               , style "color" "lightgray"
                                ]
                               [text "cancel"]
                         ]
                   ]
 
-            , div [ style [ ("display", "flex")
-                          , ("flex-direction", "column")
-                          , ("flex-grow", "1")
-                          , ("align-self" , "stretch")
-                          ]
+            , div [ style "display" "flex"
+                  , style "flex-direction" "column"
+                  , style "flex-grow" "1"
+                  , style "align-self" "stretch"
                   ]
                   [ editPage_currentKeybindView edtbuf model
                   , textarea [ id "keybindmenu-keyevent-receiver"
-                             , style [("opacity", "0"), ("height", "1px")]
+                             , style "opacity" "0"
+                             , style "height" "1px"
                              , if edtbuf.target == TargetInsertValue
                                then onTabKeyDown TabKeyDown
                                else onKeyDown KeyDown
@@ -618,15 +617,14 @@ editPageView edtbuf model =
 
             , div [ class "keybind-vbox" ] <|
                   [ div [ class "keybind-next-button"
-                        , style [ ("flex-grow", "4") ]
+                        , style "flex-grow" "4"
                         , onClick <| ConfirmAccept
                         ]
-                        [ div [style [("text-align","center")]]
+                        [ div [style "text-align" "center"]
                               [ text ">"
                               , br [][]
-                              , span [ style [ ("font-size", "0.8em")
-                                             , ("color", "lightgray")
-                                             ]
+                              , span [ style "font-size" "0.8em"
+                                     , style "color" "lightgray"
                                      ]
                                     [text "accept"]
                               ]
@@ -636,15 +634,14 @@ editPageView edtbuf model =
                         []
                     else
                         [ div [ class "keybind-next-button"
-                              , style [ ("flex-grow", "1") ]
+                              , style "flex-grow" "1"
                               , onClick <| ConfirmDelete
                               ]
-                              [ div [style [("text-align","center")]]
+                              [ div [style "text-align" "center"]
                                     [ text ">"
                                     , br [][]
-                                    , span [ style [ ("font-size", "0.8em")
-                                                   , ("color", "lightgray")
-                                                   ]
+                                    , span [ style "font-size" "0.8em"
+                                           , style "color" "lightgray"
                                            ]
                                           [text "delete"]
                                     ]
@@ -655,13 +652,12 @@ editPageView edtbuf model =
 
 editPage_currentKeybindView : EditBuffer -> Model -> Html Msg
 editPage_currentKeybindView edtbuf model =
-    div [ style [ ("display", "flex")
-                , ("flex-direction", "row")
-                , ("align-items", "center")
-                ]
+    div [ style "display" "flex"
+        , style "flex-direction" "row"
+        , style "align-items" "center"
         ]
         (  [ currentKeybindView_keys edtbuf
-           , div [style [("font-size","2em")]] [ text "⇒" ]
+           , div [style "font-size" "2em"] [ text "⇒" ]
            , currentKeybindView_cmd edtbuf
            ]
         )
@@ -670,18 +666,17 @@ editPage_currentKeybindView edtbuf model =
 currentKeybindView_keys : EditBuffer -> Html Msg
 currentKeybindView_keys edtbuf =
     div [ class <| if edtbuf.target == TargetKeys then "keybindmenu-keyeditor-focus" else "keybindmenu-keyeditor-disfocus"
-        , style [ ("display", "flex")
-                , ("flex-direction", "row")
-                , ("align-items", "center")
-                ]
+        , style "display" "flex"
+        , style "flex-direction" "row"
+        , style "align-items" "center"
         , onClick SetFocusToKeyEditor
         ]
         [ div [class <| if edtbuf.keybind.ctrl  then "keybind-edit-mod-enable" else "keybind-edit-mod-disable"] [text "Ctrl"]
-        , div [style [("font-size","2em")]] [ text "+" ]
+        , div [style "font-size" "2em"] [ text "+" ]
         , div [class <| if edtbuf.keybind.alt   then "keybind-edit-mod-enable" else "keybind-edit-mod-disable"] [text "Alt"]
-        , div [style [("font-size","2em")]] [ text "+" ]
+        , div [style "font-size" "2em"] [ text "+" ]
         , div [class <| if edtbuf.keybind.shift then "keybind-edit-mod-enable" else "keybind-edit-mod-disable"] [text "Shift"]
-        , div [style [("font-size","2em")]] [ text "+" ]
+        , div [style "font-size" "2em"] [ text "+" ]
         , div [class "keybind-edit-keycode"] [edtbuf.keybind.code |> keyCodeToKeyName |> text ]
         ]
 
@@ -690,15 +685,14 @@ currentKeybindView_cmd edtbuf =
     let
         fid = edtbuf.keybind.f.id |> String.split " " |> List.take 1 |> String.concat
     in
-        div [ style [ ("display", "flex")
-                    , ("flex-direction", "row")
-                    ]
+        div [ style "display" "flex"
+            , style "flex-direction" "row"
             ] 
             [ div [ class <| if edtbuf.target == TargetCommand then "keybindmenu-cmdselector-focus" else "keybindmenu-cmdselector-disfocus"
-                  , style [ ("display", "flex")
-                          , ("flex-direction", "row")
-                          , ("align-items", "center")
-                          ]
+                  , style "display" "flex"
+                  , style "flex-direction" "row"
+                  , style "align-items" "center"
+
                   , onClick SetFocusToCmdSelector
                   ]
                   [ div [class "keybind-edit-command" ] [ fid |> text ] ]
@@ -748,16 +742,16 @@ editPage_insertValueMessage model =
 editPage_deleteKeyBindPanel : Model -> Html Msg
 editPage_deleteKeyBindPanel model =
     div [ class "keybindmenu-editsupport" ]
-        [ div [ style [ ("display", "flex")
-                      , ("flex-direction", "row")
-                      , ("justify-content", "flex-end")
-                      ]
+        [ div [ style "display" "flex"
+              , style "flex-direction" "row"
+              , style "justify-content" "flex-end"
+
               ]
-              [ div [ style [ ("border", "1px solid gray")
-                            , ("margin", "1ex")
-                            , ("text-align", "center")
-                            , ("width", "5em")
-                            ]
+              [ div [ style "border" "1px solid gray"
+                    , style "margin" "1ex"
+                    , style "text-align" "center"
+                    , style "width" "5em"
+
                     , onClick ConfirmDelete
                     ]
                     [text "Delete"]
@@ -774,22 +768,20 @@ acceptPageView keybinds model =
         [ div [ class "keybind-prev-button"
               , onClick <| BackToEdit
               ]
-              [ div [style [("text-align","center")]]
+              [ div [style "text-align" "center"]
                     [ text "<"
                     , br [][]
-                    , span [ style [ ("font-size", "0.8em")
-                                   , ("color", "lightgray")
-                                   ]
+                    , span [ style "font-size" "0.8em"
+                           , style "color" "lightgray"
                            ]
                           [text "return to the edit"]
                     ]
               ]
-        , div [ style [ ("display", "flex")
-                      , ("flex-direction", "column")
-                      , ("flex-grow", "1")
-                      , ("align-self" , "stretch")
-                      , ("align-items", "center")
-                      ]
+        , div [ style "display" "flex"
+              , style "flex-direction" "column"
+              , style "flex-grow" "1"
+              , style "align-self"  "stretch"
+              , style "align-items" "center"
               ]
               ( case model.current of
                     Just edtbuf ->
@@ -839,34 +831,31 @@ acceptPage_updateFromToView from to =
                          ] |> String.concat |> Just
                     ) >> Maybe.withDefault "(Nothing)"
     in
-        [ div [ style [ ("font-size", "1.2em")
-                      , ("color", "silver")
-                      , ("padding-top", "1em")
-                      ]
+        [ div [ style "font-size" "1.2em"
+              , style "color" "silver"
+              , style "padding-top" "1em"
               ]
               [ text "Old: "
-              , span [ style [("color", "tomato")] ]
+              , span [ style "color" "tomato" ]
                      [ from |> kbind2str |> text ]
               ]
 
-        , div [ style [ ("font-size", "2em") ] ]
+        , div [ style "font-size" "2em" ]
               [ text "↓" ]
 
-        , div [ style [ ("font-size", "1.2em")
-                      , ("color", "silver")
-                      ]
+        , div [ style "font-size" "1.2em"
+              , style "color" "silver"
               ]
               [ text "New: "
-              , span [ style [("color", "royalblue")] ]
+              , span [ style "color" "royalblue" ]
                   [ to |> kbind2str |> text ]
               ]
         ]
 
 acceptPage_confirmMessage : String -> List (Html Msg)
 acceptPage_confirmMessage msg =
-    [ div [ style [ ("font-size", "1.2em")
-                  , ("padding", "1.5em 0 1em 0")
-                  ]
+    [ div [ style "font-size" "1.2em"
+          , style "padding" "1.5em 0 1em 0"
           ]
           [ text msg ]
     ]
@@ -919,35 +908,32 @@ notesView model =
 resetView : Model-> Html Msg
 resetView model =
     div [ class "keybind-vbox"]
-        [ div [ style [ ("font-size", "1.5em")
-                      , ("padding", "1em")
-                      , ("justify-content", "center")
-                      ]
+        [ div [ style "font-size" "1.5em"
+              , style "padding" "1em"
+              , style "justify-content" "center"
               ]
               [ p [] [text "Are you sure you want to reset keybinds?" ] ]
 
         , div [ class "keybind-hbox"
-              , style [ ("justify-content", "center")
-                      , ("align-items", "center")
-                      ]
+              , style "justify-content" "center"
+              , style "align-items" "center"
               ]
               [ div [ class <| if model.resetOptions.basic then "menu_option_enabled" else "menu_option_disabled"
                     , onClick <| SetResetOption "basic" (not model.resetOptions.basic)
                     ] [ text "basic" ]
-              , div [ style [("font-size", "2em")]] [ text "+"]
+              , div [ style "font-size" "2em"] [ text "+"]
               , div [ class <| if model.resetOptions.gates then "menu_option_enabled" else "menu_option_disabled"
                     , onClick <| SetResetOption "gates" (not model.resetOptions.gates)
                     ] [ text "windows like" ]
-              , div [ style [("font-size", "2em")]] [ text "+"]
+              , div [ style "font-size" "2em"] [ text "+"]
               , div [ class <| if model.resetOptions.emacs then "menu_option_enabled" else "menu_option_disabled"
                     , onClick <| SetResetOption "emacs" (not model.resetOptions.emacs)
                     ] [ text "emacs like" ]
               ]
 
         , div [ class "keybind-hbox"
-              , style [ ("justify-content", "center")
-                      , ("align-items", "center")
-                      ]
+              , style "justify-content" "center"
+              , style "align-items" "center"
               ]
               [ div [ class <| if model.resetOptions.basic || model.resetOptions.gates || model.resetOptions.emacs
                                then "menu_button"
@@ -970,7 +956,7 @@ keyboarEvent_toString e =
         , if e.altKey then "A-" else ""
         , if e.metaKey then "M-" else ""
         , if e.shiftKey then "S-"else ""
-        , toString e.keyCode
+        , String.fromInt e.keyCode
         ]
 
 
@@ -980,14 +966,15 @@ onKeyDown tagger =
 
 onTabKeyDown : (KeyboardEvent -> msg) -> Attribute msg
 onTabKeyDown tagger = 
-    onWithOptions "keydown" { stopPropagation = True, preventDefault = True } <|
-        considerKeyboardEvent (\ kbd_ev ->
-                                   if kbd_ev.keyCode == 9 then
-                                       Just (tagger kbd_ev)
-                                   else
-                                       Nothing
-                              )
-
+    -- onWithOptions "keydown" { stopPropagation = True, preventDefault = True } <|
+    --     considerKeyboardEvent (\ kbd_ev ->
+    --                                if kbd_ev.keyCode == 9 then
+    --                                    Just (tagger kbd_ev)
+    --                                else
+    --                                    Nothing
+    --                          )
+    -- todo: ちゃんと作る
+    on "keydown" (Json.Decode.map tagger decodeKeyboardEvent)
 
 ------------------------------------------------------------
 -- focus
@@ -995,7 +982,7 @@ onTabKeyDown tagger =
 
 doFocus: Cmd Msg
 doFocus  =
-    Task.attempt (\_ -> KeyEditorFocus True) (Dom.focus "keybindmenu-keyevent-receiver")
+    Task.attempt (\_ -> KeyEditorFocus True) (Browser.Dom.focus "keybindmenu-keyevent-receiver")
 
 onFocusIn : (Bool -> msg) -> Attribute msg
 onFocusIn tagger =
@@ -1065,7 +1052,7 @@ decodeEditCmd : Json.Decode.Decoder EditorCmds.Command
 decodeEditCmd =
     Json.Decode.string
         |> Json.Decode.andThen (fidToEditCmd >> (\v -> case v of
-                                                           Just v  -> Json.Decode.succeed v
+                                                           Just x  -> Json.Decode.succeed x
                                                            Nothing -> Json.Decode.fail "invalid f.id"
                                                 )
                                )
@@ -1088,8 +1075,7 @@ decodeKeyBind =
 encodeKeyBinds : List KeyBind.KeyBind-> String
 encodeKeyBinds keybinds =
     keybinds
-        |> List.map encodeKeyBind
-        |> Json.Encode.list 
+        |> Json.Encode.list encodeKeyBind
         |> Json.Encode.encode 0
 
 encodeKeyBind : KeyBind.KeyBind -> Json.Encode.Value

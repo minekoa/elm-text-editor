@@ -51,11 +51,12 @@ update msg model =
     in
         case msg of
             LoadSetting ("core.option", maybe_value) ->
-                ( maybe_value
-                    |> Result.fromMaybe "value is nothing"
-                    |> Result.andThen (Json.Decode.decodeString TextEditor.Option.jsonDecode)
-                    |> Result.withDefault core_opts
-                    |> (\new_opts -> { model | options = new_opts })
+                ( (case maybe_value of
+                      Nothing -> core_opts
+                      Just val ->
+                          val |> Json.Decode.decodeString TextEditor.Option.jsonDecode
+                              |> Result.withDefault core_opts
+                  ) |> (\new_opts -> { model | options = new_opts })
                 , Cmd.none
                 )
             LoadSetting _ ->
@@ -115,7 +116,7 @@ subscriptions model =
 view : Model -> Html Msg
 view model =
     div [ class "setting-menu", class "menu-root"
-        , style [("min-height", "17em")]
+        , style "min-height" "17em"
         ]
         [ menuItemsView model
         , menuPalette model
@@ -156,7 +157,7 @@ boolSettingControl label tagger value =
                                         else "setting-option-value-disactive"
                     , onClick <| tagger (not value)
                     ]
-                    [ value |> toString |> text ]
+                    [ value |> (\b-> if b then "True" else "False") |> text ]
               ]
         ]
 
@@ -171,7 +172,7 @@ intOptionSettingControl label tagger opts value =
                                                                 else "setting-option-value-disactive"
                                        , onClick <| tagger i
                                        ]
-                                       [ i |> toString |> text ]
+                                       [ i |> String.fromInt |> text ]
                               )
               )
         ]

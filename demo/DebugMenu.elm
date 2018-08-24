@@ -9,12 +9,12 @@ module DebugMenu exposing
 import Html exposing (..)
 import Html.Attributes exposing (..)
 import Html.Events exposing (..)
-import Date
+import Time
 
 import TextEditor as Editor
 import TextEditor.Buffer as Buffer
 import TextEditor.Core as Core
-import Native.Mice
+--import Native.Mice
 
 import StringTools exposing (..)
 
@@ -64,7 +64,7 @@ update msg editorModel model =
 view : Editor.Model -> Model -> Html Msg
 view editorModel model =
     div [ class "debugger-menu", class "menu-root"
-        , style [("min-height", "17em")]
+        , style "min-height" "17em"
         ]
         [ menuItemsView model
         , menuPalette editorModel model
@@ -122,25 +122,25 @@ historyView editorModel =
         ]
         [ div [ class "debugger-submenu-title" ] [ text "history:" ]
         , div
-              [ style [ ("overflow","auto"), ("width", "100%") ] ]
+              [ style "overflow" "auto", style "width" "100%" ]
               ( List.map
                     (\ c ->
                          let
-                             pos2str = \ p -> "(" ++ (toString p.row) ++ ", " ++ (toString p.column) ++")" 
+                             pos2str = \ p -> "(" ++ (String.fromInt p.row) ++ ", " ++ (String.fromInt p.column) ++")" 
                              mark2str = \ mk -> case mk of
-                                                    Just m -> "{pos=" ++ (pos2str m.pos ) ++ ", actived=" ++ (toString m.actived) ++ "}"
+                                                    Just m -> "{pos=" ++ (pos2str m.pos ) ++ ", actived=" ++ (stringFromBool m.actived) ++ "}"
                                                     Nothing -> "Nothing"
                              editParm2str = \ bfr afr str mk ->
                                  "{begin=" ++ (pos2str bfr) ++ ", end=" ++ (pos2str afr) ++ ", str=\"" ++ str ++ "\", mark=" ++ (mark2str mk) ++ "}"
-                             celstyle = style [("text-wrap", "none"), ("white-space","nowrap"), ("color", "gray")]
+                             celstyle = [ style "text-wrap" "none", style "white-space" "nowrap", style "color" "gray"]
                          in
                              case c of
                                  Buffer.Cmd_Insert bpos epos str mk ->
-                                     div [celstyle] [ "Insert " ++ editParm2str bpos epos str mk |> text ]
+                                     div celstyle [ "Insert " ++ editParm2str bpos epos str mk |> text ]
                                  Buffer.Cmd_Backspace bpos epos str mk->
-                                     div [celstyle] [ "Backspace " ++ editParm2str bpos epos str mk  |> text ]
+                                     div celstyle [ "Backspace " ++ editParm2str bpos epos str mk  |> text ]
                                  Buffer.Cmd_Delete bpos epos str mk ->
-                                     div [celstyle] [ "Delete " ++ editParm2str bpos epos str mk  |> text ]
+                                     div celstyle [ "Delete " ++ editParm2str bpos epos str mk  |> text ]
                     ) editorModel.core.buffer.history
               )
         ]
@@ -152,10 +152,9 @@ clipboardView editorModel =
         , class "debugger-hbox"
         ]
         [ div [ class "debugger-submenu-title" ] [ text "clipboard:" ]
-        , div [ style [ ("overflow","auto"), ("width", "100%"), ("color", "gray"), ("background-color", "whitesmoke") ]
-              ]
+        , div [ style "overflow" "auto", style "width" "100%", style "color" "gray", style "background-color" "whitesmoke" ]
               ( List.map
-                    (λ ln-> div [ style [("border-bottom", "1px dotted gainsboro"), ("background-color", "white"), ("height", "1em")] ] [ text ln ] )
+                    (\ ln-> div [ style "border-bottom" "1px dotted gainsboro", style "background-color" "white", style "height" "1em" ] [ text ln ] )
                     (String.lines editorModel.core.copyStore)
               )
         ]
@@ -169,23 +168,21 @@ eventlogView editorModel =
         [ div [ class "debugger-submenu-title" ]
               [ div [] [text "eventlog:"]
               , div [ onClick (SetEventlogEnable (editorModel.event_log == Nothing))
-                    , style [ ("border", "1px solid gray")
-                            , ("opacity", if (editorModel.event_log == Nothing) then "0.5" else "1.0" )
-                            , ("margin", "1ex")
-                            , ("text-align", "center")
-                            ]
+                    , style "border" "1px solid gray"
+                    , style "opacity" (if (editorModel.event_log == Nothing) then "0.5" else "1.0" )
+                    , style "margin" "1ex"
+                    , style "text-align" "center"
                     ]
                     [text <| if (editorModel.event_log == Nothing) then "OFF" else "ON"]
               ]
-        , div [ style [ ("overflow","auto")
-                      , ("width", "100%")
-                      , ("color", "gray")
-                      , ("user-select", "text")
-                      , ("-webkit-user-select", "text")
-                      , ("-moz-user-select", "text")
-                      ]
+        , div [ style "overflow" "auto"
+              , style "width" "100%"
+              , style "color" "gray"
+              , style "user-select" "text"
+              , style "-webkit-user-select" "text"
+              , style "-moz-user-select" "text"
               ]
-              ( List.map (λ ev -> div [ style [("margin-right","0.2em")]] [text <| (dateToString ev.date) ++ " | " ++ (String.pad 16 ' ' ev.name) ++ ":" ++ (ev.data |> stringEscape) ]) (Maybe.withDefault [] editorModel.event_log) )
+              ( List.map (\ev -> div [ style "margin-right" "0.2em"] [text <| (dateToString ev.date) ++ " | " ++ (String.pad 16 ' ' ev.name) ++ ":" ++ (ev.data |> stringEscape) ]) (Maybe.withDefault [] editorModel.event_log) )
         ]
 
 
@@ -194,18 +191,18 @@ inspectorView editorModel =
     let
         string_cut_n = (\ n str ->
                             str |> String.left n
-                                |> flip (++) (if String.length str <= n then "" else "…")
+                                |> ((++) (if String.length str <= n then "" else "…"))
                        )
 
 
         histToString = (\ hist ->
                              case hist of
                                  Buffer.Cmd_Insert bp ep str mk ->
-                                    "ins(" ++ (String.length str |> toString) ++ "char)"
+                                    "ins(" ++ (String.length str |> String.fromInt) ++ "char)"
                                  Buffer.Cmd_Backspace bp ep str mk->
-                                    "bs(" ++ (String.length str |> toString) ++ "char)"
+                                    "bs(" ++ (String.length str |> String.fromInt) ++ "char)"
                                  Buffer.Cmd_Delete bp ep str mk ->
-                                    "del(" ++ (String.length str |> toString) ++ "char)"
+                                    "del(" ++ (String.length str |> String.fromInt) ++ "char)"
                        )
     in
         div [ id "debug-pane-eventlog"
@@ -217,24 +214,24 @@ inspectorView editorModel =
                   , tr [] [ th [] [ text "buffer.contents" ], td [] [ editorModel.core.buffer.contents |> List.take 80 |> String.join "↵" |> string_cut_n 80 |> text ] ]
                   , tr [] [ th [] [ text "buffer.selection"], td [] [ editorModel.core.buffer.selection |> selectionToString |> text ] ]
                   , tr [] [ th [] [ text "buffer.mark"     ], td [] [ editorModel.core.buffer.mark |> markToString |> text ]]
-                  , tr [] [ th [] [ text "buffer.history"  ], td [] [ editorModel.core.buffer.history |> List.take 10 |> List.map histToString |> String.join ", " |> flip (++) (if List.length editorModel.core.buffer.history <= 10 then "" else "…") |> text ] ]
+                  , tr [] [ th [] [ text "buffer.history"  ], td [] [ editorModel.core.buffer.history |> List.take 10 |> List.map histToString |> String.join ", " |> ((++) (if List.length editorModel.core.buffer.history <= 10 then "" else "…")) |> text ] ]
 
 --                  , tr [] [ th [] [ text "texteditor.core.id"                  ], td [] [ editorModel.core.id |> text ] ]
                   , tr [] [ th [] [ text "texteditor.core.copyStore"           ], td [] [ editorModel.core.copyStore |> string_cut_n 80 |> stringEscape |> text ]]
                   , tr [] [ th [] [ text "texteditor.core.lastCommand"         ], td [] [ editorModel.core.lastCommand |> Maybe.withDefault "Nothing" |> stringEscape |> text ] ]
                   , tr [] [ th [] [ text "texteditor.core.compositionPreview"  ], td [] [ editorModel.core.compositionPreview |> Maybe.withDefault "Nothing" |> text ] ]
-                  , tr [] [ th [] [ text "texteditor.core.focus"               ], td [] [ editorModel.core.focus |> toString |> text ] ]
+                  , tr [] [ th [] [ text "texteditor.core.focus"               ], td [] [ editorModel.core.focus |> stringFromBool |> text ] ]
                   , tr [] [ th [] [ text "texteditor.core.blink"               ], td [] [ editorModel.core.blink |> Core.blinkStateToString |> text ] ]
 
-                  , tr [] [ th [] [ text "texteditor.enableComposer"], td [] [ editorModel.enableComposer |> toString |> text ] ]
-                  , tr [] [ th [] [ text "texteditor.drag"          ], td [] [ editorModel.drag |> toString |> text ] ]
-                  , tr [] [ th [] [ text "texteditor.keymap"        ], td [] [ editorModel.keymap |> List.length |> toString |> flip (++) " binds" |> text ] ]
+                  , tr [] [ th [] [ text "texteditor.enableComposer"], td [] [ editorModel.enableComposer |> stringFromBool |> text ] ]
+                  , tr [] [ th [] [ text "texteditor.drag"          ], td [] [ editorModel.drag |> stringFromBool |> text ] ]
+                  , tr [] [ th [] [ text "texteditor.keymap"        ], td [] [ editorModel.keymap |> List.length |> String.fromInt |> ((++) " binds") |> text ] ]
                   , tr [] [ th [] [ text "texteditor.event_log"     ], td [] [ editorModel.event_log |> Maybe.andThen
                                                                                    (\ evs ->
                                                                                         evs |> List.take 24
                                                                                             |> List.map (\ev -> ev.name ++ "(" ++ (ev.data |> stringEscape) ++ ")")
                                                                                             |> String.join "; "
-                                                                                            |> flip (++) (if List.length evs < 10 then "" else "…")
+                                                                                            |> ((++) (if List.length evs < 10 then "" else "…"))
                                                                                             |> Just
                                                                                    )
                                                                              |> Maybe.withDefault "(Disabled)" |> text ] ]
@@ -244,9 +241,9 @@ inspectorView editorModel =
 
 cursorToString : Buffer.Position -> String
 cursorToString cur =
-    [ cur.row |> toString
+    [ cur.row |> String.fromInt
     , ", "
-    , cur.column |> toString
+    , cur.column |> String.fromInt
     ]
         |> String.concat
 
@@ -255,13 +252,13 @@ selectionToString maybe_sel =
     case maybe_sel of
         Just sel ->
             [ "("
-            , sel.begin.row |> toString
+            , sel.begin.row |> String.fromInt
             , ","
-            , sel.begin.column |> toString
+            , sel.begin.column |> String.fromInt
             , ") ~ ("
-            , sel.end.row |> toString
+            , sel.end.row |> String.fromInt
             , ","
-            , sel.end.column |> toString
+            , sel.end.column |> String.fromInt
             , ")"
             ]
                  |> String.concat
@@ -273,17 +270,19 @@ markToString maybe_mark =
     case maybe_mark of
         Just mark ->
             [ "pos=("
-            , mark.pos.row |> toString
+            , mark.pos.row |> String.fromInt
             , ","
-            , mark.pos.column |> toString
+            , mark.pos.column |> String.fromInt
             , "), actived="
-            , mark.actived |> toString
+            , mark.actived |> stringFromBool 
             ]
                  |> String.concat
         Nothing ->
             "Nothing"
 
-
+stringFromBool: Bool -> String
+stringFromBool b =
+    if b then "True" else "False"
 
 geometoryView : Editor.Model -> Html Msg
 geometoryView editorModel =
@@ -293,26 +292,26 @@ geometoryView editorModel =
         [ table 
               [ class "debuger-table" ]
               [ tr [] [ th [] [text "--"], th [] [text "left"], th [] [text "top"], th [] [text "right"], th [] [text "bottom"], th [] [text "width"], th [] [text "height"] ]
-              , tr [] <| (th [] [ text "frame"            ]) :: (Core.frameID       editorModel.core |> getBoundingClientRect |> rectToTableColumn )
-              , tr [] <| (th [] [ text "scene"            ]) :: (Core.sceneID       editorModel.core |> getBoundingClientRect |> rectToTableColumn )
-              , tr [] <| (th [] [ text "code area"        ]) :: (Core.codeAreaID    editorModel.core |> getBoundingClientRect |> rectToTableColumn )
-              , tr [] <| (th [] [ text "line number area" ]) :: (Core.lineNumAreaID editorModel.core |> getBoundingClientRect |> rectToTableColumn )
-              , tr [] <| (th [] [ text "cursor"           ]) :: (Core.cursorID      editorModel.core |> getBoundingClientRect |> rectToTableColumn )
-              , tr [] <| (th [] [ text "input area"       ]) :: (Core.inputAreaID   editorModel.core |> getBoundingClientRect |> rectToTableColumn )
-              , tr [] <| (th [] [ text "tap area"         ]) :: (Core.tapAreaID     editorModel.core |> getBoundingClientRect |> rectToTableColumn )
-              , tr [] <| (th [] [ text "frame (page)"            ]) :: (Core.frameID       editorModel.core |> getBoundingPageRect |> rectToTableColumn )
-              , tr [] <| (th [] [ text "code area (page)"        ]) :: (Core.codeAreaID    editorModel.core |> getBoundingPageRect |> rectToTableColumn )
+              -- , tr [] <| (th [] [ text "frame"            ]) :: (Core.frameID       editorModel.core |> getBoundingClientRect |> rectToTableColumn )
+              -- , tr [] <| (th [] [ text "scene"            ]) :: (Core.sceneID       editorModel.core |> getBoundingClientRect |> rectToTableColumn )
+              -- , tr [] <| (th [] [ text "code area"        ]) :: (Core.codeAreaID    editorModel.core |> getBoundingClientRect |> rectToTableColumn )
+              -- , tr [] <| (th [] [ text "line number area" ]) :: (Core.lineNumAreaID editorModel.core |> getBoundingClientRect |> rectToTableColumn )
+              -- , tr [] <| (th [] [ text "cursor"           ]) :: (Core.cursorID      editorModel.core |> getBoundingClientRect |> rectToTableColumn )
+              -- , tr [] <| (th [] [ text "input area"       ]) :: (Core.inputAreaID   editorModel.core |> getBoundingClientRect |> rectToTableColumn )
+              -- , tr [] <| (th [] [ text "tap area"         ]) :: (Core.tapAreaID     editorModel.core |> getBoundingClientRect |> rectToTableColumn )
+              -- , tr [] <| (th [] [ text "frame (page)"            ]) :: (Core.frameID       editorModel.core |> getBoundingPageRect |> rectToTableColumn )
+              -- , tr [] <| (th [] [ text "code area (page)"        ]) :: (Core.codeAreaID    editorModel.core |> getBoundingPageRect |> rectToTableColumn )
               ]
         ]
 
 rectToTableColumn: Rect -> List (Html msg)
 rectToTableColumn rct =
-    [ td [] [ rct.left  |> toString |> text ]
-    , td [] [ rct.top   |> toString |> text ]
-    , td [] [ rct.right |> toString |> text ]
-    , td [] [ rct.bottom |> toString |> text ]
-    , td [] [ rct.width |> toString |> text ]
-    , td [] [ rct.height |> toString |> text ]
+    [ td [] [ rct.left   |> String.fromInt |> text ]
+    , td [] [ rct.top    |> String.fromInt |> text ]
+    , td [] [ rct.right  |> String.fromInt |> text ]
+    , td [] [ rct.bottom |> String.fromInt |> text ]
+    , td [] [ rct.width  |> String.fromInt |> text ]
+    , td [] [ rct.height |> String.fromInt |> text ]
     ]
 
 -- TODO: Core とコピペになってるのどうにかする
@@ -327,11 +326,11 @@ type alias Rect =
     , height : Int
     }
 
-getBoundingClientRect: String -> Rect
-getBoundingClientRect id = Native.Mice.getBoundingClientRect id
+--getBoundingClientRect: String -> Rect
+--getBoundingClientRect id = Native.Mice.getBoundingClientRect id
 
-getBoundingPageRect: String -> Rect
-getBoundingPageRect id = Native.Mice.getBoundingPageRect id
+--getBoundingPageRect: String -> Rect
+--getBoundingPageRect id = Native.Mice.getBoundingPageRect id
 
 
 
@@ -347,39 +346,39 @@ getBoundingPageRect id = Native.Mice.getBoundingPageRect id
 -- date tools
 ------------------------------------------------------------
 
-dateToString : Date.Date -> String
+dateToString : Time.Posix -> String
 dateToString date =
-    [ Date.year date |> toString |> String.padLeft 4 '0'
+    [ Time.toYear Time.utc date |> String.fromInt |> String.padLeft 4 '0'
     , "-"
-    , Date.month date |> monthToInt |> toString |> String.padLeft 2 '0'
+    , Time.toMonth Time.utc date |> monthToInt |> String.fromInt |> String.padLeft 2 '0'
     , "-"
-    , Date.day date |> toString |> String.padLeft 2 '0'
+    , Time.toDay Time.utc date |> String.fromInt |> String.padLeft 2 '0'
     , " "
-    , Date.hour date |> toString |> String.padLeft 2 '0'
+    , Time.toHour Time.utc date |> String.fromInt |> String.padLeft 2 '0'
     , ":"
-    , Date.minute date |> toString |> String.padLeft 2 '0'
+    , Time.toMinute Time.utc date |> String.fromInt |> String.padLeft 2 '0'
     , ":"
-    , Date.second date |> toString |> String.padLeft 2 '0'
+    , Time.toSecond Time.utc date |> String.fromInt |> String.padLeft 2 '0'
     , "."
-    , Date.millisecond date |> toString |> String.padRight 3 '0'
+    , Time.toMillis Time.utc date |> String.fromInt |> String.padRight 3 '0'
     ] |> String.concat
 
 
 
-monthToInt : Date.Month -> Int
+monthToInt : Time.Month -> Int
 monthToInt month =
     case month of
-        Date.Jan -> 1
-        Date.Feb -> 2
-        Date.Mar -> 3
-        Date.Apr -> 4
-        Date.May -> 5
-        Date.Jun -> 6
-        Date.Jul -> 7
-        Date.Aug -> 8
-        Date.Sep -> 9
-        Date.Oct -> 10
-        Date.Nov -> 11
-        Date.Dec -> 12
+        Time.Jan -> 1
+        Time.Feb -> 2
+        Time.Mar -> 3
+        Time.Apr -> 4
+        Time.May -> 5
+        Time.Jun -> 6
+        Time.Jul -> 7
+        Time.Aug -> 8
+        Time.Sep -> 9
+        Time.Oct -> 10
+        Time.Nov -> 11
+        Time.Dec -> 12
 
     

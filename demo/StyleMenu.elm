@@ -92,76 +92,77 @@ update : Msg -> Model -> (Model, Cmd Msg)
 update msg model =
     case msg of
         LoadSetting ("style", maybe_value) ->
-            ( maybe_value
-                |> Result.fromMaybe "value is nothing"
-                |> Result.andThen (Json.Decode.decodeString EditorStyle.jsonDecode)
-                |> Debug.log "loadstyle-parse-msg"
-                |> Result.withDefault model.style
+            ( ( case maybe_value of
+                  Nothing -> model.style
+                  Just val ->
+                      val |> Json.Decode.decodeString EditorStyle.jsonDecode
+                          |> Result.withDefault model.style
+              )
                 |> (\newstyle -> { model | style = newstyle })
             , Cmd.none
             )
         LoadSetting _ ->
             ( model, Cmd.none )
 
-        Change_Common_BGColor s ->
+        Change_Common_BGColor sel ->
             let
                 updateCommonBgColor = \s edstyle ->
                                       let
                                           common = edstyle.common |> Maybe.withDefault defaultCommonStyle
                                       in
                                           { edstyle | common = Just { common | backgroundColor = s } }
-                newstyle = updateCommonBgColor s model.style 
+                newstyle = updateCommonBgColor sel model.style 
             in
                 ( { model
                       | style      = newstyle
-                      , editTarget = EditColor "bg-color" Change_Common_BGColor (bgColorList s)
+                      , editTarget = EditColor "bg-color" Change_Common_BGColor (bgColorList sel)
                   }
                 , WebStrage.localStrage_setItem ("style", EditorStyle.jsonEncode newstyle |> Json.Encode.encode 0 )
                 )
 
-        Change_Common_FGColor s ->
+        Change_Common_FGColor sel ->
             let
                 updateCommonFgColor = \s edstyle ->
                                       let
                                           common = edstyle.common |> Maybe.withDefault defaultCommonStyle
                                       in
                                           { edstyle | common = Just { common | color = s } }
-                newstyle      = updateCommonFgColor s model.style
+                newstyle      = updateCommonFgColor sel model.style
             in
                 ( { model
                       | style      = newstyle
-                      , editTarget = EditColor "fg-color" Change_Common_FGColor (fgColorList s)
+                      , editTarget = EditColor "fg-color" Change_Common_FGColor (fgColorList sel)
                   }
                 , WebStrage.localStrage_setItem ("style", EditorStyle.jsonEncode newstyle |> Json.Encode.encode 0 )
                 )
 
-        Change_Common_FontFamily s ->
+        Change_Common_FontFamily sel ->
             let
                 updateCommonFtFamily = \s edstyle ->
                                       let
                                           common = edstyle.common |> Maybe.withDefault defaultCommonStyle
                                       in
                                           { edstyle | common = Just { common | fontFamily = s } }
-                newstyle = updateCommonFtFamily s model.style
+                newstyle = updateCommonFtFamily sel model.style
             in
                 ( { model
                       | style      = newstyle
-                      , editTarget = EditFontFamily "font-family" Change_Common_FontFamily (fontFamilyList s)
+                      , editTarget = EditFontFamily "font-family" Change_Common_FontFamily (fontFamilyList sel)
                   }
                 , WebStrage.localStrage_setItem ("style", EditorStyle.jsonEncode newstyle |> Json.Encode.encode 0)
                 )
-        Change_Common_FontSize s ->
+        Change_Common_FontSize sel ->
             let
                 updateCommonFtSize = \s edstyle ->
                                       let
                                           common = edstyle.common |> Maybe.withDefault defaultCommonStyle
                                       in
                                           { edstyle | common = Just { common | fontSize = s } }
-                newstyle = updateCommonFtSize s model.style
+                newstyle = updateCommonFtSize sel model.style
             in
                 ( { model
                       | style      = newstyle
-                      , editTarget = EditFontSize "font-size" Change_Common_FontSize (fontSizeList s)
+                      , editTarget = EditFontSize "font-size" Change_Common_FontSize (fontSizeList sel)
                   }
                 , WebStrage.localStrage_setItem ("style", EditorStyle.jsonEncode newstyle |> Json.Encode.encode 0)
                 )
@@ -212,9 +213,8 @@ subscriptions model =
 view : Model -> Html Msg
 view model =
     div [ class "style-setter", class "menu-root"
-        , style [ ("flex-grow", "2")
-                , ("min-height", "17em")
-                ]
+        , style "flex-grow" "2"
+        , style "min-height" "17em"
         ]
         [ div [ class "menu-itemlist" ]
               [ div [ onClick TouchBackgroundColor
@@ -254,22 +254,19 @@ view model =
 colorPalette : (String -> Msg) -> SelectableList -> Html Msg
 colorPalette tagger colorList =
     div [ class "menu-palette"
-        , style [ ("flex-grow", "1"), ("display", "flex"), ("align-content", "flex-start"), ("flex-wrap","wrap")
-                ]
+        , style "flex-grow" "1", style "display" "flex", style "align-content" "flex-start", style "flex-wrap" "wrap"
         ] <|
         List.map (\ color ->
                       div [ class <|
                                 if color == colorList.value
                                 then "color-palette-item-active"
                                 else "color-palette-item"
-                          , style [ ("display", "flex"), ("flex-directipn", "column") ]
+                          , style "display" "flex", style "flex-directipn" "column"
                           , onClick <| tagger color
                           ]
-                          [ div [ style [ ("width", "1em"), ("height", "1em"), ("background-color", color), ("border", "1px solid black") ]
-                                ]
+                          [ div [ style "width" "1em", style "height" "1em", style "background-color" color, style "border" "1px solid black" ]
                                 []
-                          , div [ style [ ("padding-left", "0.5em") ]
-                                ]
+                          , div [ style "padding-left" "0.5em" ]
                                 [ text color
                                 ]
                           ]
@@ -278,15 +275,14 @@ colorPalette tagger colorList =
 fontFamilySelector : (String -> Msg) -> SelectableList -> Html Msg
 fontFamilySelector tagger fontList =
     div [ class "menu-palette"
-        , style [ ("flex-grow", "1"), ("display", "flex"), ("flex-direction", "row"), ("flex-wrap","no-wrap")
-                ]
+        , style "flex-grow" "1", style "display" "flex", style "flex-direction" "row", style "flex-wrap" "no-wrap"
         ] <|
         List.map (\ font ->
                       div [ class <|
                                 if font == fontList.value
                                 then "font-palette-item-active"
                                 else "font-palette-item"
-                          , style [ ("height", "2em"), ("size", "2em"), ("font-family", font), ("width", "100%")]
+                          , style "height" "2em", style "size" "2em", style "font-family" font, style "width" "100%"
                           , onClick <| tagger font
                           ]
                           [ text font
@@ -296,15 +292,14 @@ fontFamilySelector tagger fontList =
 fontSizeSelector : (String -> Msg) -> SelectableList -> Html Msg
 fontSizeSelector tagger fontsizeList =
     div [ class "menu-palette"
-        , style [ ("flex-grow", "1"), ("display", "flex"), ("flex-direction", "row"), ("flex-wrap","no-wrap")
-                ]
+        , style "flex-grow" "1", style "display" "flex", style "flex-direction" "row", style "flex-wrap""no-wrap"
         ] <|
         List.map (\ fontsize ->
                       div [ class <|
                                 if fontsize == fontsizeList.value
                                 then "font-palette-item-active"
                                 else "font-palette-item"
-                          , style [ ("font-size", fontsize), ("width", "100%") ]
+                          , style "font-size" fontsize, style "width" "100%"
                           , onClick <| tagger fontsize
                           ]
                           [ text fontsize

@@ -108,7 +108,7 @@ keyCodeToKeyName code =
         29  -> "Muhenkan"  -- 無変換
         28  -> "Henkan"    -- 変換
         242 -> "Kana"      -- "カタカナ/ひらがな/ローマ字
-        otherwise   -> otherwise |> toString
+        otherwise   -> otherwise |> String.fromInt
 
 
 stringEscape: String -> String
@@ -117,14 +117,14 @@ stringEscape str =
         |> List.map (\ c ->
                          case c of
                              '\\' -> "\\\\"
-                             '\0' -> "\\0"
-                             '\a' -> "\\a"
-                             '\b' -> "\\b"
-                             '\f' -> "\\f"
+--                             '\0' -> "\\0"
+--                             '\a' -> "\\a"
+--                             '\b' -> "\\b"
+--                             '\f' -> "\\f"
                              '\n' -> "\\n"
                              '\r' -> "\\r"
                              '\t' -> "\\t"
-                             '\v' -> "\\v"
+--                             '\v' -> "\\v"
                              otherwise -> String.fromChar otherwise
                     )
         |> String.concat
