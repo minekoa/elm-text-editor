@@ -5,7 +5,7 @@ import Html exposing (..)
 import Html.Attributes exposing (..)
 import Html.Events exposing (..)
 import Markdown
-
+import Browser
 
 type alias Model =
     { editor : TextEditor.Model
@@ -17,18 +17,16 @@ type Msg
     = EditorMsg TextEditor.Msg
 
 
-main : Program Never Model Msg
 main =
-    Html.program
+    Browser.element
         { init = init
         , view = view
         , subscriptions = subscriptions
         , update = update
         }
 
-
-init : ( Model, Cmd Msg )
-init =
+init : Maybe Int -> ( Model, Cmd Msg )
+init flgs =
     let
         ( m, c ) = TextEditor.initLikeCodeEditor "editor-id1" defaultText
     in
@@ -61,14 +59,12 @@ subscriptions model =
 view : Model -> Html Msg
 view model =
     div
-        [ style
-            [ ( "display", "flex" )
-            , ( "width", "100%" )
-            , ( "height", "100%" )
-            ]
+        [ style "display" "flex"
+        , style "width" "100%"
+        , style "height" "100%"
         ]
-        [ div [ style [ ( "height", "100%" ), ( "width", "50%" ) ] ] [ Html.map EditorMsg (TextEditor.view model.editor) ]
-        , div [ style [ ( "height", "100%" ), ( "width", "50%" ), ( "overflow", "auto" ) ] ] [ Markdown.toHtmlWith markdownOptions [ class "md" ] (String.join "\n" model.contents) ]
+        [ div [ style "height" "100%", style "width" "50%"  ] [ Html.map EditorMsg (TextEditor.view model.editor) ]
+        , div [ style "height" "100%", style "width" "50%", style "overflow" "auto" ]  [ Markdown.toHtmlWith markdownOptions [ class "md" ] (String.join "\n" model.contents) ]
         ]
 
 markdownOptions : Markdown.Options

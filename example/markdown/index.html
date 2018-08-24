@@ -6,10 +6,13 @@
   <link rel="stylesheet" type="text/css" href="markdown.css" >
   <title>markdown editor | elm-text-editor example</title>
 </head>
-<body>
+<body id="elm">
 </body>
 <script type="text/javascript" src="./main.js"></script>
 <script type="text/javascript">
-  const app =  Elm.Main.fullscreen();
+const app = Elm.Main.init({
+  node: document.getElementById('elm'),
+  flags: null
+});
 </script>
 </html>
