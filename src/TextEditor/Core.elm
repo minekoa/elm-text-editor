@@ -244,9 +244,7 @@ withEnsureVisibleCmd model =
 
 doFocus: Model -> Cmd Msg
 doFocus model =
---    Task.attempt (\_ -> IgnoreResult) (Dom.focus <| inputAreaID model)
--- dummy code
-    Task.perform (\_ -> IgnoreResult) (Task.succeed True)
+   Task.attempt (\_ -> IgnoreResult) (Dom.focus <| inputAreaID model)
 
 elaborateInputArea: Model -> Cmd Msg
 elaborateInputArea model =
