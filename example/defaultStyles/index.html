@@ -5,10 +5,13 @@
   <style>html,head,body { padding:0; margin:0; height:100%; } body { font-family: calibri, helvetica, arial, sans-serif;}</style>
   <title>default styles | elm-text-editor example</title>
 </head>
-<body>
+<body id="elm">
 </body>
 <script type="text/javascript" src="./main.js"></script>
 <script type="text/javascript">
-  const app =  Elm.Main.fullscreen();
+const app = Elm.Main.init({
+  node: document.getElementById('elm'),
+  flags: null
+});
 </script>
 </html>

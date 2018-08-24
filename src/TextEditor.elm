@@ -366,9 +366,9 @@ update msg model =
             )
                 |> logging "setfocus" ""
 
-        DragStart mouseEvent  ->
+        DragStart mouse_event  ->
             let
-                xy = { x = mouseEvent.pageX, y = mouseEvent.pageY }
+                xy = { x = mouse_event.pageX, y = mouse_event.pageY }
                 chpos = geoPosToCharPos model.core xy
 
                 (cm, cc) =  model.core
@@ -376,7 +376,7 @@ update msg model =
                                                 , Commands.markClear
                                                 ]
             in
-                case mouseEvent.button of
+                case mouse_event.button of
                     LeftMouse ->
                         ( { model | core = cm
                           , drag = True
@@ -384,7 +384,7 @@ update msg model =
                             |> blinkBlock
                         , Cmd.batch [ Cmd.map CoreMsg cc ]
                         )
-                            |> logging "dragstart" (printDragInfo xy chpos)
+--todo: mouse関連                            |> logging "dragstart" (printDragInfo xy chpos)
 
                     RightMouse ->
                         if model.core.buffer.selection == Nothing then
@@ -392,8 +392,8 @@ update msg model =
                                 |> blinkBlock
                             , Cmd.batch [ Cmd.map CoreMsg cc ]
                             )
-                                |> setLastCommand ( ["moveTo (", chpos.row |> toString, ", ", chpos.column |> toString, ")"] |> String.concat )
-                                |> logging "moveto" (printDragInfo xy chpos )
+                                |> setLastCommand ( ["moveTo (", chpos.row |> String.fromInt, ", ", chpos.column |> String.fromInt, ")"] |> String.concat )
+--todo: mouse関連                                |> logging "moveto" (printDragInfo xy chpos )
                                                     
                         else
                             (model, Cmd.none)
@@ -464,7 +464,7 @@ input s model =
 
 keyDown : KeyboardEvent -> Model -> (Model, Cmd Msg)
 keyDown e model =
-    case KeyBind.find (e.ctrlKey, e.altKey, e.shiftKey, e.keyCode) model.keymap of
+    case KeyBind.find {ctrl=e.ctrlKey, alt=e.altKey, shift=e.shiftKey, code=e.keyCode} model.keymap of
         Just editorcmd ->
             exec_command_proc editorcmd model
                 |> logging "keydown" ((keyboarEvent_toString e) ++ ", editorcmd=" ++ editorcmd.id)
@@ -478,12 +478,12 @@ keyDown e model =
 keyPress : Int -> Model -> (Model, Cmd Msg)
 keyPress code model =
     ( model, Cmd.none )
-        |> logging "keypress" (toString code)
+        |> logging "keypress" (String.fromInt code)
 
 keyUp : Int -> Model -> (Model, Cmd Msg)
 keyUp code model =
     ( model, Cmd.none )
-        |> logging "keyup" (toString code)
+        |> logging "keyup" (String.fromInt code)
 
 compositionStart : String -> Model -> (Model, Cmd Msg)
 compositionStart data model =
@@ -538,24 +538,27 @@ yToRow : Core.Model -> Int -> Int
 yToRow model pos_y =
     Basics.min
         (pos_y // (emToPx model 1))
-        (model.buffer.contents |> List.length  |> flip (-) 1)
+        (model.buffer.contents |> List.length  |> ((-) 1))
 
 xToColumn : Core.Model -> String -> Int -> Int
 xToColumn model line pos_x =
+    calc_col line 0 pos_x model
+
+calc_col: String -> Int -> Int -> Core.Model -> Int
+calc_col ln c x model =
     let
         calc_w  = calcTextWidth (rulerID model)
         markup_ln = TextMarker.markupChank model.option.showControlCharactor model.option.tabOrder >> TextMarker.toString
-        calc_col = (\ ln c x ->
-                        if (calc_w (String.left c ln |> markup_ln)) > x || String.length ln < c  then c - 1
-                        else calc_col ln (c + 1)  x
-                   )
     in
-        calc_col line 0 pos_x
+        if (calc_w (String.left c ln |> markup_ln)) > x || String.length ln < c  then c - 1
+        else calc_col ln (c + 1)  x model
 
-printDragInfo: Mouse.Position -> Buffer.Position -> String
-printDragInfo xy rowcol =
-    "pos=" ++ (toString xy.x) ++ ", " ++ (toString xy.y)
-        ++ "; row_col=" ++ (toString rowcol.row) ++ ", " ++(toString rowcol.column)
+
+-- todo: mouse関連
+-- printDragInfo: Mouse.Position -> Buffer.Position -> String
+-- printDragInfo xy rowcol =
+--     "pos=" ++ (String.fromInt xy.x) ++ ", " ++ (String.fromInt xy.y)
+--         ++ "; row_col=" ++ (String.fromInt rowcol.row) ++ ", " ++(String.fromInt rowcol.column)
 
 ------------------------------------------------------------
 -- control state update
@@ -626,22 +629,23 @@ view : Model -> Html Msg
 view model =
     div [ id <| frameID model.core
         , class "elm-text-editor-frame"
-        , style [ ("margin", "0"), ("padding", "0"), ("width", "100%"), ("height", "100%")
-                , ("overflow","auto")
-                , ("position", "relative")
-                , ("user-select", "none")
-                , ("-webkit-user-select", "none")
-                , ("-moz-user-select", "none")
-                ]
+
+        , style "margin" "0", style "padding" "0", style "width" "100%", style "height" "100%"
+        , style "overflow" "auto"
+        , style "position" "relative"
+        , style "user-select" "none"
+        , style "-webkit-user-select" "none"
+        , style "-moz-user-select" "none"
+
         , onClick ClickScreen
         ]
         [ stylesheet model.style (frameID model.core)
         , div [ id <| sceneID model.core
               , class "elm-text-editor-scene"
-              , style [ ("position", "relative") 
-                      , ("min-height", "100%")
-                      , ("visibility", if (emToPx model.core 1) <= 0 then "hidden" else "visible")
-                      ]
+
+              , style "position" "relative"
+              , style "min-height" "100%"
+              , style "visibility" (if (emToPx model.core 1) <= 0 then "hidden" else "visible")
               ]
               [ presentation model
               ]
@@ -650,11 +654,11 @@ view model =
 
 presentation : Model -> Html Msg
 presentation model =
-    div [ style [ ("display", "flex"), ("flex-direction", "row"), ("flex-wrap", "nowrap")
-                , ("margin", "0"), ("padding", "0"), ("width", "100%"), ("height", "100%")
-                , ("position", "relative")
-                , ("line-height", emToPxString model.core 1)
-                ]
+    div [ style "display" "flex", style "flex-direction" "row", style "flex-wrap" "nowrap"
+        , style "margin" "0", style "padding" "0", style "width" "100%", style "height" "100%"
+        , style "position" "relative"
+        , style "line-height" (emToPxString model.core 1)
+
         , onFocusIn FocusIn
         , onFocusOut FocusOut
         ]
@@ -669,25 +673,27 @@ lineNumArea model =
     in
         div [ id <| lineNumAreaID model
             , class "elm-text-editor-linenum"
-            , style [ ("text-align", "right")
-                    , ("padding-right", "0.8em")
-                    ]
+
+            , style "text-align" "right"
+            , style "padding-right" "0.8em"
             ] <|
             List.map
-                (λ n -> div [ class "line-num"
-                             , style [ ("height", 1 |> emToPxString model)
-                                     , ("text-wrap", "none")]
-                             ] [ text (toString n) ])
+                (\n -> div [ class "line-num"
+                           , style "height" (1 |> emToPxString model)
+                           , style "text-wrap" "none"
+                           ]
+                           [ text (String.fromInt n) ]
+                )
                 (List.range 1 (List.length contents))
 
 codeArea : List KeyBind.KeyBind -> Core.Model -> Html Msg
 codeArea keymap model =
     div [ id <| codeAreaID model
         , class "code-area"
-        , style [ ("margin", "0"), ("padding", "0"), ("border", "none")
-                , ("flex-grow", "1") -- "line" の行末以降のタップでもカーソル移動したいので、いっぱいまで伸びるようにしておく
-                , ("position", "relative")
-                ]
+
+        , style "margin" "0", style "padding" "0", style "border" "none"
+        , style "flex-grow" "1" -- "line" の行末以降のタップでもカーソル移動したいので、いっぱいまで伸びるようにしておく
+        , style "position" "relative"
         ]
         [ ruler model
         , cursorLayer keymap model
@@ -703,35 +709,33 @@ codeLayer model =
         cursor = model.buffer.cursor
     in
         div [ class "code-layer"
-            , style [ ("margin", "0"), ("padding", "0"), ("border", "none")
-                    , ("width", "100%")
-                    ]
+
+            , style "margin" "0", style "padding" "0", style "border" "none"
+            , style "width" "100%"
             ] <|
             List.indexedMap
-                (λ n ln ->
+                (\n ln ->
                       div [ class "line"
-                          , style [ ("height", 1 |> emToPxString model)
-                                  , ("width", "100%")
-                                  , ("text-wrap", "none")
-                                  , ("white-space", "pre")
-                                  , ("pointer-events", "auto") -- マウスイベントの対象にする
-                                  ]
+
+                          , style "height" (1 |> emToPxString model)
+                          , style "width" "100%"
+                          , style "text-wrap" "none"
+                          , style "white-space" "pre"
+                          , style "pointer-events" "auto" -- マウスイベントの対象にする
                           ] <|
                           if n == cursor.row && model.compositionPreview /= Nothing then
-                              [ span [ style [ ("position", "relative")
-                                             , ("white-space", "pre")
-                                             , ("pointer-events", "none") -- マウスイベントの対象外にする
-                                             ]
+                              [ span [ style "position" "relative"
+                                     , style "white-space" "pre"
+                                     , style "pointer-events" "none" -- マウスイベントの対象外にする
                                      ]
                                      ( String.left cursor.column ln
                                              |> TextMarker.markupChank model.option.showControlCharactor model.option.tabOrder
                                              |> TextMarker.toHtml
                                      )
                               , compositionPreview model.compositionPreview
-                              , span [ style [ ("position", "relative")
-                                             , ("white-space", "pre")
-                                             , ("pointer-events", "none") -- マウスイベントの対象外にする
-                                             ]
+                              , span [ style "position" "relative"
+                                     , style "white-space" "pre"
+                                     , style "pointer-events" "none" -- マウスイベントの対象外にする
                                      ]
                                      ( String.dropLeft cursor.column ln
                                            |> TextMarker.markupLine model.option.showControlCharactor model.option.tabOrder
@@ -749,25 +753,24 @@ codeLayer model =
 cursorLayer : List KeyBind.KeyBind -> Core.Model -> Html Msg
 cursorLayer keymap model =
     div [ class "cursor-layer"
-        , style [ ("position", "absolute")
-                , ("pointer-events", "none") -- マウスイベントの対象外にする
-                ]
+        , style "position" "absolute"
+        , style "pointer-events" "none" -- マウスイベントの対象外にする
         ]
-        [ div [style [ ("position", "relative")
-                     , ("display" , "inline-flex")
-                     , ("flex-direction", "row")
-                     , ("flex-wrap", "nowrap")
-                     , ("justify-content", "flex-start")
-                     , ("height", 1 |> emToPxString model)
-                     , ("align-items" , "baseline")
-
-                     , ("top" , model.buffer.cursor.row |> emToPxString model)
-                     , ("left", "0")
-                     ]
+        [ div [ style "position" "relative"
+              , style "display"  "inline-flex"
+              , style "flex-direction" "row"
+              , style "flex-wrap" "nowrap"
+              , style "justify-content" "flex-start"
+              , style "height" (1 |> emToPxString model)
+              , style "align-items" "baseline"
+              , style "top"  (model.buffer.cursor.row |> emToPxString model)
+              , style "left" "0"
                ]
                [ pad model
                , div
-                     [ style [("position", "relative"), ("display" , "inline-flex")] ]
+                     [ style "position" "relative"
+                     , style "display" "inline-flex"
+                     ]
                      [ textarea [ id <| inputAreaID model
                                 , onInput Input
                                 , onKeyDown keymap KeyDown
@@ -783,25 +786,24 @@ cursorLayer keymap model =
                                 , selecteddata <| Buffer.selectedString model.buffer
                                 , spellcheck False
                                 , wrap "off"
-                                , style [ ("border", "none"), ("padding", "0"), ("margin","0"), ("outline", "none")
-                                        , ("overflow", "hidden"), ("opacity", "0")
-                                        , ("width", model.compositionPreview
+
+                                , style "border" "none", style "padding" "0", style "margin" "0", style "outline" "none"
+                                , style "overflow" "hidden", style "opacity" "0"
+                                , style "width" ( model.compositionPreview
                                                        |> Maybe.withDefault ""
-                                                       |> String.length |> flip (+) 1
+                                                       |> String.length |> ((+) 1)
                                                        |> toEmString
-                                          )
-                                        , ("resize", "none")
-                                        , ("height", 1 |> emToPxString model)
-                                        , ("font-size", "1em") -- 親のスタイルにあわせて大きさを買えるために必要
-                                        , ("font-family", "inherit")
-                                        , ("position", "absolute")
-                                        ]
+                                                )
+                                , style "resize" "none"
+                                , style "height" (1 |> emToPxString model)
+                                , style "font-size" "1em" -- 親のスタイルにあわせて大きさを変えるために必要
+                                , style "font-family" "inherit"
+                                , style "position" "absolute"
                                 ]
                            []
                      , span [ class "pad-composition-preview"
-                            , style [ ("visibility", "hidden")
-                                    , ("white-space", "nowrap")
-                                    ]
+                            , style "visibility" "hidden"
+                            , style "white-space" "nowrap"
                             ]
                            [compositionPreview model.compositionPreview]
                      , cursorView model
@@ -812,17 +814,16 @@ cursorLayer keymap model =
 tapControlLayer : Core.Model -> Html Msg
 tapControlLayer model =
     div [ id <| tapAreaID model
-        , style [ ("position", "absolute")
-                , ("pointer-events", "auto")
-                , ("width", "100%"), ("height", "100%")
-                , ("z-index", "9")
-
+        , style "position" "absolute"
+        , style "pointer-events" "auto"
+        , style "width" "100%", style "height" "100%"
+        , style "z-index" "9"
 -- for debug
 --                , ("color", "green")
 --                , ("background-color", "red")
 --                , ("opacity", "0.8")
-                , ("opacity", "0")
-                ]
+        , style "opacity" "0"
+
         , contenteditable True
         , onPasted Pasted
         , onCopied Copied
@@ -845,15 +846,14 @@ selectedTouchPad model =
             in
                 (List.range bpos.row epos.row)
                    |> List.map (\ row ->
-                                  div [ style [ ("position", "absolute")
-                                              , ("top" , row |> emToPxString model )
-                                              , ("left" , "0")
-                                              , ("height", 1 |> emToPxString model )
+                                  div [ style "position" "absolute"
+                                      , style "top"  (row |> emToPxString model)
+                                      , style "left"  "0"
+                                      , style "height" (1 |> emToPxString model)
 
-                                              , ("background-color", "gray")
-                                              , ("color","white")
-                                              , ("white-space", "pre")
-                                              ]
+                                      , style "background-color" "gray"
+                                      , style "color" "white"
+                                      , style "white-space" "pre"
                                       ]
                                       [ Buffer.line row model.buffer |> Maybe.withDefault "" |> text ]
                                )
@@ -897,21 +897,19 @@ markerLayer model =
                                )
             in
                 div [ class "marker-layer"
-                    , style [ ("position", "absolute")
-                            , ("pointer-events", "none") -- マウスイベントの対象外にする
-                            , ("z-index", "5") -- note: 範囲選択を一番上にしたいため 99 という数字自体に意味はない
-                            ]
+                    , style "position" "absolute"
+                    , style "pointer-events" "none" -- マウスイベントの対象外にする
+                    , style "z-index" "5" -- note: 範囲選択を一番上にしたいため 99 という数字自体に意味はない
                     ]
                     ( List.map (\ m ->
                                   div [ class "elm-text-editor-selection"
-                                      , style [ ("position", "absolute")
-                                              , ("top" , m.row |> emToPxString model )
-                                              , ("left" , m.begin_px |> toPxString)
-                                              , ("width", m.end_px - m.begin_px |> toPxString)
-                                              , ("height", 1 |> emToPxString model )
+                                      , style "position" "absolute"
+                                      , style "top"  (m.row |> emToPxString model )
+                                      , style "left"  (m.begin_px |> toPxString)
+                                      , style "width" (m.end_px - m.begin_px |> toPxString)
+                                      , style "height" (1 |> emToPxString model )
 
-                                              , ("white-space", "pre")
-                                              ]
+                                      , style "white-space" "pre"
                                       ]
                                       ( Buffer.line m.row model.buffer |> Maybe.withDefault ""
                                             |> String.dropLeft m.begin_col
@@ -930,11 +928,10 @@ pad model =
         cur      = model.buffer.cursor
     in
     span [ class "pad"
-         , style [ ("position", "relative")
-                 , ("white-space", "pre")
-                 , ("visibility", "hidden")                     
-                 , ("pointer-events", "none") -- マウスイベントの対象外にする
-                 ]
+         , style "position" "relative"
+         , style "white-space" "pre"
+         , style "visibility" "hidden"
+         , style "pointer-events" "none" -- マウスイベントの対象外にする
          ]
          ( Buffer.currentLine model.buffer
                |> String.left cur.column
@@ -946,21 +943,18 @@ pad model =
 ruler : Core.Model -> Html msg
 ruler model = 
     div [ class "ruler-layer"
-        , style [ ("position", "absolute")
-                , ("overflow", "hidden")
-                , ("width", "0px")
-                , ("opacity", "0")
-                , ("pointer-events", "none") -- マウスイベントの対象外にする
-                ]
+        , style "position" "absolute"
+        , style "overflow" "hidden"
+        , style "width" "0px"
+        , style "opacity" "0"
+        , style "pointer-events" "none" -- マウスイベントの対象外にする
         ]
         [ span [ id <| rulerID model
-               , style [ ("white-space", "pre")
-                       ]
+               , style "white-space" "pre"
                ]
                []
         , span [ id <| prototyleEmID model
-               , style [ ("white-space", "pre")
-                       ]
+               , style "white-space" "pre"
                ]
                [ text "箱|□↵├"]
         ]
@@ -970,8 +964,7 @@ compositionPreview compositionData =
     case compositionData of
         Just s ->
             span [ class "elm-text-editor-composing"
-                 , style [ ("text-decoration", "underline")
-                         ]
+                 , style "text-decoration" "underline"
                  ] [ text s ]
         Nothing ->
             text ""
@@ -984,16 +977,16 @@ cursorView model =
                                 BlinkBlocked -> True
                     ) >> not
     in
-    span [ class "elm-text-editor-cursor"
-         , style <|
-             [ ("height", 1 |> emToPxString model )
-             , ("width", "3px")
-             , ("z-index", "5")
-             ]
-               ++ ( if model.focus then [] else [ ("background-color", "gray") ] )
-               ++ ( if model.focus && (blink_off model.blink) then [ ("opacity", "0.0") ] else [])
-         , id <| cursorID model
-         ]
+    span ( [ class "elm-text-editor-cursor"
+           , id <| cursorID model
+
+           , style "height" (1 |> emToPxString model)
+           , style "width" "3px"
+           , style "z-index" "5"
+           ]
+               ++ ( if model.focus then [] else [ style "background-color" "gray" ] )
+               ++ ( if model.focus && (blink_off model.blink) then [ style "opacity" "0.0" ] else [])
+         )
     []
 
 
@@ -1081,32 +1074,31 @@ keyboarEvent_toString e =
         , if e.altKey then "A-" else ""
         , if e.metaKey then "M-" else ""
         , if e.shiftKey then "S-"else ""
-        , toString e.keyCode
+        , String.fromInt e.keyCode
         ]
                 
 onKeyDown : List KeyBind.KeyBind -> (KeyboardEvent -> msg) -> Attribute msg
 onKeyDown keymap tagger =
-    onWithOptions "keydown" { stopPropagation=True, preventDefault=True } <|
-        -- note: considerKeyboardEvent は、Nothing の時 
-        --       JsonDecodeを失敗させることで、
-        --       stopPropagetion, preventDefault を有効にしたり無効にしたりする Durty Hack
-        --       (なので、keymapにあるかどうか照合をここでやっている)
+    -- note: considerKeyboardEvent は、stopPropagetion, preventDefault を
+    --       渡した判定関数の戻りがOk msg のときは有効(True)にし、
+    --       Err msg の時 無効にする
+    custom "keydown" <|
         considerKeyboardEvent (\e ->
-                                   case KeyBind.find (e.ctrlKey, e.altKey, e.shiftKey, e.keyCode) keymap of
-                                       Just _  -> Just (tagger e)
-                                       Nothing -> Nothing
+                                   case KeyBind.find {ctrl=e.ctrlKey, alt=e.altKey, shift=e.shiftKey, code=e.keyCode} keymap of
+                                       Just _  -> Ok (tagger e)
+                                       Nothing -> Err (tagger e)
                               )
 
-onKeyDownForDeepAnalayze : List KeyBind.KeyBind -> (KeyboardEvent -> msg) -> Attribute msg
-onKeyDownForDeepAnalayze keymap tagger =
-    -- すべてのkeydownイベントをフックするかわりに preventDefault しない版。挙動が変わる
-    onWithOptions "keydown" { stopPropagation=False, preventDefault=False } <|
-        -- eventlog 用に、onKeyDown で拾わなかったキーイベントのみ発火させる
-        considerKeyboardEvent (\e ->
-                                   case KeyBind.find (e.ctrlKey, e.altKey, e.shiftKey, e.keyCode) keymap of
-                                       Just _  -> Just (tagger e)
-                                       Nothing -> Just (tagger e)
-                              )
+-- onKeyDownForDeepAnalayze : List KeyBind.KeyBind -> (KeyboardEvent -> msg) -> Attribute msg
+-- onKeyDownForDeepAnalayze keymap tagger =
+--     -- すべてのkeydownイベントをフックするかわりに preventDefault しない版。挙動が変わる
+--     onWithOptions "keydown" { stopPropagation=False, preventDefault=False } <|
+--         -- eventlog 用に、onKeyDown で拾わなかったキーイベントのみ発火させる
+--         considerKeyboardEvent (\e ->
+--                                    case KeyBind.find {ctrl=e.ctrlKey, alt=e.altKey, shift=e.shiftKey, code=e.keyCode} keymap of
+--                                        Just _  -> Just (tagger e)
+--                                        Nothing -> Just (tagger e)
+--                              )
 
 
 onKeyPress : (Int -> msg) -> Attribute msg
@@ -1148,7 +1140,7 @@ onFocusOut tagger =
 
 onMouseDown : (MouseEvent -> msg) -> Attribute msg
 onMouseDown tagger =
-    onWithOptions "mousedown" { stopPropagation=False, preventDefault=True } (Json.map tagger mouseEvent)
+    preventDefaultOn "mousedown" <| Json.map (\v -> (tagger v, True))  mouseEvent
 
 
 -- CustomEvent (clipboard)
@@ -1187,13 +1179,13 @@ emToPx model n =
     prototyleEmID model
         |> getBoundingClientRect
         |> .height
-        |>  flip (*) n
+        |>  ((*) n)
 
 toPxString : Int -> String
-toPxString = toString >> flip (++) "px"
+toPxString = String.fromInt >> ((++) "px")
 
 toEmString : Int -> String
-toEmString = toString >> flip (++) "em"
+toEmString = String.fromInt >> ((++) "em")
 
 emToPxString : Core.Model -> Int -> String
 emToPxString model = emToPx model >> toPxString 
@@ -1232,7 +1224,7 @@ mouseButton =
                2 -> Json.succeed RightMouse
                3 -> Json.succeed X1Mouse
                4 -> Json.succeed X2Mouse
-               x -> Json.fail <| "unknown mouse button value (" ++ (toString x) ++ ")"
+               x -> Json.fail <| "unknown mouse button value (" ++ (String.fromInt x) ++ ")"
         )
 
 mouseEvent : Json.Decoder MouseEvent
@@ -1253,7 +1245,10 @@ mouseEvent =
 -- Function
 
 calcTextWidth : String -> String -> Int
-calcTextWidth id txt = Native.Mice.calcTextWidth id txt
+--calcTextWidth id txt = Native.Mice.calcTextWidth id txt
+-- todo: 適当につくったやつをなんとかする
+calcTextWidth id txt =
+    String.length txt * 10 -- px にテケトー換算
 
 
 -- TODO: Core とコピペになってるのどうにかする
@@ -1269,10 +1264,32 @@ type alias Rect =
     }
 
 getBoundingClientRect: String -> Rect
-getBoundingClientRect id = Native.Mice.getBoundingClientRect id
+--todo: ちゃんと通す
+--getBoundingClientRect id = Native.Mice.getBoundingClientRect id
+getBoundingClientRect id =
+    { left = 0
+    , top = 0
+    , right = 100
+    , bottom = 200
+    , x = 0
+    , y = 0
+    , width = 100
+    , height = 200
+    }
 
 getBoundingPageRect: String -> Rect
-getBoundingPageRect id = Native.Mice.getBoundingPageRect id
-
+--todo: ちゃんと通す
+--getBoundingPageRect id = Native.Mice.getBoundingPageRect id
+getBoundingPageRect id =
+    { left = 0
+    , top = 0
+    , right = 100
+    , bottom = 200
+    , x = 0
+    , y = 0
+    , width = 100
+    , height = 200
+    }
+    
 
 

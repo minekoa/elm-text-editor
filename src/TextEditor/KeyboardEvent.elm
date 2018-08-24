@@ -26,16 +26,16 @@ decodeKeyboardEvent =
         (Json.Decode.field "shiftKey" Json.Decode.bool)    
 
 
-considerKeyboardEvent : (KeyboardEvent -> Maybe msg) -> Json.Decode.Decoder msg
+considerKeyboardEvent : (KeyboardEvent -> Result msg msg) -> Json.Decode.Decoder { message : msg, stopPropagation : Bool, preventDefault : Bool }
 considerKeyboardEvent func =
     Json.Decode.andThen
         (\event ->
             case func event of
-                Just msg ->
-                    Json.Decode.succeed msg
+                Ok okmsg ->
+                    Json.Decode.succeed { message = okmsg, stopPropagation = True, preventDefault = True }
 
-                Nothing ->
-                    Json.Decode.fail "Ignoring keyboard event"
+                Err ngmsg ->
+                    Json.Decode.succeed { message = ngmsg, stopPropagation = False, preventDefault = False }
         )
         decodeKeyboardEvent
 

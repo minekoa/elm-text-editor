@@ -4,7 +4,7 @@ import TextEditor
 import Html exposing (..)
 import Html.Attributes exposing (..)
 import Html.Events exposing (..)
-
+import Browser
 
 type alias Model =
     { notepad : TextEditor.Model
@@ -19,9 +19,8 @@ type Msg
     | ModernMsg TextEditor.Msg
 
 
-main : Program Never Model Msg
 main =
-    Html.program
+    Browser.element
         { init = init
         , view = view
         , subscriptions = subscriptions
@@ -38,17 +37,17 @@ OPQRSTU VWXYZ
 \tabcdefg hijklmn
 \t\topqrstu vwxyz
 
-あいうえお\x3000かきくけこ
-さしすせそ\x3000たちつてと
-なにぬねの\x3000はひふへほ
-まみむめも\x3000や\x3000ゆ\x3000よ
-らりるれろ\x3000わゐ\x3000ゑを
+あいうえお\u{3000}かきくけこ
+さしすせそ\u{3000}たちつてと
+なにぬねの\u{3000}はひふへほ
+まみむめも\u{3000}や\u{3000}ゆ\u{3000}よ
+らりるれろ\u{3000}わゐ\u{3000}ゑを
 ん
 """
 
 
-init : ( Model, Cmd Msg )
-init =
+init : Maybe Int -> ( Model, Cmd Msg )
+init flgs =
     let
         ( m1, c1 ) =
             TextEditor.initLikeNotepad "id_notepad" defaultText
@@ -113,16 +112,16 @@ view model =
 
         , h2 [] [ code [] [ text "TextEditor.initLikeNotepad" ] ]
         , div
-            [ style [ ( "height", "12em" ), ( "border", "1px solid black" ), ( "margin", "0.5em 1em" ) ] ]
+            [ style "height" "12em", style "border" "1px solid black", style  "margin" "0.5em 1em" ]
             [ Html.map NotepadMsg (TextEditor.view model.notepad) ]
 
         , h2 [] [ code [] [ text "TextEditor.initLikeCodeEditor" ] ]
         , div
-            [ style [ ( "height", "12em" ), ( "border", "1px solid black" ), ( "margin", "0.5em 1em" ) ] ]
+            [ style "height" "12em", style "border" "1px solid black", style  "margin" "0.5em 1em" ]
             [ Html.map EditorMsg (TextEditor.view model.editor) ]
 
         , h2 [] [ code [] [ text "TextEditor.initLikeModernEditor" ] ]
         , div
-            [ style [ ( "height", "12em" ), ( "border", "1px solid black" ), ( "margin", "0.5em 1em" ) ] ]
+            [ style "height" "12em", style "border" "1px solid black", style  "margin" "0.5em 1em" ]
             [ Html.map ModernMsg (TextEditor.view model.modern) ]
         ]

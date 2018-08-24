@@ -31,18 +31,26 @@ type alias KeyBind =
     , f : EditorCmds.Command
     }
 
+type alias KeyCombination =
+    { ctrl: Bool
+    , alt : Bool
+    , shift: Bool
+    , code: Int
+    }
+
 {-| Find a keybind from keycode and modifires.
 -}
-find : (Bool, Bool, Bool, Int) -> List KeyBind -> Maybe EditorCmds.Command
-find (ctrl, alt, shift, keycode) keymap =
+find : KeyCombination -> List KeyBind -> Maybe EditorCmds.Command
+find keycombi keymap =
+-- todo: keybindにkeycombinationを含ませて、=で一発比較できるようにする
     case keymap of
         [] ->
             Nothing
         x :: xs ->
-            if (keycode == x.code)
-                && (ctrl == x.ctrl) && (alt == x.alt) && (shift == x.shift)
+            if (keycombi.code == x.code)
+                && (keycombi.ctrl == x.ctrl) && (keycombi.alt == x.alt) && (keycombi.shift == x.shift)
             then Just x.f
-            else find (ctrl, alt, shift, keycode) xs
+            else find keycombi xs
 
 {-| Basic Keybinds. ex) arrow-keys, <Home>, <End>, <Backspace> ..etc.
 -}
