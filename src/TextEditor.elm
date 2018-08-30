@@ -105,6 +105,7 @@ type alias EventInfo =
     , data : String
     }
 
+
 {-| Generate new `Model`.
 
 The `id` argument is a unique id for TextEditor's Dom Elements used by JavaScript(Native).
@@ -1176,16 +1177,18 @@ selecteddata selected_str =
 
 emToPx : Core.Model -> Int -> Int
 emToPx model n =
-    prototyleEmID model
-        |> getBoundingClientRect
-        |> .height
-        |>  ((*) n)
+-- todo: 計算すること
+    16 * n
+--   prototyleEmID model
+--       |> getBoundingClientRect
+--       |> .height
+--       |>  ((*) n)
 
 toPxString : Int -> String
-toPxString = String.fromInt >> ((++) "px")
+toPxString = String.fromInt >> (\n -> n ++ "px")
 
 toEmString : Int -> String
-toEmString = String.fromInt >> ((++) "em")
+toEmString = String.fromInt >> (\n -> n ++ "em")
 
 emToPxString : Core.Model -> Int -> String
 emToPxString model = emToPx model >> toPxString 
@@ -1240,7 +1243,6 @@ mouseEvent =
 ------------------------------------------------------------
 -- Native (Mice)
 ------------------------------------------------------------
-
 
 -- Function
 
