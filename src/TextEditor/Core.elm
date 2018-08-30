@@ -58,7 +58,7 @@ type alias Model =
 
     , focus : Bool
     , blink : BlinkState
-    , blinkSpan : Float
+    , blinkSpan : Float -- msec order
     }
 
 
@@ -125,7 +125,7 @@ update msg model =
 
 subscriptions : Model -> Sub Msg
 subscriptions model = 
-    Sub.batch [ Time.every (model.blinkSpan * 1000) Tick ]
+    Sub.batch [ Time.every (model.blinkSpan) Tick ]
 
 
 ------------------------------------------------------------
