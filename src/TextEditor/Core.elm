@@ -159,16 +159,15 @@ getFrameViewPortAndTagetPositon frame_id target_id =
                                      Task.fail <| Dom.NotFound (frame_id ++ " or " ++ target_id)
                         )
 
--- calcNewFrameViewPort : (Dom.Viewport, Dom.Element) -> { x: Float, y: Float }
-calcNewFrameViewPort : (Dom.Viewport, Dom.Element) -> { x: Float, y: Float, ox: Float, oy: Float }
+--calcNewFrameViewPort : (Dom.Viewport, Dom.Element) -> { x: Float, y: Float }
 calcNewFrameViewPort (frame_vp, target_pos) =
     let
-        margin = target_pos.element.height * 3
+        margin = target_pos.element.height * 2.1
 
-        target = { top    = target_pos.element.y
-                 , bottom = target_pos.element.y + target_pos.element.height
-                 , left   = target_pos.element.x
-                 , right  = target_pos.element.x + target_pos.element.width
+        target = { top    = target_pos.element.y + frame_vp.viewport.y
+                 , bottom = target_pos.element.y + frame_vp.viewport.y + target_pos.element.height
+                 , left   = target_pos.element.x + frame_vp.viewport.x
+                 , right  = target_pos.element.x + frame_vp.viewport.x + target_pos.element.width
                  }
         frame  = { top    = frame_vp.viewport.y
                  , bottom = frame_vp.viewport.y + frame_vp.viewport.height
@@ -180,12 +179,17 @@ calcNewFrameViewPort (frame_vp, target_pos) =
                       else if (target.bottom + margin > frame.bottom) then frame.top + (target.bottom - frame.bottom) + margin
                       else                                                 frame.top
 
-        new_scr_bottom = if      (target.left  - margin < frame.left)  then frame.left + (target.left  - frame.left)  - margin
-                         else if (target.right + margin < frame.right) then frame.left + (target.right - frame.right) + margin
-                         else                                               frame.left
+        new_scr_left = if      (target.left  - margin < frame.left)  then frame.left + (target.left  - frame.left)  - margin
+                       else if (target.right + margin > frame.right) then frame.left + (target.right - frame.right) + margin
+                       else                                               frame.left
     in
-        -- { y = new_scr_top, x = new_scr_bottom }
-        Debug.log "new_pos" { y = new_scr_top, x = new_scr_bottom, oy = frame.top, ox= frame.left } --oy ox はデバッグプリント用
+--        { y = new_scr_top, x = new_scr_left }
+        Debug.log "new_pos" { y = new_scr_top, x = new_scr_left
+                            , oy = (frame.top,frame.bottom)
+                            , ox = (frame.left,frame.right)
+                            , tx = (target.left, target.right)
+                            , ty = (target.top, target.bottom)
+                            } --oy ox tx ty はデバッグプリント用
 
 
 
