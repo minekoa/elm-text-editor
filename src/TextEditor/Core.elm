@@ -26,6 +26,7 @@ module TextEditor.Core exposing
     , doFocus
     , elaborateInputArea
     , elaborateTapArea
+    , measureSelectionGeometory
 
     , EventType(..)
     , setEventRequest
@@ -59,6 +60,10 @@ type alias Model =
     , focus : Bool
     , blink : BlinkState
     , blinkSpan : Float -- msec order
+
+
+    -- geometory
+    , selectionGeometory : Maybe MarkGeometory
     }
 
 
@@ -78,6 +83,12 @@ init id opts text =
           False                  -- focus
           BlinkBlocked           -- blink
           1                      -- blinkSpan
+
+          -- geometory
+          Nothing                -- selectionGeometory
+
+
+
     , Cmd.none
     )
 
@@ -92,6 +103,35 @@ clearEventRequest: Model -> Model
 clearEventRequest model =
     { model | eventRequest = Nothing }
 
+
+------------------------------------------------------------
+type alias MarkGeometory =
+    { codeAreaWidth : Float
+    , markBgnWidth : Float
+    , markEndWidth : Float
+    }
+                      
+getMarkGeometoryTask : String -> String -> String -> Task Dom.Error MarkGeometory
+getMarkGeometoryTask codeArea_id markBgnRuler_id markEndRuler_id =
+    Task.sequence [ Dom.getElement codeArea_id     |> Task.andThen (\info -> Task.succeed (info.element.width))
+                  , Dom.getElement markBgnRuler_id |> Task.andThen (\info -> Task.succeed (info.element.width))
+                  , Dom.getElement markEndRuler_id |> Task.andThen (\info -> Task.succeed (info.element.width))
+                  ]
+        |> Task.andThen (\widthList ->
+                             case ( widthList |> List.head
+                                  , widthList |> List.drop 1 |> List.head
+                                  , widthList |> List.drop 2 |> List.head
+                                  )
+                             of
+                                 (Just codeArea_w, Just markBgn_w, Just markEnd_w) ->
+                                     Task.succeed <| MarkGeometory codeArea_w markBgn_w markEnd_w
+                                 _ ->
+                                     Task.fail <| Dom.NotFound (codeArea_id ++ " or " ++ markBgnRuler_id ++ " or " ++ markEndRuler_id)
+                        )
+
+
+
+
 ------------------------------------------------------------
 -- update
 ------------------------------------------------------------
@@ -99,6 +139,7 @@ clearEventRequest model =
 type Msg
     = IgnoreResult
     | EnsureVisible
+    | MeasuredSelectionGeometory (Maybe MarkGeometory)
     | Tick Posix
 
 update : Msg -> Model -> (Model, Cmd Msg)
@@ -110,6 +151,11 @@ update msg model =
         EnsureVisible ->
             ( model
             , ensureVisible model
+            )
+
+        MeasuredSelectionGeometory geo ->
+            ( { model | selectionGeometory = Debug.log "Update selection-geo:" geo }
+            , Cmd.none
             )
 
         Tick new_time ->
@@ -259,6 +305,17 @@ ensureVisible: Model -> Cmd Msg
 ensureVisible model =
     Task.perform (\_ -> IgnoreResult) (ensureVisibleTask (frameID model) (cursorID model))
 
+measureSelectionGeometory: Model -> Cmd Msg
+measureSelectionGeometory model =
+    Task.attempt (\r ->
+                      case r of
+                          Ok geo -> MeasuredSelectionGeometory (Just geo)
+                          Err e  -> MeasuredSelectionGeometory Nothing
+                 )
+        ( getMarkGeometoryTask (codeAreaID model)
+                               ((rulerID model) ++ "_selectionBgn")
+                               ((rulerID model) ++ "_selectionEnd")
+        )
 
 ------------------------------------------------------------
 -- Native

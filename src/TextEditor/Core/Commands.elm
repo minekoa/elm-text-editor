@@ -158,7 +158,7 @@ moveF f model =
     { model | buffer = f model.buffer }
         |> Core.blinkBlock
         |> Core.withEnsureVisibleCmd
-
+        |> Tuple.mapSecond (\cmd -> Cmd.batch [ cmd, (Core.measureSelectionGeometory model) ] )
 
 
 -- API

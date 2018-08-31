@@ -863,29 +863,27 @@ selectedTouchPad model =
 
 markerLayer: Core.Model -> Html Msg
 markerLayer model =
-    case model.buffer.selection of
-        Nothing ->
-            text ""
-
-        Just sel ->
+    case (model.buffer.selection, model.selectionGeometory) of
+        (Just sel, Just geo) ->
             let
                 bpos = if (Buffer.isPreviosPos sel.begin sel.end) then sel.begin else sel.end
                 epos = if (Buffer.isPreviosPos sel.begin sel.end) then sel.end else sel.begin
 
-                rect = getBoundingClientRect (codeAreaID model)
-                calc_w  = calcTextWidth (rulerID model)
-                bpix = calc_w (Buffer.line bpos.row model.buffer |> Maybe.withDefault "" |> String.left bpos.column |> TextMarker.markupChank model.option.showControlCharactor model.option.tabOrder |> TextMarker.toString )
-                epix = calc_w (Buffer.line epos.row model.buffer |> Maybe.withDefault "" |> String.left epos.column |> TextMarker.markupChank model.option.showControlCharactor model.option.tabOrder |> TextMarker.toString )
+--                rect = getBoundingClientRect (codeAreaID model)
+--                calc_w  = calcTextWidth (rulerID model)
+--                bpix = calc_w (Buffer.line bpos.row model.buffer |> Maybe.withDefault "" |> String.left bpos.column |> TextMarker.markupChank model.option.showControlCharactor model.option.tabOrder |> TextMarker.toString )
+--                epix = calc_w (Buffer.line epos.row model.buffer |> Maybe.withDefault "" |> String.left epos.column |> TextMarker.markupChank model.option.showControlCharactor model.option.tabOrder |> TextMarker.toString )
+
 
                 ms = List.range bpos.row epos.row
                    |> List.map (\ r ->
                                     let
                                         pb = if r == bpos.row
-                                             then bpix
+                                             then geo.markBgnWidth |> round --bpix
                                              else 0 -- rect.left
                                         pe = if r == epos.row
-                                             then epix
-                                             else rect.right - rect.left
+                                             then geo.markEndWidth  |> round --epix
+                                             else geo.codeAreaWidth |> round --rect.right - rect.left
 
                                         cb = if r == bpos.row
                                              then bpos.column
@@ -922,6 +920,9 @@ markerLayer model =
                                             |> TextMarker.toHtml
                                       )
                              ) ms )
+        _ ->
+            text ""
+
 
 pad : Core.Model -> Html msg
 pad model =
@@ -950,15 +951,49 @@ ruler model =
         , style "opacity" "0"
         , style "pointer-events" "none" -- マウスイベントの対象外にする
         ]
-        [ span [ id <| rulerID model
-               , style "white-space" "pre"
-               ]
-               []
-        , span [ id <| prototyleEmID model
-               , style "white-space" "pre"
-               ]
-               [ text "箱|□↵├"]
-        ]
+        ( [ span [ id <| rulerID model
+                 , style "white-space" "pre"
+                 ]
+                 []
+          , span [ id <| prototyleEmID model
+                 , style "white-space" "pre"
+                 ]
+                 [ text "箱|□↵├"]
+          ]
+          ++ (selectionRulers model)
+        )
+
+selectionRulers : Core.Model -> List (Html msg)
+selectionRulers model =
+    case model.buffer.selection of
+        Nothing -> []
+        Just sel ->
+            let
+                bpos = if (Buffer.isPreviosPos sel.begin sel.end) then sel.begin else sel.end
+                epos = if (Buffer.isPreviosPos sel.begin sel.end) then sel.end else sel.begin
+            in
+                [ span [ id <| (rulerID model) ++ "_selectionBgn"
+                       , style "white-space" "pre"
+                       ]
+                       [ Buffer.line bpos.row model.buffer
+                           |> Maybe.withDefault ""
+                           |> String.left bpos.column
+                           |> TextMarker.markupChank model.option.showControlCharactor model.option.tabOrder
+                           |> TextMarker.toString
+                           |> text
+                       ]
+                , span [ id <| (rulerID model) ++ "_selectionEnd"
+                       , style "white-space" "pre"
+                       ]
+                       [ Buffer.line epos.row model.buffer
+                           |> Maybe.withDefault ""
+                           |> String.left epos.column
+                           |> TextMarker.markupChank model.option.showControlCharactor model.option.tabOrder
+                           |> TextMarker.toString
+                           |> text
+                       ]
+                ]
+
 
 compositionPreview : Maybe String -> Html msg
 compositionPreview compositionData =
