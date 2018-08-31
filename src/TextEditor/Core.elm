@@ -130,6 +130,64 @@ getMarkGeometoryTask codeArea_id markBgnRuler_id markEndRuler_id =
                         )
 
 
+------------------------------------------------------------
+
+ensureVisibleTask : String -> String -> Task Dom.Error ()
+ensureVisibleTask frame_id target_id =
+    getFrameViewPortAndTagetPositon frame_id target_id
+        |> Task.andThen (\ vp_and_pos ->
+                             let
+                                 xy = calcNewFrameViewPort vp_and_pos
+                             in
+                                 Dom.setViewportOf frame_id xy.x xy.y
+                        )
+
+
+getFrameViewPortAndTagetPositon : String -> String -> Task Dom.Error (Dom.Viewport, Dom.Element)
+getFrameViewPortAndTagetPositon frame_id target_id =
+    Task.sequence [ Dom.getViewportOf frame_id |> Task.andThen (\ vport -> Task.succeed ( (Just vport, Nothing) ))
+                  , Dom.getElement target_id   |> Task.andThen (\ elem  -> Task.succeed ( Nothing    , Just elem))
+                  ]
+        |> Task.andThen (\ lst ->
+                             case ( lst |> List.head |> Maybe.andThen Tuple.first
+                                  , lst |> List.drop 1 |> List.head |> Maybe.andThen Tuple.second
+                                  )
+                             of
+                                 (Just frame_vport, Just target_elm) -> 
+                                     Task.succeed (frame_vport, target_elm)
+                                 _ ->
+                                     Task.fail <| Dom.NotFound (frame_id ++ " or " ++ target_id)
+                        )
+
+-- calcNewFrameViewPort : (Dom.Viewport, Dom.Element) -> { x: Float, y: Float }
+calcNewFrameViewPort : (Dom.Viewport, Dom.Element) -> { x: Float, y: Float, ox: Float, oy: Float }
+calcNewFrameViewPort (frame_vp, target_pos) =
+    let
+        margin = target_pos.element.height * 3
+
+        target = { top    = target_pos.element.y
+                 , bottom = target_pos.element.y + target_pos.element.height
+                 , left   = target_pos.element.x
+                 , right  = target_pos.element.x + target_pos.element.width
+                 }
+        frame  = { top    = frame_vp.viewport.y
+                 , bottom = frame_vp.viewport.y + frame_vp.viewport.height
+                 , left   = frame_vp.viewport.x
+                 , right  = frame_vp.viewport.x + frame_vp.viewport.width
+                 }
+
+        new_scr_top = if      (target.top    - margin < frame.top)    then frame.top + (target.top    - frame.top)    - margin
+                      else if (target.bottom + margin > frame.bottom) then frame.top + (target.bottom - frame.bottom) + margin
+                      else                                                 frame.top
+
+        new_scr_bottom = if      (target.left  - margin < frame.left)  then frame.left + (target.left  - frame.left)  - margin
+                         else if (target.right + margin < frame.right) then frame.left + (target.right - frame.right) + margin
+                         else                                               frame.left
+    in
+        -- { y = new_scr_top, x = new_scr_bottom }
+        Debug.log "new_pos" { y = new_scr_top, x = new_scr_bottom, oy = frame.top, ox= frame.left } --oy ox はデバッグプリント用
+
+
 
 
 ------------------------------------------------------------
@@ -303,7 +361,12 @@ elaborateTapArea model =
 
 ensureVisible: Model -> Cmd Msg
 ensureVisible model =
-    Task.perform (\_ -> IgnoreResult) (ensureVisibleTask (frameID model) (cursorID model))
+    Task.attempt (\r ->
+                      case r of
+                          Ok _  -> IgnoreResult
+                          Err _ -> IgnoreResult
+                 )
+        (ensureVisibleTask (frameID model) (cursorID model))
 
 measureSelectionGeometory: Model -> Cmd Msg
 measureSelectionGeometory model =
@@ -330,12 +393,6 @@ elaborateInputAreaTask input_area_id =
 elaborateTapAreaTask: String  -> Task Never Bool
 elaborateTapAreaTask input_area_id =
 --    Task.succeed (Native.Mice.elaborateTapArea input_area_id)
--- dummy code
-    Task.succeed True
-
-ensureVisibleTask : String -> String -> Task Never Bool
-ensureVisibleTask frame_id target_id =
---    Task.succeed (Native.Mice.ensureVisible frame_id target_id)
 -- dummy code
     Task.succeed True
 
