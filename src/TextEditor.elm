@@ -256,7 +256,7 @@ type Msg
     | FocusIn Bool
     | FocusOut Bool
     | ClickScreen
-    | DragStart MouseEvent
+--    | DragStart MouseEvent
 --    | DragAt Mouse.Position
 --    | DragEnd Mouse.Position
     | Logging String String Time.Posix
@@ -367,6 +367,7 @@ update msg model =
             )
                 |> logging "setfocus" ""
 
+{- TODO: mouse関連
         DragStart mouse_event  ->
             let
                 xy = { x = mouse_event.pageX, y = mouse_event.pageY }
@@ -385,7 +386,7 @@ update msg model =
                             |> blinkBlock
                         , Cmd.batch [ Cmd.map CoreMsg cc ]
                         )
---todo: mouse関連                            |> logging "dragstart" (printDragInfo xy chpos)
+                            |> logging "dragstart" (printDragInfo xy chpos)
 
                     RightMouse ->
                         if model.core.buffer.selection == Nothing then
@@ -394,14 +395,13 @@ update msg model =
                             , Cmd.batch [ Cmd.map CoreMsg cc ]
                             )
                                 |> setLastCommand ( ["moveTo (", chpos.row |> String.fromInt, ", ", chpos.column |> String.fromInt, ")"] |> String.concat )
---todo: mouse関連                                |> logging "moveto" (printDragInfo xy chpos )
+                                |> logging "moveto" (printDragInfo xy chpos )
                                                     
                         else
                             (model, Cmd.none)
                     _ ->
                         (model, Cmd.none)
 
-{- TODO: mouse関連
         DragAt xy ->
             let
                 chpos = geoPosToCharPos model.core xy
@@ -829,7 +829,8 @@ tapControlLayer model =
         , onPasted Pasted
         , onCopied Copied
         , onCutted Cutted
-        , onMouseDown DragStart
+--todo: 0.19対応で一時的に無効化した
+--        , onMouseDown DragStart
         , selecteddata <| Buffer.selectedString model.buffer
         ]
         (selectedTouchPad model)
@@ -869,21 +870,15 @@ markerLayer model =
                 bpos = if (Buffer.isPreviosPos sel.begin sel.end) then sel.begin else sel.end
                 epos = if (Buffer.isPreviosPos sel.begin sel.end) then sel.end else sel.begin
 
---                rect = getBoundingClientRect (codeAreaID model)
---                calc_w  = calcTextWidth (rulerID model)
---                bpix = calc_w (Buffer.line bpos.row model.buffer |> Maybe.withDefault "" |> String.left bpos.column |> TextMarker.markupChank model.option.showControlCharactor model.option.tabOrder |> TextMarker.toString )
---                epix = calc_w (Buffer.line epos.row model.buffer |> Maybe.withDefault "" |> String.left epos.column |> TextMarker.markupChank model.option.showControlCharactor model.option.tabOrder |> TextMarker.toString )
-
-
                 ms = List.range bpos.row epos.row
                    |> List.map (\ r ->
                                     let
                                         pb = if r == bpos.row
-                                             then geo.markBgnWidth |> round --bpix
+                                             then geo.markBgnWidth |> round
                                              else 0 -- rect.left
                                         pe = if r == epos.row
-                                             then geo.markEndWidth  |> round --epix
-                                             else geo.codeAreaWidth |> round --rect.right - rect.left
+                                             then geo.markEndWidth  |> round
+                                             else geo.codeAreaWidth |> round
 
                                         cb = if r == bpos.row
                                              then bpos.column

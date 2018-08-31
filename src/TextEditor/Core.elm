@@ -154,7 +154,7 @@ update msg model =
             )
 
         MeasuredSelectionGeometory geo ->
-            ( { model | selectionGeometory = Debug.log "Update selection-geo:" geo }
+            ( { model | selectionGeometory = geo }
             , Cmd.none
             )
 
